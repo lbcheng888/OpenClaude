@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-full",
+  "version": "2.1.126",
+  "type": "module",
+  "scripts": { "build": "tsc", "start": "node dist/index.js" },
+  "dependencies": { "ink": "^5.0.0", "react": "^18.0.0" },
+  "devDependencies": { "typescript": "^5.0.0", "@types/react": "^18.0.0", "@types/node": "^20.0.0" }
+}
