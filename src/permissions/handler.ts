@@ -60,6 +60,14 @@ export class PermissionHandler {
       return { behavior: "deny", message: "Plan mode: edits and commands are blocked until plan is approved." };
     }
 
+    // Safety checks
+    if (toolName === "Bash") {
+      const cmd = String(input.command || "");
+      if (cmd.includes("rm -rf /") || cmd.includes("sudo rm")) {
+        return { behavior: "deny", message: "Safety: destructive command blocked." };
+      }
+    }
+
     // Check denylist
     if (this.denylist.some((r) => matchRule(r, toolName, input))) {
       return { behavior: "deny", message: `Denied by rules: ${toolName}` };
@@ -70,14 +78,6 @@ export class PermissionHandler {
       return { behavior: "allow" };
     }
 
-    // Safety checks
-    if (toolName === "Bash") {
-      const cmd = String(input.command || "");
-      if (cmd.includes("rm -rf /") || cmd.includes("sudo rm")) {
-        return { behavior: "deny", message: "Safety: destructive command blocked." };
-      }
-    }
-
     // Session approval cache. Denylist and hard safety checks still win.
     const cached = this.sessionApprovals.get(getSessionRuleKey(toolName, input));
     if (cached) return { behavior: cached };
@@ -85,6 +85,10 @@ export class PermissionHandler {
     // Accept edits mode
     if (this.mode === "acceptEdits" && (toolName === "Write" || toolName === "Edit" || toolName === "MultiEdit")) {
       return { behavior: "allow" };
+    }
+
+    if (this.mode === "dontAsk") {
+      return { behavior: "deny", message: `Permission denied by dontAsk mode: ${toolName}` };
     }
 
     // Default: ask

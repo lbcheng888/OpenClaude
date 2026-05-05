@@ -8,7 +8,7 @@ import { TenguSession, type PermissionDecision, type TenguLoopEvent, type ToolDi
 import { createSettingsHookRunner } from "../hooks/runner.js";
 import { PermissionHandler, type PermissionBehavior, type PermissionMode } from "../permissions/handler.js";
 import { executeTool, getToolDefs } from "../tools/registry.js";
-import { createSession, listSessions, loadSession, saveSession } from "../session/store.js";
+import { createSession, listSessions, loadSession, saveSession, type SessionData } from "../session/store.js";
 import type { CliOptions } from "../index.js";
 import { StartupScreen, getEffortStatus, getPromptPlaceholder } from "./startup-screen.js";
 
@@ -44,6 +44,9 @@ type ClaudeCodeTuiProps = {
   initialPrompt?: string;
   bypassPermissions?: boolean;
   modelOverride?: string;
+  resumeSessionId?: string;
+  continueSession?: boolean;
+  initialPermissionMode?: PermissionMode;
 };
 
 export function ClaudeCodeTui({
@@ -51,25 +54,38 @@ export function ClaudeCodeTui({
   initialPrompt,
   bypassPermissions,
   modelOverride,
+  resumeSessionId,
+  continueSession,
+  initialPermissionMode,
 }: ClaudeCodeTuiProps): React.ReactElement {
   useApp();
   const cfg = getApiConfig();
   const model = modelOverride || cfg?.model || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
-  const [permissionMode, setPermissionMode] = useState<PermissionMode>(
-    bypassPermissions ? "bypassPermissions" : "default",
-  );
   const permissionHandler = useMemo(() => new PermissionHandler(), []);
+  const [permissionMode, setPermissionMode] = useState<PermissionMode>(
+    bypassPermissions ? "bypassPermissions" : initialPermissionMode || permissionHandler.getMode(),
+  );
   const initialPromptText = useMemo(() => initialPrompt?.trim() || "", [initialPrompt]);
+  const restoredSession = useMemo(
+    () => resolveInitialSession(resumeSessionId, Boolean(continueSession)),
+    [continueSession, resumeSessionId],
+  );
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
-    initialPromptText
-      ? [
-          {
-            id: "user-initial",
-            role: "user",
-            content: initialPromptText,
-          },
-        ]
-      : [],
+    [
+      ...(restoredSession?.messages || []),
+      ...(restoredSession?.error
+        ? [{ id: "restore-error", role: "system" as const, content: restoredSession.error }]
+        : []),
+      ...(initialPromptText
+        ? [
+            {
+              id: "user-initial",
+              role: "user" as const,
+              content: initialPromptText,
+            },
+          ]
+        : []),
+    ],
   );
   const [input, setInput] = useState("");
   const [cursor, setCursor] = useState(0);
@@ -81,8 +97,9 @@ export function ClaudeCodeTui({
   const [usage, setUsage] = useState<Usage>({});
   const [inputHistory, setInputHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
-  const sessionRef = useRef(createSession(initialPromptText || process.cwd()));
+  const sessionRef = useRef(restoredSession?.session || createSession(initialPromptText || process.cwd()));
   const initialPromptSent = useRef(false);
+  const restoredHydrated = useRef(false);
   const hookRunner = useMemo(() => createSettingsHookRunner(), []);
 
   const visibleMessages = useMemo(() => messages.slice(-12), [messages]);
@@ -124,14 +141,14 @@ export function ClaudeCodeTui({
   useEffect(() => {
     if (!hookRunner) return;
     void hookRunner("SessionStart", {
-      source: "startup",
+      source: restoredSession?.source || "startup",
       cwd: process.cwd(),
       session_id: sessionRef.current.id,
       permission_mode: permissionMode,
     }).then(emitHookOutcome).catch(error => {
       pushSystemMessage(error instanceof Error ? error.message : String(error));
     });
-  }, [emitHookOutcome, hookRunner, permissionMode, pushSystemMessage]);
+  }, [emitHookOutcome, hookRunner, permissionMode, pushSystemMessage, restoredSession?.source]);
 
   const upsertToolRender = useCallback((messageId: string, tool: ToolRender): void => {
     setMessages(previous => {
@@ -319,7 +336,7 @@ export function ClaudeCodeTui({
               permission_mode: permissionMode,
             }).then(emitHookOutcome);
           }
-          saveCurrentSession(sessionRef.current.id, agentSession.history, permissionMode);
+          saveCurrentSession(sessionRef.current, agentSession.history, permissionMode);
           pushSystemMessage(`Session compact checkpoint saved: ${sessionRef.current.id}`);
           if (hookRunner) {
             void hookRunner("PostCompact", {
@@ -442,7 +459,7 @@ export function ClaudeCodeTui({
 
       try {
         await agentSession.runUserTurn(promptForAgent);
-        saveCurrentSession(sessionRef.current.id, agentSession.history, permissionMode);
+        saveCurrentSession(sessionRef.current, agentSession.history, permissionMode);
         setFeedbackVisible(true);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -459,6 +476,17 @@ export function ClaudeCodeTui({
     },
     [agentSession, emitHookOutcome, handleSlashCommand, hookRunner, loading, permissionMode],
   );
+
+  useEffect(() => {
+    if (!restoredSession?.session || restoredHydrated.current) return;
+    restoredHydrated.current = true;
+    agentSession.hydrate(
+      restoredSession.session.messages.map(message => ({
+        role: message.role,
+        content: message.content,
+      })),
+    );
+  }, [agentSession, restoredSession?.session]);
 
   useEffect(() => {
     if (!initialPromptText || initialPromptSent.current) return;
@@ -627,10 +655,13 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
   const hookRunner = createSettingsHookRunner();
 
   if (hookRunner) {
+    const permissionMode = options.bypassPermissions
+      ? "bypassPermissions"
+      : options.permissionMode || "default";
     const sessionStart = await hookRunner("SessionStart", {
       source: "startup",
       cwd: process.cwd(),
-      permission_mode: options.bypassPermissions ? "bypassPermissions" : "default",
+      permission_mode: permissionMode,
     });
     for (const line of [...sessionStart.notifications, ...sessionStart.additionalContext]) {
       process.stderr.write(`${line}\n`);
@@ -639,7 +670,7 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
     const promptHook = await hookRunner("UserPromptSubmit", {
       prompt,
       cwd: process.cwd(),
-      permission_mode: options.bypassPermissions ? "bypassPermissions" : "default",
+      permission_mode: permissionMode,
     });
     for (const line of [...promptHook.notifications, ...promptHook.additionalContext]) {
       process.stderr.write(`${line}\n`);
@@ -655,6 +686,7 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
 
   const permissionHandler = new PermissionHandler();
   if (options.bypassPermissions) permissionHandler.setMode("bypassPermissions");
+  else if (options.permissionMode) permissionHandler.setMode(options.permissionMode);
 
   const session = new TenguSession({
     tools: getToolDefs(),
@@ -674,6 +706,19 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
       }
     },
   });
+
+  const restored = resolveInitialSession(options.resumeSessionId, options.continueSession);
+  if (restored?.session) {
+    session.hydrate(
+      restored.session.messages.map(message => ({
+        role: message.role,
+        content: message.content,
+      })),
+    );
+  } else if (restored?.error) {
+    process.stderr.write(`${restored.error}\n`);
+    return;
+  }
 
   try {
     await session.runUserTurn(prompt);
@@ -1183,6 +1228,19 @@ function truncateLine(value: string, max: number): string {
   return `${normalized.slice(0, max - 1)}…`;
 }
 
+function truncateToWidth(value: string, maxWidth: number): string {
+  if (maxWidth <= 0) return "";
+  if (stringWidth(value) <= maxWidth) return value;
+  if (maxWidth <= 1) return "…";
+
+  let output = "";
+  for (const char of value) {
+    if (stringWidth(`${output}${char}…`) > maxWidth) break;
+    output += char;
+  }
+  return `${output}…`;
+}
+
 function insertInputText(
   value: string,
   input: string,
@@ -1374,19 +1432,16 @@ function nextWordBoundary(value: string, cursor: number): number {
   return index;
 }
 
-function saveCurrentSession(id: string, history: ApiMessage[], permissionMode: PermissionMode): void {
-  saveSession({
-    id,
-    title: history.find(message => message.role === "user" && typeof message.content === "string")?.content as string | undefined,
-    messages: history.map((message, index) => ({
-      role: message.role,
-      content: message.content,
-      timestamp: Date.now() - (history.length - index),
-    })),
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    permissionMode,
-  });
+function saveCurrentSession(session: SessionData, history: ApiMessage[], permissionMode: PermissionMode): void {
+  session.title = history.find(message => message.role === "user" && typeof message.content === "string")?.content as string | undefined;
+  session.messages = history.map((message, index) => ({
+    role: message.role,
+    content: message.content,
+    timestamp: Date.now() - (history.length - index),
+  }));
+  session.permissionMode = permissionMode;
+  session.cwd ||= process.cwd();
+  saveSession(session);
 }
 
 function initializeClaudeMd(): string {
@@ -1442,6 +1497,34 @@ function rebuildChatMessagesFromSession(
       return null;
     })
     .filter((message): message is ChatMessage => Boolean(message));
+}
+
+function resolveInitialSession(
+  resumeSessionId: string | undefined,
+  continueSession: boolean,
+): { session?: SessionData; messages: ChatMessage[]; source: "resume" | "continue"; error?: string } | null {
+  if (!resumeSessionId && !continueSession) return null;
+  const targetId = resumeSessionId || listSessions()[0]?.id;
+  if (!targetId) {
+    return {
+      messages: [],
+      source: continueSession ? "continue" : "resume",
+      error: "No saved sessions",
+    };
+  }
+  const session = loadSession(targetId);
+  if (!session) {
+    return {
+      messages: [],
+      source: continueSession ? "continue" : "resume",
+      error: `Session not found: ${targetId}`,
+    };
+  }
+  return {
+    session,
+    messages: rebuildChatMessagesFromSession(session.messages),
+    source: continueSession && !resumeSessionId ? "continue" : "resume",
+  };
 }
 
 function readStdin(): Promise<string> {

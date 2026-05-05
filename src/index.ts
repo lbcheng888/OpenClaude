@@ -36,6 +36,9 @@ const { waitUntilExit } = await wrappedRender(
     initialPrompt: options.prompt,
     bypassPermissions: options.bypassPermissions,
     modelOverride: options.model,
+    resumeSessionId: options.resumeSessionId,
+    continueSession: options.continueSession,
+    initialPermissionMode: options.permissionMode,
   }),
 );
 await waitUntilExit();
@@ -61,6 +64,9 @@ Options:
   --output-format <format>                          Output format for --print: text
   --model <model>                                   Model for the current session
   --settings <file>                                 Additional settings JSON file
+  --permission-mode <mode>                          default, acceptEdits, plan, dontAsk, bypassPermissions
+  -r, --resume [sessionId]                          Resume a saved session
+  -c, --continue                                    Continue the most recent session
   -h, --help                                        Display help for command
   -v, -V, --version                                 Display version
 `;
@@ -73,6 +79,9 @@ export type CliOptions = {
   bypassPermissions: boolean;
   model?: string;
   settingsPath?: string;
+  resumeSessionId?: string;
+  continueSession: boolean;
+  permissionMode?: "default" | "acceptEdits" | "plan" | "dontAsk" | "bypassPermissions";
   prompt: string;
 };
 
@@ -80,6 +89,9 @@ function parseCliArgs(argv: string[]): CliOptions {
   const promptParts: string[] = [];
   let model: string | undefined;
   let settingsPath: string | undefined;
+  let resumeSessionId: string | undefined;
+  let continueSession = false;
+  let permissionMode: CliOptions["permissionMode"];
   let skipNext = false;
 
   for (let i = 0; i < argv.length; i++) {
@@ -90,10 +102,27 @@ function parseCliArgs(argv: string[]): CliOptions {
       continue;
     }
 
-    if (arg === "--model" || arg === "--output-format" || arg === "--settings") {
+    if (arg === "--model" || arg === "--output-format" || arg === "--settings" || arg === "--permission-mode") {
       if (arg === "--model") model = argv[i + 1];
       if (arg === "--settings") settingsPath = argv[i + 1];
+      if (arg === "--permission-mode") permissionMode = parsePermissionMode(argv[i + 1]);
       skipNext = true;
+      continue;
+    }
+
+    if (arg === "--resume" || arg === "-r") {
+      const next = argv[i + 1];
+      if (next && !next.startsWith("-")) {
+        resumeSessionId = next;
+        skipNext = true;
+      } else {
+        continueSession = true;
+      }
+      continue;
+    }
+
+    if (arg === "--continue" || arg === "-c") {
+      continueSession = true;
       continue;
     }
 
@@ -117,6 +146,16 @@ function parseCliArgs(argv: string[]): CliOptions {
       continue;
     }
 
+    if (arg.startsWith("--permission-mode=")) {
+      permissionMode = parsePermissionMode(arg.slice("--permission-mode=".length));
+      continue;
+    }
+
+    if (arg.startsWith("--resume=")) {
+      resumeSessionId = arg.slice("--resume=".length);
+      continue;
+    }
+
     if (arg.startsWith("-")) continue;
     promptParts.push(arg);
   }
@@ -130,6 +169,22 @@ function parseCliArgs(argv: string[]): CliOptions {
       argv.includes("--allow-dangerously-skip-permissions"),
     model,
     settingsPath,
+    resumeSessionId,
+    continueSession,
+    permissionMode,
     prompt: promptParts.join(" ").trim(),
   };
+}
+
+function parsePermissionMode(value: string | undefined): CliOptions["permissionMode"] {
+  if (
+    value === "default" ||
+    value === "acceptEdits" ||
+    value === "plan" ||
+    value === "dontAsk" ||
+    value === "bypassPermissions"
+  ) {
+    return value;
+  }
+  return undefined;
 }

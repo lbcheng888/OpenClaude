@@ -98,4 +98,37 @@ describe("permission handler", () => {
       input: { command: "npm test -- --watch=false" },
     })).resolves.toEqual({ behavior: "allow" });
   });
+
+  test("safety checks and dontAsk mode deny before prompting", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          defaultMode: "dontAsk",
+          allow: ["Bash(*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "unsafe",
+      input: { command: "rm -rf /" },
+    })).resolves.toEqual({ behavior: "deny", message: "Safety: destructive command blocked." });
+
+    await expect(handler.checkPermission({
+      toolName: "Write",
+      toolUseID: "write",
+      input: { file_path: "/tmp/a.ts" },
+    })).resolves.toEqual({ behavior: "deny", message: "Permission denied by dontAsk mode: Write" });
+  });
 });

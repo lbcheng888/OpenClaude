@@ -114,6 +114,10 @@ export function getEffortStatus(model: string): string {
 }
 
 function ClawdMark(): React.ReactElement {
+  if (isAppleTerminal()) {
+    return <AppleTerminalClawdMark />;
+  }
+
   return (
     <Box flexDirection="column">
       <Text>
@@ -133,6 +137,24 @@ function ClawdMark(): React.ReactElement {
       <Text color="clawd_body">  ▘▘ ▝▝  </Text>
     </Box>
   );
+}
+
+function AppleTerminalClawdMark(): React.ReactElement {
+  return (
+    <Box flexDirection="column" alignItems="center">
+      <Text>
+        <Text color="clawd_body">▗</Text>
+        <Text color="clawd_background" backgroundColor="clawd_body"> ▗   ▖ </Text>
+        <Text color="clawd_body">▖</Text>
+      </Text>
+      <Text backgroundColor="clawd_body">{" ".repeat(7)}</Text>
+      <Text color="clawd_body">▘▘ ▝▝</Text>
+    </Box>
+  );
+}
+
+function isAppleTerminal(): boolean {
+  return process.env.TERM_PROGRAM === "Apple_Terminal";
 }
 
 function FeedView({ config, width }: { config: FeedConfig; width: number }): React.ReactElement {

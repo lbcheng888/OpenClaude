@@ -30,7 +30,8 @@
 - [x] 支持基础官方 Hook JSON 输出：PreToolUse `permissionDecision` / `updatedInput` / `additionalContext`、PermissionRequest `decision`。
 - [x] 支持基础生命周期 hooks：UserPromptSubmit、SessionStart、StopFailure、PreCompact、PostCompact。
 - [ ] 官方 hook 的 prompt/agent/function/session/plugin、once/asyncRewake、完整输出 schema 语义一致。
-- [x] 支持基础 session 保存和 `/resume <id>` 历史重建。
+- [x] 支持官方 project JSONL 路径的基础 session 保存和 `/resume <id>` 历史重建。
+- [x] 支持 CLI `--resume <id>` / `--continue` 基础历史恢复。
 - [x] `/compact` 保存当前 session checkpoint。
 - [ ] session continue/compact 的官方摘要语义一致。
 - [x] 支持基础上下文统计，不能出现 `NaN`。
@@ -74,7 +75,8 @@
 - [x] 支持历史输入上下切换。
 - [x] 支持粘贴多行内容进入输入缓冲。
 - [x] 支持内置和自定义 slash command 的唯一匹配 Tab 补全。
-- [ ] `/` slash command 补全面板与官方一致。
+- [x] `/` slash command 有基础补全面板和 Tab 唯一匹配补全。
+- [ ] `/` slash command 补全面板的颜色、排序、分组与官方完全一致。
 - [x] `?` shortcuts 帮助入口可用。
 - [x] 支持 Shift+Tab 权限模式切换。
 - [ ] Shift+Tab 权限模式切换顺序和文案与官方完全一致。
@@ -146,11 +148,14 @@
 - [x] deny 返回 `is_error` tool_result。
 - [x] permission prompt 使用工具摘要和 `Y/N` 基础决策。
 - [ ] permission prompt UI 与官方完全一致。
-- [ ] Esc、remember choice 行为一致。
-- [ ] tool-specific permission matcher 一致。
+- [x] Esc 拒绝、`A` allow 并记住本 session 基础行为可用。
+- [ ] permission prompt UI 与 remember choice 文案/持久化和官方完全一致。
+- [ ] tool-specific permission matcher 与官方完全一致。
 - [x] PermissionRequest hook 可在交互弹窗前 allow/deny。
 - [x] 读取 `~/.claude/settings.json` 的 `permissions.allow/deny/defaultMode`。
 - [x] settings allow/deny 支持基础 tool-specific matcher：`Bash(pattern)`、`Read(path)` 等。
+- [x] settings allow/deny 支持 escaped parentheses、旧工具名别名、Bash `cmd:*` 基础匹配。
+- [x] `dontAsk` 模式未预批准直接拒绝，不再弹窗。
 - [ ] settings allow/deny matcher 与官方完全一致。
 - [ ] MCP permissions 一致。
 - [ ] dangerous mode 文案与颜色完全一致。
@@ -166,7 +171,7 @@
 - [x] `/feedback`
 - [x] `/clear`
 - [x] `/compact` 基础占位提示
-- [x] `/resume` 基础占位提示
+- [x] `/resume` 可列出并恢复基础 session history
 - [x] `/cost` 基础占位提示
 - [x] `/doctor`
 - [ ] `/login` / auth 相关命令
@@ -182,7 +187,8 @@
 - [ ] model/effort 配置来源一致。
 - [ ] changelog cache 读取与官方一致。
 - [x] 基础 session store 可保存/恢复 API history。
-- [ ] session store 格式与官方一致。
+- [x] session store 使用 `~/.claude/projects/<sanitized-cwd>/<session-id>.jsonl` 基础格式、`parentUuid` 链和 `last-prompt`。
+- [ ] session store 的 queue-operation、attribution、compact boundary、sidechain/subagent、tombstone 与官方完全一致。
 - [ ] telemetry/usage 不泄漏到 UI，但内部状态一致。
 
 ## 验收证明
@@ -192,6 +198,7 @@
 - [x] `npm run test:tengu` 覆盖 Bash timeout、background task 输出查询。
 - [x] `npm run test:tengu` 覆盖 settings 层级合并、flag/managed 来源、permission matcher、基础 hooks、Hook JSON 决策。
 - [x] `npm run test:tengu` 覆盖 Read media/notebook/empty、Grep hidden/case/output mode、Glob hidden/ignore。
+- [x] `npm run test:tengu` 覆盖 session project JSONL 写入/读取、parentUuid 链、metadata 保留、dontAsk 拒绝。
 - [x] `npm run build` 能生成本项目 `dist/index.js`。
 - [x] `npm run test:tui-smoke` 真启动 TUI 验证首屏、welcome、无凭证错误、bypass footer。
 - [x] `npm run test:tui-input-smoke` 真启动 TUI 验证 `?` 帮助和 `/doctor` 命令。
