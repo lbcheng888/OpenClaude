@@ -59,6 +59,219 @@ describe("permission handler", () => {
     })).resolves.toEqual({ behavior: "deny", message: "Denied by rules: Bash" });
   });
 
+  test("settings ask rules force prompts ahead of allow rules", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: ["Bash(git:*)", "Read"],
+          ask: ["Bash(git push:*)", "Read(/secret/**)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "git-status",
+      input: { command: "git status" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "git-push",
+      input: { command: "git push origin main" },
+    })).resolves.toEqual({ behavior: "ask" });
+    await expect(handler.checkPermission({
+      toolName: "Read",
+      toolUseID: "read-secret",
+      input: { file_path: "/secret/token.txt" },
+    })).resolves.toEqual({ behavior: "ask" });
+  });
+
+  test("dontAsk mode denies explicit ask rules instead of prompting", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          defaultMode: "dontAsk",
+          ask: ["Bash(npm:*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "npm",
+      input: { command: "npm test" },
+    })).resolves.toEqual({ behavior: "deny", message: "Permission denied by dontAsk mode: Bash" });
+  });
+
+  test("bypass mode still respects explicit deny and ask rules", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: ["Bash(*)"],
+          ask: ["Bash(npm publish:*)"],
+          deny: ["Bash(curl:*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+    handler.setMode("bypassPermissions");
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "npm-publish",
+      input: { command: "npm publish --dry-run" },
+    })).resolves.toEqual({ behavior: "ask" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "curl",
+      input: { command: "curl https://example.com" },
+    })).resolves.toEqual({ behavior: "deny", message: "Denied by rules: Bash" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "npm-test",
+      input: { command: "npm test" },
+    })).resolves.toEqual({ behavior: "allow" });
+  });
+
+  test("bash prefix allow rules require every subcommand to be allowed", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: ["Bash(git:*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "git-chain",
+      input: { command: "git status && git diff --stat" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "mixed-chain",
+      input: { command: "git status && curl https://example.com" },
+    })).resolves.toEqual({ behavior: "ask" });
+  });
+
+  test("bash deny and ask rules pierce env vars wrappers redirections and xargs", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: ["Bash(*)"],
+          ask: ["Bash(npm publish:*)"],
+          deny: ["Bash(rm:*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "env-deny",
+      input: { command: "FOO=bar rm file.txt" },
+    })).resolves.toEqual({ behavior: "deny", message: "Denied by rules: Bash" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "wrapped-deny",
+      input: { command: "timeout 5 xargs rm file.txt" },
+    })).resolves.toEqual({ behavior: "deny", message: "Denied by rules: Bash" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "ask-publish",
+      input: { command: "NODE_ENV=production npm publish --dry-run > out.txt" },
+    })).resolves.toEqual({ behavior: "ask" });
+  });
+
+  test("bash wildcard rules support escaped stars and optional trailing args", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: ["Bash(git *)", "Bash(echo \\*)"],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "bare-git",
+      input: { command: "git" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "git-status",
+      input: { command: "git status" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "literal-star",
+      input: { command: "echo *" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Bash",
+      toolUseID: "nonliteral-star",
+      input: { command: "echo hello" },
+    })).resolves.toEqual({ behavior: "ask" });
+  });
+
   test("permission rules handle escaped parentheses and session remember choices", async () => {
     tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
     mkdirSync(tempDir, { recursive: true });

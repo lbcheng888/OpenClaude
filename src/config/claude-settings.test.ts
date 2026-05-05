@@ -39,12 +39,12 @@ describe("claude settings", () => {
     });
     writeJson(join(project, ".claude", "settings.json"), {
       env: { A: "project" },
-      permissions: { allow: ["Bash(git *)"] },
+      permissions: { allow: ["Bash(git *)"], ask: ["Read(/secret/**)"] },
       hooks: { PreToolUse: [{ matcher: "Bash", hooks: [{ type: "command", command: "echo project" }] }] },
     });
     writeJson(join(project, ".claude", "settings.local.json"), {
       env: { B: "local" },
-      permissions: { deny: ["Bash(rm *)"], defaultMode: "plan" },
+      permissions: { ask: ["Bash(git push:*)"], deny: ["Bash(rm *)"], defaultMode: "plan" },
     });
 
     process.env.HOME = home;
@@ -56,6 +56,7 @@ describe("claude settings", () => {
 
     expect(settings?.env).toEqual({ A: "project", B: "local" });
     expect(settings?.permissions?.allow).toEqual(["Read", "Bash(git *)"]);
+    expect(settings?.permissions?.ask).toEqual(["Read(/secret/**)", "Bash(git push:*)"]);
     expect(settings?.permissions?.deny).toEqual(["Bash(rm *)"]);
     expect(settings?.permissions?.defaultMode).toBe("plan");
     expect(settings?.hooks?.PreToolUse).toHaveLength(2);
@@ -80,7 +81,7 @@ describe("claude settings", () => {
     });
     writeJson(flagPath, {
       env: { B: "flag" },
-      permissions: { allow: ["Bash(npm *)"] },
+      permissions: { allow: ["Bash(npm *)"], ask: ["Bash(npm publish:*)"] },
     });
     writeJson(join(managed, "managed-settings.json"), {
       env: { A: "managed-base" },
@@ -102,6 +103,7 @@ describe("claude settings", () => {
 
     expect(settings?.env).toEqual({ A: "managed-dropin", B: "flag", C: "managed" });
     expect(settings?.permissions?.allow).toEqual(["Read", "Bash(npm *)"]);
+    expect(settings?.permissions?.ask).toEqual(["Bash(npm publish:*)"]);
     expect(settings?.permissions?.deny).toEqual(["Bash(rm *)", "Bash(curl *)"]);
     expect(settings?.permissions?.defaultMode).toBe("dontAsk");
   });

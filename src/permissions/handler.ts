@@ -1,4 +1,5 @@
 // Permission system (1:1 from binary)
+import shellQuote from "shell-quote";
 import { readClaudeSettings } from "../config/claude-settings.js";
 
 export type PermissionBehavior = "allow" | "deny" | "ask";
@@ -22,14 +23,17 @@ export interface PermissionRequest {
 export class PermissionHandler {
   private mode: PermissionMode = "default";
   private allowlist: string[] = [];
+  private asklist: string[] = [];
   private denylist: string[] = [];
   private sessionApprovals = new Map<string, PermissionBehavior>();
 
   constructor() {
     const permissions = readClaudeSettings()?.permissions;
     const allow = Array.isArray(permissions?.allow) ? permissions.allow.filter(isString) : [];
+    const ask = Array.isArray(permissions?.ask) ? permissions.ask.filter(isString) : [];
     const deny = Array.isArray(permissions?.deny) ? permissions.deny.filter(isString) : [];
     this.allowlist = [...new Set(["Read", "Glob", "Grep", "LS", "TodoWrite", "WebFetch", ...allow])];
+    this.asklist = [...new Set(ask)];
     this.denylist = [...new Set(deny)];
     if (isPermissionMode(permissions?.defaultMode)) {
       this.mode = permissions.defaultMode;
@@ -46,11 +50,6 @@ export class PermissionHandler {
 
   async checkPermission(request: PermissionRequest): Promise<PermissionResult> {
     const { toolName, input } = request;
-
-    // Bypass mode - allow everything
-    if (this.mode === "bypassPermissions") {
-      return { behavior: "allow" };
-    }
 
     // Plan mode - deny edits and bash
     if (
@@ -69,12 +68,25 @@ export class PermissionHandler {
     }
 
     // Check denylist
-    if (this.denylist.some((r) => matchRule(r, toolName, input))) {
+    if (this.denylist.some((r) => matchRule(r, toolName, input, "deny"))) {
       return { behavior: "deny", message: `Denied by rules: ${toolName}` };
     }
 
+    // Explicit ask rules force a prompt unless dontAsk mode forbids prompting.
+    if (this.asklist.some((r) => matchRule(r, toolName, input, "ask"))) {
+      if (this.mode === "dontAsk") {
+        return { behavior: "deny", message: `Permission denied by dontAsk mode: ${toolName}` };
+      }
+      return { behavior: "ask" };
+    }
+
+    // Bypass mode still respects explicit deny/ask rules and hard safety checks.
+    if (this.mode === "bypassPermissions") {
+      return { behavior: "allow" };
+    }
+
     // Check allowlist
-    if (this.allowlist.some((r) => matchRule(r, toolName, input))) {
+    if (toolName === "Bash" ? bashCommandAllowedByRules(this.allowlist, input) : this.allowlist.some((r) => matchRule(r, toolName, input, "allow"))) {
       return { behavior: "allow" };
     }
 
@@ -108,16 +120,42 @@ export class PermissionHandler {
   }
 }
 
-function matchRule(rule: string, toolName: string, input: Record<string, unknown>): boolean {
+function matchRule(
+  rule: string,
+  toolName: string,
+  input: Record<string, unknown>,
+  behavior: PermissionBehavior,
+): boolean {
   const trimmedRule = rule.trim();
 
   const parsed = parsePermissionRule(trimmedRule);
   if (parsed.toolName !== toolName) return false;
   if (!parsed.ruleContent) return true;
   if (toolName === "Bash") {
-    return matchBashRule(parsed.ruleContent, String(input.command || ""));
+    return matchBashRule(parsed.ruleContent, String(input.command || ""), behavior, { includeSubcommands: true });
   }
   return matchGlob(parsed.ruleContent, getToolMatchValue(toolName, input));
+}
+
+function bashCommandAllowedByRules(rules: string[], input: Record<string, unknown>): boolean {
+  const command = String(input.command || "");
+  const bashRules = rules
+    .map((rule) => parsePermissionRule(rule.trim()))
+    .filter((rule) => rule.toolName === "Bash");
+  if (bashRules.length === 0) return false;
+  if (bashRules.some((rule) => !rule.ruleContent)) return true;
+
+  if (bashRules.some((rule) => rule.ruleContent && matchBashRule(rule.ruleContent, command, "allow", { includeSubcommands: false }))) {
+    return true;
+  }
+
+  const subcommands = splitBashCommand(command);
+  if (subcommands.length === 0) return false;
+  return subcommands.every((subcommand) =>
+    bashRules.some((rule) =>
+      rule.ruleContent && matchBashRule(rule.ruleContent, subcommand, "allow", { includeSubcommands: false }),
+    ),
+  );
 }
 
 function getToolMatchValue(toolName: string, input: Record<string, unknown>): string {
@@ -147,15 +185,306 @@ function matchGlob(pattern: string, value: string): boolean {
   return new RegExp(`^${source}$`).test(normalizedValue);
 }
 
-function matchBashRule(ruleContent: string, command: string): boolean {
+function matchBashRule(
+  ruleContent: string,
+  command: string,
+  behavior: PermissionBehavior,
+  options: { includeSubcommands: boolean },
+): boolean {
   const normalizedRule = ruleContent.trim();
-  const normalizedCommand = command.trim();
   if (!normalizedRule) return true;
-  if (normalizedRule.endsWith(":*")) {
-    const prefix = normalizedRule.slice(0, -2).trim();
-    return normalizedCommand === prefix || normalizedCommand.startsWith(`${prefix} `);
+  const bashRule = parseBashPermissionRule(normalizedRule);
+  return buildBashCandidates(command, behavior, options).some((candidate) =>
+    matchParsedBashRule(bashRule, candidate, behavior),
+  );
+}
+
+type BashPermissionRule =
+  | { type: "exact"; command: string }
+  | { type: "prefix"; prefix: string }
+  | { type: "wildcard"; pattern: string };
+
+function parseBashPermissionRule(ruleContent: string): BashPermissionRule {
+  const prefix = extractBashPrefix(ruleContent);
+  if (prefix !== null) return { type: "prefix", prefix };
+  if (hasUnescapedStar(ruleContent)) return { type: "wildcard", pattern: ruleContent };
+  return { type: "exact", command: unescapeBashWildcardLiterals(ruleContent) };
+}
+
+function matchParsedBashRule(rule: BashPermissionRule, command: string, behavior: PermissionBehavior): boolean {
+  const candidate = command.trim();
+  if (!candidate) return false;
+  switch (rule.type) {
+    case "exact":
+      return candidate === rule.command;
+    case "prefix":
+      if (behavior === "allow" && splitBashCommand(candidate).length > 1) return false;
+      if (candidate === rule.prefix || candidate.startsWith(`${rule.prefix} `)) return true;
+      return candidate === `xargs ${rule.prefix}` || candidate.startsWith(`xargs ${rule.prefix} `);
+    case "wildcard":
+      if (behavior === "allow" && splitBashCommand(candidate).length > 1) return false;
+      return matchWildcardPattern(rule.pattern, candidate);
   }
-  return matchGlob(normalizedRule, normalizedCommand);
+}
+
+function buildBashCandidates(
+  command: string,
+  behavior: PermissionBehavior,
+  options: { includeSubcommands: boolean },
+): string[] {
+  const seeds = uniqueNonEmpty([command.trim(), stripBashOutputRedirections(command)]);
+  const candidates = expandBashCandidateTransforms(seeds, behavior);
+  if (!options.includeSubcommands) return candidates;
+
+  const subcommands = candidates.flatMap((candidate) => splitBashCommand(candidate));
+  return expandBashCandidateTransforms([...candidates, ...subcommands], behavior);
+}
+
+function expandBashCandidateTransforms(commands: string[], behavior: PermissionBehavior): string[] {
+  const candidates = uniqueNonEmpty(commands);
+  const seen = new Set(candidates);
+  let index = 0;
+  while (index < candidates.length) {
+    const command = candidates[index++]!;
+    for (const next of [
+      stripSafeBashWrappers(command),
+      behavior === "allow" ? command : stripAllLeadingEnvVars(command),
+    ]) {
+      const trimmed = next.trim();
+      if (trimmed && !seen.has(trimmed)) {
+        seen.add(trimmed);
+        candidates.push(trimmed);
+      }
+    }
+  }
+  return candidates;
+}
+
+function splitBashCommand(command: string): string[] {
+  const joined = joinBashContinuations(command.trim());
+  if (!joined) return [];
+  const newlinePlaceholder = `__CLAUDE_CODE_NL_${Math.random().toString(36).slice(2)}__`;
+  const parsed = parseShell(joined.replace(/\n/gu, `\n${newlinePlaceholder}\n`));
+  if (!parsed) return [joined];
+
+  const commands: string[] = [];
+  let current: string[] = [];
+  let skipNext = false;
+  for (const token of parsed) {
+    if (skipNext) {
+      skipNext = false;
+      continue;
+    }
+    if (typeof token === "string") {
+      if (token === newlinePlaceholder) {
+        pushCurrentCommand(commands, current);
+        current = [];
+      } else {
+        current.push(token);
+      }
+      continue;
+    }
+    if (isShellGlobToken(token)) {
+      current.push(token.pattern);
+      continue;
+    }
+    if (isShellCommentToken(token)) {
+      current.push(`#${token.comment}`);
+      continue;
+    }
+    if (!isShellOperatorToken(token)) continue;
+    if (BASH_COMMAND_SEPARATORS.has(token.op)) {
+      pushCurrentCommand(commands, current);
+      current = [];
+      continue;
+    }
+    if (BASH_REDIRECT_OPERATORS.has(token.op)) {
+      const previous = current[current.length - 1];
+      if (previous && /^[0-9]$/u.test(previous)) current.pop();
+      skipNext = true;
+    }
+  }
+  pushCurrentCommand(commands, current);
+  return commands.length > 0 ? commands : [joined];
+}
+
+function stripBashOutputRedirections(command: string): string {
+  const split = splitBashCommand(command);
+  return split.length === 1 ? split[0]! : command.trim();
+}
+
+function pushCurrentCommand(commands: string[], current: string[]): void {
+  const value = current.join(" ").trim();
+  if (value) commands.push(value);
+}
+
+type ShellQuoteToken =
+  | string
+  | { op: string; pattern?: string }
+  | { comment: string };
+
+function parseShell(command: string): ShellQuoteToken[] | null {
+  try {
+    const parse = (shellQuote as { parse: (cmd: string, env?: (name: string) => string) => ShellQuoteToken[] }).parse;
+    return parse(command, (name: string) => `$${name}`);
+  } catch {
+    return null;
+  }
+}
+
+const BASH_COMMAND_SEPARATORS = new Set(["&&", "||", ";", ";;", "|"]);
+const BASH_REDIRECT_OPERATORS = new Set([">", ">>", ">&"]);
+
+function isShellOperatorToken(token: ShellQuoteToken): token is { op: string } {
+  return typeof token === "object" && token !== null && "op" in token && typeof token.op === "string";
+}
+
+function isShellGlobToken(token: ShellQuoteToken): token is { op: "glob"; pattern: string } {
+  return isShellOperatorToken(token) && token.op === "glob" && typeof token.pattern === "string";
+}
+
+function isShellCommentToken(token: ShellQuoteToken): token is { comment: string } {
+  return typeof token === "object" && token !== null && "comment" in token && typeof token.comment === "string";
+}
+
+function joinBashContinuations(command: string): string {
+  return command.replace(/\\+\n/gu, (match) => {
+    const backslashCount = match.length - 1;
+    return backslashCount % 2 === 1 ? "\\".repeat(backslashCount - 1) : match;
+  });
+}
+
+function stripSafeBashWrappers(command: string): string {
+  const safeEnvVars = new Set([
+    "ANTHROPIC_API_KEY",
+    "BLOCK_SIZE",
+    "BLOCKSIZE",
+    "CGO_ENABLED",
+    "CHARSET",
+    "COLORTERM",
+    "FORCE_COLOR",
+    "GCC_COLORS",
+    "GO111MODULE",
+    "GOARCH",
+    "GOEXPERIMENT",
+    "GOOS",
+    "GREP_COLOR",
+    "GREP_COLORS",
+    "LANG",
+    "LANGUAGE",
+    "LC_ALL",
+    "LC_CTYPE",
+    "LC_TIME",
+    "LSCOLORS",
+    "LS_COLORS",
+    "NODE_ENV",
+    "NO_COLOR",
+    "PYTEST_DEBUG",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD",
+    "PYTHONDONTWRITEBYTECODE",
+    "PYTHONUNBUFFERED",
+    "RUST_BACKTRACE",
+    "RUST_LOG",
+    "TERM",
+    "TIME_STYLE",
+    "TZ",
+  ]);
+  const envPattern = /^([A-Za-z_][A-Za-z0-9_]*)=([A-Za-z0-9_./:-]+)[ \t]+/u;
+  const wrapperPatterns = [
+    /^timeout[ \t]+(?:(?:--(?:foreground|preserve-status|verbose)|--(?:kill-after|signal)=[A-Za-z0-9_.+-]+|--(?:kill-after|signal)[ \t]+[A-Za-z0-9_.+-]+|-v|-[ks][ \t]+[A-Za-z0-9_.+-]+|-[ks][A-Za-z0-9_.+-]+)[ \t]+)*(?:--[ \t]+)?\d+(?:\.\d+)?[smhd]?[ \t]+/u,
+    /^time[ \t]+(?:--[ \t]+)?/u,
+    /^nice(?:[ \t]+-n[ \t]+-?\d+|[ \t]+-\d+)?[ \t]+(?:--[ \t]+)?/u,
+    /^stdbuf(?:[ \t]+-[ioe][LN0-9]+)+[ \t]+(?:--[ \t]+)?/u,
+    /^nohup[ \t]+(?:--[ \t]+)?/u,
+  ];
+  let stripped = command.trim();
+  let previous = "";
+  while (stripped !== previous) {
+    previous = stripped;
+    stripped = stripBashCommentLines(stripped);
+    const match = stripped.match(envPattern);
+    if (match && safeEnvVars.has(match[1]!)) stripped = stripped.replace(envPattern, "");
+  }
+  previous = "";
+  while (stripped !== previous) {
+    previous = stripped;
+    stripped = stripBashCommentLines(stripped);
+    for (const pattern of wrapperPatterns) stripped = stripped.replace(pattern, "");
+  }
+  return stripped.trim();
+}
+
+function stripAllLeadingEnvVars(command: string): string {
+  const envPattern =
+    /^([A-Za-z_][A-Za-z0-9_]*(?:\[[^\]]*\])?)\+?=(?:'[^'\n\r]*'|"(?:\\.|[^"$`\\\n\r])*"|\\.|[^ \t\n\r$`;|&()<>\\\\'"])*[ \t]+/u;
+  let stripped = command.trim();
+  let previous = "";
+  while (stripped !== previous) {
+    previous = stripped;
+    stripped = stripBashCommentLines(stripped);
+    const match = stripped.match(envPattern);
+    if (match) stripped = stripped.slice(match[0].length);
+  }
+  return stripped.trim();
+}
+
+function stripBashCommentLines(command: string): string {
+  const lines = command.split("\n");
+  const kept = lines.filter((line) => {
+    const trimmed = line.trim();
+    return trimmed !== "" && !trimmed.startsWith("#");
+  });
+  return kept.length === 0 ? command : kept.join("\n");
+}
+
+function extractBashPrefix(ruleContent: string): string | null {
+  const match = ruleContent.match(/^(.+):\*$/u);
+  return match?.[1]?.trim() || null;
+}
+
+function hasUnescapedStar(pattern: string): boolean {
+  if (pattern.endsWith(":*")) return false;
+  for (let index = 0; index < pattern.length; index++) {
+    if (pattern[index] === "*" && !isEscaped(pattern, index)) return true;
+  }
+  return false;
+}
+
+function unescapeBashWildcardLiterals(value: string): string {
+  return value.replace(/\\\*/gu, "*").replace(/\\\\/gu, "\\");
+}
+
+function matchWildcardPattern(pattern: string, command: string): boolean {
+  const star = "\0STAR\0";
+  const slash = "\0SLASH\0";
+  let processed = "";
+  for (let index = 0; index < pattern.trim().length; index++) {
+    const char = pattern[index]!;
+    const next = pattern[index + 1];
+    if (char === "\\" && next === "*") {
+      processed += star;
+      index++;
+    } else if (char === "\\" && next === "\\") {
+      processed += slash;
+      index++;
+    } else {
+      processed += char;
+    }
+  }
+  const unescapedStarCount = (processed.match(/\*/gu) || []).length;
+  let source = processed
+    .replace(/[.+?^${}()|[\]\\'"]/gu, "\\$&")
+    .replace(/\*/gu, ".*")
+    .replaceAll(star, "\\*")
+    .replaceAll(slash, "\\\\");
+  if (source.endsWith(" .*") && unescapedStarCount === 1) {
+    source = `${source.slice(0, -3)}( .*)?`;
+  }
+  return new RegExp(`^${source}$`, "su").test(command.trim());
+}
+
+function uniqueNonEmpty(values: string[]): string[] {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
 function parsePermissionRule(rule: string): { toolName: string; ruleContent?: string } {

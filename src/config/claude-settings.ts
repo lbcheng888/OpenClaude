@@ -35,6 +35,7 @@ export type ClaudeSettings = {
   model?: unknown;
   permissions?: {
     allow?: unknown;
+    ask?: unknown;
     deny?: unknown;
     defaultMode?: unknown;
   };
@@ -131,6 +132,7 @@ function mergeSettings(base: ClaudeSettings, next: ClaudeSettings): ClaudeSettin
     ...(base.permissions || {}),
     ...(next.permissions || {}),
     allow: mergeArray(base.permissions?.allow, next.permissions?.allow),
+    ask: mergeArray(base.permissions?.ask, next.permissions?.ask),
     deny: mergeArray(base.permissions?.deny, next.permissions?.deny),
   };
   return merged;

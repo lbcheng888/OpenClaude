@@ -1,0 +1,130 @@
+#!/usr/bin/expect -f
+set timeout 12
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-background-smoke-work"
+file mkdir $workdir
+cd $workdir
+
+proc send_slow {spawn_id text} {
+  foreach char [split $text ""] {
+    send -i $spawn_id -- $char
+    after 35
+  }
+}
+
+set server_script {
+const http = require("http");
+
+function writeEvent(res, event) {
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+function completeWithText(res, text) {
+  writeEvent(res, { type: "content_block_start", index: 0, content_block: { type: "text", text: "" } });
+  writeEvent(res, { type: "content_block_delta", index: 0, delta: { type: "text_delta", text } });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, { type: "message_delta", delta: { stop_reason: "end_turn" }, usage: { input_tokens: 1, output_tokens: 1 } });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+function startBackgroundTask(res) {
+  writeEvent(res, {
+    type: "content_block_start",
+    index: 0,
+    content_block: { type: "tool_use", id: "toolu_background", name: "Task" },
+  });
+  writeEvent(res, {
+    type: "content_block_delta",
+    index: 0,
+    delta: {
+      type: "input_json_delta",
+      partial_json: "{\"description\":\"Slow subagent\",\"prompt\":\"sleep child\",\"run_in_background\":true}",
+    },
+  });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, { type: "message_delta", delta: { stop_reason: "tool_use" }, usage: { input_tokens: 1, output_tokens: 1 } });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") {
+    res.writeHead(404).end();
+    return;
+  }
+
+  let body = "";
+  req.on("data", chunk => { body += chunk; });
+  req.on("end", () => {
+    const payload = JSON.parse(body);
+    const messages = JSON.stringify(payload.messages || []);
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+
+    if (messages.includes("sleep child")) {
+      setTimeout(() => completeWithText(res, "child done"), 30000);
+      return;
+    }
+
+    if (messages.includes("Async agent launched successfully")) {
+      setTimeout(() => completeWithText(res, "parent done"), 30000);
+      return;
+    }
+
+    startBackgroundTask(res);
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+}
+
+spawn -noecho node -e $server_script
+set server_id $spawn_id
+expect -i $server_id -re {PORT ([0-9]+)}
+set port $expect_out(1,string)
+
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-background-smoke-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-background-smoke-home/.claude"
+set env(ANTHROPIC_BASE_URL) "http://127.0.0.1:$port"
+set env(ANTHROPIC_AUTH_TOKEN) "test-token"
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_HAIKU_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
+catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
+catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
+
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "start"
+set app_id $spawn_id
+
+expect -i $app_id "Backgrounded agent"
+send -i $app_id "\033\[B"
+expect -i $app_id "Background tasks"
+expect -i $app_id "local_agent_1"
+expect -i $app_id "running"
+send -i $app_id "\033"
+after 100
+send_slow $app_id "/tasks"
+after 100
+send -i $app_id "\r"
+expect -i $app_id "Background tasks"
+expect -i $app_id "local_agent_1"
+send -i $app_id "\r"
+expect -i $app_id "Output"
+expect -i $app_id "not_ready"
+send -i $app_id "s"
+expect -i $app_id "Stop"
+expect -i $app_id "Stopped background agent task: local_agent_1"
+
+send -i $app_id "\003"
+expect -i $app_id eof
+catch {exec kill [exp_pid -i $server_id]}

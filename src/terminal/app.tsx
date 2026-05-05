@@ -1,26 +1,75 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, NoSelect, Ratchet, Text, stringWidth, useAnimationFrame, useApp, useInput } from "@anthropic/ink";
+import { Box, Link, NoSelect, Ratchet, Text, stringWidth, useAnimationFrame, useApp, useInput } from "@anthropic/ink";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { homedir } from "os";
-import { join } from "path";
+import { isAbsolute, join, relative, resolve } from "path";
 import { getApiConfig, streamMessage, type ApiMessage, type ApiMessageContent, type Usage } from "../api/client.js";
-import { TenguSession, type PermissionDecision, type TenguLoopEvent, type ToolDisplay } from "../agent/tengu.js";
+import {
+  TenguSession,
+  type PermissionDecision,
+  type SpinnerMode,
+  type SubagentExecutionRequest,
+  type SubagentExecutionResult,
+  type TenguLoopEvent,
+  type ToolDisplay,
+  type ToolProgressDisplay,
+} from "../agent/tengu.js";
 import { createSettingsHookRunner } from "../hooks/runner.js";
 import { PermissionHandler, type PermissionBehavior, type PermissionMode } from "../permissions/handler.js";
-import { executeTool, getToolDefs } from "../tools/registry.js";
+import {
+  backgroundForegroundBashTasks,
+  executeTool,
+  FILE_UNCHANGED_STUB,
+  getToolDefs,
+  hasForegroundBashTasks,
+  listBackgroundTasks,
+  readBackgroundTaskOutput,
+  stopBackgroundTask,
+  type BackgroundTaskSummary,
+} from "../tools/registry.js";
 import { createSession, listSessions, loadSession, saveSession, type SessionData } from "../session/store.js";
+import { addCodeChangesToCostState, addUsageToCostState, createEmptyCostState, formatCostSummary } from "../core/cost.js";
+import { sanitizeAssistantText } from "../core/protocol.js";
 import type { CliOptions } from "../index.js";
+import {
+  createAnsiTextLines,
+  hasAnsiSequences,
+  stripAnsiSequences,
+  type AnsiTextLine,
+  type AnsiTextSegment,
+} from "./ansi.js";
 import { StartupScreen, getEffortStatus, getPromptPlaceholder } from "./startup-screen.js";
 
-type Role = "user" | "assistant" | "system";
+type Role = "startup" | "user" | "assistant" | "system";
 
 type ToolRender = {
   id: string;
   name: string;
   input: Record<string, unknown>;
+  inputPreview?: string;
+  startedAt?: number;
+  progress?: ToolProgressDisplay;
   result?: string;
   isError?: boolean;
   display?: ToolDisplay;
+};
+
+type AgentProgressEntry = NonNullable<Extract<ToolProgressDisplay, { type: "agent_progress" }>["entries"]>[number];
+type ToolRenderItem =
+  | { type: "tool"; tool: ToolRender }
+  | { type: "agent_group"; tools: ToolRender[] };
+
+type AgentGroupStat = {
+  id: string;
+  agentType: string;
+  description?: string;
+  toolUseCount: number;
+  tokens: number | null;
+  isResolved: boolean;
+  isError: boolean;
+  isAsync: boolean;
+  lastToolInfo: string | null;
+  output: string;
 };
 
 type ChatMessage = {
@@ -37,7 +86,17 @@ type PermissionPrompt = {
   resolve: (decision: { behavior: PermissionBehavior; remember?: boolean }) => void;
 };
 
+type BackgroundTaskActionResult = {
+  taskId: string;
+  action: "output" | "stop";
+  content: string;
+  isError?: boolean;
+  pending?: boolean;
+};
+
 type SendOptions = { appendUserMessage?: boolean };
+type AnimationFrameRef = ReturnType<typeof useAnimationFrame>[0];
+const TRANSCRIPT_RESERVED_ROWS = 6;
 
 type ClaudeCodeTuiProps = {
   version: string;
@@ -60,7 +119,9 @@ export function ClaudeCodeTui({
 }: ClaudeCodeTuiProps): React.ReactElement {
   useApp();
   const cfg = getApiConfig();
-  const model = modelOverride || cfg?.model || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+  const initialModel = modelOverride || cfg?.model || process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+  const [model, setModel] = useState(initialModel);
+  const modelRef = useRef(initialModel);
   const permissionHandler = useMemo(() => new PermissionHandler(), []);
   const [permissionMode, setPermissionMode] = useState<PermissionMode>(
     bypassPermissions ? "bypassPermissions" : initialPermissionMode || permissionHandler.getMode(),
@@ -72,6 +133,7 @@ export function ClaudeCodeTui({
   );
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
     [
+      ...(restoredSession?.session ? [] : [createStartupMessage()]),
       ...(restoredSession?.messages || []),
       ...(restoredSession?.error
         ? [{ id: "restore-error", role: "system" as const, content: restoredSession.error }]
@@ -90,20 +152,32 @@ export function ClaudeCodeTui({
   const [input, setInput] = useState("");
   const [cursor, setCursor] = useState(0);
   const [streaming, setStreaming] = useState("");
+  const [streamMode, setStreamMode] = useState<SpinnerMode>("responding");
   const [loading, setLoading] = useState(false);
   const [permissionPrompt, setPermissionPrompt] = useState<PermissionPrompt | null>(null);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [expandedOutput, setExpandedOutput] = useState(false);
+  const [backgroundTasksVisible, setBackgroundTasksVisible] = useState(false);
+  const [selectedBackgroundTaskIndex, setSelectedBackgroundTaskIndex] = useState(0);
+  const [backgroundTaskResult, setBackgroundTaskResult] = useState<BackgroundTaskActionResult | null>(null);
   const [usage, setUsage] = useState<Usage>({});
+  const [costState, setCostState] = useState(createEmptyCostState);
   const [inputHistory, setInputHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const sessionRef = useRef(restoredSession?.session || createSession(initialPromptText || process.cwd()));
   const initialPromptSent = useRef(false);
   const restoredHydrated = useRef(false);
+  const subagentSeqRef = useRef(1);
+  const apiRequestStartedAt = useRef<number | null>(null);
   const hookRunner = useMemo(() => createSettingsHookRunner(), []);
 
-  const visibleMessages = useMemo(() => messages.slice(-12), [messages]);
-  const isEmptySession = messages.length === 0 && !loading && !streaming;
+  const terminalRows = Math.max(20, process.stdout.rows || 40);
+  const visibleMessages = useMemo(
+    () => getVisibleMessages(messages, expandedOutput, terminalRows),
+    [expandedOutput, messages, terminalRows],
+  );
+  const visibleStreaming = useMemo(() => sanitizeAssistantText(streaming), [streaming]);
+  const isEmptySession = messages.every(message => message.role === "startup") && !loading && !visibleStreaming;
   const slashCommandMatches = useMemo(() => (
     input.startsWith("/") && !input.includes(" ")
       ? getSlashCommandMatches(input).slice(0, 8)
@@ -114,11 +188,74 @@ export function ClaudeCodeTui({
     permissionHandler.setMode(permissionMode);
   }, [permissionHandler, permissionMode]);
 
+  useEffect(() => {
+    modelRef.current = model;
+  }, [model]);
+
   const pushSystemMessage = useCallback((content: string): void => {
     setMessages(previous => [
       ...previous,
       { id: `system-${Date.now()}-${previous.length}`, role: "system", content },
     ]);
+  }, []);
+
+  const showBackgroundTaskOutput = useCallback((taskId: string): void => {
+    setBackgroundTaskResult({
+      taskId,
+      action: "output",
+      content: "Loading task output…",
+      pending: true,
+    });
+    void readBackgroundTaskOutput(taskId)
+      .then(result => {
+        setBackgroundTaskResult({
+          taskId,
+          action: "output",
+          content: result.content,
+          isError: result.isError,
+        });
+      })
+      .catch(error => {
+        setBackgroundTaskResult({
+          taskId,
+          action: "output",
+          content: error instanceof Error ? error.message : String(error),
+          isError: true,
+        });
+      });
+  }, []);
+
+  const stopManagedBackgroundTask = useCallback((taskId: string): void => {
+    setBackgroundTaskResult({
+      taskId,
+      action: "stop",
+      content: "Stopping task…",
+      pending: true,
+    });
+    void stopBackgroundTask(taskId)
+      .then(result => {
+        setBackgroundTaskResult({
+          taskId,
+          action: "stop",
+          content: result.content,
+          isError: result.isError,
+        });
+      })
+      .catch(error => {
+        setBackgroundTaskResult({
+          taskId,
+          action: "stop",
+          content: error instanceof Error ? error.message : String(error),
+          isError: true,
+        });
+      });
+  }, []);
+
+  const openBackgroundTasksPanel = useCallback((): void => {
+    const tasks = listBackgroundTasks();
+    setSelectedBackgroundTaskIndex(current => clamp(current, 0, Math.max(0, tasks.length - 1)));
+    setBackgroundTaskResult(null);
+    setBackgroundTasksVisible(true);
   }, []);
 
   const emitHookOutcome = useCallback((outcome: {
@@ -163,9 +300,17 @@ export function ClaudeCodeTui({
         }
         return {
           ...message,
-          toolUses: toolUses.map((existing, index) =>
-            index === existingIndex ? { ...existing, ...tool } : existing,
-          ),
+          toolUses: toolUses.map((existing, index) => {
+            if (index !== existingIndex) return existing;
+            const hasFullInput = Object.keys(tool.input).length > 0;
+            return {
+              ...existing,
+              ...tool,
+              name: tool.name || existing.name,
+              input: hasFullInput ? tool.input : existing.input,
+              inputPreview: hasFullInput ? tool.inputPreview : tool.inputPreview ?? existing.inputPreview,
+            };
+          }),
         };
       });
       return found ? next : [...next, { id: messageId, role: "assistant", content: "", toolUses: [tool] }];
@@ -173,7 +318,18 @@ export function ClaudeCodeTui({
   }, []);
 
   const handleAgentEvent = useCallback((event: TenguLoopEvent): void => {
+    if (event.type === "api_request") {
+      apiRequestStartedAt.current = Date.now();
+      return;
+    }
+
+    if (event.type === "stream_mode") {
+      setStreamMode(event.mode);
+      return;
+    }
+
     if (event.type === "assistant_start") {
+      setStreamMode("requesting");
       setMessages(previous => [
         ...previous,
         { id: event.assistantId, role: "assistant", content: "", toolUses: [] },
@@ -182,30 +338,13 @@ export function ClaudeCodeTui({
     }
 
     if (event.type === "assistant_text_delta") {
-      setStreaming(event.fullText);
+      setStreamMode("responding");
+      setStreaming(sanitizeAssistantText(event.fullText));
       return;
     }
 
-    if (event.type === "assistant_complete") {
-      setStreaming("");
-      if (event.usage) {
-        setUsage(current => ({ ...current, ...event.usage }));
-      }
-      setMessages(previous => {
-        let found = false;
-        const next = previous.map(message => {
-          if (message.id !== event.assistantId) return message;
-          found = true;
-          return { ...message, content: event.text };
-        });
-        return found
-          ? next
-          : [...next, { id: event.assistantId, role: "assistant", content: event.text, toolUses: [] }];
-      });
-      return;
-    }
-
-    if (event.type === "tool_start") {
+    if (event.type === "tool_input_start") {
+      setStreamMode("tool-input");
       upsertToolRender(event.assistantId, {
         id: event.tool.id,
         name: event.tool.name,
@@ -214,7 +353,54 @@ export function ClaudeCodeTui({
       return;
     }
 
+    if (event.type === "tool_input_delta") {
+      setStreamMode("tool-input");
+      upsertToolRender(event.assistantId, {
+        id: event.toolUseId,
+        name: "",
+        input: {},
+        inputPreview: event.fullInputJson,
+      });
+      return;
+    }
+
+    if (event.type === "assistant_complete") {
+      setStreaming("");
+      setStreamMode(event.content.some(block => block.type === "tool_use") ? "tool-use" : "responding");
+      const apiDurationMs = apiRequestStartedAt.current === null ? 0 : Date.now() - apiRequestStartedAt.current;
+      apiRequestStartedAt.current = null;
+      if (event.usage) {
+        setUsage(current => ({ ...current, ...event.usage }));
+        setCostState(current => addUsageToCostState(current, modelRef.current, event.usage!, apiDurationMs));
+      }
+      setMessages(previous => {
+        let found = false;
+        const text = sanitizeAssistantText(event.text);
+        const next = previous.map(message => {
+          if (message.id !== event.assistantId) return message;
+          found = true;
+          return { ...message, content: text };
+        });
+        return found
+          ? next
+          : [...next, { id: event.assistantId, role: "assistant", content: text, toolUses: [] }];
+      });
+      return;
+    }
+
+    if (event.type === "tool_start") {
+      setStreamMode("tool-use");
+      upsertToolRender(event.assistantId, {
+        id: event.tool.id,
+        name: event.tool.name,
+        input: event.tool.input,
+        startedAt: Date.now(),
+      });
+      return;
+    }
+
     if (event.type === "tool_result") {
+      setStreamMode("tool-use");
       upsertToolRender(event.assistantId, {
         id: event.tool.id,
         name: event.tool.name,
@@ -222,6 +408,23 @@ export function ClaudeCodeTui({
         result: event.result.content,
         isError: event.result.is_error,
         display: event.display,
+      });
+      if (!event.result.is_error && event.display?.type === "edit") {
+        const changes = countDiffLineChanges(event.display.diff);
+        if (changes.added || changes.removed) {
+          setCostState(current => addCodeChangesToCostState(current, changes.added, changes.removed));
+        }
+      }
+      return;
+    }
+
+    if (event.type === "tool_progress") {
+      setStreamMode("tool-use");
+      upsertToolRender(event.assistantId, {
+        id: event.tool.id,
+        name: event.tool.name,
+        input: event.tool.input,
+        progress: event.progress,
       });
       return;
     }
@@ -252,11 +455,108 @@ export function ClaudeCodeTui({
   }, [permissionHandler]);
 
   const agentSession = useMemo(
-    () =>
-      new TenguSession({
+    () => {
+      const createRunSubagent = (
+        parentContext: { emitProgress?: (progress: ToolProgressDisplay) => void | Promise<void> } | undefined,
+      ) => async (
+        request: SubagentExecutionRequest,
+        signal?: AbortSignal,
+      ): Promise<SubagentExecutionResult> => {
+        const agentId = request.agentId || `${request.parentToolUseId}-agent-${subagentSeqRef.current++}`;
+        const startedAt = Date.now();
+        let totalToolUseCount = 0;
+        const entries = new Map<string, AgentProgressEntry>();
+        const emitAgentProgress = async (progress: {
+          message: string;
+          toolName?: string;
+        }): Promise<void> => {
+          await parentContext?.emitProgress?.({
+            type: "agent_progress",
+            agentId,
+            description: request.description,
+            message: progress.message,
+            elapsedTimeSeconds: elapsedSecondsSince(startedAt),
+            totalToolUseCount,
+            ...(progress.toolName ? { toolName: progress.toolName } : {}),
+            entries: [...entries.values()],
+          });
+        };
+        const childSession = new TenguSession({
+          tools: getToolDefs().filter(tool => tool.name !== "Task"),
+          stream: (history, tools, childSignal) => streamMessage(history, undefined, tools, undefined, childSignal, modelRef.current),
+          executeTool: (name, input, childSignal, childContext) => executeTool(name, input, childSignal, {
+            ...childContext,
+            sessionId: sessionRef.current.id,
+            cwd: sessionRef.current.cwd || process.cwd(),
+          }),
+          checkPermission: tool =>
+            permissionHandler.checkPermission({
+              toolName: tool.name,
+              toolUseID: tool.id,
+              input: tool.input,
+            }),
+          requestPermission,
+          runHooks: hookRunner,
+          onEvent: async event => {
+            if (event.type === "tool_start") {
+              totalToolUseCount++;
+              entries.set(event.tool.id, {
+                toolUseId: event.tool.id,
+                toolName: event.tool.name,
+                input: event.tool.input,
+                status: "running",
+              });
+              await emitAgentProgress({
+                message: `Using ${getUserFacingToolName(event.tool.name)}`,
+                toolName: event.tool.name,
+              });
+            }
+            if (event.type === "tool_result") {
+              const existing = entries.get(event.tool.id) || {
+                toolUseId: event.tool.id,
+                toolName: event.tool.name,
+                input: event.tool.input,
+                status: "running" as const,
+              };
+              entries.set(event.tool.id, {
+                ...existing,
+                status: event.result.is_error ? "failed" : "completed",
+                summary: summarizeSubagentToolResult(event.tool.name, event.result.content, event.display),
+              });
+              await emitAgentProgress({
+                message: `${getUserFacingToolName(event.tool.name)} ${event.result.is_error ? "failed" : "done"}`,
+                toolName: event.tool.name,
+              });
+            }
+            if (event.type === "assistant_text_delta" && event.fullText.trim()) {
+              await emitAgentProgress({ message: "Responding" });
+            }
+          },
+        });
+        try {
+          const result = await childSession.runUserTurn(request.prompt);
+          return {
+            agentId,
+            status: "completed",
+            content: result.text,
+            totalDurationMs: Date.now() - startedAt,
+            totalTokens: usageTokenCount(result.usage),
+            totalToolUseCount: countToolUsesInMessages(result.messages),
+          };
+        } catch (error) {
+          return createFailedSubagentResult(agentId, error, startedAt, totalToolUseCount);
+        }
+      };
+
+      return new TenguSession({
         tools: getToolDefs(),
-        stream: (history, tools, signal) => streamMessage(history, undefined, tools, undefined, signal),
-        executeTool,
+        stream: (history, tools, signal) => streamMessage(history, undefined, tools, undefined, signal, modelRef.current),
+        executeTool: (name, input, signal, context) => executeTool(name, input, signal, {
+          ...context,
+          sessionId: sessionRef.current.id,
+          cwd: sessionRef.current.cwd || process.cwd(),
+          runSubagent: createRunSubagent(context),
+        }),
         checkPermission: tool =>
           permissionHandler.checkPermission({
             toolName: tool.name,
@@ -266,7 +566,8 @@ export function ClaudeCodeTui({
         requestPermission,
         runHooks: hookRunner,
         onEvent: handleAgentEvent,
-      }),
+      });
+    },
     [handleAgentEvent, hookRunner, permissionHandler, requestPermission],
   );
 
@@ -278,8 +579,13 @@ export function ClaudeCodeTui({
       switch (command) {
         case "/clear":
           agentSession.reset();
-          setMessages([]);
+          setMessages([createStartupMessage()]);
           setStreaming("");
+          setUsage({});
+          setCostState(createEmptyCostState());
+          setBackgroundTasksVisible(false);
+          setSelectedBackgroundTaskIndex(0);
+          setBackgroundTaskResult(null);
           setFeedbackVisible(false);
           if (hookRunner) {
             void hookRunner("SessionStart", {
@@ -297,7 +603,14 @@ export function ClaudeCodeTui({
           return true;
 
         case "/model":
-          pushSystemMessage(argumentText ? `Model switching is not enabled in this build. Current model: ${model}` : `Current model: ${model}`);
+          if (argumentText) {
+            modelRef.current = argumentText;
+            setModel(argumentText);
+            setUsage({});
+            pushSystemMessage(`Model set to ${argumentText}`);
+          } else {
+            pushSystemMessage(`Current model: ${model}`);
+          }
           return true;
 
         case "/permissions":
@@ -313,7 +626,17 @@ export function ClaudeCodeTui({
           return true;
 
         case "/cost":
-          pushSystemMessage("Cost display is not available until API usage accounting is wired into the session state.");
+          pushSystemMessage(formatCostSummary(costState));
+          return true;
+
+        case "/tasks":
+          if (!argumentText) {
+            openBackgroundTasksPanel();
+            return true;
+          }
+          void runTasksSlashCommand(argumentText)
+            .then(pushSystemMessage)
+            .catch(error => pushSystemMessage(error instanceof Error ? error.message : String(error)));
           return true;
 
         case "/doctor":
@@ -405,13 +728,21 @@ export function ClaudeCodeTui({
         }
       }
     },
-    [agentSession, cfg, emitHookOutcome, hookRunner, model, permissionMode, pushSystemMessage],
+    [agentSession, cfg, costState, emitHookOutcome, hookRunner, model, openBackgroundTasksPanel, permissionMode, pushSystemMessage],
   );
 
   const send = useCallback(
     async (text: string, options: SendOptions = {}) => {
       const trimmed = text.trim();
-      if (!trimmed || loading) return;
+      if (!trimmed) return;
+      if (loading) {
+        if (trimmed === "/tasks") {
+          openBackgroundTasksPanel();
+          setInput("");
+          setCursor(0);
+        }
+        return;
+      }
       let promptForAgent = trimmed;
       if (trimmed.startsWith("/") || trimmed === "?") {
         const slashResult = handleSlashCommand(trimmed);
@@ -443,6 +774,8 @@ export function ClaudeCodeTui({
       setHistoryIndex(null);
 
       setFeedbackVisible(false);
+      setBackgroundTasksVisible(false);
+      setBackgroundTaskResult(null);
       const userMessage: ChatMessage = {
         id: `user-${Date.now()}`,
         role: "user",
@@ -456,6 +789,7 @@ export function ClaudeCodeTui({
       setCursor(0);
       setLoading(true);
       setStreaming("");
+      setStreamMode("requesting");
 
       try {
         await agentSession.runUserTurn(promptForAgent);
@@ -472,9 +806,10 @@ export function ClaudeCodeTui({
       } finally {
         setLoading(false);
         setStreaming("");
+        setStreamMode("responding");
       }
     },
-    [agentSession, emitHookOutcome, handleSlashCommand, hookRunner, loading, permissionMode],
+    [agentSession, emitHookOutcome, handleSlashCommand, hookRunner, loading, openBackgroundTasksPanel, permissionMode],
   );
 
   useEffect(() => {
@@ -500,6 +835,7 @@ export function ClaudeCodeTui({
         agentSession.cancel();
         setLoading(false);
         setStreaming("");
+        setStreamMode("responding");
         pushSystemMessage("Interrupted");
         return;
       }
@@ -515,6 +851,13 @@ export function ClaudeCodeTui({
     if (key.ctrl && (value === "o" || value === "O")) {
       setExpandedOutput(current => !current);
       return;
+    }
+
+    if (key.ctrl && (value === "b" || value === "B")) {
+      if (loading && hasForegroundBashTasks()) {
+        backgroundForegroundBashTasks();
+        return;
+      }
     }
 
     if ((key as { shift?: boolean; tab?: boolean }).shift && ((key as { tab?: boolean }).tab || value === "\x1b[Z")) {
@@ -533,6 +876,43 @@ export function ClaudeCodeTui({
         permissionPrompt.resolve({ behavior: "deny" });
       }
       return;
+    }
+
+    if (backgroundTasksVisible) {
+      const tasks = listBackgroundTasks();
+      const selectedTask = tasks[clamp(selectedBackgroundTaskIndex, 0, Math.max(0, tasks.length - 1))];
+
+      if (key.escape) {
+        setBackgroundTasksVisible(false);
+        return;
+      }
+
+      if (key.upArrow) {
+        setSelectedBackgroundTaskIndex(current => Math.max(0, current - 1));
+        setBackgroundTaskResult(null);
+        return;
+      }
+
+      if (key.downArrow) {
+        setSelectedBackgroundTaskIndex(current => Math.min(Math.max(0, tasks.length - 1), current + 1));
+        setBackgroundTaskResult(null);
+        return;
+      }
+
+      if ((key.return || value === "\r" || value === "\n" || value === "o" || value === "O") && selectedTask) {
+        showBackgroundTaskOutput(selectedTask.id);
+        return;
+      }
+
+      if ((value === "s" || value === "S" || value === "k" || value === "K") && selectedTask) {
+        stopManagedBackgroundTask(selectedTask.id);
+        return;
+      }
+
+      if (value === "r" || value === "R") {
+        setBackgroundTaskResult(null);
+        return;
+      }
     }
 
     if (feedbackVisible && (value === "g" || value === "G" || value === "b" || value === "B")) {
@@ -582,6 +962,11 @@ export function ClaudeCodeTui({
       return;
     }
 
+    if (key.downArrow && historyIndex === null && input.trim() === "") {
+      openBackgroundTasksPanel();
+      return;
+    }
+
     if (key.tab && input.startsWith("/")) {
       const completion = completeSlashCommand(input);
       if (completion) {
@@ -601,6 +986,16 @@ export function ClaudeCodeTui({
       return;
     }
 
+    const normalizedIncoming = value.replace(/\r\n?/gu, "\n");
+    if (!key.ctrl && normalizedIncoming.includes("\n") && !(key as { shift?: boolean }).shift) {
+      const textBeforeReturn = normalizedIncoming.split("\n")[0] || "";
+      const safeCursor = clamp(cursor, 0, input.length);
+      const nextInput = `${input.slice(0, safeCursor)}${textBeforeReturn}${input.slice(safeCursor)}`;
+      setBackgroundTasksVisible(false);
+      void send(nextInput);
+      return;
+    }
+
     if (key.return || value === "\r" || value === "\n") {
       if ((key as { shift?: boolean }).shift) {
         insertInputText("\n", input, cursor, setInput, setCursor);
@@ -616,22 +1011,29 @@ export function ClaudeCodeTui({
     }
 
     if (value && !key.ctrl && value !== "\t" && value !== "\x1b[Z") {
+      setBackgroundTasksVisible(false);
       insertInputText(value.replace(/\r\n?/gu, "\n"), input, cursor, setInput, setCursor);
     }
   });
 
   return (
     <Box flexDirection="column" paddingX={1}>
-      <StartupScreen version={version} model={model} />
       <Box flexDirection="column" minHeight={1}>
         {visibleMessages.map(message => (
-          <MessageView key={message.id} message={message} expandedOutput={expandedOutput} />
+          <MessageView key={message.id} message={message} expandedOutput={expandedOutput} version={version} model={model} />
         ))}
-        {streaming && <AssistantStreaming text={streaming} />}
-        {loading && !streaming && <ThinkingSpinner marginTop={messages.length > 0 ? 1 : 0} />}
+        {visibleStreaming && <AssistantStreaming text={visibleStreaming} />}
+        {loading && !visibleStreaming && <OfficialSpinner mode={streamMode} marginTop={messages.length > 0 ? 1 : 0} />}
       </Box>
       {feedbackVisible && <FeedbackPrompt />}
       {permissionPrompt && <PermissionPromptView prompt={permissionPrompt} />}
+      {backgroundTasksVisible && (
+        <BackgroundTasksPanel
+          tasks={listBackgroundTasks()}
+          selectedIndex={selectedBackgroundTaskIndex}
+          result={backgroundTaskResult}
+        />
+      )}
       {slashCommandMatches.length > 0 && <SlashCommandPanel commands={slashCommandMatches} />}
       <Box marginTop={1}>
         <Text dimColor>{"─".repeat(Math.max(10, (process.stdout.columns || 80) - 2))}</Text>
@@ -688,10 +1090,55 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
   if (options.bypassPermissions) permissionHandler.setMode("bypassPermissions");
   else if (options.permissionMode) permissionHandler.setMode(options.permissionMode);
 
+  const restored = resolveInitialSession(options.resumeSessionId, options.continueSession);
+  let subagentSeq = 1;
+  const createPrintSubagentRunner = () => async (
+    request: SubagentExecutionRequest,
+    signal?: AbortSignal,
+  ): Promise<SubagentExecutionResult> => {
+    const agentId = request.agentId || `${request.parentToolUseId}-agent-${subagentSeq++}`;
+    const startedAt = Date.now();
+    const childSession = new TenguSession({
+      tools: getToolDefs().filter(tool => tool.name !== "Task"),
+      stream: (history, tools, childSignal) => streamMessage(history, undefined, tools, undefined, childSignal, options.model),
+      executeTool: (name, input, childSignal, childContext) => executeTool(name, input, childSignal, {
+        ...childContext,
+        sessionId: restored?.session?.id,
+        cwd: restored?.session?.cwd || process.cwd(),
+      }),
+      checkPermission: tool =>
+        permissionHandler.checkPermission({
+          toolName: tool.name,
+          toolUseID: tool.id,
+          input: tool.input,
+        }),
+      requestPermission: async () => ({ behavior: "deny", message: "Permission denied" }),
+      runHooks: hookRunner,
+    });
+    try {
+      const result = await childSession.runUserTurn(request.prompt);
+      return {
+        agentId,
+        status: "completed",
+        content: result.text,
+        totalDurationMs: Date.now() - startedAt,
+        totalTokens: usageTokenCount(result.usage),
+        totalToolUseCount: countToolUsesInMessages(result.messages),
+      };
+    } catch (error) {
+      return createFailedSubagentResult(agentId, error, startedAt);
+    }
+  };
+
   const session = new TenguSession({
     tools: getToolDefs(),
-    stream: (history, tools, signal) => streamMessage(history, undefined, tools, undefined, signal),
-    executeTool,
+    stream: (history, tools, signal) => streamMessage(history, undefined, tools, undefined, signal, options.model),
+    executeTool: (name, input, signal, context) => executeTool(name, input, signal, {
+      ...context,
+      sessionId: restored?.session?.id,
+      cwd: restored?.session?.cwd || process.cwd(),
+      runSubagent: createPrintSubagentRunner(),
+    }),
     checkPermission: tool =>
       permissionHandler.checkPermission({
         toolName: tool.name,
@@ -707,7 +1154,6 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
     },
   });
 
-  const restored = resolveInitialSession(options.resumeSessionId, options.continueSession);
   if (restored?.session) {
     session.hydrate(
       restored.session.messages.map(message => ({
@@ -731,10 +1177,18 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
 function MessageView({
   message,
   expandedOutput,
+  version,
+  model,
 }: {
   message: ChatMessage;
   expandedOutput: boolean;
+  version: string;
+  model: string;
 }): React.ReactElement {
+  if (message.role === "startup") {
+    return <StartupScreen version={version} model={model} />;
+  }
+
   if (message.role === "user") {
     return (
       <Box marginTop={1} backgroundColor="userMessageBackground" paddingRight={1}>
@@ -745,23 +1199,201 @@ function MessageView({
   }
 
   if (message.role === "system") {
-    return (
-      <Box marginTop={1} flexDirection="column">
-        <MarkdownBlock content={message.content} prefix="⚠ " prefixColor="warning" />
-      </Box>
-    );
+    return <SystemMessageView content={message.content} />;
   }
+
+  const assistantContent = sanitizeAssistantText(message.content);
 
   return (
     <Box flexDirection="column" marginTop={1}>
-      {message.content.trim() && (
-        <MarkdownBlock content={message.content} prefix="● " prefixColor="text" />
+      {assistantContent.trim() && (
+        <MarkdownBlock content={assistantContent} prefix="● " prefixColor="text" />
       )}
-      {message.toolUses?.map(tool => (
-        <ToolUseView key={tool.id} tool={tool} expandedOutput={expandedOutput} />
+      {groupToolRenderItems(message.toolUses || []).map(item => item.type === "agent_group" ? (
+        <AgentGroupView key={item.tools.map(tool => tool.id).join(":")} tools={item.tools} expandedOutput={expandedOutput} />
+      ) : (
+        <ToolUseView key={item.tool.id} tool={item.tool} expandedOutput={expandedOutput} />
       ))}
     </Box>
   );
+}
+
+function createStartupMessage(): ChatMessage {
+  return {
+    id: "startup",
+    role: "startup",
+    content: "",
+  };
+}
+
+function getVisibleMessages(messages: ChatMessage[], expandedOutput: boolean, terminalRows: number): ChatMessage[] {
+  if (messages.length <= 1) return messages;
+  const availableRows = Math.max(8, terminalRows - TRANSCRIPT_RESERVED_ROWS);
+  const visible: ChatMessage[] = [];
+  let usedRows = 0;
+
+  for (let index = messages.length - 1; index >= 0; index--) {
+    const message = messages[index]!;
+    const rows = estimateMessageRows(message, expandedOutput);
+    if (visible.length > 0 && usedRows + rows > availableRows) break;
+    visible.unshift(message);
+    usedRows += rows;
+  }
+
+  return visible.length > 0 ? visible : [messages[messages.length - 1]!];
+}
+
+function estimateMessageRows(message: ChatMessage, expandedOutput: boolean): number {
+  if (message.role === "startup") return 12;
+  if (message.role === "user") return 1 + estimateWrappedLineCount(message.content, process.stdout.columns || 80);
+  if (message.role === "system") return Math.max(1, normalizeSystemMessage(message.content).split("\n").length) + 1;
+
+  const assistantContent = sanitizeAssistantText(message.content);
+  const assistantTextRows = assistantContent.trim()
+    ? estimateWrappedLineCount(assistantContent, process.stdout.columns || 80) + 1
+    : 1;
+  const toolRows = (message.toolUses || []).reduce(
+    (sum, tool) => sum + estimateToolRows(tool, expandedOutput),
+    0,
+  );
+  return assistantTextRows + toolRows;
+}
+
+function estimateToolRows(tool: ToolRender, expandedOutput: boolean): number {
+  if (tool.result === undefined) {
+    if (tool.progress?.type === "agent_progress") {
+      const entries = tool.progress.entries || [];
+      return 2 + (expandedOutput ? entries.length : Math.min(entries.length, 6));
+    }
+    return 2;
+  }
+
+  if ((tool.name === "Bash" || tool.name === "BashOutput") && tool.display?.type === "bash") {
+    if (!expandedOutput) return 2;
+    return 2 + estimateWrappedLineCount([tool.display.stdout, tool.display.stderr].filter(Boolean).join("\n"), process.stdout.columns || 80);
+  }
+  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent") {
+    if (!expandedOutput) return 3;
+    return 2 + estimateWrappedLineCount(tool.display.content || tool.display.error || "", process.stdout.columns || 80);
+  }
+  if (tool.display?.type === "edit" && expandedOutput && tool.display.diff) {
+    return 2 + estimateWrappedLineCount(tool.display.diff, process.stdout.columns || 80);
+  }
+  if (expandedOutput && (tool.name === "Glob" || tool.name === "Grep" || tool.name === "LS")) {
+    return 2 + estimateWrappedLineCount(tool.result || "", process.stdout.columns || 80);
+  }
+  return 2;
+}
+
+function estimateWrappedLineCount(content: string, terminalWidth: number): number {
+  const trimmed = content.trimEnd();
+  if (!trimmed) return 0;
+  const wrapWidth = Math.max(10, terminalWidth - 10);
+  return trimmed.split("\n").reduce((sum, line) => {
+    return sum + Math.max(1, Math.ceil(stringWidth(stripAnsiSequences(line)) / wrapWidth));
+  }, 0);
+}
+
+function groupToolRenderItems(tools: ToolRender[]): ToolRenderItem[] {
+  const items: ToolRenderItem[] = [];
+  let pendingAgents: ToolRender[] = [];
+  const flushAgents = (): void => {
+    if (pendingAgents.length === 0) return;
+    if (pendingAgents.length === 1) {
+      items.push({ type: "tool", tool: pendingAgents[0]! });
+    } else {
+      items.push({ type: "agent_group", tools: pendingAgents });
+    }
+    pendingAgents = [];
+  };
+
+  for (const tool of tools) {
+    if (isAgentToolRender(tool)) {
+      pendingAgents.push(tool);
+      continue;
+    }
+    flushAgents();
+    items.push({ type: "tool", tool });
+  }
+  flushAgents();
+  return items;
+}
+
+function isAgentToolRender(tool: ToolRender): boolean {
+  return tool.name === "Task";
+}
+
+function SystemMessageView({ content }: { content: string }): React.ReactElement {
+  const lines = normalizeSystemMessage(content).split("\n");
+  return (
+    <Box marginTop={1} flexDirection="column">
+      {lines.map((line, index) => (
+        <Box key={`system-${index}`}>
+          <Text color="warning">{index === 0 ? "⚠ " : "  "}</Text>
+          <Text color={isSystemMessageError(line) ? "error" : undefined}>{line}</Text>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+function BackgroundTasksPanel({
+  tasks,
+  selectedIndex,
+  result,
+}: {
+  tasks: BackgroundTaskSummary[];
+  selectedIndex: number;
+  result: BackgroundTaskActionResult | null;
+}): React.ReactElement {
+  const safeSelectedIndex = clamp(selectedIndex, 0, Math.max(0, tasks.length - 1));
+  return (
+    <Box marginTop={1} flexDirection="column">
+      <Box>
+        <Text color="claude">Background tasks</Text>
+        <Text dimColor> (↑↓ select · Enter output · S stop · R refresh · Esc close)</Text>
+      </Box>
+      {tasks.length === 0 ? (
+        <Text dimColor>  no job focused</Text>
+      ) : (
+        tasks.map((task, index) => (
+          <Box key={task.id} flexDirection="column">
+            <Text>
+              <Text color={task.status === "failed" ? "error" : task.status === "running" ? "success" : "subtle"}>
+                {index === safeSelectedIndex ? "› " : "  "}
+              </Text>
+              <Text bold>{task.id}</Text>
+              <Text dimColor>{` ${task.kind} · ${task.status} · ${formatDurationMs(Date.now() - task.startedAt)}`}</Text>
+            </Text>
+            <Text dimColor>{`  ${truncateLine(task.description, 96)}`}</Text>
+          </Box>
+        ))
+      )}
+      {result ? (
+        <Box flexDirection="column" marginTop={1}>
+          <Text color={result.isError ? "error" : result.pending ? "subtle" : "success"}>
+            {result.action === "stop" ? "Stop" : "Output"} · {result.taskId}
+          </Text>
+          <OutputLineView
+            content={formatManagedTaskResultContent(result.content)}
+            isError={result.isError}
+            expanded={false}
+          />
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
+
+function normalizeSystemMessage(content: string): string {
+  return content
+    .replace(/<\/?(?:hook_error|hook_context|error)>/gu, "")
+    .replace(/^Error:\s*/iu, "")
+    .trimEnd();
+}
+
+function isSystemMessageError(line: string): boolean {
+  return /(?:\berror\b|权限|denied|failed|not found|credentials|超长)/iu.test(line);
 }
 
 function AssistantStreaming({ text }: { text: string }): React.ReactElement {
@@ -770,6 +1402,102 @@ function AssistantStreaming({ text }: { text: string }): React.ReactElement {
       <Text color="text">● </Text>
       <Text>{text}</Text>
       <Text dimColor>│</Text>
+    </Box>
+  );
+}
+
+function AgentGroupView({
+  tools,
+  expandedOutput,
+}: {
+  tools: ToolRender[];
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const stats = tools.map(getAgentGroupStat);
+  const anyUnresolved = stats.some(stat => !stat.isResolved);
+  const anyError = stats.some(stat => stat.isError);
+  const allComplete = !anyUnresolved;
+  const allAsync = stats.every(stat => stat.isAsync);
+  const allSameType = stats.length > 0 && stats.every(stat => stat.agentType === stats[0]?.agentType);
+  const commonType = allSameType && stats[0]?.agentType !== "Agent" ? stats[0]?.agentType : null;
+
+  return (
+    <Box flexDirection="column">
+      <Box>
+        <Box minWidth={2}>
+          <Text color={anyError ? "error" : allComplete ? "success" : undefined} dimColor={!allComplete}>⏺</Text>
+        </Box>
+        {allComplete ? (
+          allAsync ? (
+            <Text>
+              <Text bold>{tools.length}</Text> background agents launched <Text dimColor>(↓ manage)</Text>
+            </Text>
+          ) : (
+            <Text>
+              <Text bold>{tools.length}</Text> {commonType ? `${commonType} agents` : "agents"} finished <Text dimColor>(ctrl+o to expand)</Text>
+            </Text>
+          )
+        ) : (
+          <Text>
+            Running <Text bold>{tools.length}</Text> {commonType ? `${commonType} agents` : "agents"}… <Text dimColor>(ctrl+o to expand)</Text>
+          </Text>
+        )}
+      </Box>
+      {stats.map((stat, index) => (
+        <AgentGroupLine
+          key={stat.id}
+          stat={stat}
+          isLast={index === stats.length - 1}
+          hideType={allSameType}
+          expandedOutput={expandedOutput}
+        />
+      ))}
+    </Box>
+  );
+}
+
+function AgentGroupLine({
+  stat,
+  isLast,
+  hideType,
+  expandedOutput,
+}: {
+  stat: AgentGroupStat;
+  isLast: boolean;
+  hideType: boolean;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const treeChar = isLast ? "└─" : "├─";
+  const statusText = getAgentGroupStatusText(stat);
+  const title = hideType ? stat.description || stat.agentType : stat.agentType;
+
+  return (
+    <Box flexDirection="column">
+      <Box paddingLeft={3}>
+        <Text dimColor>{treeChar} </Text>
+        <Text dimColor={!stat.isResolved} color={stat.isError ? "error" : undefined}>
+          <Text bold>{title}</Text>
+          {!hideType && stat.description ? <Text dimColor>{` (${stat.description})`}</Text> : null}
+          {!stat.isAsync ? (
+            <>
+              {" · "}
+              {stat.toolUseCount} {stat.toolUseCount === 1 ? "tool use" : "tool uses"}
+              {stat.tokens !== null ? ` · ${formatNumber(stat.tokens)} tokens` : ""}
+            </>
+          ) : null}
+        </Text>
+      </Box>
+      {!stat.isAsync ? (
+        <Box paddingLeft={3}>
+          <Text dimColor>{isLast ? "   ⎿  " : "│  ⎿  "}</Text>
+          <Text dimColor={!stat.isError} color={stat.isError ? "error" : undefined}>{statusText}</Text>
+        </Box>
+      ) : null}
+      {expandedOutput && stat.output ? (
+        <Box paddingLeft={6}>
+          <OutputLineView content={stat.output} isError={stat.isError} expanded />
+        </Box>
+      ) : null}
     </Box>
   );
 }
@@ -839,7 +1567,9 @@ function ToolUseView({
   tool: ToolRender;
   expandedOutput: boolean;
 }): React.ReactElement {
-  const displayInput = formatToolUseMessage(tool.name, tool.input);
+  const displayInput = tool.inputPreview
+    ? formatToolInputPreview(tool.name, tool.inputPreview)
+    : formatToolUseMessage(tool.name, tool.input);
   const resolved = tool.result !== undefined;
 
   return (
@@ -865,7 +1595,42 @@ function ToolResultView({
   tool: ToolRender;
   expandedOutput: boolean;
 }): React.ReactElement {
+  const isPendingBash = tool.result === undefined && tool.name === "Bash";
+  const isPendingWebSearch = tool.result === undefined && tool.name === "WebSearch";
+  const isPendingTask = tool.result === undefined && tool.name === "Task";
+  const [progressRef] = useAnimationFrame(isPendingBash ? 1000 : null);
+
   if (tool.result === undefined) {
+    if (isPendingBash) {
+      const progress = tool.progress?.type === "bash_progress" ? tool.progress : undefined;
+      const elapsedMs = progress
+        ? progress.elapsedTimeSeconds * 1000
+        : tool.startedAt
+          ? Date.now() - tool.startedAt
+          : 0;
+      const timeoutMs = getExplicitBashTimeoutMs(tool.input);
+      const shouldShowElapsed = elapsedMs >= BASH_PROGRESS_THRESHOLD_MS;
+      if (progress?.output.trim()) {
+        return <BashProgressView progress={progress} expandedOutput={expandedOutput} progressRef={progressRef} />;
+      }
+      return (
+        <MessageResponseView>
+          <Box ref={progressRef}>
+            <Text dimColor>Running…</Text>
+            {shouldShowElapsed && <Text dimColor>{` ${formatShellTimeDisplay(elapsedMs, timeoutMs)}`}</Text>}
+            {shouldShowElapsed && <Text dimColor> (ctrl+b to run in background)</Text>}
+          </Box>
+        </MessageResponseView>
+      );
+    }
+    if (isPendingWebSearch) {
+      const progress = tool.progress?.type === "web_search_progress" ? tool.progress : undefined;
+      return <WebSearchProgressView progress={progress} />;
+    }
+    if (isPendingTask) {
+      const progress = tool.progress?.type === "agent_progress" ? tool.progress : undefined;
+      return <AgentProgressView progress={progress} input={tool.input} expandedOutput={expandedOutput} />;
+    }
     return (
       <MessageResponseView height={1}>
         <Text dimColor>Running…</Text>
@@ -901,11 +1666,50 @@ function ToolResultView({
     );
   }
 
-  if (tool.isError) {
-    return <OutputLineView content={result || "Error"} isError expanded={expandedOutput} />;
+  if (tool.name === "WebSearch" && tool.display?.type === "web_search") {
+    return <WebSearchResultView display={tool.display} expandedOutput={expandedOutput} />;
+  }
+
+  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent") {
+    return <AgentResultView display={tool.display} expandedOutput={expandedOutput} />;
+  }
+
+  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent_background") {
+    return <AgentBackgroundView display={tool.display} expandedOutput={expandedOutput} />;
   }
 
   if (tool.name === "Read") {
+    if (tool.isError) {
+      return (
+        <MessageResponseView height={1}>
+          <Text color="error">{formatReadErrorSummary(result)}</Text>
+        </MessageResponseView>
+      );
+    }
+    if (tool.display?.type === "read") {
+      const count = tool.display.numLines;
+      return (
+        <MessageResponseView height={1}>
+          <Text>
+            Read <Text bold>{count}</Text> {count === 1 ? "line" : "lines"}
+          </Text>
+        </MessageResponseView>
+      );
+    }
+    if (tool.display?.type === "text" && tool.display.summary === "file_unchanged") {
+      return (
+        <MessageResponseView height={1}>
+          <Text dimColor>Unchanged since last read</Text>
+        </MessageResponseView>
+      );
+    }
+    if (result.startsWith(FILE_UNCHANGED_STUB)) {
+      return (
+        <MessageResponseView height={1}>
+          <Text dimColor>Unchanged since last read</Text>
+        </MessageResponseView>
+      );
+    }
     const count = countResultLines(result);
     return (
       <MessageResponseView height={1}>
@@ -914,6 +1718,10 @@ function ToolResultView({
         </Text>
       </MessageResponseView>
     );
+  }
+
+  if (tool.isError) {
+    return <OutputLineView content={result || "Error"} isError expanded={expandedOutput} />;
   }
 
   if (tool.name === "Glob" || tool.name === "Grep" || tool.name === "LS") {
@@ -931,9 +1739,9 @@ function ToolResultView({
     );
   }
 
-  if (tool.name === "Write" || tool.name === "Edit" || tool.name === "MultiEdit") {
+  if (tool.name === "Write" || tool.name === "Edit" || tool.name === "MultiEdit" || tool.name === "NotebookEdit") {
     if (tool.display?.type === "edit" && expandedOutput && tool.display.diff) {
-      return <OutputLineView content={tool.display.diff} expanded />;
+      return <DiffOutputView diff={tool.display.diff} />;
     }
     return (
       <MessageResponseView height={1}>
@@ -954,6 +1762,261 @@ function ToolResultView({
   }
 
   return <OutputLineView content={result || "Done"} expanded={expandedOutput} />;
+}
+
+function AgentProgressView({
+  progress,
+  input,
+  expandedOutput,
+}: {
+  progress?: Extract<ToolProgressDisplay, { type: "agent_progress" }>;
+  input: Record<string, unknown>;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const description = progress?.description || (typeof input.description === "string" ? input.description : "Agent");
+  const message = progress?.message || "Initializing…";
+  const toolUseCount = progress?.totalToolUseCount || 0;
+  if (toolUseCount > 0) {
+    const entries = progress?.entries || [];
+    const visibleEntries = expandedOutput ? entries : entries.slice(-6);
+    const hiddenCount = Math.max(0, entries.length - visibleEntries.length);
+    return (
+      <Box flexDirection="column">
+        <MessageResponseView height={1}>
+          <Text dimColor>
+            In progress… · <Text bold>{toolUseCount}</Text> {toolUseCount === 1 ? "tool use" : "tool uses"}
+            {message ? ` · ${message}` : ""}
+            {expandedOutput && progress?.agentId ? ` · ${progress.agentId}` : ""}
+          </Text>
+        </MessageResponseView>
+        {hiddenCount > 0 ? (
+          <Text dimColor>{`  +${hiddenCount} more tool ${hiddenCount === 1 ? "use" : "uses"} (ctrl+o to expand)`}</Text>
+        ) : null}
+        {visibleEntries.map(entry => (
+          <AgentProgressEntryView key={entry.toolUseId} entry={entry} />
+        ))}
+      </Box>
+    );
+  }
+  return (
+    <MessageResponseView height={1}>
+      <Text dimColor>
+        {description} · {message}
+      </Text>
+    </MessageResponseView>
+  );
+}
+
+function AgentProgressEntryView({
+  entry,
+}: {
+  entry: AgentProgressEntry;
+}): React.ReactElement {
+  const label = formatToolUseMessage(entry.toolName, entry.input);
+  const color = entry.status === "failed" ? "error" : entry.status === "completed" ? "success" : undefined;
+  return (
+    <Box flexDirection="column">
+      <Text color={color}>
+        {"  "}⎿ {getUserFacingToolName(entry.toolName)}
+        {label ? <Text dimColor>{`(${label})`}</Text> : null}
+      </Text>
+      {entry.summary ? <Text dimColor>{`    └ ${entry.summary}`}</Text> : null}
+    </Box>
+  );
+}
+
+function getAgentGroupStat(tool: ToolRender): AgentGroupStat {
+  const progress = tool.progress?.type === "agent_progress" ? tool.progress : undefined;
+  const display = tool.display;
+  const agentDisplay = display?.type === "agent" ? display : undefined;
+  const backgroundDisplay = display?.type === "agent_background" ? display : undefined;
+  const isAsync = tool.input.run_in_background === true || backgroundDisplay !== undefined;
+  const lastEntry = progress?.entries?.[progress.entries.length - 1];
+  const output = agentDisplay
+    ? agentDisplay.content.trim() || agentDisplay.error?.trim() || ""
+    : backgroundDisplay
+      ? [
+          `task_id: ${backgroundDisplay.taskId}`,
+          `agent_id: ${backgroundDisplay.agentId}`,
+          `output_file: ${backgroundDisplay.outputFile}`,
+        ].join("\n")
+    : "";
+
+  return {
+    id: tool.id,
+    agentType: getAgentGroupType(tool.input),
+    description: typeof tool.input.description === "string" ? tool.input.description : undefined,
+    toolUseCount: agentDisplay?.totalToolUseCount ?? progress?.totalToolUseCount ?? 0,
+    tokens: agentDisplay?.totalTokens ?? progress?.totalTokens ?? null,
+    isResolved: tool.result !== undefined,
+    isError: Boolean(tool.isError || agentDisplay?.status === "failed"),
+    isAsync,
+    lastToolInfo: lastEntry ? formatAgentGroupLastToolInfo(lastEntry) : progress?.message || null,
+    output,
+  };
+}
+
+function getAgentGroupType(input: Record<string, unknown>): string {
+  const subagentType = typeof input.subagent_type === "string" ? input.subagent_type : "";
+  if (!subagentType || subagentType === "general-purpose" || subagentType === "worker") return "Agent";
+  return subagentType;
+}
+
+function formatAgentGroupLastToolInfo(entry: AgentProgressEntry): string {
+  const name = getUserFacingToolName(entry.toolName);
+  if (entry.status === "running") {
+    const input = formatToolUseMessage(entry.toolName, entry.input);
+    return input ? `${name}: ${input}` : name;
+  }
+  if (entry.summary) return `${name}: ${entry.summary}`;
+  return entry.status === "failed" ? `${name} failed` : `${name} done`;
+}
+
+function getAgentGroupStatusText(stat: AgentGroupStat): string {
+  if (!stat.isResolved) return stat.lastToolInfo || "Initializing…";
+  if (stat.isAsync) return stat.description || "Running in the background";
+  if (stat.isError) return "Failed";
+  return "Done";
+}
+
+function AgentResultView({
+  display,
+  expandedOutput,
+}: {
+  display: Extract<ToolDisplay, { type: "agent" }>;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const parts = [
+    display.totalToolUseCount === 1 ? "1 tool use" : `${display.totalToolUseCount} tool uses`,
+    `${display.totalTokens} tokens`,
+    formatDurationMs(display.totalDurationMs),
+  ];
+  const label = display.status === "failed" ? "Failed" : "Done";
+  const output = display.content.trim() || display.error?.trim() || "";
+  if (expandedOutput && output) {
+    return (
+      <Box flexDirection="column">
+        <MessageResponseView height={1}>
+          <Text color={display.status === "failed" ? "error" : undefined}>{label} ({parts.join(" · ")})</Text>
+        </MessageResponseView>
+        <OutputLineView content={output} isError={display.status === "failed"} expanded />
+      </Box>
+    );
+  }
+  return (
+    <Box flexDirection="column">
+      <MessageResponseView height={1}>
+        <Text color={display.status === "failed" ? "error" : undefined}>{label} ({parts.join(" · ")})</Text>
+      </MessageResponseView>
+      <Text dimColor>{"  "}(ctrl+o to expand)</Text>
+    </Box>
+  );
+}
+
+function AgentBackgroundView({
+  display,
+  expandedOutput,
+}: {
+  display: Extract<ToolDisplay, { type: "agent_background" }>;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  return (
+    <Box flexDirection="column">
+      <MessageResponseView height={1}>
+        <Text>
+          Backgrounded agent <Text bold>{display.taskId}</Text>
+          <Text dimColor>{` (${truncateLine(display.description, 48)})`}</Text>
+          <Text dimColor> (↓ manage)</Text>
+        </Text>
+      </MessageResponseView>
+      {expandedOutput ? (
+        <Text dimColor>{`  output_file: ${display.outputFile}`}</Text>
+      ) : null}
+    </Box>
+  );
+}
+
+function WebSearchProgressView({
+  progress,
+}: {
+  progress?: Extract<ToolProgressDisplay, { type: "web_search_progress" }>;
+}): React.ReactElement {
+  if (progress?.stage === "search_results_received") {
+    return (
+      <MessageResponseView height={1}>
+        <Text dimColor>
+          Found {progress.resultCount ?? 0} results for "{progress.query}"
+        </Text>
+      </MessageResponseView>
+    );
+  }
+  return (
+    <MessageResponseView height={1}>
+      <Text dimColor>Searching{progress?.query ? `: ${progress.query}` : "…"}</Text>
+    </MessageResponseView>
+  );
+}
+
+function WebSearchResultView({
+  display,
+  expandedOutput,
+}: {
+  display: Extract<ToolDisplay, { type: "web_search" }>;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const timeDisplay = display.durationSeconds >= 1
+    ? `${Math.round(display.durationSeconds)}s`
+    : `${Math.round(display.durationSeconds * 1000)}ms`;
+  if (expandedOutput && display.results.length > 0) {
+    return (
+      <MessageResponseView>
+        <Box flexDirection="column">
+          <Text>{`Did ${display.searchCount} ${pluralize(display.searchCount, "search", "searches")} in ${timeDisplay}`}</Text>
+          {display.results.slice(0, 8).map((result, index) => (
+            <LinkedText key={`${result.url}-${index}`} content={`- ${result.title}: ${result.url}`} dimColor />
+          ))}
+        </Box>
+      </MessageResponseView>
+    );
+  }
+  return (
+    <MessageResponseView height={1}>
+      <Text>
+        Did {display.searchCount} {pluralize(display.searchCount, "search", "searches")} in {timeDisplay}
+      </Text>
+    </MessageResponseView>
+  );
+}
+
+function BashProgressView({
+  progress,
+  expandedOutput,
+  progressRef,
+}: {
+  progress: Extract<ToolProgressDisplay, { type: "bash_progress" }>;
+  expandedOutput: boolean;
+  progressRef: AnimationFrameRef;
+}): React.ReactElement {
+  const output = expandedOutput ? progress.fullOutput.trimEnd() : progress.output.trimEnd();
+  const formatted = formatTerminalOutput(output);
+  const extraLines = expandedOutput ? 0 : Math.max(0, progress.totalLines - 5);
+  const footerParts = [
+    extraLines > 0 ? `+${extraLines} ${pluralize(extraLines, "line", "lines")}` : "",
+    formatShellTimeDisplay(progress.elapsedTimeSeconds * 1000, progress.timeoutMs),
+    progress.totalBytes > 0 ? formatFileSize(progress.totalBytes) : "",
+    "(ctrl+b to run in background)",
+  ].filter(Boolean);
+
+  return (
+    <MessageResponseView>
+      <Box ref={progressRef} flexDirection="column">
+        {formatted && <AnsiTextBlock content={formatted} dimColor expanded />}
+        <Box>
+          <Text dimColor>{footerParts.join(" ")}</Text>
+        </Box>
+      </Box>
+    </MessageResponseView>
+  );
 }
 
 function BashBackgroundView({
@@ -981,9 +2044,16 @@ function BashResultView({
   const hasOutput = display.stdout.trim() || display.stderr.trim() || display.cwdResetWarning;
   if (!hasOutput) {
     return (
-      <MessageResponseView height={1}>
-        <Text dimColor>{display.exitCode === 0 ? "(No output)" : `Exit code ${display.exitCode ?? 1}`}</Text>
-      </MessageResponseView>
+      <Box flexDirection="column">
+        <MessageResponseView height={1}>
+          <Text dimColor>{display.exitCode === 0 ? (display.noOutputExpected ? "Done" : "(No output)") : `Exit code ${display.exitCode ?? 1}`}</Text>
+        </MessageResponseView>
+        {display.timeoutMs && (
+          <MessageResponseView height={1}>
+            <Text dimColor>{`(timeout ${formatDurationMs(display.timeoutMs)})`}</Text>
+          </MessageResponseView>
+        )}
+      </Box>
     );
   }
 
@@ -1001,11 +2071,17 @@ function BashResultView({
           <Text color="error">{`Exit code ${display.exitCode}`}</Text>
         </MessageResponseView>
       )}
+      {display.timeoutMs && (
+        <MessageResponseView height={1}>
+          <Text dimColor>{`(timeout ${formatDurationMs(display.timeoutMs)})`}</Text>
+        </MessageResponseView>
+      )}
     </Box>
   );
 }
 
 const MessageResponseContext = React.createContext(false);
+const BASH_PROGRESS_THRESHOLD_MS = 2000;
 
 function MessageResponseView({
   children,
@@ -1036,6 +2112,38 @@ function MessageResponseView({
   return <Ratchet lock="offscreen">{content}</Ratchet>;
 }
 
+function DiffOutputView({ diff }: { diff: string }): React.ReactElement {
+  return (
+    <MessageResponseView>
+      <Box flexDirection="column">
+        {diff.trimEnd().split("\n").map((line, index) => (
+          <Text
+            key={`diff-${index}`}
+            color={getDiffLineColor(line)}
+            dimColor={isDimDiffLine(line)}
+          >
+            {line}
+          </Text>
+        ))}
+      </Box>
+    </MessageResponseView>
+  );
+}
+
+function getDiffLineColor(line: string): string | undefined {
+  if (line.startsWith("+") && !line.startsWith("+++")) return "diffAdded";
+  if (line.startsWith("-") && !line.startsWith("---")) return "diffRemoved";
+  if (line.startsWith("@@")) return "ansi:cyan";
+  return undefined;
+}
+
+function isDimDiffLine(line: string): boolean {
+  return line.startsWith("---")
+    || line.startsWith("+++")
+    || line.startsWith(" ")
+    || line === "… diff truncated";
+}
+
 function OutputLineView({
   content,
   isError,
@@ -1045,30 +2153,63 @@ function OutputLineView({
   isError?: boolean;
   expanded?: boolean;
 }): React.ReactElement {
-  const formatted = formatTerminalOutput(stripUnderlineAnsi(content));
   return (
     <MessageResponseView>
-      <Text color={isError ? "error" : undefined}>
-        {expanded
-          ? formatted.trimEnd()
-          : renderTruncatedContent(formatted, process.stdout.columns || 80)}
-      </Text>
+      <AnsiTextBlock content={formatTerminalOutput(content)} color={isError ? "error" : undefined} expanded={Boolean(expanded)} />
     </MessageResponseView>
   );
 }
 
 const SPINNER_FRAMES = ["·", "✢", "✱", "✶", "✻", "✽", "✽", "✻", "✶", "✱", "✢", "·"];
+const SPINNER_VERBS = [
+  "Accomplishing",
+  "Architecting",
+  "Calculating",
+  "Cogitating",
+  "Considering",
+  "Crafting",
+  "Determining",
+  "Generating",
+  "Inferring",
+  "Synthesizing",
+];
 
-function ThinkingSpinner({ marginTop }: { marginTop: number }): React.ReactElement {
+function OfficialSpinner({
+  mode,
+  marginTop,
+}: {
+  mode: SpinnerMode;
+  marginTop: number;
+}): React.ReactElement {
   const [ref, time] = useAnimationFrame(120);
+  const [verb] = useState(() => SPINNER_VERBS[Math.floor(Math.random() * SPINNER_VERBS.length)] || "Working");
   const frame = SPINNER_FRAMES[Math.floor(time / 120) % SPINNER_FRAMES.length] || SPINNER_FRAMES[0];
+  const statusText = getSpinnerStatusText(mode, time);
 
   return (
-    <Box ref={ref} marginTop={marginTop}>
-      <Text bold color="claude">{frame}</Text>
-      <Text color="claude"> Thinking…</Text>
+    <Box ref={ref} marginTop={marginTop} flexDirection="row">
+      <Box width={2}>
+        <Text color="claude">{frame}</Text>
+      </Box>
+      <Text color="claude">{verb}…</Text>
+      {statusText && <Text dimColor>{` (${statusText})`}</Text>}
     </Box>
   );
+}
+
+function getSpinnerStatusText(mode: SpinnerMode, time: number): string | null {
+  switch (mode) {
+    case "requesting":
+      return "esc to interrupt";
+    case "thinking":
+      return time >= 3000 ? "thinking" : null;
+    case "tool-input":
+      return "using tool";
+    case "tool-use":
+      return "running";
+    case "responding":
+      return null;
+  }
 }
 
 function FeedbackPrompt(): React.ReactElement {
@@ -1199,11 +2340,9 @@ function ModeFooter({
   const rightWidth = stringWidth(right);
   const separatorWidth = left || expanded ? 2 : 0;
   const availableForUsage = Math.max(0, columns - leftWidth - rightWidth - separatorWidth - 1);
-  const usageText = availableForUsage <= 0
+  const usageText = left || availableForUsage <= 0
     ? ""
-    : left && stringWidth(requestedUsageText) > availableForUsage
-      ? ""
-      : truncateToWidth(requestedUsageText, availableForUsage);
+    : truncateToWidth(requestedUsageText, availableForUsage);
   const gap = Math.max(
     1,
     columns - leftWidth - rightWidth - separatorWidth - stringWidth(usageText),
@@ -1239,6 +2378,61 @@ function truncateToWidth(value: string, maxWidth: number): string {
     output += char;
   }
   return `${output}…`;
+}
+
+function formatDurationMs(value: number): string {
+  if (value < 1000) return `${value}ms`;
+  const seconds = value / 1000;
+  if (seconds < 60) return `${seconds % 1 === 0 ? seconds.toFixed(0) : seconds.toFixed(1)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainder = Math.round(seconds % 60);
+  return remainder ? `${minutes}m ${remainder}s` : `${minutes}m`;
+}
+
+function formatBackgroundTasks(tasks: BackgroundTaskSummary[]): string {
+  if (tasks.length === 0) return "No background tasks.";
+
+  return tasks
+    .map(task => {
+      const age = formatDurationMs(Date.now() - task.startedAt);
+      const outputFile = task.outputFile ? ` | ${task.outputFile}` : "";
+      return `${task.kind} ${task.id} | ${task.status} | ${truncateLine(task.description, 80)} | ${age}${outputFile}`;
+    })
+    .join("\n");
+}
+
+function formatManagedTaskResultContent(content: string): string {
+  const normalized = content
+    .replace(/<\/?retrieval_status>/gu, "")
+    .replace(/<\/?task_id>/gu, "")
+    .replace(/<\/?task_type>/gu, "")
+    .replace(/<\/?status>/gu, "")
+    .replace(/<\/?output>/gu, "")
+    .replace(/<\/?error>/gu, "")
+    .trim();
+  return normalized || content;
+}
+
+function formatFileSize(sizeInBytes: number): string {
+  const kb = sizeInBytes / 1024;
+  if (kb < 1) return `${sizeInBytes} bytes`;
+  if (kb < 1024) return `${kb.toFixed(1).replace(/\.0$/u, "")}KB`;
+  const mb = kb / 1024;
+  if (mb < 1024) return `${mb.toFixed(1).replace(/\.0$/u, "")}MB`;
+  const gb = mb / 1024;
+  return `${gb.toFixed(1).replace(/\.0$/u, "")}GB`;
+}
+
+function getExplicitBashTimeoutMs(input: Record<string, unknown>): number | undefined {
+  const value = input.timeout;
+  if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
+  return Math.max(1, Math.min(Math.round(value), 10 * 60 * 1000));
+}
+
+function formatShellTimeDisplay(elapsedMs: number, timeoutMs?: number): string {
+  const elapsed = formatDurationMs(Math.max(0, Math.floor(elapsedMs / 1000) * 1000));
+  if (timeoutMs) return `(${elapsed} · timeout ${formatDurationMs(timeoutMs)})`;
+  return `(${elapsed})`;
 }
 
 function insertInputText(
@@ -1322,8 +2516,8 @@ function formatTokenLimit(value: number): string {
 function helpCommandText(): string {
   return [
     "Available commands:",
-    "/clear, /compact, /cost, /doctor, /feedback, /help, /init, /mcp, /model, /permissions, /release-notes, /resume",
-    "Shortcuts: Ctrl+C interrupt/exit, Ctrl+O expand tool output, Shift+Enter newline, Shift+Tab cycle permissions.",
+    "/clear, /compact, /cost, /doctor, /feedback, /help, /init, /mcp, /model, /permissions, /release-notes, /resume, /tasks",
+    "Shortcuts: Ctrl+C interrupt/exit, Ctrl+O expand tool output, ↓ manage background tasks, Shift+Enter newline, Shift+Tab cycle permissions.",
   ].join("\n");
 }
 
@@ -1340,6 +2534,7 @@ const SLASH_COMMANDS = [
   "/permissions",
   "/release-notes",
   "/resume",
+  "/tasks",
 ];
 
 function completeSlashCommand(input: string): string | null {
@@ -1380,9 +2575,48 @@ function slashCommandDescription(command: string): string {
       return "show release notes";
     case "/resume":
       return "resume session";
+    case "/tasks":
+      return "show/manage background tasks";
     default:
       return "custom command";
   }
+}
+
+async function runTasksSlashCommand(argumentText: string): Promise<string> {
+  const args = argumentText.trim().split(/\s+/u).filter(Boolean);
+  if (args.length === 0) return formatBackgroundTasks(listBackgroundTasks());
+
+  const action = args[0]?.toLowerCase();
+  if ((action === "stop" || action === "kill" || action === "output" || action === "show" || action === "view") && !args[1]) {
+    return tasksSlashUsage();
+  }
+
+  if ((action === "stop" || action === "kill") && args[1]) {
+    const result = await stopBackgroundTask(args[1]);
+    return result.content;
+  }
+
+  if ((action === "output" || action === "show" || action === "view") && args[1]) {
+    const result = await readBackgroundTaskOutput(args[1]);
+    return result.content;
+  }
+
+  if (args.length === 1) {
+    const result = await readBackgroundTaskOutput(args[0] || "");
+    return result.content;
+  }
+
+  return tasksSlashUsage();
+}
+
+function tasksSlashUsage(): string {
+  return [
+    "Usage:",
+    "/tasks",
+    "/tasks <task_id>",
+    "/tasks output <task_id>",
+    "/tasks stop <task_id>",
+  ].join("\n");
 }
 
 function loadCustomSlashCommand(command: string, argumentText: string): string | null {
@@ -1491,7 +2725,7 @@ function rebuildChatMessagesFromSession(
         const toolUses = message.content
           .filter((block): block is { type: "tool_use"; id: string; name: string; input: Record<string, unknown> } => block.type === "tool_use")
           .map(block => ({ id: block.id, name: block.name, input: block.input, result: "Restored from session" }));
-        return { id: `resume-assistant-${index}`, role: "assistant", content: text, toolUses };
+        return { id: `resume-assistant-${index}`, role: "assistant", content: sanitizeAssistantText(text), toolUses };
       }
 
       return null;
@@ -1548,6 +2782,8 @@ function getUserFacingToolName(name: string): string {
   if (name === "KillBash") return "Kill Bash";
   if (name === "NotebookEdit") return "Edit Notebook";
   if (name === "WebSearch") return "Web Search";
+  if (name === "TaskOutput") return "Task Output";
+  if (name === "TaskStop") return "Stop Task";
   return name;
 }
 
@@ -1559,10 +2795,10 @@ function formatToolUseMessage(name: string, input: Record<string, unknown>): str
     return input.bash_id;
   }
   if (name === "Read" && typeof input.file_path === "string") {
-    return truncateLine(input.file_path, 120);
+    return truncateLine(formatDisplayPath(input.file_path), 120);
   }
   if (name === "LS" && typeof input.path === "string") {
-    return truncateLine(input.path, 120);
+    return truncateLine(formatDisplayPath(input.path), 120);
   }
   if ((name === "Glob" || name === "Grep") && typeof input.pattern === "string") {
     const parts = [`pattern: "${input.pattern}"`];
@@ -1570,7 +2806,7 @@ function formatToolUseMessage(name: string, input: Record<string, unknown>): str
     return truncateLine(parts.join(", "), 160);
   }
   if ((name === "Write" || name === "Edit" || name === "MultiEdit") && typeof input.file_path === "string") {
-    return truncateLine(input.file_path, 120);
+    return truncateLine(formatDisplayPath(input.file_path), 120);
   }
   if (name === "TodoWrite" && Array.isArray(input.todos)) {
     return `${input.todos.length} ${pluralize(input.todos.length, "todo", "todos")}`;
@@ -1584,10 +2820,74 @@ function formatToolUseMessage(name: string, input: Record<string, unknown>): str
   if (name === "Task" && typeof input.description === "string") {
     return truncateLine(input.description, 160);
   }
+  if ((name === "TaskOutput" || name === "TaskStop") && typeof input.task_id === "string") {
+    return input.task_id;
+  }
   if (name === "NotebookEdit" && typeof input.notebook_path === "string") {
-    return truncateLine(input.notebook_path, 120);
+    return truncateLine(formatDisplayPath(input.notebook_path), 120);
   }
   return "";
+}
+
+function formatDisplayPath(value: string): string {
+  if (!value) return value;
+  const absolutePath = isAbsolute(value) ? value : resolve(process.cwd(), value);
+  const cwdRelative = relative(process.cwd(), absolutePath);
+  if (cwdRelative === "") return ".";
+  if (!cwdRelative.startsWith("..") && !isAbsolute(cwdRelative)) return cwdRelative;
+
+  const homeRelative = relative(homedir(), absolutePath);
+  if (homeRelative === "") return "~";
+  if (!homeRelative.startsWith("..") && !isAbsolute(homeRelative)) return `~/${homeRelative}`;
+
+  return value;
+}
+
+function summarizeSubagentToolResult(name: string, content: string, display?: ToolDisplay): string {
+  if (display?.type === "read") {
+    return `Read ${display.numLines} ${display.numLines === 1 ? "line" : "lines"}`;
+  }
+  if (display?.type === "web_search") {
+    return `Found ${display.totalResultCount} ${display.totalResultCount === 1 ? "result" : "results"}`;
+  }
+  if (display?.type === "edit") {
+    return display.summary;
+  }
+  if (display?.type === "agent") {
+    return display.status === "failed" ? display.error || "Failed" : "Done";
+  }
+  if (display?.type === "agent_background") {
+    return `Backgrounded ${display.taskId}`;
+  }
+  if (display?.type === "bash_background") {
+    return `Backgrounded ${display.taskId}`;
+  }
+  if (display?.type === "bash") {
+    const text = [display.stdout, display.stderr].filter(Boolean).join("\n").trim();
+    if (!text && display.exitCode === 0) return "Done";
+    if (!text && display.exitCode !== 0) return `Exit code ${display.exitCode ?? "unknown"}`;
+    return truncateLine(firstResultLine(text), 120);
+  }
+  if (display?.type === "text" && display.summary) {
+    return display.summary;
+  }
+  const cleaned = stripToolUseErrorTags(content).trim();
+  return truncateLine(firstResultLine(cleaned) || (name === "Bash" ? "Done" : ""), 120);
+}
+
+function formatToolInputPreview(name: string, inputPreview: string): string {
+  const compact = inputPreview.replace(/\s+/gu, " ").trim();
+  if (!compact) return "";
+  try {
+    const parsed = JSON.parse(compact) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const formatted = formatToolUseMessage(name, parsed as Record<string, unknown>);
+      if (formatted) return formatted;
+    }
+  } catch {
+    // Streaming JSON may be incomplete; compact text keeps the in-flight tool visible.
+  }
+  return truncateLine(compact, 160);
 }
 
 function trimRightLines(value: string): string {
@@ -1609,19 +2909,124 @@ function stripToolUseErrorTags(value: string): string {
   return match?.[1]?.trim() || value;
 }
 
-function stripUnderlineAnsi(value: string): string {
-  return value.replace(
-    // eslint-disable-next-line no-control-regex
-    /\u001b\[([0-9]+;)*4(;[0-9]+)*m|\u001b\[4(;[0-9]+)*m|\u001b\[([0-9]+;)*4m/gu,
-    "",
+function LinkedText({
+  content,
+  color,
+  dimColor,
+}: {
+  content: string;
+  color?: string;
+  dimColor?: boolean;
+}): React.ReactElement {
+  return (
+    <Text color={color} dimColor={dimColor}>
+      {splitUrls(content).map((part, index) => (
+        part.type === "url"
+          ? <Link key={`${part.value}-${index}`} url={part.value} fallback={part.value}>{part.value}</Link>
+          : part.value
+      ))}
+    </Text>
   );
 }
 
+function AnsiTextBlock({
+  content,
+  color,
+  dimColor,
+  expanded,
+}: {
+  content: string;
+  color?: string;
+  dimColor?: boolean;
+  expanded?: boolean;
+}): React.ReactElement {
+  const { lines } = createAnsiTextLines(content, process.stdout.columns || 80, Boolean(expanded));
+  return (
+    <Box flexDirection="column">
+      {lines.map((line, index) => (
+        <AnsiTextLineView key={`ansi-line-${index}`} line={line} color={color} dimColor={dimColor} />
+      ))}
+    </Box>
+  );
+}
+
+function AnsiTextLineView({
+  line,
+  color,
+  dimColor,
+}: {
+  line: AnsiTextLine;
+  color?: string;
+  dimColor?: boolean;
+}): React.ReactElement {
+  return (
+    <Text>
+      {line.map((segment, index) => (
+        <AnsiTextSegmentView
+          key={`ansi-segment-${index}`}
+          segment={segment}
+          color={color}
+          dimColor={dimColor}
+        />
+      ))}
+    </Text>
+  );
+}
+
+function AnsiTextSegmentView({
+  segment,
+  color,
+  dimColor,
+}: {
+  segment: AnsiTextSegment;
+  color?: string;
+  dimColor?: boolean;
+}): React.ReactElement {
+  const foreground = segment.color || color;
+  const segmentDim = !segment.bold && (segment.dimColor || dimColor || undefined);
+  return (
+    <Text
+      color={foreground}
+      backgroundColor={segment.backgroundColor}
+      bold={segment.bold}
+      dimColor={segmentDim}
+      underline={segment.underline}
+      inverse={segment.inverse}
+    >
+      {splitUrls(segment.text).map((part, index) => (
+        part.type === "url"
+          ? <Link key={`${part.value}-${index}`} url={part.value} fallback={part.value}>{part.value}</Link>
+          : part.value
+      ))}
+    </Text>
+  );
+}
+
+function splitUrls(value: string): Array<{ type: "text" | "url"; value: string }> {
+  const parts: Array<{ type: "text" | "url"; value: string }> = [];
+  const urlPattern = /https?:\/\/[^\s<>"'`]+/giu;
+  let cursor = 0;
+  for (const match of value.matchAll(urlPattern)) {
+    const index = match.index || 0;
+    const rawUrl = match[0] || "";
+    const url = rawUrl.replace(/[),.;:!?]+$/u, "");
+    const trailing = rawUrl.slice(url.length);
+    if (index > cursor) parts.push({ type: "text", value: value.slice(cursor, index) });
+    if (url) parts.push({ type: "url", value: url });
+    if (trailing) parts.push({ type: "text", value: trailing });
+    cursor = index + rawUrl.length;
+  }
+  if (cursor < value.length) parts.push({ type: "text", value: value.slice(cursor) });
+  return parts.length > 0 ? parts : [{ type: "text", value }];
+}
+
 function formatTerminalOutput(value: string): string {
-  const trimmed = value.trim();
+  const plain = stripAnsiSequences(value);
+  const trimmed = plain.trim();
   if (/data:image\/[a-z0-9.+-]+;base64,/iu.test(trimmed)) {
     return "[Image data]";
   }
+  if (hasAnsiSequences(value)) return value;
   if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return value;
   try {
     return JSON.stringify(JSON.parse(trimmed), null, 2);
@@ -1634,10 +3039,30 @@ function firstResultLine(value: string): string {
   return value.split("\n").find(line => line.trim())?.trim() || "";
 }
 
+function formatReadErrorSummary(value: string): string {
+  if (/File (does not exist|not found)/iu.test(value)) return "File not found";
+  if (/exceeds maximum allowed tokens|File content too large/iu.test(value)) return "File content too large";
+  if (/Not a file/iu.test(value)) return "Not a file";
+  return "Error reading file";
+}
+
 function countResultLines(value: string): number {
   const trimmed = value.trimEnd();
   if (!trimmed) return 0;
   return trimmed.split("\n").length;
+}
+
+function countDiffLineChanges(diff: string): { added: number; removed: number } {
+  let added = 0;
+  let removed = 0;
+  for (const line of diff.split("\n")) {
+    if (line.startsWith("+") && !line.startsWith("+++")) {
+      added++;
+    } else if (line.startsWith("-") && !line.startsWith("---")) {
+      removed++;
+    }
+  }
+  return { added, removed };
 }
 
 function isEmptySearchResult(value: string): boolean {
@@ -1649,62 +3074,43 @@ function pluralize(count: number, singular: string, plural: string): string {
   return count === 1 ? singular : plural;
 }
 
-const MAX_LINES_TO_SHOW = 3;
-const PADDING_TO_PREVENT_OVERFLOW = 10;
-
-function renderTruncatedContent(content: string, terminalWidth: number): string {
-  const trimmedContent = content.trimEnd();
-  if (!trimmedContent) return "";
-
-  const wrapWidth = Math.max(terminalWidth - PADDING_TO_PREVENT_OVERFLOW, 10);
-  const maxChars = MAX_LINES_TO_SHOW * wrapWidth * 4;
-  const preTruncated = trimmedContent.length > maxChars;
-  const contentForWrapping = preTruncated ? trimmedContent.slice(0, maxChars) : trimmedContent;
-  const { aboveTheFold, remainingLines } = wrapText(contentForWrapping, wrapWidth);
-  const estimatedRemaining = preTruncated
-    ? Math.max(remainingLines, Math.ceil(stringWidth(trimmedContent) / wrapWidth) - MAX_LINES_TO_SHOW)
-    : remainingLines;
-
-  return [
-    aboveTheFold,
-    estimatedRemaining > 0 ? `… +${estimatedRemaining} lines (ctrl+o to expand)` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat("en-US").format(value);
 }
 
-function wrapText(text: string, wrapWidth: number): { aboveTheFold: string; remainingLines: number } {
-  const wrappedLines: string[] = [];
+function elapsedSecondsSince(startedAt: number): number {
+  return Math.max(0, (Date.now() - startedAt) / 1000);
+}
 
-  for (const line of text.split("\n")) {
-    if (stringWidth(line) <= wrapWidth) {
-      wrappedLines.push(line.trimEnd());
-      continue;
-    }
+function usageTokenCount(value?: Usage): number {
+  return (value?.input_tokens || 0) + (value?.output_tokens || 0);
+}
 
-    let chunk = "";
-    for (const char of line) {
-      const next = `${chunk}${char}`;
-      if (chunk && stringWidth(next) > wrapWidth) {
-        wrappedLines.push(chunk.trimEnd());
-        chunk = char;
-      } else {
-        chunk = next;
-      }
-    }
-    if (chunk) wrappedLines.push(chunk.trimEnd());
-  }
-
-  const remainingLines = wrappedLines.length - MAX_LINES_TO_SHOW;
-  if (remainingLines === 1) {
-    return {
-      aboveTheFold: wrappedLines.slice(0, MAX_LINES_TO_SHOW + 1).join("\n").trimEnd(),
-      remainingLines: 0,
-    };
-  }
-
+function createFailedSubagentResult(
+  agentId: string,
+  error: unknown,
+  startedAt: number,
+  totalToolUseCount = 0,
+): SubagentExecutionResult {
+  const message = error instanceof Error ? error.message : String(error);
   return {
-    aboveTheFold: wrappedLines.slice(0, MAX_LINES_TO_SHOW).join("\n").trimEnd(),
-    remainingLines: Math.max(0, remainingLines),
+    agentId,
+    status: "failed",
+    content: "",
+    error: message,
+    totalDurationMs: Date.now() - startedAt,
+    totalTokens: 0,
+    totalToolUseCount,
   };
+}
+
+function countToolUsesInMessages(messages: ApiMessage[]): number {
+  let total = 0;
+  for (const message of messages) {
+    if (!Array.isArray(message.content)) continue;
+    for (const block of message.content) {
+      if (block.type === "tool_use") total++;
+    }
+  }
+  return total;
 }
