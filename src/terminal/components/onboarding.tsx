@@ -11,7 +11,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
 
 interface OnboardingStep {
   id: string;

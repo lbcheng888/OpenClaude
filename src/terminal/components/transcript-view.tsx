@@ -12,7 +12,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Box, Text, useInput, useApp } from "ink";
+import { Box, Text, useInput, useApp } from "@anthropic/ink";
 
 // ============================================================
 // Types (1:1 from binary message protocol)
@@ -156,16 +156,6 @@ function SystemMessage({ text }: { text: string }) {
   );
 }
 
-/** Usage stats footer */
-function UsageFooter({ usage }: { usage?: { input_tokens: number; output_tokens: number } }) {
-  if (!usage) return null;
-  return (
-    <Box>
-      <Text dimColor>  in:{usage.input_tokens} out:{usage.output_tokens}</Text>
-    </Box>
-  );
-}
-
 /** Input area */
 function InputArea({ value, loading }: { value: string; loading: boolean }) {
   return (
@@ -266,11 +256,7 @@ export function TranscriptView() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      setStatusText(
-        result.usage
-          ? `in:${result.usage.input_tokens} out:${result.usage.output_tokens}`
-          : "Done"
-      );
+      setStatusText("Done");
       setLoading(false);
     },
     [messages, loading]
@@ -359,7 +345,6 @@ export function TranscriptView() {
         {messages.map((msg) => (
           <Box key={msg.id} flexDirection="column">
             {renderContent(msg)}
-            <UsageFooter usage={msg.usage} />
           </Box>
         ))}
 

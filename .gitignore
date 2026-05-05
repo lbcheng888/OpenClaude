@@ -35,3 +35,4 @@ cursor-source/
 .truth-userdata/
 truth-dom
 *.png
+start.sh

@@ -10,7 +10,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
 
 // ============================================================
 // Z#078 gPK — Sandbox Bash Confirm (MH) — 5,300 bytes

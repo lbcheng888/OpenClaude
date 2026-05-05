@@ -6,7 +6,8 @@
 // ============================================================
 
 import React, { useState, useEffect } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
+import { DialogFrame, OptionSelector } from "./wrappers.js";
 
 // ============================================================
 // TrustDialog — first-run trust confirmation
@@ -19,26 +20,23 @@ interface TrustDialogProps {
 
 export function TrustDialog({ onAccept, cwd }: TrustDialogProps) {
   useEffect(() => {
-    // Auto-accept after 1s for demo
-    const t = setTimeout(onAccept, 1000);
-    return () => clearTimeout(t);
+    const { stdin } = process;
+    if (!stdin?.isTTY) { onAccept(); return; }
+    const onData = (c: Buffer) => { if (c.toString() === "\r" || c.toString() === "\n") onAccept(); };
+    stdin.on("data", onData);
+    return () => void stdin.removeListener("data", onData);
   }, [onAccept]);
 
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Box marginBottom={1}>
-        <Text bold color="yellow">⚠ Trust Confirmation</Text>
-      </Box>
-      <Box flexDirection="column" width={70}>
-        <Text>
-          Claude Code needs access to your working directory:
-        </Text>
-        <Text bold>  {cwd}</Text>
-        <Box marginTop={1}>
-          <Text dimColor>Press Enter to trust and continue.</Text>
-        </Box>
-      </Box>
-    </Box>
+  return React.createElement(
+    DialogFrame,
+    { title: "Trust Confirmation", color: "background", onCancel: () => process.exit(0) },
+    React.createElement(
+      Box,
+      { flexDirection: "column", gap: 1 },
+      React.createElement(Text, null, "Claude Code needs access to your working directory:"),
+      React.createElement(Text, { bold: true }, `  ${cwd}`)
+    ),
+    React.createElement(Text, { dimColor: true }, "Press Enter to trust and continue.")
   );
 }
 
@@ -53,52 +51,25 @@ interface AutoModeOptInProps {
 }
 
 export function AutoModeOptInDialog({ onAccept, onDecline, declineExits }: AutoModeOptInProps) {
-  const [selected, setSelected] = useState<"accept" | "decline">("accept");
+  const options = [
+    { label: React.createElement(Text, null, "Yes, enable auto mode"), value: "accept" },
+    { label: React.createElement(Text, null, `No${declineExits ? " (exit)" : ""}, ask each time`), value: "decline" },
+  ];
 
-  useEffect(() => {
-    const { stdin } = process;
-    if (!stdin?.isTTY) return;
+  const handleChange = (value: string) => {
+    if (value === "accept") onAccept();
+    else onDecline();
+  };
 
-    const onData = (chunk: Buffer) => {
-      const char = chunk.toString();
-      if (char === "\r" || char === "\n") {
-        selected === "accept" ? onAccept() : onDecline();
-      }
-      if (char === "y" || char === "Y") {
-        setSelected("accept");
-        onAccept();
-      }
-      if (char === "n" || char === "N") {
-        setSelected("decline");
-        onDecline();
-      }
-      if (char === "\t") setSelected((s) => (s === "accept" ? "decline" : "accept"));
-    };
-
-    stdin.on("data", onData);
-    return () => void stdin.removeListener("data", onData);
-  }, [selected, onAccept, onDecline]);
-
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Box marginBottom={1}>
-        <Text bold color="cyan">Auto Mode</Text>
-      </Box>
-      <Box flexDirection="column" width={70}>
-        <Text>
-          Auto mode lets Claude run tools without asking for permission each time.
-          You can still review changes before they&apos;re committed.
-        </Text>
-        <Box marginTop={1} flexDirection="column">
-          <Text color={selected === "accept" ? "green" : undefined}>
-            {selected === "accept" ? "❯ " : "  "}[Y] Yes, enable auto mode
-          </Text>
-          <Text color={selected === "decline" ? "red" : undefined}>
-            {selected === "decline" ? "❯ " : "  "}[N] No{declineExits ? " (exit)" : ""}, ask each time
-          </Text>
-        </Box>
-      </Box>
-    </Box>
+  return React.createElement(
+    DialogFrame,
+    { title: "Auto Mode", color: "background", onCancel: onDecline },
+    React.createElement(
+      Text,
+      null,
+      "Auto mode lets Claude run tools without asking for permission each time. You can still review changes before they're committed."
+    ),
+    React.createElement(OptionSelector, { options, onChange: handleChange, onCancel: onDecline })
   );
 }
 
@@ -113,20 +84,18 @@ interface ApproveApiKeyProps {
 
 export function ApproveApiKey({ customApiKeyTruncated, onDone }: ApproveApiKeyProps) {
   useEffect(() => {
-    const t = setTimeout(onDone, 1500);
-    return () => clearTimeout(t);
+    const { stdin } = process;
+    if (!stdin?.isTTY) { onDone(); return; }
+    const onData = (c: Buffer) => { if (c.toString() === "\r" || c.toString() === "\n") onDone(); };
+    stdin.on("data", onData);
+    return () => void stdin.removeListener("data", onData);
   }, [onDone]);
 
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Box marginBottom={1}>
-        <Text bold color="cyan">API Key Detected</Text>
-      </Box>
-      <Box flexDirection="column" width={70}>
-        <Text>Using API key: {customApiKeyTruncated}</Text>
-        <Text dimColor>Press Enter to continue.</Text>
-      </Box>
-    </Box>
+  return React.createElement(
+    DialogFrame,
+    { title: "API Key Detected", color: "background" },
+    React.createElement(Text, null, `Using API key: ${customApiKeyTruncated}`),
+    React.createElement(Text, { dimColor: true }, "Press Enter to continue.")
   );
 }
 
@@ -157,7 +126,7 @@ export function TeamOnboarding({ onDone }: TeamOnboardingProps) {
 }
 
 // ============================================================
-// SettingsErrors — config validation errors
+// SettingsErrors — config validation errors (1:1 from binary ES3)
 // ============================================================
 
 interface SettingsErrorsProps {
@@ -168,53 +137,55 @@ interface SettingsErrorsProps {
 }
 
 export function SettingsErrors({ settingsErrors, onContinue, onFix, onExit }: SettingsErrorsProps) {
-  const [selected, setSelected] = useState<"continue" | "fix" | "exit">("continue");
+  const hasSevere = false; // CS3: checks if any error.severity !== "warning"
+  const title = hasSevere ? "Settings Error" : "Settings Warning";
+  const cancelAction = hasSevere ? onExit : onContinue;
 
-  useEffect(() => {
-    const { stdin } = process;
-    if (!stdin?.isTTY) { onContinue(); return; }
+  const options = hasSevere
+    ? [
+        { label: React.createElement(Text, null, "Fix with Claude"), value: "fix" },
+        { label: React.createElement(Text, null, "Exit and fix manually"), value: "exit" },
+        { label: React.createElement(Text, null, "Continue without these settings"), value: "continue" },
+      ]
+    : [
+        { label: React.createElement(Text, null, "Continue"), value: "continue" },
+        { label: React.createElement(Text, null, "Fix with Claude"), value: "fix" },
+        { label: React.createElement(Text, null, "Exit and fix manually"), value: "exit" },
+      ];
 
-    const onData = (chunk: Buffer) => {
-      const char = chunk.toString();
-      if (char === "\r" || char === "\n") {
-        if (selected === "continue") onContinue();
-        else if (selected === "fix") onFix();
-        else onExit();
-      }
-      if (char === "\t") {
-        setSelected((s) => (s === "continue" ? "fix" : s === "fix" ? "exit" : "continue"));
-      }
-    };
+  const explanation = hasSevere
+    ? "Files with errors are skipped entirely, not just the invalid settings."
+    : "The values listed above were skipped; the rest of the file is in effect.";
 
-    stdin.on("data", onData);
-    return () => void stdin.removeListener("data", onData);
-  }, [selected, onContinue, onFix, onExit]);
+  const handleChange = (value: string) => {
+    if (value === "exit") onExit();
+    else if (value === "fix") onFix();
+    else onContinue();
+  };
 
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Box marginBottom={1}>
-        <Text bold color="red">⚠ Configuration Errors</Text>
-      </Box>
-      <Box flexDirection="column" width={70}>
-        {settingsErrors.slice(0, 5).map((err, i) => (
-          <Text key={i} color="red">  • {err}</Text>
-        ))}
-        {settingsErrors.length > 5 && (
-          <Text dimColor>  ... and {settingsErrors.length - 5} more</Text>
-        )}
-        <Box marginTop={1} flexDirection="column">
-          <Text color={selected === "continue" ? "green" : undefined}>
-            {selected === "continue" ? "❯ " : "  "}Continue anyway
-          </Text>
-          <Text color={selected === "fix" ? "yellow" : undefined}>
-            {selected === "fix" ? "❯ " : "  "}Open settings to fix
-          </Text>
-          <Text color={selected === "exit" ? "red" : undefined}>
-            {selected === "exit" ? "❯ " : "  "}Exit
-          </Text>
-        </Box>
-      </Box>
-    </Box>
+  return React.createElement(
+    DialogFrame,
+    { title, color: "warning", onCancel: cancelAction },
+
+    // Error list (1:1 binary vT6 component)
+    React.createElement(
+      Box,
+      { flexDirection: "column" },
+      ...settingsErrors.slice(0, 5).map((err, i) =>
+        React.createElement(Text, { key: i, color: "red" as any }, `  • ${err}`)
+      ),
+      settingsErrors.length > 5 && React.createElement(
+        Text,
+        { dimColor: true },
+        `  ... and ${settingsErrors.length - 5} more`
+      )
+    ),
+
+    // Explanation
+    React.createElement(Text, { dimColor: true }, explanation),
+
+    // Options
+    React.createElement(OptionSelector, { options, onChange: handleChange, onCancel: cancelAction })
   );
 }
 
@@ -248,25 +219,31 @@ export function ResumeConversation({ sessions, onSelect }: ResumeConversationPro
     return () => void stdin.removeListener("data", onData);
   }, [selected, sessions, onSelect]);
 
-  return (
-    <Box flexDirection="column" padding={1}>
-      <Box marginBottom={1}>
-        <Text bold color="cyan">Resume Session</Text>
-      </Box>
-      <Box flexDirection="column">
-        {sessions.length === 0 ? (
-          <Text dimColor>No previous sessions found.</Text>
-        ) : (
-          sessions.map((s, i) => (
-            <Text key={s.id} color={i === selected ? "green" : undefined}>
-              {i === selected ? "❯ " : "  "}{s.title || s.id} — {s.date}
-            </Text>
-          ))
-        )}
-        <Box marginTop={1}>
-          <Text dimColor>j/k to navigate, Enter to select, Esc for new session</Text>
-        </Box>
-      </Box>
-    </Box>
+  // Build options for OptionSelector
+  const options = sessions.map((s) => ({
+    label: React.createElement(Text, null, `${s.title || s.id} — ${s.date}`),
+    value: s.id,
+  }));
+
+  return React.createElement(
+    DialogFrame,
+    { title: "Resume Session", color: "background", onCancel: () => onSelect(null) },
+
+    sessions.length === 0
+      ? React.createElement(Text, { dimColor: true }, "No previous sessions found.")
+      : React.createElement(
+          Box,
+          { flexDirection: "column" },
+          React.createElement(OptionSelector, {
+            options,
+            onChange: (id: string) => onSelect(id),
+            onCancel: () => onSelect(null),
+          }),
+          React.createElement(
+            Box,
+            { marginTop: 1 },
+            React.createElement(Text, { dimColor: true }, "j/k to navigate, Enter to select, Esc for new session")
+          )
+        )
   );
 }

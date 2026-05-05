@@ -1,0 +1,29 @@
+#!/usr/bin/env expect
+set timeout 10
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-smoke-work"
+file mkdir $workdir
+cd $workdir
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-smoke-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-smoke-home/.claude"
+file mkdir $env(CLAUDE_CONFIG_DIR)
+catch {unset env(ANTHROPIC_AUTH_TOKEN)}
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_BASE_URL)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_HAIKU_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
+catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
+catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
+expect "Claude Code v2.1.128"
+send "?"
+expect "Available commands:"
+send "/doctor\r"
+expect "cwd:"
+expect "auth:"
+send "\003"
+expect eof

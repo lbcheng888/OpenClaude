@@ -2,13 +2,14 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import type { ApiMessage, ApiMessageContent } from "../api/client.js";
 
 const SESSION_DIR = join(homedir(), ".claude", "sessions");
 
-interface SessionData {
+export interface SessionData {
   id: string;
   title?: string;
-  messages: Array<{ role: string; content: string; timestamp: number }>;
+  messages: Array<{ role: ApiMessage["role"]; content: ApiMessageContent; timestamp: number }>;
   createdAt: number;
   updatedAt: number;
   permissionMode: string;

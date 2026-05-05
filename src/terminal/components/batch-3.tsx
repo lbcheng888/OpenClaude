@@ -14,7 +14,8 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
+import { DialogFrame, OptionSelector } from "./wrappers.js";
 
 // ============================================================
 // Z#083 DkH — Tool Confirm with "don't ask again"
@@ -288,57 +289,38 @@ interface ModelMigrationProps {
 
 export function ModelMigrationDialog({ tierLabel, fromName, toName, toProviderId, onDone }: ModelMigrationProps): React.ReactElement {
   const title = `Newer ${tierLabel} model available`;
-  const [selected, setSelected] = useState<"yes" | "no">("yes");
 
-  useEffect(() => {
-    const { stdin } = process;
-    if (!stdin?.isTTY) return;
+  const options = [
+    { label: React.createElement(Text, null, "Yes, upgrade"), value: "yes" },
+    { label: React.createElement(Text, null, "No, keep current"), value: "no" },
+  ];
 
-    const onData = (chunk: Buffer) => {
-      const char = chunk.toString();
-      if (char === "\r" || char === "\n") {
-        onDone(selected === "yes");
-      }
-      if (char === "y" || char === "Y") onDone(true);
-      if (char === "n" || char === "N") onDone(false);
-    };
-
-    stdin.on("data", onData);
-    return () => void stdin.removeListener("data", onData);
-  }, [selected, onDone]);
+  const handleChange = (value: string) => onDone(value === "yes");
 
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(Text, { bold: true }, title),
+    DialogFrame,
+    { title, color: "background" },
+
+    // Model info (1:1 binary: currently pinned / latest available)
     React.createElement(
       Box,
-      { flexDirection: "column", marginY: 1 },
+      { flexDirection: "column", gap: 1 },
       React.createElement(
-        Box,
+        Text,
         null,
-        React.createElement(Text, null, "Currently pinned: "),
+        "Currently pinned: ",
         React.createElement(Text, { bold: true }, fromName)
       ),
       React.createElement(
-        Box,
+        Text,
         null,
-        React.createElement(Text, null, "Latest available: "),
+        "Latest available: ",
         React.createElement(Text, { bold: true }, toName),
         React.createElement(Text, { dimColor: true }, ` (${toProviderId})`)
       )
     ),
-    React.createElement(
-      Box,
-      { flexDirection: "column" },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: "green" }, "[Y] Yes, upgrade"),
-        React.createElement(Text, null, "  "),
-        React.createElement(Text, { color: "red" }, "[N] No, keep current")
-      )
-    )
+
+    React.createElement(OptionSelector, { options, onChange: handleChange, onCancel: () => onDone(false) })
   );
 }
 
@@ -351,67 +333,47 @@ interface ProTrialProps {
 }
 
 export function ProTrialDialog({ onDone }: ProTrialProps): React.ReactElement {
-  const [status, setStatus] = useState<"idle" | "starting" | "error">("idle");
-  const trialDays = 14; // CV8()
+  const trialDays = 14;
 
-  const handleStart = async () => {
-    if (status === "starting") return;
-    if (status === "error") { onDone(); return; }
-
-    setStatus("starting");
-    try {
-      // IV8() - start pro trial
-      setStatus("idle");
-      onDone();
-    } catch {
-      setStatus("error");
-    }
-  };
+  const options = [
+    { label: React.createElement(Text, null, "Start free trial"), value: "yes" },
+    { label: React.createElement(Text, null, "No thanks"), value: "no" },
+  ];
 
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
+    DialogFrame,
+    { title: "Try Claude Pro", color: "background" },
     React.createElement(
-      Box,
-      { marginBottom: 1 },
-      React.createElement(Text, { bold: true, color: "cyan" }, "Try Claude Pro"),
-      trialDays !== null && React.createElement(
-        Text,
-        null,
-        `Your Pro plan includes ${trialDays} days of increased usage limits and priority access.`
-      )
-    ),
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginBottom: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: "green" }, "[Y] Start free trial"),
-        React.createElement(Text, null, "  "),
-        React.createElement(Text, { color: "red" }, "[N] No thanks")
-      )
-    ),
-    status === "error" && React.createElement(
       Text,
-      { color: "red" },
-      "Failed to start trial. Press Enter to continue."
-    )
+      null,
+      `Your Pro plan includes ${trialDays} days of increased usage limits and priority access.`
+    ),
+    React.createElement(OptionSelector, { options, onChange: (v) => { if (v === "yes") onDone(); else onDone(); }, onCancel: () => onDone() })
   );
 }
 
 // ============================================================
-// Z#421 BuK — Teleport Progress View
+// Z#421 BuK — Teleport Progress View (1:1 from binary)
 // ============================================================
+// Binary structure:
+//   B (flexDirection:"column", paddingX:1, paddingY:1)
+//     B (marginBottom:1)
+//       v (bold, color:"claude") spinnerChar " Teleporting session…"
+//     sessionId && B (marginBottom:1) v(dimColor) sessionId
+//     B (flexDirection:"column", marginLeft:2)
+//       for each step:
+//         B (flexDirection:"row")
+//           B (width:2) v(color, dimColor) ✓/spinner/○
+//           v (dimColor:!current, bold:current) step.label
 
 const TELEPORT_STEPS = [
-  { key: "prepare", label: "Preparing session" },
-  { key: "upload", label: "Uploading context" },
-  { key: "transfer", label: "Transferring" },
-  { key: "ready", label: "Ready" },
+  { key: "validating", label: "Validating session" },
+  { key: "fetching_logs", label: "Fetching session logs" },
+  { key: "fetching_branch", label: "Getting branch info" },
+  { key: "checking_out", label: "Checking out branch" },
 ];
 
-const TELEPORT_SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const TELEPORT_SPINNER = ["◐", "◓", "◑", "◒"];
 
 export function TeleportProgressView({ sessionId }: { sessionId?: string }): React.ReactElement {
   const [tick, setTick] = useState(0);
@@ -421,49 +383,70 @@ export function TeleportProgressView({ sessionId }: { sessionId?: string }): Rea
     return () => clearInterval(interval);
   }, []);
 
-  const spinnerIdx = Math.floor(tick / 10) % TELEPORT_SPINNER.length;
-  const msgIdx = Math.floor(tick / 10) % TELEPORT_STEPS.length;
+  const spinnerIdx = tick % TELEPORT_SPINNER.length;
+  const spinnerChar = TELEPORT_SPINNER[spinnerIdx];
+  const currentStepIdx = Math.floor(tick / 10) % TELEPORT_STEPS.length;
+
+  // 1:1 from official BuK:
+  // B(ref, flexDirection:"column", paddingX:1, paddingY:1)
+  //   B(marginBottom:1) v(bold, color:"claude") spinner " Teleporting session…"
+  //   sessionId && B(marginBottom:1) v(dimColor) sessionId
+  //   B(flexDirection:"column", marginLeft:2) [steps...]
 
   return React.createElement(
     Box,
-    { flexDirection: "column" },
+    { flexDirection: "column", paddingX: 1, paddingY: 1 },
+
+    // Spinner header (1:1 official)
     React.createElement(
       Box,
       { marginBottom: 1 },
       React.createElement(
         Text,
         { bold: true, color: "claude" as any },
-        TELEPORT_SPINNER[spinnerIdx],
-        " Teleporting session…"
+        `${spinnerChar} Teleporting session…`
       )
     ),
+
+    // Session ID (1:1 official)
     sessionId && React.createElement(
       Box,
       { marginBottom: 1 },
       React.createElement(Text, { dimColor: true }, sessionId)
     ),
-    ...TELEPORT_STEPS.map((step, i) => {
-      const isDone = i < msgIdx;
-      const isCurrent = i === msgIdx;
-      return React.createElement(
-        Box,
-        { key: step.key, flexDirection: "row" },
-        React.createElement(
+
+    // Steps container (1:1 official: marginLeft:2)
+    React.createElement(
+      Box,
+      { flexDirection: "column", marginLeft: 2 },
+      ...TELEPORT_STEPS.map((step, i) => {
+        const isDone = i < currentStepIdx;
+        const isCurrent = i === currentStepIdx;
+        return React.createElement(
           Box,
-          { width: 2 },
+          { key: step.key, flexDirection: "row" },
+          // Step icon (1:1: width:2)
+          React.createElement(
+            Box,
+            { width: 2 },
+            React.createElement(
+              Text,
+              {
+                color: isDone ? "green" : isCurrent ? "claude" as any : undefined,
+                dimColor: !isDone && !isCurrent,
+              },
+              isDone ? "✓" : isCurrent ? spinnerChar : "○"
+            )
+          ),
+          // Step label (1:1: dimColor when not current, bold when current)
           React.createElement(
             Text,
-            { color: isDone ? "green" : isCurrent ? "claude" as any : undefined, dimColor: !isDone && !isCurrent },
-            isDone ? "✓" : isCurrent ? TELEPORT_SPINNER[spinnerIdx] : "○"
+            { dimColor: !isCurrent, bold: isCurrent },
+            step.label
           )
-        ),
-        React.createElement(
-          Text,
-          { dimColor: !isCurrent, bold: isCurrent },
-          step.label
-        )
-      );
-    })
+        );
+      })
+    )
   );
 }
 
@@ -557,62 +540,24 @@ interface McpConfigStatusProps {
 }
 
 export function McpConfigStatusView({ onDone }: McpConfigStatusProps): React.ReactElement {
-  // Load MCP project config
-  const mcpConfig = { servers: {} as Record<string, unknown> };
-  const servers = Object.keys(mcpConfig.servers);
-  const hasServers = servers.length > 0;
-
-  // Check config sources
-  const bashSources: string[] = []; // GSK()
-  const otelSources: string[] = []; // RSK()
-  const apiKeySources: string[] = []; // ZSK()
-  const awsSources: string[] = []; // LSK()
-  const gcpSources: string[] = []; // kSK()
+  useEffect(() => {
+    const { stdin } = process;
+    if (!stdin?.isTTY) { onDone(); return; }
+    const onData = (c: Buffer) => {
+      const ch = c.toString();
+      if (ch === "\r" || ch === "\n") onDone();
+      if (ch === "\x1b") onDone();
+    };
+    stdin.on("data", onData);
+    return () => void stdin.removeListener("data", onData);
+  }, [onDone]);
 
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(Text, { bold: true }, "MCP Configuration Status"),
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginY: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, null, `MCP Servers: `),
-        React.createElement(Text, { bold: true }, `${servers.length} configured`)
-      ),
-      !hasServers && React.createElement(
-        Text,
-        { dimColor: true },
-        "No MCP servers configured. Use /mcp to add servers."
-      )
-    ),
-    // Config sources
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginTop: 1 },
-      bashSources.length > 0 && React.createElement(
-        Text,
-        { dimColor: true },
-        `Bash allow rules: ${bashSources.join(", ")}`
-      ),
-      otelSources.length > 0 && React.createElement(
-        Text,
-        { dimColor: true },
-        `OTel headers: ${otelSources.join(", ")}`
-      ),
-      apiKeySources.length > 0 && React.createElement(
-        Text,
-        { dimColor: true },
-        `API key helpers: ${apiKeySources.join(", ")}`
-      )
-    ),
-    React.createElement(
-      Box,
-      { marginTop: 1 },
-      React.createElement(Text, { dimColor: true }, "Enter to continue · ESC to cancel")
-    )
+    DialogFrame,
+    { title: "MCP Configuration Status", color: "background", onCancel: onDone },
+    React.createElement(Text, null, "MCP Servers: ", React.createElement(Text, { bold: true }, "0 configured")),
+    React.createElement(Text, { dimColor: true }, "No MCP servers configured. Use /mcp to add servers."),
+    React.createElement(Text, { dimColor: true }, "Enter to continue")
   );
 }
 
@@ -669,50 +614,28 @@ interface ClaudeInChromeProps {
 }
 
 export function ClaudeInChromeOnboarding({ onDone }: ClaudeInChromeProps): React.ReactElement {
-  const [installed, setInstalled] = useState(false);
-
   useEffect(() => {
-    // Check if Chrome extension is installed
-    const check = async () => {
-      try {
-        const ok = false; // I7H() - check extension
-        setInstalled(ok);
-      } catch {
-        // ignore
-      }
-    };
-    check();
-  }, []);
+    const { stdin } = process;
+    if (!stdin?.isTTY) { onDone(); return; }
+    const onData = (c: Buffer) => { if (c.toString() === "\r" || c.toString() === "\n") onDone(); };
+    stdin.on("data", onData);
+    return () => void stdin.removeListener("data", onData);
+  }, [onDone]);
 
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(Text, { bold: true }, "Claude in Chrome"),
+    DialogFrame,
+    { title: "Claude in Chrome", color: "background", onCancel: onDone },
     React.createElement(
-      Box,
-      { marginY: 1 },
-      React.createElement(
-        Text,
-        null,
-        "Claude in Chrome works with the Chrome extension to let you control your browser directly from Claude Code."
-      ),
-      React.createElement(Box, null, React.createElement(Text, null, " ")),
-      !installed && React.createElement(
-        Box,
-        { flexDirection: "column" },
-        React.createElement(Text, null, "Requires the Chrome extension. Get started at "),
-        React.createElement(Text, { color: "blue" as any }, CLAUDE_IN_CHROME_URL)
-      ),
-      installed && React.createElement(
-        Text,
-        { color: "green" },
-        "✓ Chrome extension detected. Ready to use."
-      )
+      Text,
+      null,
+      "Claude in Chrome works with the Chrome extension to let you control your browser directly from Claude Code."
     ),
     React.createElement(
       Box,
-      { marginTop: 1 },
-      React.createElement(Text, { dimColor: true }, "Enter to continue")
-    )
+      null,
+      React.createElement(Text, null, "Requires the Chrome extension. Get started at "),
+      React.createElement(Text, { color: "blue" as any }, CLAUDE_IN_CHROME_URL)
+    ),
+    React.createElement(Text, { dimColor: true }, "Enter to continue")
   );
 }

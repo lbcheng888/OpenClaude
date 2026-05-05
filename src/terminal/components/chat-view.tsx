@@ -12,7 +12,7 @@
 //   │   ├── AssistantMessage
 //   │   └── SystemMessage (tool results, errors)
 //   ├── InputBox (prompt input with vim mode)
-//   └── StatusBar (usage, mode, sandbox violations)
+//   └── StatusBar (mode, sandbox violations)
 // ============================================================
 
 import React, {
@@ -22,7 +22,7 @@ import React, {
   useRef,
   type ReactElement,
 } from "react";
-import { Box, Text, useInput, useApp } from "ink";
+import { Box, Text, useInput, useApp } from "@anthropic/ink";
 import { useAppState } from "./app-state.js";
 import { useTerminal } from "./terminal-context.js";
 
@@ -112,17 +112,7 @@ function MessageRow({ msg }: { msg: ChatMessage }) {
       null,
       React.createElement(Text, { bold: true, color }, prefix),
       React.createElement(Text, null, msg.content)
-    ),
-    msg.usage &&
-      React.createElement(
-        Box,
-        null,
-        React.createElement(
-          Text,
-          { dimColor: true },
-          `  in:${msg.usage.input_tokens} out:${msg.usage.output_tokens}`
-        )
-      )
+    )
   );
 }
 
@@ -206,11 +196,7 @@ export function ChatView(): ReactElement {
       };
 
       setMessages((p) => [...p, assistantMsg]);
-      setStatusText(
-        result.usage
-          ? `in:${result.usage.input_tokens} out:${result.usage.output_tokens}`
-          : "Done"
-      );
+      setStatusText("Done");
       setLoading(false);
     },
     [loading]

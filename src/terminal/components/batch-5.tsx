@@ -17,7 +17,8 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
+import { DialogFrame, OptionSelector } from "./wrappers.js";
 
 // ============================================================
 // Z#233 gx8 — Agent Job Management Views
@@ -250,34 +251,15 @@ export function PluginInstallConfirmation({
         : `${pluginName.split(",")[0]} and ${pluginName.split(",")[1]}`
       : `${pluginCount} plugins`;
 
+  const options = [
+    { label: React.createElement(Text, null, "Yes, install"), value: "yes" },
+    { label: React.createElement(Text, null, "No, not now"), value: "no" },
+  ];
+
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(
-      Box,
-      { marginBottom: 1 },
-      React.createElement(Text, { bold: true }, "Install Plugin"),
-      React.createElement(Text, { dimColor: true }, ` ${label}`)
-    ),
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginBottom: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: "green" }, "[Y] Yes, install")
-      ),
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { dimColor: true }, "[N] No, not now")
-      )
-    ),
-    React.createElement(
-      Box,
-      null,
-      React.createElement(Text, { dimColor: true }, "Enter to confirm")
-    )
+    DialogFrame,
+    { title: `Install Plugin — ${label}`, color: "background" },
+    React.createElement(OptionSelector, { options, onChange: () => {}, onCancel: () => {} })
   );
 }
 
@@ -329,42 +311,17 @@ export function McpEnableAllConfirm({
   onConfirm: () => void;
   onCancel: () => void;
 }): React.ReactElement {
+  const options = [
+    { label: React.createElement(Text, null, "Yes, enable all"), value: "yes" },
+    { label: React.createElement(Text, null, "Cancel"), value: "no" },
+  ];
+
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(
-      Box,
-      { marginBottom: 1 },
-      React.createElement(Text, { bold: true, color: "warning" as any }, title)
-    ),
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginBottom: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, null, "Enable all MCP servers for this project?")
-      ),
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { dimColor: true }, "This can be changed later in settings.")
-      )
-    ),
-    React.createElement(
-      Box,
-      { flexDirection: "column" },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: "green" }, "[Y] Yes, enable all")
-      ),
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { dimColor: true }, "[N] Cancel")
-      )
-    )
+    DialogFrame,
+    { title, color: "warning", onCancel },
+    React.createElement(Text, null, "Enable all MCP servers for this project?"),
+    React.createElement(Text, { dimColor: true }, "This can be changed later in settings."),
+    React.createElement(OptionSelector, { options, onChange: (v) => v === "yes" ? onConfirm() : onCancel(), onCancel })
   );
 }
 
@@ -434,43 +391,24 @@ export function UpdateCheckDialog({
   onUpdate: () => void;
   onSkip: () => void;
 }): React.ReactElement {
+  const options = [
+    { label: React.createElement(Text, null, "Update now"), value: "yes" },
+    { label: React.createElement(Text, null, "Skip this version"), value: "no" },
+  ];
+
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
+    DialogFrame,
+    { title: "Update Available", color: "background", onCancel: onSkip },
+
     React.createElement(
       Box,
-      { marginBottom: 1 },
-      React.createElement(Text, { bold: true, color: "cyan" }, "Update Available")
+      { flexDirection: "column", gap: 1 },
+      React.createElement(Text, null, `Current: ${updateInfo.currentVersion}`),
+      React.createElement(Text, null, `Latest:  ${updateInfo.latestVersion}`),
+      React.createElement(Text, { dimColor: true }, `Run: ${updateInfo.updateCommand}`)
     ),
-    React.createElement(
-      Box,
-      { flexDirection: "column", marginY: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, null, `Current: ${updateInfo.currentVersion}`),
-        React.createElement(Text, null, `Latest:  ${updateInfo.latestVersion}`)
-      ),
-      React.createElement(
-        Box,
-        { marginTop: 1 },
-        React.createElement(Text, { dimColor: true }, `Run: ${updateInfo.updateCommand}`)
-      )
-    ),
-    React.createElement(
-      Box,
-      { flexDirection: "column" },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: "green" }, "[Y] Update now")
-      ),
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { dimColor: true }, "[N] Skip this version")
-      )
-    )
+
+    React.createElement(OptionSelector, { options, onChange: (v) => v === "yes" ? onUpdate() : onSkip(), onCancel: onSkip })
   );
 }
 

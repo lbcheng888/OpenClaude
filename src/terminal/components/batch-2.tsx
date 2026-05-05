@@ -12,7 +12,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Box, Text, useInput } from "ink";
+import { Box, Text, useInput } from "@anthropic/ink";
 
 // ============================================================
 // Z#146 EGK — Vim Mode Handler

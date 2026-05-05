@@ -11,7 +11,7 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Box, Text } from "ink";
+import { Box, Text } from "@anthropic/ink";
 
 // ============================================================
 // Z#087 YW3 — Notebook Cell Edit View
@@ -297,8 +297,18 @@ export function FeedbackSurveyWidget({
 }
 
 // ============================================================
-// Z#008 ef3 — Config Error Dialog
+// Z#008 ef3 — Config Error Dialog (1:1 from binary)
 // ============================================================
+// Binary structure:
+//   Z6 (title:"Configuration Error", color:"error", onCancel:onExit)
+//     B (flexDirection:"column", gap:1)
+//       v: "The configuration file at " + v(bold) filePath + " contains invalid JSON."
+//       v: errorDescription
+//     B (flexDirection:"column")
+//       v(bold): "Choose an option:"
+//       C6 (options: [{label:"Exit and fix manually","exit"},{label:"Reset with default configuration","reset"}], onChange:$, onCancel:onExit)
+
+import { DialogFrame, OptionSelector } from "./wrappers.js";
 
 interface ConfigErrorProps {
   filePath: string;
@@ -310,60 +320,40 @@ interface ConfigErrorProps {
 export function ConfigErrorDialog({ filePath, errorDescription, onExit, onReset }: ConfigErrorProps): React.ReactElement {
   const [selected, setSelected] = useState<"exit" | "reset">("exit");
 
+  const options = [
+    { label: React.createElement(Text, null, "Exit and fix manually"), value: "exit" },
+    { label: React.createElement(Text, null, "Reset with default configuration"), value: "reset" },
+  ];
+
+  const handleChange = (value: string) => {
+    if (value === "exit") onExit();
+    else onReset();
+  };
+
   return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    // Error header
-    React.createElement(
-      Box,
-      { marginBottom: 1 },
-      React.createElement(Text, { bold: true, color: "red" as any }, "Configuration Error")
-    ),
+    DialogFrame,
+    { title: "Configuration Error", color: "error", onCancel: onExit },
 
-    // Description
+    // Error description block (1:1 binary: B flexDirection:column gap:1)
     React.createElement(
       Box,
-      { flexDirection: "column", marginBottom: 1 },
+      { flexDirection: "column", gap: 1 },
       React.createElement(
-        Box,
+        Text,
         null,
-        React.createElement(
-          Text,
-          null,
-          "The configuration file at ",
-          React.createElement(Text, { bold: true }, filePath),
-          " contains invalid JSON."
-        )
+        "The configuration file at ",
+        React.createElement(Text, { bold: true }, filePath),
+        " contains invalid JSON."
       ),
-      errorDescription && React.createElement(
-        Box,
-        { marginTop: 1 },
-        React.createElement(Text, { dimColor: true }, errorDescription)
-      )
+      errorDescription && React.createElement(Text, null, errorDescription)
     ),
 
-    // Options
+    // Options block (1:1 binary: B flexDirection:column)
     React.createElement(
       Box,
-      { flexDirection: "column", marginBottom: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: selected === "exit" ? "red" : undefined }, selected === "exit" ? "❯ " : "  "),
-        React.createElement(Text, null, "[E] Exit and fix the file manually")
-      ),
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, { color: selected === "reset" ? "yellow" : undefined }, selected === "reset" ? "❯ " : "  "),
-        React.createElement(Text, null, "[R] Reset to default configuration")
-      )
-    ),
-
-    React.createElement(
-      Box,
-      null,
-      React.createElement(Text, { dimColor: true }, "Enter to confirm · Tab to switch")
+      { flexDirection: "column" },
+      React.createElement(Text, { bold: true }, "Choose an option:"),
+      React.createElement(OptionSelector, { options, onChange: handleChange, onCancel: onExit })
     )
   );
 }

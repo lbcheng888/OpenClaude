@@ -14,6 +14,41 @@ export interface ContentBlock {
   input?: Record<string, unknown>;
 }
 
+export type ApiMessageContent =
+  | string
+  | Array<
+      | { type: "text"; text: string }
+      | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
+      | { type: "tool_result"; tool_use_id: string; content: string; is_error?: boolean }
+    >;
+
+export type ApiMessage = {
+  role: "user" | "assistant";
+  content: ApiMessageContent;
+};
+
+export type TextContentBlock = { type: "text"; text: string };
+export type ToolUseContentBlock = {
+  type: "tool_use";
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+};
+export type ToolResultContentBlock = {
+  type: "tool_result";
+  tool_use_id: string;
+  content: string;
+  is_error?: boolean;
+};
+export type AssistantContentBlock = TextContentBlock | ToolUseContentBlock;
+export type Usage = { input_tokens?: number; output_tokens?: number };
+export type ApiStreamEvent =
+  | { type: "text_delta"; index: number; text: string }
+  | { type: "tool_use"; index: number; tool: ToolUseContentBlock }
+  | { type: "message_delta"; stop_reason?: string | null; usage?: Usage }
+  | { type: "message_stop" }
+  | { type: "error"; error: string };
+
 export interface ApiResponse {
   content: ContentBlock[];
   usage?: { input_tokens: number; output_tokens: number };
@@ -28,7 +63,7 @@ export function getApiConfig(): ApiConfig | null {
 }
 
 export async function sendMessage(
-  messages: { role: string; content: string }[],
+  messages: ApiMessage[],
   system?: string,
   tools?: ToolDef[],
   maxTokens = 4096
@@ -78,11 +113,12 @@ export async function sendMessage(
 
 // Streaming API call
 export async function* streamMessage(
-  messages: { role: string; content: string }[],
+  messages: ApiMessage[],
   system?: string,
   tools?: ToolDef[],
-  maxTokens = 4096
-): AsyncGenerator<{ type: "text_delta" | "tool_use" | "usage" | "error"; text?: string; tool?: { id: string; name: string; input: Record<string, unknown> }; usage?: { input_tokens: number; output_tokens: number }; error?: string }> {
+  maxTokens = 4096,
+  signal?: AbortSignal
+): AsyncGenerator<ApiStreamEvent> {
   const cfg = getApiConfig();
   if (!cfg) { yield { type: "error", error: "No API credentials" }; return; }
 
@@ -95,6 +131,7 @@ export async function* streamMessage(
   if (system) body.system = system;
   if (tools && tools.length > 0) body.tools = tools;
 
+  const requestSignal = createRequestSignal(signal, 120000);
   try {
     const res = await fetch(`${cfg.baseUrl}/v1/messages`, {
       method: "POST",
@@ -104,7 +141,7 @@ export async function* streamMessage(
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(120000),
+      signal: requestSignal.signal,
     });
 
     if (!res.ok) {
@@ -117,7 +154,11 @@ export async function* streamMessage(
 
     const decoder = new TextDecoder();
     let buffer = "";
-    let currentTool: any = null;
+    const currentTools = new Map<number, {
+      id: string;
+      name: string;
+      inputJson: string;
+    }>();
 
     while (true) {
       const { done, value } = await reader.read();
@@ -133,49 +174,73 @@ export async function* streamMessage(
         const data = line.slice(6);
         if (data === "[DONE]") return;
 
-        try {
-          const event = JSON.parse(data);
+        const event = JSON.parse(data);
+        const index = typeof event.index === "number" ? event.index : 0;
 
-          switch (event.type) {
-            case "content_block_start":
-              if (event.content_block?.type === "tool_use") {
-                currentTool = {
-                  id: event.content_block.id,
-                  name: event.content_block.name,
-                  input: {},
-                };
-              }
-              break;
+        switch (event.type) {
+          case "content_block_start":
+            if (event.content_block?.type === "tool_use") {
+              currentTools.set(index, {
+                id: String(event.content_block.id),
+                name: String(event.content_block.name),
+                inputJson: "",
+              });
+            }
+            break;
 
-            case "content_block_delta":
-              if (event.delta?.type === "text_delta") {
-                yield { type: "text_delta", text: event.delta.text };
-              } else if (event.delta?.type === "input_json_delta" && currentTool) {
-                currentTool.input_json = (currentTool.input_json || "") + event.delta.partial_json;
-              }
-              break;
+          case "content_block_delta":
+            if (event.delta?.type === "text_delta") {
+              yield { type: "text_delta", index, text: String(event.delta.text || "") };
+            } else if (event.delta?.type === "input_json_delta" && currentTools.has(index)) {
+              const currentTool = currentTools.get(index)!;
+              currentTool.inputJson += String(event.delta.partial_json || "");
+            }
+            break;
 
-            case "content_block_stop":
-              if (currentTool) {
-                try {
-                  currentTool.input = JSON.parse(currentTool.input_json || "{}");
-                } catch {}
-                yield { type: "tool_use", tool: currentTool };
-                currentTool = null;
-              }
-              break;
-
-            case "message_delta":
-              if (event.usage) {
-                yield { type: "usage", usage: event.usage };
-              }
-              break;
+          case "content_block_stop": {
+            const currentTool = currentTools.get(index);
+            if (currentTool) {
+              yield {
+                type: "tool_use",
+                index,
+                tool: {
+                  type: "tool_use",
+                  id: currentTool.id,
+                  name: currentTool.name,
+                  input: JSON.parse(currentTool.inputJson || "{}"),
+                },
+              };
+              currentTools.delete(index);
+            }
+            break;
           }
-        } catch {}
+
+          case "message_delta":
+            yield {
+              type: "message_delta",
+              stop_reason: event.delta?.stop_reason ?? undefined,
+              usage: event.usage,
+            };
+            break;
+
+          case "message_stop":
+            yield { type: "message_stop" };
+            break;
+
+          case "error":
+            yield { type: "error", error: event.error?.message || event.error?.type || "API stream error" };
+            break;
+        }
       }
     }
   } catch (e: any) {
+    if (requestSignal.signal.aborted) {
+      yield { type: "error", error: "Interrupted" };
+      return;
+    }
     yield { type: "error", error: e.message };
+  } finally {
+    requestSignal.cleanup();
   }
 }
 
@@ -184,7 +249,35 @@ export interface ToolDef {
   description: string;
   input_schema: {
     type: "object";
-    properties: Record<string, { type: string; description: string }>;
+    properties: Record<string, unknown>;
     required?: string[];
+  };
+}
+
+function createRequestSignal(signal: AbortSignal | undefined, timeoutMs: number): {
+  signal: AbortSignal;
+  cleanup: () => void;
+} {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    controller.abort(new Error(`Request timed out after ${timeoutMs}ms`));
+  }, timeoutMs);
+
+  const abortFromParent = (): void => {
+    controller.abort(signal?.reason ?? new Error("Interrupted"));
+  };
+
+  if (signal?.aborted) {
+    abortFromParent();
+  } else {
+    signal?.addEventListener("abort", abortFromParent, { once: true });
+  }
+
+  return {
+    signal: controller.signal,
+    cleanup: () => {
+      clearTimeout(timeout);
+      signal?.removeEventListener("abort", abortFromParent);
+    },
   };
 }
