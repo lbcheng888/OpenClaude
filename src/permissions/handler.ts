@@ -1,9 +1,12 @@
 // Permission system (1:1 from binary)
 import shellQuote from "shell-quote";
+import { existsSync, realpathSync } from "node:fs";
+import { relative, resolve } from "node:path";
+import { homedir } from "node:os";
 import { readClaudeSettings } from "../config/claude-settings.js";
 
 export type PermissionBehavior = "allow" | "deny" | "ask";
-export type PermissionMode = "default" | "acceptEdits" | "plan" | "bypassPermissions" | "dontAsk";
+export type PermissionMode = "default" | "acceptEdits" | "plan" | "auto" | "bypassPermissions" | "dontAsk";
 
 export interface PermissionResult {
   behavior: PermissionBehavior;
@@ -129,12 +132,24 @@ function matchRule(
   const trimmedRule = rule.trim();
 
   const parsed = parsePermissionRule(trimmedRule);
+
+  // MCP tool matching
+  if (isMCPTool(toolName)) {
+    if (parsed.toolName.startsWith(MCP_TOOL_PREFIX)) {
+      return matchMCPRule(parsed.toolName, parsed.ruleContent, toolName);
+    }
+    // Non-MCP rules can match MCP tools by exact name
+    if (parsed.toolName !== toolName) return false;
+    return true;
+  }
+
+  // Regular tool matching
   if (parsed.toolName !== toolName) return false;
   if (!parsed.ruleContent) return true;
   if (toolName === "Bash") {
     return matchBashRule(parsed.ruleContent, String(input.command || ""), behavior, { includeSubcommands: true });
   }
-  return matchGlob(parsed.ruleContent, getToolMatchValue(toolName, input));
+  return getToolMatchValues(toolName, input).some(value => matchGlob(parsed.ruleContent!, value));
 }
 
 function bashCommandAllowedByRules(rules: string[], input: Record<string, unknown>): boolean {
@@ -158,14 +173,50 @@ function bashCommandAllowedByRules(rules: string[], input: Record<string, unknow
   );
 }
 
-function getToolMatchValue(toolName: string, input: Record<string, unknown>): string {
-  if (toolName === "Bash") return String(input.command || "");
+function getToolMatchValues(toolName: string, input: Record<string, unknown>): string[] {
+  if (toolName === "Bash") return [String(input.command || "")];
   if (toolName === "Read" || toolName === "Write" || toolName === "Edit" || toolName === "MultiEdit") {
-    return String(input.file_path || "");
+    return getPathMatchValues(String(input.file_path || ""));
   }
-  if (toolName === "Grep" || toolName === "Glob") return String(input.pattern || "");
-  if (toolName === "LS") return String(input.path || "");
-  return JSON.stringify(input);
+  if (toolName === "Grep" || toolName === "Glob") return [String(input.pattern || "")];
+  if (toolName === "LS") return getPathMatchValues(String(input.path || ""));
+  return [JSON.stringify(input)];
+}
+
+function getToolMatchValue(toolName: string, input: Record<string, unknown>): string {
+  return getToolMatchValues(toolName, input)[0] || "";
+}
+
+function getPathMatchValues(value: string): string[] {
+  const trimmed = value.trim();
+  if (!trimmed) return [trimmed];
+  const absolute = resolve(expandHome(trimmed));
+  const values = [
+    trimmed,
+    trimmed.replace(/\\/g, "/"),
+    absolute,
+    absolute.replace(/\\/g, "/"),
+    relative(process.cwd(), absolute).replace(/\\/g, "/"),
+    formatHomePath(absolute),
+  ];
+  if (existsSync(absolute)) {
+    const real = realpathSync(absolute);
+    values.push(real, real.replace(/\\/g, "/"), relative(process.cwd(), real).replace(/\\/g, "/"), formatHomePath(real));
+  }
+  return uniqueNonEmpty(values);
+}
+
+function expandHome(value: string): string {
+  if (value === "~") return homedir();
+  if (value.startsWith("~/")) return `${homedir()}${value.slice(1)}`;
+  return value;
+}
+
+function formatHomePath(value: string): string {
+  const home = homedir();
+  if (value === home) return "~";
+  if (value.startsWith(`${home}/`)) return `~${value.slice(home.length)}`;
+  return value;
 }
 
 function matchGlob(pattern: string, value: string): boolean {
@@ -526,11 +577,40 @@ function unescapeRuleContent(value: string): string {
     .replace(/\\\\/gu, "\\");
 }
 
+const MCP_TOOL_PREFIX = "mcp__";
+
 function normalizeLegacyToolName(value: string): string {
   if (value === "Task") return "Agent";
   if (value === "KillShell") return "KillBash";
   if (value === "BashOutputTool" || value === "AgentOutputTool") return "BashOutput";
   return value;
+}
+
+function isMCPTool(toolName: string): boolean {
+  return toolName.startsWith(MCP_TOOL_PREFIX);
+}
+
+function parseMCPToolName(toolName: string): { server: string; tool: string } | null {
+  if (!isMCPTool(toolName)) return null;
+  const parts = toolName.slice(MCP_TOOL_PREFIX.length).split("__");
+  if (parts.length < 2) return null;
+  return { server: parts[0]!, tool: parts.slice(1).join("__") };
+}
+
+function matchMCPRule(ruleToolName: string, ruleContent: string | undefined, toolName: string): boolean {
+  const requestParts = parseMCPToolName(toolName);
+  if (!requestParts) return false;
+
+  // Rule like "mcp__server" matches any tool from that server
+  if (!ruleContent) {
+    const ruleServer = ruleToolName.slice(MCP_TOOL_PREFIX.length);
+    return ruleServer === requestParts.server;
+  }
+
+  // Rule like "mcp__server(tool_pattern)" matches specific tool
+  const ruleServer = ruleToolName.slice(MCP_TOOL_PREFIX.length);
+  if (ruleServer !== requestParts.server) return false;
+  return matchGlob(ruleContent, requestParts.tool);
 }
 
 function getSessionRuleKey(toolName: string, input: Record<string, unknown>): string {

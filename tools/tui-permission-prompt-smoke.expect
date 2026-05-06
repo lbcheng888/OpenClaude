@@ -1,0 +1,89 @@
+#!/usr/bin/env expect
+set timeout 15
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-permission-smoke"
+file delete -force $workdir
+file mkdir $workdir
+cd $workdir
+
+set server_script {
+const http = require("http");
+
+function writeEvent(res, event) {
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+function respondWithText(res, text) {
+  writeEvent(res, { type: "content_block_start", index: 0, content_block: { type: "text", text: "" } });
+  writeEvent(res, { type: "content_block_delta", index: 0, delta: { type: "text_delta", text } });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, { type: "message_delta", delta: { stop_reason: "end_turn" }, usage: { input_tokens: 9, output_tokens: 2 } });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+function respondWithBash(res) {
+  writeEvent(res, { type: "content_block_start", index: 0, content_block: { type: "tool_use", id: "toolu_permission", name: "Bash" } });
+  writeEvent(res, { type: "content_block_delta", index: 0, delta: { type: "input_json_delta", partial_json: "{\"command\":\"echo permission-ok\"}" } });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, { type: "message_delta", delta: { stop_reason: "tool_use" }, usage: { input_tokens: 10, output_tokens: 10 } });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") { res.writeHead(404).end(); return; }
+  let body = "";
+  req.on("data", chunk => { body += chunk; });
+  req.on("end", () => {
+    const payload = JSON.parse(body);
+    const messages = JSON.stringify(payload.messages || []);
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+    if (messages.includes('"tool_result"')) {
+      respondWithText(res, "Done.");
+      return;
+    }
+    respondWithBash(res);
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+}
+
+spawn -noecho node -e $server_script
+set server_id $spawn_id
+expect -i $server_id -re {PORT ([0-9]+)}
+set port $expect_out(1,string)
+
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-permission-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-permission-home/.claude"
+set env(ANTHROPIC_BASE_URL) "http://127.0.0.1:$port"
+set env(ANTHROPIC_AUTH_TOKEN) "test-token"
+file mkdir $env(CLAUDE_CONFIG_DIR)
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(DEEPSEEK_API_KEY)}
+catch {unset env(OPENAI_API_KEY)}
+
+spawn -noecho node [file join $repo dist index.js] "run bash"
+expect "Claude Code"
+after 100
+send "\033\[?1;2c"
+expect "Allow Bash?"
+send "\033\[?1;2c"
+after 50
+send "a"
+expect "permission-ok"
+expect "Done."
+send "\003"
+expect "Press Ctrl-C again to exit"
+send "\003"
+expect eof

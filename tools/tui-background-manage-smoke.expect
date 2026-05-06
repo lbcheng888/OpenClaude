@@ -109,22 +109,14 @@ set app_id $spawn_id
 expect -i $app_id "Backgrounded agent"
 send -i $app_id "\033\[B"
 expect -i $app_id "Background tasks"
-expect -i $app_id "local_agent_1"
+expect -i $app_id "Slow subagent"
 expect -i $app_id "running"
-send -i $app_id "\033"
-after 100
-send_slow $app_id "/tasks"
-after 100
-send -i $app_id "\r"
-expect -i $app_id "Background tasks"
-expect -i $app_id "local_agent_1"
-send -i $app_id "\r"
-expect -i $app_id "Output"
-expect -i $app_id "not_ready"
-send -i $app_id "s"
+after 1500
+send -i $app_id "\170"
 expect -i $app_id "Stop"
-expect -i $app_id "Stopped background agent task: local_agent_1"
+expect -i $app_id "Slow subagent"
+expect -i $app_id "stopped"
 
-send -i $app_id "\003"
+send -i $app_id "\003\003\003"
 expect -i $app_id eof
 catch {exec kill [exp_pid -i $server_id]}

@@ -101,6 +101,108 @@ describe("Tengu agent loop", () => {
     });
   });
 
+  test("accepts user image content blocks as first-class API input", async () => {
+    const requests: ApiMessage[][] = [];
+    const session = new TenguSession({
+      tools,
+      stream: history => {
+        requests.push(history);
+        return fromEvents([
+          { type: "text_delta", index: 0, text: "I can see it." },
+          { type: "message_delta", stop_reason: "end_turn" },
+          { type: "message_stop" },
+        ]);
+      },
+      executeTool: async () => ({ content: "" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    await session.runUserTurn([
+      { type: "text", text: "describe" },
+      { type: "image", source: { type: "base64", media_type: "image/png", data: "iVBORw0KGgo=" }, id: 1 },
+    ]);
+
+    expect(requests[0]).toEqual([
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "describe" },
+          { type: "image", source: { type: "base64", media_type: "image/png", data: "iVBORw0KGgo=" }, id: 1 },
+        ],
+      },
+    ]);
+  });
+
+  test("does not treat tool_use stop_reason without a tool block as a failed turn", async () => {
+    let executed = false;
+    const session = new TenguSession({
+      tools,
+      stream: () => fromEvents([
+        { type: "text_delta", index: 0, text: "I can answer directly." },
+        { type: "message_delta", stop_reason: "tool_use" },
+        { type: "message_stop" },
+      ]),
+      executeTool: async () => {
+        executed = true;
+        return { content: "" };
+      },
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    const result = await session.runUserTurn("answer directly");
+
+    expect(result.text).toBe("I can answer directly.");
+    expect(result.stopReason).toBe("tool_use");
+    expect(executed).toBe(false);
+  });
+
+  test("retries malformed upstream tool-call turns without duplicating the user prompt", async () => {
+    for (const apiError of [
+      "API Error: Upstream model promised tool work but emitted no tool call.",
+      "API Error: Upstream model emitted invalid tool call syntax.",
+    ]) {
+      const requests: ApiMessage[][] = [];
+      const notifications: string[] = [];
+      let calls = 0;
+      const session = new TenguSession({
+        tools,
+        stream: history => {
+          requests.push(history);
+          calls++;
+          if (calls === 1) {
+            return fromEvents([{ type: "error", error: apiError }]);
+          }
+          return fromEvents([
+            { type: "text_delta", index: 0, text: "Recovered." },
+            { type: "message_delta", stop_reason: "end_turn" },
+            { type: "message_stop" },
+          ]);
+        },
+        executeTool: async () => ({ content: "" }),
+        checkPermission: async () => ({ behavior: "allow" }),
+        runHooks: async event => {
+          if (event === "StopFailure") notifications.push("stop-failure");
+          return { blocked: false, additionalContext: [], notifications: [] };
+        },
+        onEvent: event => {
+          if (event.type === "notification") notifications.push(event.text);
+        },
+      });
+
+      const result = await session.runUserTurn("inspect the project");
+
+      expect(result.text).toBe("Recovered.");
+      expect(calls).toBe(2);
+      expect(requests[0]).toEqual([{ role: "user", content: "inspect the project" }]);
+      expect(requests[1]).toEqual([{ role: "user", content: "inspect the project" }]);
+      expect(session.history).toEqual([
+        { role: "user", content: "inspect the project" },
+        { role: "assistant", content: [{ type: "text", text: "Recovered." }] },
+      ]);
+      expect(notifications).toEqual([]);
+    }
+  });
+
   test("tool execution can emit notification events into the TUI loop", async () => {
     const notifications: string[] = [];
     const session = new TenguSession({
@@ -135,6 +237,78 @@ describe("Tengu agent loop", () => {
     await session.runUserTurn("run tests");
 
     expect(notifications).toEqual(["Background bash completed: local_bash_1"]);
+  });
+
+  test("API retry stream events are surfaced as official retry notifications", async () => {
+    const notifications: string[] = [];
+    const previousUserType = process.env.USER_TYPE;
+    process.env.USER_TYPE = "external";
+    try {
+      const session = new TenguSession({
+        tools,
+        stream: () => fromEvents([
+          {
+            type: "api_retry",
+            error: "API Error: Unable to connect to API (ECONNREFUSED)",
+            retryInMs: 1_000,
+            retryAttempt: 4,
+            maxRetries: 10,
+          },
+          { type: "text_delta", index: 0, text: "Recovered." },
+          { type: "message_delta", stop_reason: "end_turn" },
+          { type: "message_stop" },
+        ]),
+        executeTool: async () => ({ content: "" }),
+        checkPermission: async () => ({ behavior: "allow" }),
+        onEvent: event => {
+          if (event.type === "notification") notifications.push(event.text);
+        },
+      });
+
+      const result = await session.runUserTurn("hello");
+
+      expect(result.text).toBe("Recovered.");
+      expect(notifications).toEqual([
+        "API Error: Unable to connect to API (ECONNREFUSED)\nRetrying in 1 second... (attempt 4/10)",
+      ]);
+    } finally {
+      restoreTestEnv("USER_TYPE", previousUserType);
+    }
+  });
+
+  test("API retry stream events hide early retries for non-ant users", async () => {
+    const notifications: string[] = [];
+    const previousUserType = process.env.USER_TYPE;
+    delete process.env.USER_TYPE;
+    try {
+      const session = new TenguSession({
+        tools,
+        stream: () => fromEvents([
+          {
+            type: "api_retry",
+            error: "API Error: Unable to connect to API (ECONNREFUSED)",
+            retryInMs: 1_000,
+            retryAttempt: 3,
+            maxRetries: 10,
+          },
+          { type: "text_delta", index: 0, text: "Recovered." },
+          { type: "message_delta", stop_reason: "end_turn" },
+          { type: "message_stop" },
+        ]),
+        executeTool: async () => ({ content: "" }),
+        checkPermission: async () => ({ behavior: "allow" }),
+        onEvent: event => {
+          if (event.type === "notification") notifications.push(event.text);
+        },
+      });
+
+      const result = await session.runUserTurn("hello");
+
+      expect(result.text).toBe("Recovered.");
+      expect(notifications).toEqual([]);
+    } finally {
+      restoreTestEnv("USER_TYPE", previousUserType);
+    }
   });
 
   test("preserves multiple tool_result blocks in tool_use order", async () => {
@@ -232,6 +406,109 @@ describe("Tengu agent loop", () => {
         { type: "tool_result", tool_use_id: "toolu_b", content: "b.ts" },
       ],
     });
+  });
+
+  test("emits visible tool_result before PostToolUse hook finishes", async () => {
+    let releasePostHook: (() => void) | undefined;
+    let postHookReleased = false;
+    let visibleResultEmitted = false;
+    const requests: ApiMessage[][] = [];
+    const session = new TenguSession({
+      tools,
+      stream: history => {
+        requests.push(history);
+        return fromEvents(
+          requests.length === 1
+            ? [
+                {
+                  type: "tool_use",
+                  index: 0,
+                  tool: { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } },
+                },
+                { type: "message_delta", stop_reason: "tool_use" },
+                { type: "message_stop" },
+              ]
+            : [
+                { type: "text_delta", index: 0, text: "done" },
+                { type: "message_delta", stop_reason: "end_turn" },
+                { type: "message_stop" },
+              ],
+        );
+      },
+      executeTool: async () => ({ content: "file" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+      runHooks: async event => {
+        if (event === "PostToolUse") {
+          await new Promise<void>(resolve => {
+            releasePostHook = () => {
+              postHookReleased = true;
+              resolve();
+            };
+          });
+          return { blocked: false, additionalContext: ["hook context"], notifications: [] };
+        }
+        return { blocked: false, additionalContext: [], notifications: [] };
+      },
+      onEvent: event => {
+        if (event.type === "tool_result" && event.tool.id === "toolu_read") {
+          visibleResultEmitted = true;
+          expect(postHookReleased).toBe(false);
+          expect(event.result.content).toBe("file");
+        }
+      },
+    });
+
+    const pending = session.runUserTurn("read");
+    await waitUntil(() => visibleResultEmitted);
+    expect(releasePostHook).toBeDefined();
+    releasePostHook?.();
+    await pending;
+
+    expect(requests[1][2]).toEqual({
+      role: "user",
+      content: [
+        {
+          type: "tool_result",
+          tool_use_id: "toolu_read",
+          content: "file\n\n<hook_context>hook context</hook_context>",
+        },
+      ],
+    });
+  });
+
+  test("default loop budget supports deep tool workflows before failing", async () => {
+    let requestCount = 0;
+    const session = new TenguSession({
+      tools,
+      stream: () => {
+        requestCount++;
+        const toolUseId = `toolu_deep_${requestCount}`;
+        return fromEvents(
+          requestCount <= 12
+            ? [
+                {
+                  type: "tool_use",
+                  index: 0,
+                  tool: { type: "tool_use", id: toolUseId, name: "Read", input: { file_path: `${requestCount}.ts` } },
+                },
+                { type: "message_delta", stop_reason: "tool_use" },
+                { type: "message_stop" },
+              ]
+            : [
+                { type: "text_delta", index: 0, text: "done after deep workflow" },
+                { type: "message_delta", stop_reason: "end_turn" },
+                { type: "message_stop" },
+              ],
+        );
+      },
+      executeTool: async (_name, input) => ({ content: `read ${input.file_path}` }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    const result = await session.runUserTurn("inspect broadly");
+
+    expect(result.text).toBe("done after deep workflow");
+    expect(requestCount).toBe(13);
   });
 
   test("emits official spinner mode transitions from stream and tool execution", async () => {
@@ -351,6 +628,67 @@ describe("Tengu agent loop", () => {
     });
   });
 
+  test("unknown tools return official fallback without hooks, permissions, or execution", async () => {
+    let executed = false;
+    let permissionChecks = 0;
+    const hookEvents: string[] = [];
+    const requests: ApiMessage[][] = [];
+    const session = new TenguSession({
+      tools,
+      stream: history => {
+        requests.push(history);
+        return fromEvents(
+          requests.length === 1
+            ? [
+                {
+                  type: "tool_use",
+                  index: 0,
+                  tool: { type: "tool_use", id: "toolu_missing", name: "MissingTool", input: { value: true } },
+                },
+                { type: "message_delta", stop_reason: "tool_use" },
+                { type: "message_stop" },
+              ]
+            : [
+                { type: "text_delta", index: 0, text: "handled" },
+                { type: "message_delta", stop_reason: "end_turn" },
+                { type: "message_stop" },
+              ],
+        );
+      },
+      executeTool: async () => {
+        executed = true;
+        return { content: "should not run" };
+      },
+      checkPermission: async () => {
+        permissionChecks++;
+        return { behavior: "allow" };
+      },
+      runHooks: async event => {
+        hookEvents.push(event);
+        return { blocked: false, additionalContext: [], notifications: [] };
+      },
+    });
+
+    await session.runUserTurn("use missing tool");
+
+    expect(executed).toBe(false);
+    expect(permissionChecks).toBe(0);
+    expect(hookEvents).not.toContain("PreToolUse");
+    expect(hookEvents).not.toContain("PermissionRequest");
+    expect(hookEvents).not.toContain("PostToolUseFailure");
+    expect(requests[1][2]).toEqual({
+      role: "user",
+      content: [
+        {
+          type: "tool_result",
+          tool_use_id: "toolu_missing",
+          content: "Error: Tool 'MissingTool' not found",
+          is_error: true,
+        },
+      ],
+    });
+  });
+
   test("rejects duplicate tool_use ids", async () => {
     const session = new TenguSession({
       tools,
@@ -409,6 +747,32 @@ describe("Tengu agent loop", () => {
     session.cancel();
 
     await expect(run).rejects.toThrow("Interrupted");
+    expect(streamSignal?.aborted).toBe(true);
+  });
+
+  test("external abort signal cancels a running turn with the original reason", async () => {
+    let streamSignal: AbortSignal | undefined;
+    let streamStarted!: () => void;
+    const started = new Promise<void>(resolve => {
+      streamStarted = resolve;
+    });
+    const controller = new AbortController();
+
+    const session = new TenguSession({
+      tools,
+      stream: (_history, _tools, signal) => {
+        streamSignal = signal;
+        return waitForAbort(signal!, streamStarted);
+      },
+      executeTool: async () => ({ content: "" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    const run = session.runUserTurn("cancel child", controller.signal);
+    await started;
+    controller.abort(new Error("Stopped background agent"));
+
+    await expect(run).rejects.toThrow("Stopped background agent");
     expect(streamSignal?.aborted).toBe(true);
   });
 
@@ -852,6 +1216,16 @@ async function* fromEvents(events: ApiStreamEvent[]): AsyncGenerator<ApiStreamEv
   }
 }
 
+async function waitUntil(predicate: () => boolean, timeoutMs = 500): Promise<void> {
+  const startedAt = Date.now();
+  while (!predicate()) {
+    if (Date.now() - startedAt > timeoutMs) {
+      throw new Error("Timed out waiting for condition");
+    }
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
+}
+
 async function* waitForAbort(signal: AbortSignal, onStart: () => void): AsyncGenerator<ApiStreamEvent> {
   onStart();
   await new Promise<void>(resolve => {
@@ -862,4 +1236,12 @@ async function* waitForAbort(signal: AbortSignal, onStart: () => void): AsyncGen
     signal.addEventListener("abort", () => resolve(), { once: true });
   });
   throw signal.reason;
+}
+
+function restoreTestEnv(key: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[key];
+    return;
+  }
+  process.env[key] = value;
 }

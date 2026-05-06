@@ -2,20 +2,32 @@
   "name": "claude-code-full",
   "version": "2.1.128",
   "type": "module",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "bun build --target=node --outdir=dist src/index.ts",
     "start": "node dist/index.js",
-    "test:tengu": "bun test src/agent/tengu.test.ts src/api/client.test.ts src/tools/registry.test.ts src/tools/diff.test.ts src/hooks/runner.test.ts src/config/claude-settings.test.ts src/permissions/handler.test.ts src/session/store.test.ts src/terminal/ansi.test.ts src/core/protocol.test.ts src/core/cost.test.ts",
+    "test:tengu": "bun test src/agent/tengu.test.ts src/api/client.test.ts src/tools/registry.test.ts src/tools/diff.test.ts src/hooks/runner.test.ts src/config/claude-settings.test.ts src/permissions/handler.test.ts src/session/store.test.ts src/terminal/ansi.test.ts src/terminal/markdown.test.ts src/terminal/image-paste.test.ts src/terminal/startup-screen.test.ts src/terminal/app.test.tsx src/core/protocol.test.ts src/core/cost.test.ts src/core/context.test.ts",
     "test:tui-smoke": "expect tools/tui-smoke.expect",
     "test:tui-input-smoke": "expect tools/tui-input-smoke.expect",
-    "test:tui-background-smoke": "expect tools/tui-background-manage-smoke.expect"
+    "test:tui-background-smoke": "expect tools/tui-background-manage-smoke.expect",
+    "test:tui-idle-exit": "expect tools/tui-idle-exit-smoke.expect",
+    "test:tui-interrupt": "expect tools/tui-interrupt-smoke.expect",
+    "test:tui-input-clears-exit": "expect tools/tui-input-clears-exit-smoke.expect",
+    "test:tui-startup-layout": "expect tools/tui-startup-layout-smoke.expect",
+    "test:tui-image-paste": "expect tools/tui-image-paste-smoke.expect",
+    "test:tui-permission": "expect tools/tui-permission-prompt-smoke.expect",
+    "test:tui-tool-render": "expect tools/tui-tool-render-smoke.expect"
   },
   "dependencies": {
     "@anthropic/ink": "workspace:*",
+    "ignore": "^7.0.5",
+    "marked": "^18.0.3",
     "react": "^19.0.0",
     "react-reconciler": "^0.33.0",
-    "shell-quote": "^1.8.3"
+    "shell-quote": "^1.8.3",
+    "yaml": "^2.8.4"
   },
   "devDependencies": {
     "@types/bun": "^1.3.13",

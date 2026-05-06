@@ -1,0 +1,36 @@
+#!/usr/bin/env expect
+set timeout 10
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-image-paste-smoke"
+file delete -force $workdir
+file mkdir $workdir
+
+set image_path [file join $workdir "sample paste.png"]
+set fh [open $image_path wb]
+puts -nonewline $fh [binary format H* "89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c020000000b4944415478da63fcff1f0003030200efbfa7db0000000049454e44ae426082"]
+close $fh
+
+cd $workdir
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-image-paste-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-image-paste-home/.claude"
+file mkdir $env(CLAUDE_CONFIG_DIR)
+catch {unset env(ANTHROPIC_AUTH_TOKEN)}
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_BASE_URL)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(DEEPSEEK_API_KEY)}
+catch {unset env(OPENAI_API_KEY)}
+
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
+expect "Claude Code v2.1.128"
+
+send "\033\[200~$image_path\033\[201~"
+expect -re {\[Image #1\]}
+send " describe\r"
+expect "No API credentials"
+send "\003"
+expect "Press Ctrl-C again to exit"
+send "\003"
+expect eof

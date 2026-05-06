@@ -1,0 +1,95 @@
+#!/usr/bin/expect -f
+# Request interrupt: SSE server that hangs, Ctrl+C interrupts request, then double Ctrl+C exits
+set timeout 12
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-interrupt-smoke"
+file mkdir $workdir
+cd $workdir
+
+# Start a local SSE server that sends message_start then hangs forever
+set server_script {
+const http = require("http");
+
+function writeEvent(res, event) {
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") {
+    res.writeHead(404).end();
+    return;
+  }
+
+  let body = "";
+  req.on("data", chunk => { body += chunk; });
+  req.on("end", () => {
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+
+    // Send message_start to trigger spinner, then hang forever
+    writeEvent(res, {
+      type: "message_start",
+      message: {
+        id: "msg_hanging",
+        type: "message",
+        role: "assistant",
+        model: "claude-sonnet-4-6",
+        content: [],
+        usage: { input_tokens: 1, output_tokens: 0 },
+      },
+    });
+    // Never send message_stop — connection stays open
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+}
+
+spawn -noecho node -e $server_script
+set server_id $spawn_id
+expect -i $server_id -re {PORT ([0-9]+)}
+set port $expect_out(1,string)
+
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-interrupt-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-interrupt-home/.claude"
+set env(ANTHROPIC_BASE_URL) "http://127.0.0.1:$port"
+set env(ANTHROPIC_AUTH_TOKEN) "test-token"
+file mkdir $env(CLAUDE_CONFIG_DIR)
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_HAIKU_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
+catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
+catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
+
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "hello"
+set app_id $spawn_id
+
+expect "Claude Code v2.1.128"
+
+# Wait for the SSE streaming to start (spinner visible)
+after 2000
+
+# First Ctrl+C: interrupt the request
+send -i $app_id "\003"
+expect -i $app_id "Request interrupted by user"
+
+after 500
+
+# Second Ctrl+C: show exit prompt
+send -i $app_id "\003"
+expect -i $app_id "Press Ctrl-C again to exit"
+
+# Third Ctrl+C: must exit
+send -i $app_id "\003"
+expect -i $app_id eof
+
+catch {exec kill [exp_pid -i $server_id]}

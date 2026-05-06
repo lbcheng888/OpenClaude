@@ -30,6 +30,8 @@ if (options.print || !process.stdin.isTTY) {
 const React = await import("react");
 const { wrappedRender } = await import("@anthropic/ink");
 const { ClaudeCodeTui } = await import("./terminal/app.js");
+const { refreshChangelogCache } = await import("./terminal/startup-screen.js");
+void refreshChangelogCache(version);
 const { waitUntilExit } = await wrappedRender(
   React.createElement(ClaudeCodeTui, {
     version,
@@ -39,7 +41,9 @@ const { waitUntilExit } = await wrappedRender(
     resumeSessionId: options.resumeSessionId,
     continueSession: options.continueSession,
     initialPermissionMode: options.permissionMode,
+    additionalDirectories: options.addDirs,
   }),
+  { exitOnCtrlC: false },
 );
 await waitUntilExit();
 
@@ -79,6 +83,7 @@ export type CliOptions = {
   bypassPermissions: boolean;
   model?: string;
   settingsPath?: string;
+  addDirs: string[];
   resumeSessionId?: string;
   continueSession: boolean;
   permissionMode?: "default" | "acceptEdits" | "plan" | "dontAsk" | "bypassPermissions";
@@ -89,6 +94,7 @@ function parseCliArgs(argv: string[]): CliOptions {
   const promptParts: string[] = [];
   let model: string | undefined;
   let settingsPath: string | undefined;
+  const addDirs: string[] = [];
   let resumeSessionId: string | undefined;
   let continueSession = false;
   let permissionMode: CliOptions["permissionMode"];
@@ -102,10 +108,11 @@ function parseCliArgs(argv: string[]): CliOptions {
       continue;
     }
 
-    if (arg === "--model" || arg === "--output-format" || arg === "--settings" || arg === "--permission-mode") {
+    if (arg === "--model" || arg === "--output-format" || arg === "--settings" || arg === "--permission-mode" || arg === "--add-dir") {
       if (arg === "--model") model = argv[i + 1];
       if (arg === "--settings") settingsPath = argv[i + 1];
       if (arg === "--permission-mode") permissionMode = parsePermissionMode(argv[i + 1]);
+      if (arg === "--add-dir" && argv[i + 1]) addDirs.push(argv[i + 1]);
       skipNext = true;
       continue;
     }
@@ -127,7 +134,6 @@ function parseCliArgs(argv: string[]): CliOptions {
     }
 
     if (
-      arg === "--add-dir" ||
       arg === "--agent" ||
       arg === "--append-system-prompt" ||
       arg === "--mcp-config"
@@ -143,6 +149,11 @@ function parseCliArgs(argv: string[]): CliOptions {
 
     if (arg.startsWith("--settings=")) {
       settingsPath = arg.slice("--settings=".length);
+      continue;
+    }
+
+    if (arg.startsWith("--add-dir=")) {
+      addDirs.push(arg.slice("--add-dir=".length));
       continue;
     }
 
@@ -169,6 +180,7 @@ function parseCliArgs(argv: string[]): CliOptions {
       argv.includes("--allow-dangerously-skip-permissions"),
     model,
     settingsPath,
+    addDirs,
     resumeSessionId,
     continueSession,
     permissionMode,

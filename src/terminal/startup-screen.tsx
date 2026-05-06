@@ -1,15 +1,17 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, sep } from "node:path";
+import { dirname, join, sep } from "node:path";
 import React from "react";
 import { Box, Text, color, stringWidth } from "@anthropic/ink";
 import { readClaudeSettingString } from "../config/claude-settings.js";
 
+export const CHANGELOG_URL = "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md";
+const RAW_CHANGELOG_URL = "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md";
 const LEFT_PANEL_MAX_WIDTH = 50;
 const BORDER_PADDING = 4;
 const CONTENT_PADDING = 2;
 const DIVIDER_WIDTH = 1;
-const MAX_RELEASE_NOTES = 3;
+const MAX_RELEASE_NOTES_SHOWN = 5;
 const PROMPT_EXAMPLES = [
   "fix lint errors",
   "fix typecheck errors",
@@ -35,6 +37,10 @@ export function StartupScreen({
   version: string;
   model: string;
 }): React.ReactElement {
+  React.useEffect(() => {
+    markReleaseNotesSeen(version);
+  }, [version]);
+
   const columns = Math.max(40, process.stdout.columns || 80);
   const theme = getThemeName();
   const layoutMode: LayoutMode = columns >= 70 ? "horizontal" : "compact";
@@ -201,13 +207,80 @@ function createStartupFeed(version: string): FeedConfig {
   };
 }
 
-function readRecentReleaseNotes(version: string): string[] {
-  const changelogPath = join(homedir(), ".claude", "cache", "changelog.md");
+export function readRecentReleaseNotes(version: string): string[] {
+  const changelogPath = getChangelogCachePath();
   if (!existsSync(changelogPath)) return [];
 
   const content = readFileSync(changelogPath, "utf8");
+  return getRecentReleaseNotes(version, readLastReleaseNotesSeen(), content);
+}
+
+export function readAllReleaseNotes(): Array<[string, string[]]> {
+  const changelogPath = getChangelogCachePath();
+  if (!existsSync(changelogPath)) return [];
+  return getAllReleaseNotes(readFileSync(changelogPath, "utf8"));
+}
+
+export async function refreshChangelogCache(currentVersion: string, timeoutMs = 5_000): Promise<boolean> {
+  const cachedChangelog = readCachedChangelog();
+  if (readLastReleaseNotesSeen() === currentVersion && cachedChangelog) return false;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(RAW_CHANGELOG_URL, { signal: controller.signal });
+    if (!response.ok) return false;
+    const content = await response.text();
+    if (!content || content === cachedChangelog) return false;
+    writeChangelogCache(content);
+    return true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function fetchReleaseNotesForCommand(timeoutMs = 500): Promise<Array<[string, string[]]>> {
+  await refreshChangelogCache("force-fetch-release-notes", timeoutMs);
+  return readAllReleaseNotes();
+}
+
+export function formatReleaseNotes(notes: Array<[string, string[]]>): string {
+  if (notes.length === 0) return `See the full changelog at: ${CHANGELOG_URL}`;
+  return notes
+    .map(([version, versionNotes]) => {
+      const bulletPoints = versionNotes.map(note => `· ${note}`).join("\n");
+      return `Version ${version}:\n${bulletPoints}`;
+    })
+    .join("\n\n");
+}
+
+export function getRecentReleaseNotes(
+  currentVersion: string,
+  previousVersion: string | null | undefined,
+  changelogContent: string,
+): string[] {
+  const releaseNotes = parseChangelog(changelogContent);
+  const current = coerceVersion(currentVersion);
+  const previous = previousVersion ? coerceVersion(previousVersion) : null;
+  if (previous && current && compareVersions(current, previous) <= 0) return [];
+
+  return Object.entries(releaseNotes)
+    .filter(([version]) => {
+      const parsed = coerceVersion(version);
+      if (!parsed) return false;
+      return !previous || compareVersions(parsed, previous) > 0;
+    })
+    .sort(([a], [b]) => compareVersionStrings(b, a))
+    .flatMap(([, notes]) => notes)
+    .filter(Boolean)
+    .slice(0, MAX_RELEASE_NOTES_SHOWN);
+}
+
+export function parseChangelog(content: string): Record<string, string[]> {
   const sections = content.split(/^## /gm).slice(1);
-  const parsed = sections.map(section => {
+  const releaseNotes: Record<string, string[]> = {};
+  for (const section of sections) {
     const lines = section.trim().split("\n");
     const sectionVersion = (lines[0] || "").split(" - ")[0]?.trim() || "";
     const notes = lines
@@ -215,12 +288,111 @@ function readRecentReleaseNotes(version: string): string[] {
       .filter(line => line.trim().startsWith("- "))
       .map(line => line.trim().slice(2).trim())
       .filter(Boolean);
-    return { version: sectionVersion, notes };
-  });
+    if (sectionVersion && notes.length > 0) {
+      releaseNotes[sectionVersion] = notes;
+    }
+  }
+  return releaseNotes;
+}
 
-  const exact = parsed.find(section => section.version === version);
-  const source = exact?.notes.length ? exact : parsed.find(section => section.notes.length > 0);
-  return source ? source.notes.slice(0, MAX_RELEASE_NOTES) : [];
+export function getAllReleaseNotes(changelogContent: string): Array<[string, string[]]> {
+  return Object.entries(parseChangelog(changelogContent))
+    .sort(([a], [b]) => compareVersionStrings(b, a))
+    .map(([version, notes]) => [version, notes.filter(Boolean)] as [string, string[]])
+    .filter(([, notes]) => notes.length > 0);
+}
+
+export function markReleaseNotesSeen(version: string): void {
+  if (!version) return;
+  const globalConfigPath = getGlobalConfigPath();
+  const parsed = readGlobalConfig(globalConfigPath);
+  if (parsed.lastReleaseNotesSeen === version) return;
+  writeJsonAtomically(globalConfigPath, { ...parsed, lastReleaseNotesSeen: version });
+}
+
+function readCachedChangelog(): string {
+  const changelogPath = getChangelogCachePath();
+  if (!existsSync(changelogPath)) return "";
+  try {
+    return readFileSync(changelogPath, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function writeChangelogCache(content: string): void {
+  const changelogPath = getChangelogCachePath();
+  writeTextAtomically(changelogPath, content);
+}
+
+function readLastReleaseNotesSeen(): string | null {
+  const globalConfigPath = getGlobalConfigPath();
+  if (!existsSync(globalConfigPath)) return null;
+  try {
+    const parsed = JSON.parse(readFileSync(globalConfigPath, "utf8")) as { lastReleaseNotesSeen?: unknown };
+    return typeof parsed.lastReleaseNotesSeen === "string" ? parsed.lastReleaseNotesSeen : null;
+  } catch {
+    return null;
+  }
+}
+
+function readGlobalConfig(globalConfigPath: string): Record<string, unknown> & { lastReleaseNotesSeen?: string } {
+  if (!existsSync(globalConfigPath)) return {};
+  try {
+    const parsed = JSON.parse(readFileSync(globalConfigPath, "utf8"));
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function getClaudeConfigHomeDir(): string {
+  return process.env.CLAUDE_CONFIG_DIR || join(homedir(), ".claude");
+}
+
+function getChangelogCachePath(): string {
+  return join(getClaudeConfigHomeDir(), "cache", "changelog.md");
+}
+
+function getGlobalConfigPath(): string {
+  const configHome = getClaudeConfigHomeDir();
+  const legacyPath = join(configHome, ".config.json");
+  if (existsSync(legacyPath)) return legacyPath;
+  return join(process.env.CLAUDE_CONFIG_DIR || homedir(), ".claude.json");
+}
+
+function writeJsonAtomically(filePath: string, value: unknown): void {
+  writeTextAtomically(filePath, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function writeTextAtomically(filePath: string, content: string): void {
+  mkdirSync(dirname(filePath), { recursive: true });
+  const tempPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  writeFileSync(tempPath, content, "utf8");
+  renameSync(tempPath, filePath);
+}
+
+function compareVersionStrings(left: string, right: string): number {
+  const parsedLeft = coerceVersion(left);
+  const parsedRight = coerceVersion(right);
+  if (!parsedLeft && !parsedRight) return left.localeCompare(right);
+  if (!parsedLeft) return -1;
+  if (!parsedRight) return 1;
+  return compareVersions(parsedLeft, parsedRight);
+}
+
+function compareVersions(left: [number, number, number], right: [number, number, number]): number {
+  for (let index = 0; index < left.length; index++) {
+    const diff = left[index] - right[index];
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
+function coerceVersion(value: string): [number, number, number] | null {
+  const match = value.match(/(\d+)\.(\d+)\.(\d+)/u);
+  if (!match) return null;
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
 }
 
 function getEffortSuffix(model: string): string {

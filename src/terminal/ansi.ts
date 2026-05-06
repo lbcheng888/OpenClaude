@@ -7,6 +7,9 @@ export type AnsiTextStyle = {
   dimColor?: boolean;
   underline?: boolean;
   inverse?: boolean;
+  italic?: boolean;
+  strikethrough?: boolean;
+  href?: string;
 };
 
 export type AnsiTextSegment = AnsiTextStyle & {
@@ -15,16 +18,16 @@ export type AnsiTextSegment = AnsiTextStyle & {
 
 export type AnsiTextLine = AnsiTextSegment[];
 
-const CSI_SEQUENCE_PATTERN = /\u001b\[([0-?]*)([ -/]*)([@-~])/gu;
+const ANSI_SEQUENCE_PATTERN = /\u001b\]([^\u0007\u001b]*)(?:\u0007|\u001b\\)|\u001b\[([0-?]*)([ -/]*)([@-~])|\u001b[ -/0-~]/gu;
 const SGR_COLOR_NAMES = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"] as const;
 
 export function hasAnsiSequences(value: string): boolean {
-  CSI_SEQUENCE_PATTERN.lastIndex = 0;
-  return CSI_SEQUENCE_PATTERN.test(value);
+  ANSI_SEQUENCE_PATTERN.lastIndex = 0;
+  return ANSI_SEQUENCE_PATTERN.test(value);
 }
 
 export function stripAnsiSequences(value: string): string {
-  return value.replace(CSI_SEQUENCE_PATTERN, "");
+  return value.replace(ANSI_SEQUENCE_PATTERN, "");
 }
 
 export function parseAnsiSegments(value: string): AnsiTextSegment[] {
@@ -32,15 +35,19 @@ export function parseAnsiSegments(value: string): AnsiTextSegment[] {
   const style: AnsiTextStyle = {};
   let cursor = 0;
 
-  CSI_SEQUENCE_PATTERN.lastIndex = 0;
-  for (const match of value.matchAll(CSI_SEQUENCE_PATTERN)) {
+  ANSI_SEQUENCE_PATTERN.lastIndex = 0;
+  for (const match of value.matchAll(ANSI_SEQUENCE_PATTERN)) {
     const index = match.index ?? 0;
     if (index > cursor) {
       pushSegment(segments, value.slice(cursor, index), style);
     }
     cursor = index + match[0].length;
-    if (match[3] === "m") {
-      applySgrParameters(style, parseSgrParameters(match[1] || ""));
+    if (match[4] === "m") {
+      applySgrParameters(style, parseSgrParameters(match[2] || ""));
+      continue;
+    }
+    if (match[1] !== undefined) {
+      applyOscSequence(style, match[1]);
     }
   }
 
@@ -112,11 +119,34 @@ export function wrapAnsiSegments(segments: AnsiTextSegment[], wrapWidth: number)
 
 function parseSgrParameters(raw: string): number[] {
   if (!raw) return [0];
-  return raw.split(";").map(part => {
-    if (part === "") return 0;
-    const parsed = Number.parseInt(part, 10);
-    return Number.isFinite(parsed) ? parsed : 0;
-  });
+  const params: number[] = [];
+  for (const group of raw.split(";")) {
+    if (group.includes(":")) {
+      params.push(...parseColonSgrParameter(group));
+      continue;
+    }
+    if (group === "") {
+      params.push(0);
+      continue;
+    }
+    const parsed = Number.parseInt(group, 10);
+    params.push(Number.isFinite(parsed) ? parsed : 0);
+  }
+  return params.length > 0 ? params : [0];
+}
+
+function parseColonSgrParameter(raw: string): number[] {
+  const parts = raw.split(":").filter(part => part !== "");
+  const parsed = parts.map(part => Number.parseInt(part, 10)).filter(Number.isFinite);
+  const colorPrefix = parsed[0];
+  const colorMode = parsed[1];
+  if ((colorPrefix === 38 || colorPrefix === 48) && colorMode === 2 && parsed.length >= 5) {
+    return [colorPrefix, colorMode, ...parsed.slice(-3)];
+  }
+  if ((colorPrefix === 38 || colorPrefix === 48) && colorMode === 5 && parsed.length >= 3) {
+    return [colorPrefix, colorMode, parsed[2]!];
+  }
+  return parsed.length > 0 ? parsed : [0];
 }
 
 function applySgrParameters(style: AnsiTextStyle, params: number[]): void {
@@ -149,12 +179,38 @@ function applySgrParameters(style: AnsiTextStyle, params: number[]): void {
       style.underline = undefined;
       continue;
     }
+    if (code === 3) {
+      style.italic = true;
+      continue;
+    }
+    if (code === 23) {
+      style.italic = undefined;
+      continue;
+    }
     if (code === 7) {
       style.inverse = true;
       continue;
     }
     if (code === 27) {
       style.inverse = undefined;
+      continue;
+    }
+    if (code === 9) {
+      style.strikethrough = true;
+      continue;
+    }
+    if (code === 29) {
+      style.strikethrough = undefined;
+      continue;
+    }
+    if (code === 5) {
+      // blink - treat as bold since blinking is distracting in TUI
+      style.bold = true;
+      continue;
+    }
+    if (code === 25) {
+      style.bold = undefined;
+      style.dimColor = undefined;
       continue;
     }
     if (code === 39) {
@@ -227,6 +283,13 @@ function setColor(style: AnsiTextStyle, color: string | undefined, background: b
   else style.color = color;
 }
 
+function applyOscSequence(style: AnsiTextStyle, payload: string): void {
+  const parts = payload.split(";");
+  if (parts[0] !== "8") return;
+  const href = parts.slice(2).join(";");
+  style.href = href || undefined;
+}
+
 function pushSegment(segments: AnsiTextSegment[], text: string, style: AnsiTextStyle): void {
   if (!text) return;
   const segment = { text, ...style };
@@ -266,7 +329,10 @@ function sameStyle(a: AnsiTextStyle, b: AnsiTextStyle): boolean {
     && a.bold === b.bold
     && a.dimColor === b.dimColor
     && a.underline === b.underline
-    && a.inverse === b.inverse;
+    && a.inverse === b.inverse
+    && a.italic === b.italic
+    && a.strikethrough === b.strikethrough
+    && a.href === b.href;
 }
 
 function clearStyle(style: AnsiTextStyle): void {
@@ -275,5 +341,8 @@ function clearStyle(style: AnsiTextStyle): void {
   style.bold = undefined;
   style.dimColor = undefined;
   style.underline = undefined;
+  style.inverse = undefined;
+  style.italic = undefined;
+  style.strikethrough = undefined;
   style.inverse = undefined;
 }

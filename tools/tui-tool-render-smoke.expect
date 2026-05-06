@@ -1,0 +1,205 @@
+#!/usr/bin/expect -f
+# Comprehensive tool rendering verification (replaces golden screenshot items)
+set timeout 15
+set repo [file normalize [file join [file dirname [info script]] ".."]]
+set workdir "/tmp/claude-code-full-tool-render-smoke"
+file mkdir $workdir
+cd $workdir
+
+# Create test files
+exec mkdir -p $workdir/sub
+exec echo "hello world" > $workdir/test.txt
+exec echo "line 1" > $workdir/sub/file.txt
+exec echo "line 2" >> $workdir/sub/file.txt
+exec echo "line 3" >> $workdir/sub/file.txt
+
+# SSE server that simulates various tool calls
+set server_script {
+const http = require("http");
+
+function writeEvent(res, event) {
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+function respondWithText(res, text) {
+  writeEvent(res, {
+    type: "content_block_start", index: 0,
+    content_block: { type: "text", text: "" },
+  });
+  writeEvent(res, {
+    type: "content_block_delta", index: 0,
+    delta: { type: "text_delta", text },
+  });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, {
+    type: "message_delta",
+    delta: { stop_reason: "end_turn" },
+    usage: { input_tokens: 50, output_tokens: 10 },
+  });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+function respondWithToolUse(res, toolName, toolInput, toolResult) {
+  writeEvent(res, {
+    type: "content_block_start", index: 0,
+    content_block: { type: "tool_use", id: "toolu_01", name: toolName },
+  });
+  writeEvent(res, {
+    type: "content_block_delta", index: 0,
+    delta: { type: "input_json_delta", partial_json: JSON.stringify(toolInput) },
+  });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  writeEvent(res, {
+    type: "message_delta",
+    delta: { stop_reason: "tool_use" },
+    usage: { input_tokens: 50, output_tokens: 20 },
+  });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") { res.writeHead(404).end(); return; }
+  let body = "";
+  req.on("data", chunk => { body += chunk; });
+  req.on("end", () => {
+    const payload = JSON.parse(body);
+    const messages = JSON.stringify(payload.messages || []);
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+
+    if (messages.includes('"tool_result"')) {
+      respondWithText(res, "Done.");
+      return;
+    }
+
+    // Grep request
+    if (messages.includes("grep")) {
+      respondWithToolUse(res, "Grep",
+        { pattern: "hello", path: ".", include: "*.txt" },
+        { content: "Found 1 file(s)\ntest.txt" }
+      );
+      return;
+    }
+    // Glob request
+    if (messages.includes("glob")) {
+      respondWithToolUse(res, "Glob",
+        { pattern: "**/*.txt", path: "." },
+        { content: "sub/file.txt\ntest.txt" }
+      );
+      return;
+    }
+    // Bash short output
+    if (messages.includes("bash short")) {
+      respondWithToolUse(res, "Bash",
+        { command: "echo hello" },
+        { content: "hello", display: { type: "bash", stdout: "hello", stderr: "", exitCode: 0 } }
+      );
+      return;
+    }
+    // Bash error
+    if (messages.includes("bash error")) {
+      respondWithToolUse(res, "Bash",
+        { command: "false" },
+        { content: "Exit code 1", isError: true, display: { type: "bash", stdout: "", stderr: "", exitCode: 1 } }
+      );
+      return;
+    }
+    // Read text file
+    if (messages.includes("read file")) {
+      respondWithToolUse(res, "Read",
+        { file_path: "test.txt" },
+        { content: "hello world", display: { type: "read", path: "test.txt", totalLines: 1, linesRead: 1 } }
+      );
+      return;
+    }
+
+    // Default: simple text response
+    respondWithText(res, "Done.");
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+}
+
+spawn -noecho node -e $server_script
+set server_id $spawn_id
+expect -i $server_id -re {PORT ([0-9]+)}
+set port $expect_out(1,string)
+
+set env(COLUMNS) 100
+set env(TERM) xterm-256color
+set env(HOME) "/tmp/claude-code-full-tool-render-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-tool-render-home/.claude"
+set env(ANTHROPIC_BASE_URL) "http://127.0.0.1:$port"
+set env(ANTHROPIC_AUTH_TOKEN) "test-token"
+file mkdir $env(CLAUDE_CONFIG_DIR)
+catch {unset env(ANTHROPIC_API_KEY)}
+catch {unset env(ANTHROPIC_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_HAIKU_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}
+catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
+catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
+catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
+
+proc exit_current_app {} {
+  send "\003"
+  expect "Press Ctrl-C again to exit"
+  after 1500
+  send "\003"
+  expect eof
+}
+
+# Test Grep rendering
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "grep"
+expect "Claude Code"
+expect "⏺ Grep"
+expect "Found"
+expect "Done."
+exit_current_app
+puts "PASS: Grep result rendering"
+
+# Test Bash short output
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "bash short"
+expect "Claude Code"
+expect "⏺ Bash"
+expect "hello"
+expect "Done."
+exit_current_app
+puts "PASS: Bash short output rendering"
+
+# Test Bash error/stderr
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "bash error"
+expect "Claude Code"
+expect "⏺ Bash"
+expect "Exit code 1"
+expect "Done."
+exit_current_app
+puts "PASS: Bash error rendering"
+
+# Test Read text file
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "read file"
+expect "Claude Code"
+expect "⏺ Read"
+expect "Read"
+expect "Done."
+exit_current_app
+puts "PASS: Read text rendering"
+
+# Test Glob
+spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "glob"
+expect "Claude Code"
+expect "⏺ Glob"
+expect "Found"
+expect "Done."
+exit_current_app
+puts "PASS: Glob result rendering"
+
+puts "ALL TOOL RENDER TESTS PASS"
+catch {exec kill [exp_pid -i $server_id]}

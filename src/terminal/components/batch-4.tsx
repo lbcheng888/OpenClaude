@@ -239,60 +239,7 @@ interface FeedbackSurveyProps {
   showNotSure?: boolean;
 }
 
-export function FeedbackSurveyWidget({
-  state,
-  lastResponse,
-  inputValue,
-  setInputValue,
-  onRequestFeedback,
-  onUndo,
-  showNotSure = false,
-}: FeedbackSurveyProps): React.ReactElement | null {
-  if (state === "closed") return null;
-
-  // Pending state - ask for rating
-  if (state === "pending") {
-    return React.createElement(
-      Box,
-      { flexDirection: "column", paddingY: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, null, "How was this response?"),
-      ),
-      React.createElement(
-        Box,
-        { marginTop: 1 },
-        React.createElement(Text, { color: "green" }, "[G] Good  "),
-        React.createElement(Text, { color: "red" }, "[B] Bad  "),
-        showNotSure && React.createElement(Text, { dimColor: true }, "[N] Not sure"),
-        onUndo && React.createElement(
-          Box,
-          null,
-          React.createElement(Text, { dimColor: true }, "[U] Undo")
-        )
-      )
-    );
-  }
-
-  // Thanks state - ask for more details
-  if (state === "thanks") {
-    return React.createElement(
-      Box,
-      { flexDirection: "column", paddingY: 1 },
-      React.createElement(
-        Box,
-        null,
-        React.createElement(Text, null, "Thanks! What could be improved? (optional)"),
-      ),
-      React.createElement(
-        Box,
-        { marginTop: 1 },
-        React.createElement(Text, { dimColor: true }, "Type feedback and press Enter · Esc to skip")
-      )
-    );
-  }
-
+export function FeedbackSurveyWidget(_props: FeedbackSurveyProps): React.ReactElement | null {
   return null;
 }
 

@@ -1,13 +1,15 @@
-#!/usr/bin/env expect
+#!/usr/bin/expect -f
+# Normal input clears exit confirmation: type 'a' after Ctrl+C prompt, then Ctrl+C re-arms
 set timeout 10
 set repo [file normalize [file join [file dirname [info script]] ".."]]
-set workdir "/tmp/claude-code-full-smoke-work"
+set workdir "/tmp/claude-code-full-input-clears-exit-smoke"
 file mkdir $workdir
 cd $workdir
+
 set env(COLUMNS) 100
 set env(TERM) xterm-256color
-set env(HOME) "/tmp/claude-code-full-smoke-home"
-set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-smoke-home/.claude"
+set env(HOME) "/tmp/claude-code-full-input-clears-exit-home"
+set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-input-clears-exit-home/.claude"
 file mkdir $env(CLAUDE_CONFIG_DIR)
 catch {unset env(ANTHROPIC_AUTH_TOKEN)}
 catch {unset env(ANTHROPIC_API_KEY)}
@@ -18,27 +20,25 @@ catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}
 catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
 catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
 catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
+
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
+
 expect "Claude Code v2.1.128"
-send "?"
-expect "Available commands:"
-send "\033\[B"
-expect "No background tasks."
-send "/doctor\r"
-expect "cwd:"
-expect "auth:"
-send "/model claude-opus-4-6\r"
-expect "Model set to claude-opus-4-6"
-send "/model\r"
-expect "Current model: claude-opus-4-6"
-send "/cost\r"
-expect "Total cost:"
-expect "Usage:"
-send "/tasks\r"
-expect "No background tasks."
-send "/tasks missing-task\r"
-expect "Background task not found: missing-task"
-send "/tasks stop\r"
-expect "Usage:"
-send "\003\003\003"
+expect "Welcome"
+
+# First Ctrl+C: show exit prompt
+send "\003"
+expect "Press Ctrl-C again to exit"
+
+# Type 'a' (normal input should clear the exit prompt)
+send "a"
+after 300
+
+# Since exit prompt was cleared, 'a' should be typed into input field
+# Now do Ctrl+C again -- should show exit prompt again
+send "\003"
+expect "Press Ctrl-C again to exit"
+
+# Second Ctrl+C: exit
+send "\003"
 expect eof

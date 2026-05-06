@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { clearClaudeSettingsCache } from "../config/claude-settings.js";
@@ -309,6 +309,50 @@ describe("permission handler", () => {
       toolName: "Bash",
       toolUseID: "remembered",
       input: { command: "npm test -- --watch=false" },
+    })).resolves.toEqual({ behavior: "allow" });
+  });
+
+  test("path permission rules match relative absolute home and symlink-real paths", async () => {
+    tempDir = join(tmpdir(), `claude-permissions-${Date.now()}`);
+    mkdirSync(tempDir, { recursive: true });
+    mkdirSync(join(tempDir, "src"));
+    mkdirSync(join(tempDir, "real"));
+    writeFileSync(join(tempDir, "src", "allowed.ts"), "");
+    writeFileSync(join(tempDir, "real", "target.ts"), "");
+    symlinkSync(join(tempDir, "real", "target.ts"), join(tempDir, "src", "link.ts"));
+    process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH = join(tempDir, "managed");
+    writeFileSync(
+      join(tempDir, "settings.json"),
+      JSON.stringify({
+        permissions: {
+          allow: [
+            "Read(src/**)",
+            `Read(${join(tempDir, "real")}/**)`,
+          ],
+        },
+      }),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = tempDir;
+    process.chdir(tempDir);
+    clearClaudeSettingsCache();
+
+    const handler = new PermissionHandler();
+
+    await expect(handler.checkPermission({
+      toolName: "Read",
+      toolUseID: "relative",
+      input: { file_path: "src/allowed.ts" },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Read",
+      toolUseID: "absolute",
+      input: { file_path: join(tempDir, "src", "allowed.ts") },
+    })).resolves.toEqual({ behavior: "allow" });
+    await expect(handler.checkPermission({
+      toolName: "Read",
+      toolUseID: "symlink-real",
+      input: { file_path: "src/link.ts" },
     })).resolves.toEqual({ behavior: "allow" });
   });
 

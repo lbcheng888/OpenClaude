@@ -6,7 +6,7 @@ import type {
   ToolDisplay,
   ToolProgressDisplay,
 } from "../agent/tengu.js";
-import { exec, execFileSync, type ChildProcess } from "child_process";
+import { exec, execFile, execFileSync, type ChildProcess } from "child_process";
 import {
   accessSync,
   constants as fsConstants,
@@ -23,8 +23,9 @@ import { homedir, tmpdir } from "os";
 import { promisify } from "util";
 import { getClaudeConfigDir, getProjectDir } from "../session/store.js";
 import { createUnifiedDiff } from "./diff.js";
+import { normalizeSubagentType } from "./read-only.js";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export interface ToolResult {
   content: string;
@@ -160,6 +161,9 @@ const TASK_TOOL_DESCRIPTION = `Launch a new agent to handle complex, multi-step 
 
 The Task tool launches a specialized subagent that starts fresh and handles a focused task with its own tool loop.
 
+For read-only codebase exploration, search, grep/glob, or analysis, set subagent_type to "Explore".
+Explore agents are read-only and are shown as Explore(...) in the transcript.
+
 When NOT to use the Task tool:
 - If you want to read a specific file path, use the Read tool or search tools instead.
 - If you are searching for a specific class, symbol, or string, use Glob/Grep or Bash search commands instead.
@@ -276,14 +280,15 @@ export const BUILTIN_TOOLS: Tool[] = [
         const finalStderr = [stderr, cwdState.warning].filter(Boolean).join("\n");
         const timedOut = e.killed === true || e.signal === "SIGTERM";
         const errorText = timedOut ? `Command timed out after ${formatDurationMs(timeout)}` : e.message;
-        const output = prepareBashOutput(stdout, finalStderr || errorText, exitCode, context);
+        const stderrForModel = finalStderr || (timedOut ? errorText : "");
+        const output = prepareBashOutput(stdout, stderrForModel, exitCode, context);
         return {
           content: output.content,
           isError: true,
           display: {
             type: "bash",
             stdout: output.stdout,
-            stderr: output.stderr || "Command failed",
+            stderr: output.stderr,
             exitCode,
             cwd: state.cwd || cwdState.cwd,
             cwdResetWarning: cwdState.warning,
@@ -362,7 +367,7 @@ export const BUILTIN_TOOLS: Tool[] = [
           type: "string",
           description: "A complete task briefing. Include goals, paths, constraints, and expected output, but do not paste large raw outputs, whole files, or the full parent transcript.",
         },
-        subagent_type: { type: "string", description: "The type of specialized agent to use" },
+        subagent_type: { type: "string", description: "The type of specialized agent to use. Use \"Explore\" for read-only code search and analysis." },
         run_in_background: { type: "boolean", description: "Set to true to run this agent in the background. You will be notified when it completes." },
       },
       required: ["description", "prompt"],
@@ -370,7 +375,7 @@ export const BUILTIN_TOOLS: Tool[] = [
     async execute(input, signal, context) {
       const description = String(input.description || "").trim();
       const prompt = String(input.prompt || "").trim();
-      const subagentType = typeof input.subagent_type === "string" ? input.subagent_type : undefined;
+      const subagentType = normalizeSubagentType(input.subagent_type);
       if (!description || !prompt) {
         return { content: "Error: description and prompt are required", isError: true };
       }
@@ -433,59 +438,83 @@ export const BUILTIN_TOOLS: Tool[] = [
   },
   {
     name: "TaskOutput",
-    description: "Read output and status from a background agent task",
+    description: "Read output and status from a background task",
     input_schema: {
       type: "object",
       properties: {
-        task_id: { type: "string", description: "Background agent task id" },
+        task_id: { type: "string", description: "Background task id" },
         block: { type: "boolean", description: "Whether to wait for completion" },
         timeout: { type: "number", description: "Maximum wait time in milliseconds" },
       },
       required: ["task_id"],
     },
-    async execute(input, signal) {
+    async execute(input, signal, context) {
       const taskId = String(input.task_id || "");
-      const task = backgroundAgentTasks.get(taskId);
-      if (!task) return { content: `Error: Background agent task not found: ${taskId}`, isError: true };
+      const agentTask = backgroundAgentTasks.get(taskId);
+      const bashTask = backgroundBashTasks.get(taskId);
+      if (!agentTask && !bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
       const shouldBlock = input.block !== false;
       const timeoutMs = typeof input.timeout === "number" ? Math.max(0, Math.min(input.timeout, 600000)) : 30000;
       let timedOut = false;
-      if (shouldBlock && task.status === "running") {
-        timedOut = !(await waitForBackgroundAgentTask(task, timeoutMs, signal));
+      if (agentTask) {
+        if (shouldBlock && agentTask.status === "running") {
+          timedOut = !(await waitForBackgroundAgentTask(agentTask, timeoutMs, signal));
+        }
+        return formatBackgroundAgentTaskOutput(agentTask, timedOut ? "timeout" : undefined);
       }
-      return formatBackgroundAgentTaskOutput(task, timedOut ? "timeout" : undefined);
+      if (!bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
+      if (shouldBlock && bashTask.status === "running") {
+        timedOut = !(await waitForBackgroundBashTask(bashTask, timeoutMs, signal));
+      }
+      return formatBackgroundBashTaskOutput(bashTask, timedOut ? "timeout" : undefined, context);
     },
   },
   {
     name: "TaskStop",
-    description: "Stop a running background agent task",
+    description: "Stop a running background task by ID",
     input_schema: {
       type: "object",
       properties: {
-        task_id: { type: "string", description: "Background agent task id" },
+        task_id: { type: "string", description: "Background task id" },
+        shell_id: { type: "string", description: "Deprecated: use task_id instead" },
       },
-      required: ["task_id"],
     },
     requiresPermission: true,
     async execute(input) {
-      const taskId = String(input.task_id || "");
-      const task = backgroundAgentTasks.get(taskId);
-      if (!task) return { content: `Error: Background agent task not found: ${taskId}`, isError: true };
-      if (task.status !== "running") return { content: `Background agent task ${taskId} is already ${task.status}` };
-      task.status = "killed";
-      task.error = "Killed";
-      task.controller.abort(new Error("Killed"));
-      writeBackgroundAgentOutputFile(task);
-      return { content: `Stopped background agent task: ${taskId}` };
+      const taskId = String(input.task_id || input.shell_id || "");
+      if (!taskId) return { content: "Error: Missing required parameter: task_id", isError: true };
+      const agentTask = backgroundAgentTasks.get(taskId);
+      const bashTask = backgroundBashTasks.get(taskId);
+      if (!agentTask && !bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
+
+      if (agentTask) {
+        if (agentTask.status !== "running") {
+          return { content: `Error: Task ${taskId} is not running (status: ${agentTask.status})`, isError: true };
+        }
+        agentTask.status = "killed";
+        agentTask.error = "Killed";
+        agentTask.controller.abort(new Error("Killed"));
+        writeBackgroundAgentOutputFile(agentTask);
+        return formatTaskStopOutput(taskId, "local_agent", agentTask.description);
+      }
+
+      if (!bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
+      if (bashTask.status !== "running") {
+        return { content: `Error: Task ${taskId} is not running (status: ${bashTask.status})`, isError: true };
+      }
+      bashTask.status = "killed";
+      bashTask.controller.abort(new Error("Killed"));
+      bashTask.child.kill("SIGTERM");
+      return formatTaskStopOutput(taskId, "local_bash", bashTask.command);
     },
   },
   {
     name: "LS",
-    description: "List files and directories in a given path",
+    description: "List files and directories in a given path. Relative paths resolve from the primary working directory; do not invent absolute paths from other machines.",
     input_schema: {
       type: "object",
       properties: {
-        path: { type: "string", description: "Directory path to list" },
+        path: { type: "string", description: "Directory path to list. Prefer relative paths from the primary working directory unless an absolute path was observed." },
         ignore: { type: "array", description: "Glob patterns to ignore" },
       },
       required: ["path"],
@@ -504,11 +533,11 @@ export const BUILTIN_TOOLS: Tool[] = [
   },
   {
     name: "Read",
-    description: "Read a file from the local filesystem",
+    description: "Read a file from the local filesystem. Relative paths resolve from the primary working directory; do not invent absolute paths from other machines.",
     input_schema: {
       type: "object",
       properties: {
-        file_path: { type: "string", description: "Path to the file to read" },
+        file_path: { type: "string", description: "Path to the file to read. Prefer relative paths from the primary working directory unless an absolute path was observed." },
         offset: { type: "number", description: "Line number to start reading from" },
         limit: { type: "number", description: "Number of lines to read" },
       },
@@ -520,7 +549,17 @@ export const BUILTIN_TOOLS: Tool[] = [
       if (!existsSync(fp)) return { content: `Error: File not found: ${fp}`, isError: true };
       const stat = statSync(fp);
       if (!stat.isFile()) return { content: `Error: Not a file: ${fp}`, isError: true };
+      const offset = typeof input.offset === "number" ? input.offset : 1;
+      const limit = typeof input.limit === "number" ? input.limit : MAX_LINES_TO_READ;
+      const explicitLimit = typeof input.limit === "number" ? input.limit : undefined;
+      if (!Number.isInteger(offset) || offset < 0) {
+        return { content: "Error: offset must be a non-negative integer", isError: true };
+      }
+      if (!Number.isInteger(limit) || limit <= 0) {
+        return { content: "Error: limit must be a positive integer", isError: true };
+      }
       if (stat.size === 0) {
+        rememberReadFile(context, fp, stat, offset, explicitLimit);
         return {
           content: "<system-reminder>Warning: the file exists but the contents are empty.</system-reminder>",
           display: {
@@ -541,14 +580,14 @@ export const BUILTIN_TOOLS: Tool[] = [
         };
       }
       const mediaSummary = summarizeNonTextFile(fp, stat.size);
-      if (mediaSummary) return { content: mediaSummary };
+      if (mediaSummary) {
+        rememberReadFile(context, fp, stat, offset, explicitLimit);
+        return { content: mediaSummary };
+      }
       try {
         const content = readFileSync(fp, "utf-8");
         const lines = content.split("\n");
-        const offset = typeof input.offset === "number" ? input.offset : 1;
         const lineOffset = offset === 0 ? 0 : offset - 1;
-        const limit = typeof input.limit === "number" ? input.limit : MAX_LINES_TO_READ;
-        const explicitLimit = typeof input.limit === "number" ? input.limit : undefined;
         const cache = getReadFileCache(context);
         const cached = cache.get(fp);
         if (cached && cached.offset === offset && cached.limit === explicitLimit && cached.mtimeMs === stat.mtimeMs) {
@@ -557,11 +596,7 @@ export const BUILTIN_TOOLS: Tool[] = [
             display: { type: "text", summary: "file_unchanged" },
           };
         }
-        cache.set(fp, {
-          mtimeMs: stat.mtimeMs,
-          offset,
-          limit: explicitLimit,
-        });
+        rememberReadFile(context, fp, stat, offset, explicitLimit);
         const selectedLines = lines.slice(lineOffset, lineOffset + limit);
         if (selectedLines.length === 0) {
           return {
@@ -607,9 +642,11 @@ export const BUILTIN_TOOLS: Tool[] = [
       required: ["file_path", "content"],
     },
     requiresPermission: true,
-    async execute(input) {
+    async execute(input, _signal, context) {
       const fp = resolve(input.file_path as string);
       try {
+        const freshnessError = validateFileFreshSinceRead(fp, context, false);
+        if (freshnessError) return { content: freshnessError, isError: true };
         const before = existsSync(fp) ? readFileSync(fp, "utf-8") : "";
         const next = input.content as string;
         writeFileSync(fp, next, "utf-8");
@@ -651,12 +688,14 @@ export const BUILTIN_TOOLS: Tool[] = [
       required: ["file_path", "edits"],
     },
     requiresPermission: true,
-    async execute(input) {
+    async execute(input, _signal, context) {
       const fp = resolve(input.file_path as string);
       if (!existsSync(fp)) return { content: `Error: File not found: ${fp}`, isError: true };
       if (!Array.isArray(input.edits)) return { content: "Error: edits must be an array", isError: true };
 
       try {
+        const freshnessError = validateFileFreshSinceRead(fp, context, false);
+        if (freshnessError) return { content: freshnessError, isError: true };
         const before = readFileSync(fp, "utf-8");
         let content = before;
         let applied = 0;
@@ -671,6 +710,9 @@ export const BUILTIN_TOOLS: Tool[] = [
           if (!oldString) return { content: "Error: old_string is required", isError: true };
           if (!content.includes(oldString)) {
             return { content: `Error: old_string not found in file for edit ${applied + 1}`, isError: true };
+          }
+          if (!replaceAll && countOccurrences(content, oldString) > 1) {
+            return { content: `Error: old_string appears multiple times in file for edit ${applied + 1}. Use replace_all=true or provide more context.`, isError: true };
           }
           content = replaceAll
             ? content.split(oldString).join(newString)
@@ -707,21 +749,30 @@ export const BUILTIN_TOOLS: Tool[] = [
       required: ["file_path", "old_string", "new_string"],
     },
     requiresPermission: true,
-    async execute(input) {
+    async execute(input, _signal, context) {
       const fp = resolve(input.file_path as string);
       if (!existsSync(fp)) return { content: `Error: File not found: ${fp}`, isError: true };
       try {
+        const freshnessError = validateFileFreshSinceRead(fp, context, false);
+        if (freshnessError) return { content: freshnessError, isError: true };
         const before = readFileSync(fp, "utf-8");
         let content = before;
         const oldS = input.old_string as string;
         const newS = input.new_string as string;
         const replaceAll = input.replace_all as boolean;
+        if (oldS === newS) return { content: "Error: No changes to make: old_string and new_string are exactly the same.", isError: true };
+        if (fp.endsWith(".ipynb")) return { content: "Error: File is a Jupyter Notebook. Use the NotebookEdit tool to edit this file.", isError: true };
+        if (!oldS) return { content: "Error: old_string is required", isError: true };
 
         if (replaceAll) {
+          if (!content.includes(oldS)) return { content: `Error: old_string not found in file`, isError: true };
           content = content.split(oldS).join(newS);
         } else {
           const idx = content.indexOf(oldS);
           if (idx === -1) return { content: `Error: old_string not found in file`, isError: true };
+          if (countOccurrences(content, oldS) > 1) {
+            return { content: "Error: old_string appears multiple times in file. Use replace_all=true or provide more context.", isError: true };
+          }
           content = content.slice(0, idx) + newS + content.slice(idx + oldS.length);
         }
 
@@ -756,8 +807,8 @@ export const BUILTIN_TOOLS: Tool[] = [
       required: ["notebook_path", "new_source"],
     },
     requiresPermission: true,
-    async execute(input) {
-      return editNotebook(input);
+    async execute(input, _signal, context) {
+      return editNotebook(input, context);
     },
   },
   {
@@ -767,7 +818,7 @@ export const BUILTIN_TOOLS: Tool[] = [
       type: "object",
       properties: {
         pattern: { type: "string", description: "Glob pattern to match (e.g. *.ts)" },
-        path: { type: "string", description: "Directory to search in" },
+        path: { type: "string", description: "Directory to search in. Prefer relative paths from the primary working directory unless an absolute path was observed." },
         hidden: { type: "boolean", description: "Include hidden files and directories" },
         ignore: { type: "array", description: "Glob patterns to ignore" },
       },
@@ -776,18 +827,37 @@ export const BUILTIN_TOOLS: Tool[] = [
     async execute(input) {
       const dir = resolve((input.path as string) || ".");
       const pattern = input.pattern as string;
+      const maxResults = 100;
       try {
+        if (!existsSync(dir)) return { content: `Error: Path not found: ${dir}`, isError: true };
+        if (!statSync(dir).isDirectory()) return { content: `Error: Not a directory: ${dir}`, isError: true };
         const regex = globToRegExp(pattern);
-        const ignore = Array.isArray(input.ignore) ? input.ignore.map(String).map(globToRegExp) : [];
-        const includeHidden = input.hidden === true;
-        const files = readdirSync(dir, { recursive: true } as any)
-          .map(file => String(file).replace(/\\/g, "/"))
+        const ignorePatterns = Array.isArray(input.ignore) ? input.ignore.map(String).map(globToRegExp) : [];
+        const includeHidden = input.hidden !== false;
+        const allFiles = walkFiles(dir)
           .filter(file => includeHidden || !hasHiddenPathPart(file))
-          .filter(file => !ignore.some(ignorePattern => ignorePattern.test(file)))
+          .filter(file => !ignorePatterns.some(ip => matchesGlobRegex(ip, file)))
           .filter(file => regex.test(file))
-          .sort((a, b) => a.localeCompare(b))
-          .slice(0, 100);
-        return { content: files.join("\n") || "(no matches)" };
+          .sort((a, b) => {
+            // Sort by modification time (oldest first) matching official --sort=modified
+            try {
+              const statA = statSync(join(dir, a));
+              const statB = statSync(join(dir, b));
+              const mtimeDiff = statA.mtimeMs - statB.mtimeMs;
+              if (mtimeDiff !== 0) return mtimeDiff;
+            } catch {
+              // fall through to name sort
+            }
+            return a.localeCompare(b);
+          });
+        const truncated = allFiles.length > maxResults;
+        const files = allFiles.slice(0, maxResults);
+        const content = files.join("\n") || "No files found";
+        return {
+          content: truncated
+            ? `${content}\n(Results truncated. Consider using a more specific path or pattern.)`
+            : content,
+        };
       } catch (e: any) {
         return { content: `Error: ${e.message}`, isError: true };
       }
@@ -800,11 +870,21 @@ export const BUILTIN_TOOLS: Tool[] = [
       type: "object",
       properties: {
         pattern: { type: "string", description: "Regex pattern to search for" },
-        path: { type: "string", description: "Directory or file to search in" },
+        path: { type: "string", description: "Directory or file to search in. Prefer relative paths from the primary working directory unless an absolute path was observed." },
         include: { type: "string", description: "File pattern to include (e.g. *.ts)" },
         head_limit: { type: "number", description: "Maximum number of matching lines to return" },
         case_insensitive: { type: "boolean", description: "Search case-insensitively" },
+        "-i": { type: "boolean", description: "Search case-insensitively" },
         hidden: { type: "boolean", description: "Search hidden files and directories" },
+        glob: { type: "string", description: "Glob pattern(s) to filter files" },
+        type: { type: "string", description: "Ripgrep file type to search" },
+        "-A": { type: "number", description: "Number of lines after each match" },
+        "-B": { type: "number", description: "Number of lines before each match" },
+        "-C": { type: "number", description: "Number of context lines around each match" },
+        context: { type: "number", description: "Number of context lines around each match" },
+        "-n": { type: "boolean", description: "Show line numbers in content mode" },
+        offset: { type: "number", description: "Skip first N result entries before limiting" },
+        multiline: { type: "boolean", description: "Enable multiline matching" },
         output_mode: { type: "string", description: "content, files_with_matches, or count" },
       },
       required: ["pattern"],
@@ -812,37 +892,30 @@ export const BUILTIN_TOOLS: Tool[] = [
     async execute(input) {
       const pattern = input.pattern as string;
       const path = String(input.path || ".");
-      const include = (input.include as string) || "*";
-      const headLimit = typeof input.head_limit === "number" ? Math.max(1, input.head_limit) : 200;
-      const outputMode = String(input.output_mode || "content");
+      const headLimit = parseGrepHeadLimit(input.head_limit);
+      const offset = parseGrepOffset(input.offset);
+      const outputMode = String(input.output_mode || "files_with_matches");
+      const showHidden = input.hidden !== false; // hidden by default like official
+      if (!pattern) return { content: "Error: pattern is required", isError: true };
+      if (headLimit === null) return { content: "Error: head_limit must be a non-negative integer", isError: true };
+      if (offset === null) return { content: "Error: offset must be a non-negative integer", isError: true };
+      if (outputMode !== "content" && outputMode !== "files_with_matches" && outputMode !== "count") {
+        return { content: `Error: invalid output_mode: ${outputMode}`, isError: true };
+      }
       try {
-        const command = [
-          "rg",
-          outputMode === "files_with_matches" ? "--files-with-matches" : outputMode === "count" ? "--count" : "--line-number",
-          outputMode === "content" ? "--no-heading" : "",
-          "--color=never",
-          input.case_insensitive === true ? "--ignore-case" : "",
-          input.hidden === true ? "--hidden" : "",
-          include ? `-g ${shellQuote(include)}` : "",
-          "--",
-          shellQuote(pattern),
-          shellQuote(path),
-        ]
-          .filter(Boolean)
-          .join(" ");
-        const { stdout } = await execAsync(command, {
+        const absolutePath = resolve(path);
+        if (input.path && !existsSync(absolutePath)) return { content: `Error: Path not found: ${path}`, isError: true };
+        const args = buildGrepArgs(input, pattern, path, outputMode, showHidden);
+        const { stdout } = await execFileAsync("rg", args, {
           cwd: process.cwd(),
           timeout: 120000,
           maxBuffer: 10 * 1024 * 1024,
-          shell: getShellPath(),
         });
-        const filtered = filterGrepHiddenOutput(stdout.trimEnd(), input.hidden === true);
-        return { content: limitLines(filtered, headLimit) || "(no matches)" };
+        return formatGrepResult(String(stdout).trimEnd(), outputMode, headLimit, offset);
       } catch (e: any) {
         const stdout = typeof e.stdout === "string" ? e.stdout.trimEnd() : "";
         if (stdout) {
-          const filtered = filterGrepHiddenOutput(stdout, input.hidden === true);
-          return { content: limitLines(filtered, headLimit) || "(no matches)" };
+          return formatGrepResult(stdout, outputMode, headLimit, offset);
         }
         if (e.code === 1) return { content: "(no matches)" };
         const stderr = typeof e.stderr === "string" ? e.stderr.trim() : "";
@@ -992,14 +1065,21 @@ export async function executeTool(
   signal?: AbortSignal,
   context?: ToolExecutionContext,
 ): Promise<ToolResult> {
-  const tool = BUILTIN_TOOLS.find((t) => t.name === name);
+  const resolvedName = resolveToolAlias(name);
+  const tool = BUILTIN_TOOLS.find((t) => t.name === resolvedName);
   if (!tool) {
     return {
-      content: `<tool_use_error>Error: No such tool available: ${name}</tool_use_error>`,
+      content: `Error: Tool '${name}' not found`,
       isError: true,
     };
   }
   return tool.execute(input, signal, context);
+}
+
+function resolveToolAlias(name: string): string {
+  if (name === "KillShell") return "TaskStop";
+  if (name === "AgentOutputTool" || name === "BashOutputTool") return "TaskOutput";
+  return name;
 }
 
 type WebSearchRequestOptions = {
@@ -1359,6 +1439,52 @@ async function waitForBackgroundAgentTask(
   return task.status !== "running";
 }
 
+async function waitForBackgroundBashTask(
+  task: BackgroundBashTask,
+  timeoutMs: number,
+  signal?: AbortSignal,
+): Promise<boolean> {
+  const startedAt = Date.now();
+  while (task.status === "running" && Date.now() - startedAt < timeoutMs) {
+    if (signal?.aborted) throw signal.reason instanceof Error ? signal.reason : new Error("Interrupted");
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  return task.status !== "running";
+}
+
+function formatBackgroundBashTaskOutput(
+  task: BackgroundBashTask,
+  retrievalOverride?: "timeout" | "not_ready" | "success",
+  context?: ToolExecutionContext,
+): ToolResult {
+  const retrievalStatus = retrievalOverride || (task.status === "running" ? "not_ready" : "success");
+  const content = [
+    `<retrieval_status>${retrievalStatus}</retrieval_status>`,
+    `<task_id>${task.id}</task_id>`,
+    "<task_type>local_bash</task_type>",
+    `<status>${task.status}</status>`,
+    task.exitCode !== null ? `<exit_code>${task.exitCode}</exit_code>` : "",
+    [task.stdout, task.stderr].filter(Boolean).join("\n").trim()
+      ? `<output>\n${[task.stdout, task.stderr].filter(Boolean).join("\n").trimEnd()}\n</output>`
+      : "",
+    task.status === "failed" ? `<error>Command failed</error>` : "",
+  ].filter(Boolean).join("\n\n");
+  const output = prepareBashOutput(task.stdout, task.stderr, task.exitCode, context);
+  return {
+    content,
+    isError: task.status === "failed" || undefined,
+    display: {
+      type: "bash",
+      stdout: output.stdout,
+      stderr: output.stderr,
+      exitCode: task.exitCode,
+      cwd: task.cwd,
+      persistedOutputPath: output.persistedOutputPath,
+      persistedOutputSize: output.persistedOutputSize,
+    },
+  };
+}
+
 function formatBackgroundAgentTaskOutput(
   task: BackgroundAgentTask,
   retrievalOverride?: "timeout" | "not_ready" | "success",
@@ -1404,6 +1530,17 @@ function formatBackgroundAgentTaskOutput(
       outputFile: task.outputFile,
       status: task.status,
     },
+  };
+}
+
+function formatTaskStopOutput(taskId: string, taskType: "local_bash" | "local_agent", command: string): ToolResult {
+  return {
+    content: JSON.stringify({
+      message: `Successfully stopped task: ${taskId} (${command})`,
+      task_id: taskId,
+      task_type: taskType,
+      command,
+    }),
   };
 }
 
@@ -1454,9 +1591,6 @@ export async function readBackgroundTaskOutput(
 ): Promise<ToolResult> {
   const task = findBackgroundTask(taskId);
   if (!task) return { content: `Background task not found: ${taskId}`, isError: true };
-  if (task.kind === "bash") {
-    return executeTool("BashOutput", { bash_id: taskId }, signal, context);
-  }
   return executeTool("TaskOutput", { task_id: taskId, block: false }, signal, context);
 }
 
@@ -1467,9 +1601,6 @@ export async function stopBackgroundTask(
 ): Promise<ToolResult> {
   const task = findBackgroundTask(taskId);
   if (!task) return { content: `Background task not found: ${taskId}`, isError: true };
-  if (task.kind === "bash") {
-    return executeTool("KillBash", { bash_id: taskId }, signal, context);
-  }
   return executeTool("TaskStop", { task_id: taskId }, signal, context);
 }
 
@@ -1522,6 +1653,41 @@ export function backgroundForegroundBashTasks(): string[] {
   return taskIds;
 }
 
+export function stopAllRunningTasks(reason = "Interrupted"): string[] {
+  const stoppedTaskIds: string[] = [];
+  const error = new Error(reason);
+
+  for (const foregroundTask of [...foregroundBashTasks]) {
+    if (foregroundTask.progressTimer) {
+      clearInterval(foregroundTask.progressTimer);
+      foregroundTask.progressTimer = undefined;
+    }
+    foregroundTask.child.kill("SIGTERM");
+    cleanupStateFile(foregroundTask.stateFile);
+    foregroundBashTasks.delete(foregroundTask);
+    if (foregroundTask.backgroundTaskId) stoppedTaskIds.push(foregroundTask.backgroundTaskId);
+  }
+
+  for (const task of backgroundBashTasks.values()) {
+    if (task.status !== "running") continue;
+    task.status = "killed";
+    task.controller.abort(error);
+    task.child.kill("SIGTERM");
+    stoppedTaskIds.push(task.id);
+  }
+
+  for (const task of backgroundAgentTasks.values()) {
+    if (task.status !== "running") continue;
+    task.status = "killed";
+    task.error = reason;
+    task.controller.abort(error);
+    writeBackgroundAgentOutputFile(task);
+    stoppedTaskIds.push(task.id);
+  }
+
+  return stoppedTaskIds;
+}
+
 export function resetToolStateForTests(): void {
   bashCwd = process.cwd();
   bashEnv = { ...process.env };
@@ -1561,6 +1727,33 @@ function getReadFileCache(context?: ToolExecutionContext): Map<string, ReadFileC
     readFileState.set(sessionKey, cache);
   }
   return cache;
+}
+
+function rememberReadFile(
+  context: ToolExecutionContext | undefined,
+  filePath: string,
+  stat: { mtimeMs: number },
+  offset: number,
+  limit?: number,
+): void {
+  getReadFileCache(context).set(filePath, { mtimeMs: stat.mtimeMs, offset, limit });
+}
+
+function validateFileFreshSinceRead(
+  filePath: string,
+  context: ToolExecutionContext | undefined,
+  requireRead: boolean,
+): string | null {
+  const remembered = getReadFileCache(context).get(filePath);
+  if (!remembered) {
+    return requireRead ? "Error: File has not been read yet. Read it first before editing it." : null;
+  }
+  if (!existsSync(filePath)) return null;
+  const currentMtime = statSync(filePath).mtimeMs;
+  if (currentMtime > remembered.mtimeMs) {
+    return "Error: File has been modified since it was read. Read it again before attempting to edit it.";
+  }
+  return null;
 }
 
 function addLineNumbers(lines: string[], startLine: number): string {
@@ -1798,6 +1991,47 @@ function syncBackgroundTaskOutput(foregroundTask: ForegroundBashTask): void {
   task.stderr = foregroundTask.stderr;
 }
 
+function countOccurrences(content: string, needle: string): number {
+  if (!needle) return 0;
+  let count = 0;
+  let index = 0;
+  while (true) {
+    const next = content.indexOf(needle, index);
+    if (next === -1) return count;
+    count++;
+    index = next + needle.length;
+  }
+}
+
+function walkFiles(root: string, relativeDir = ""): string[] {
+  const absoluteDir = join(root, relativeDir);
+  const files: string[] = [];
+  for (const entry of readdirSync(absoluteDir, { withFileTypes: true })) {
+    const relativePath = join(relativeDir, entry.name).replace(/\\/g, "/");
+    const absolutePath = join(root, relativePath);
+    if (entry.isDirectory()) {
+      files.push(...walkFiles(root, relativePath));
+      continue;
+    }
+    if (entry.isFile()) {
+      files.push(relativePath);
+      continue;
+    }
+    if (entry.isSymbolicLink()) {
+      try {
+        if (statSync(absolutePath).isFile()) files.push(relativePath);
+      } catch {
+        // Broken symlinks are ignored by official file discovery.
+      }
+    }
+  }
+  return files;
+}
+
+function matchesGlobRegex(regex: RegExp, filePath: string): boolean {
+  return regex.test(filePath) || regex.test(basename(filePath));
+}
+
 function globToRegExp(pattern: string): RegExp {
   const normalized = pattern.replace(/\\/g, "/");
   let source = "^";
@@ -1828,11 +2062,45 @@ function globToRegExp(pattern: string): RegExp {
       continue;
     }
 
+    if (char === "{") {
+      const end = findClosingGlobBrace(normalized, index);
+      if (end !== -1) {
+        const alternatives = normalized
+          .slice(index + 1, end)
+          .split(",")
+          .map(part => part.split("").map(escapeRegExp).join(""));
+        source += `(?:${alternatives.join("|")})`;
+        index = end;
+        continue;
+      }
+    }
+
+    if (char === "[") {
+      const end = normalized.indexOf("]", index + 1);
+      if (end !== -1) {
+        const rawClass = normalized.slice(index + 1, end);
+        if (rawClass && !rawClass.includes("/")) {
+          const negated = rawClass.startsWith("!") ? `^${rawClass.slice(1)}` : rawClass;
+          source += `[${negated.replace(/\\/g, "\\\\")}]`;
+          index = end;
+          continue;
+        }
+      }
+    }
+
     source += escapeRegExp(char || "");
   }
 
   source += "$";
   return new RegExp(source);
+}
+
+function findClosingGlobBrace(value: string, start: number): number {
+  for (let index = start + 1; index < value.length; index++) {
+    if (value[index] === "}") return index;
+    if (value[index] === "/") return -1;
+  }
+  return -1;
 }
 
 function escapeRegExp(value: string): string {
@@ -1858,12 +2126,169 @@ function getTailLines(value: string, count: number): string {
   return value.split(/\r?\n/u).filter(line => line.trim()).slice(-count).join("\n");
 }
 
-function filterGrepHiddenOutput(value: string, includeHidden: boolean): string {
-  if (includeHidden || !value) return value;
-  return value
-    .split("\n")
-    .filter(line => !hasHiddenPathPart(line.split(":")[0] || line))
-    .join("\n");
+function parseGrepHeadLimit(value: unknown): number | undefined | null {
+  if (value === undefined) return 250;
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) return null;
+  return value === 0 ? undefined : value;
+}
+
+function parseGrepOffset(value: unknown): number | null {
+  if (value === undefined) return 0;
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) return null;
+  return value;
+}
+
+function buildGrepArgs(
+  input: Record<string, unknown>,
+  pattern: string,
+  searchPath: string,
+  outputMode: string,
+  showHidden: boolean,
+): string[] {
+  const args: string[] = [];
+  if (showHidden) args.push("--hidden");
+  for (const dir of [".git", ".svn", ".hg", ".bzr", ".jj", ".sl"]) {
+    args.push("--glob", `!${dir}`);
+  }
+  args.push("--max-columns", "500");
+  if (input.multiline === true) args.push("-U", "--multiline-dotall");
+  if (input.case_insensitive === true || input["-i"] === true) args.push("-i");
+  if (outputMode === "files_with_matches") args.push("-l");
+  if (outputMode === "count") args.push("-c");
+  if (outputMode === "content" && input["-n"] !== false) args.push("-n");
+  if (outputMode === "content") {
+    const context = firstNumber(input.context, input["-C"]);
+    if (context !== undefined) {
+      args.push("-C", String(context));
+    } else {
+      const before = firstNumber(input["-B"]);
+      const after = firstNumber(input["-A"]);
+      if (before !== undefined) args.push("-B", String(before));
+      if (after !== undefined) args.push("-A", String(after));
+    }
+  }
+  const type = typeof input.type === "string" ? input.type.trim() : "";
+  if (type) args.push("--type", type);
+  for (const globPattern of splitGrepGlobPatterns(input.glob ?? input.include)) {
+    args.push("--glob", globPattern);
+  }
+  if (pattern.startsWith("-")) args.push("-e", pattern);
+  else args.push(pattern);
+  args.push(searchPath);
+  return args;
+}
+
+function firstNumber(...values: unknown[]): number | undefined {
+  for (const value of values) {
+    if (typeof value === "number" && Number.isInteger(value) && value >= 0) return value;
+  }
+  return undefined;
+}
+
+function splitGrepGlobPatterns(value: unknown): string[] {
+  if (typeof value !== "string" || !value.trim()) return [];
+  const patterns: string[] = [];
+  for (const rawPattern of value.trim().split(/\s+/u)) {
+    if (rawPattern.includes("{") && rawPattern.includes("}")) {
+      patterns.push(rawPattern);
+      continue;
+    }
+    patterns.push(...rawPattern.split(",").filter(Boolean));
+  }
+  return patterns;
+}
+
+function applyGrepLimit<T>(
+  items: T[],
+  headLimit: number | undefined,
+  offset: number,
+): { items: T[]; appliedLimit?: number; appliedOffset?: number } {
+  const start = Math.min(offset, items.length);
+  if (headLimit === undefined) {
+    return {
+      items: items.slice(start),
+      ...(offset > 0 ? { appliedOffset: offset } : {}),
+    };
+  }
+  const limited = items.slice(start, start + headLimit);
+  return {
+    items: limited,
+    ...(items.length - start > headLimit ? { appliedLimit: headLimit } : {}),
+    ...(offset > 0 ? { appliedOffset: offset } : {}),
+  };
+}
+
+function formatLimitInfo(appliedLimit: number | undefined, appliedOffset: number | undefined): string {
+  const parts = [
+    appliedLimit !== undefined ? `limit: ${appliedLimit}` : "",
+    appliedOffset ? `offset: ${appliedOffset}` : "",
+  ].filter(Boolean);
+  return parts.join(", ");
+}
+
+function formatGrepResult(
+  stdout: string,
+  outputMode: string,
+  headLimit: number | undefined,
+  offset: number,
+): { content: string; display?: Record<string, unknown> } {
+  const lines = stdout ? stdout.split("\n").filter(Boolean) : [];
+  const { items: limited, appliedLimit, appliedOffset } = applyGrepLimit(lines, headLimit, offset);
+  const limitInfo = formatLimitInfo(appliedLimit, appliedOffset);
+
+  switch (outputMode) {
+    case "files_with_matches": {
+      limited.sort((a, b) => a.localeCompare(b));
+      const numFiles = limited.length;
+      if (numFiles === 0) return { content: "No files found" };
+      const header = `Found ${numFiles} ${numFiles === 1 ? "file" : "files"}${limitInfo ? ` ${limitInfo}` : ""}`;
+      return { content: [header, ...limited.map(formatGrepPathLine)].join("\n") };
+    }
+    case "count": {
+      let totalMatches = 0;
+      const countLines = limited.map(formatGrepCountLine);
+      for (const line of countLines) {
+        const lastColon = line.lastIndexOf(":");
+        if (lastColon > 0) {
+          const count = parseInt(line.slice(lastColon + 1), 10);
+          if (!isNaN(count)) totalMatches += count;
+        }
+      }
+      const fileCount = countLines.length;
+      const summary = `Found ${totalMatches} total ${totalMatches === 1 ? "occurrence" : "occurrences"} across ${fileCount} ${fileCount === 1 ? "file" : "files"}.${limitInfo ? ` with pagination = ${limitInfo}` : ""}`;
+      return { content: `${countLines.join("\n") || "No matches found"}\n\n${summary}` };
+    }
+    case "content":
+    default: {
+      const content = limited.map(formatGrepContentLine).join("\n") || "No matches found";
+      return { content: limitInfo ? `${content}\n\n[Showing results with pagination = ${limitInfo}]` : content };
+    }
+  }
+}
+
+function formatGrepPathLine(line: string): string {
+  return formatDisplayPathForTool(line);
+}
+
+function formatGrepContentLine(line: string): string {
+  const colonIndex = line.indexOf(":");
+  if (colonIndex <= 0) return line;
+  return `${formatDisplayPathForTool(line.slice(0, colonIndex))}${line.slice(colonIndex)}`;
+}
+
+function formatGrepCountLine(line: string): string {
+  const colonIndex = line.lastIndexOf(":");
+  if (colonIndex <= 0) return line;
+  return `${formatDisplayPathForTool(line.slice(0, colonIndex))}${line.slice(colonIndex)}`;
+}
+
+function formatDisplayPathForTool(filePath: string): string {
+  const absolutePath = resolve(filePath);
+  const cwdRelative = relative(process.cwd(), absolutePath);
+  if (cwdRelative && !cwdRelative.startsWith("..") && !cwdRelative.startsWith("/") && cwdRelative !== ".") {
+    return cwdRelative.replace(/\\/g, "/");
+  }
+  return filePath.replace(/\\/g, "/");
 }
 
 function htmlToText(value: string): string {
@@ -1928,7 +2353,7 @@ type NotebookContent = {
   nbformat_minor?: number;
 };
 
-function editNotebook(input: Record<string, unknown>): ToolResult {
+function editNotebook(input: Record<string, unknown>, context?: ToolExecutionContext): ToolResult {
   const filePath = resolve(String(input.notebook_path || ""));
   const mode = parseNotebookEditMode(input.edit_mode);
   const cellType = parseNotebookCellType(input.cell_type);
@@ -1948,6 +2373,8 @@ function editNotebook(input: Record<string, unknown>): ToolResult {
   if (mode !== "insert" && !cellId) {
     return { content: "Error: Cell ID must be specified when not inserting a new cell.", isError: true };
   }
+  const freshnessError = validateFileFreshSinceRead(filePath, context, true);
+  if (freshnessError) return { content: freshnessError, isError: true };
 
   let notebook: NotebookContent;
   const originalContent = readFileSync(filePath, "utf8");

@@ -41,6 +41,29 @@ describe("ANSI terminal output parsing", () => {
     expect(stripAnsiSequences("a\u001b[31mb\u001b[0m\u001b[2Kc")).toBe("abc");
   });
 
+  test("strips OSC and single ESC sequences without leaking control text", () => {
+    expect(stripAnsiSequences("a\u001b]0;title\u0007b\u001b7c\u001b8")).toBe("abc");
+  });
+
+  test("preserves OSC 8 hyperlinks as segment metadata", () => {
+    const segments = parseAnsiSegments("open \u001b]8;;https://example.com\u0007site\u001b]8;;\u0007 done");
+
+    expect(segments).toEqual([
+      { text: "open " },
+      { text: "site", href: "https://example.com" },
+      { text: " done" },
+    ]);
+  });
+
+  test("parses colon-separated RGB SGR parameters", () => {
+    const segments = parseAnsiSegments("\u001b[38:2::1:2:3mfg\u001b[48:2:0:4:5:6mbg\u001b[0m");
+
+    expect(segments).toEqual([
+      { text: "fg", color: "rgb(1,2,3)" },
+      { text: "bg", color: "rgb(1,2,3)", backgroundColor: "rgb(4,5,6)" },
+    ]);
+  });
+
   test("wraps styled output without dropping styles", () => {
     const lines = wrapAnsiSegments(parseAnsiSegments("\u001b[31mabcdef\u001b[0m"), 3);
 

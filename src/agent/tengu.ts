@@ -1,7 +1,9 @@
 import type {
   ApiMessage,
+  ApiMessageContent,
   ApiStreamEvent,
   AssistantContentBlock,
+  ImageContentBlock,
   TextContentBlock,
   ToolDef,
   ToolResultContentBlock,
@@ -209,6 +211,7 @@ export type TenguSessionOptions = {
   onEvent?: (event: TenguLoopEvent) => void | Promise<void>;
   maxTurns?: number;
   apiHistoryTokenBudget?: number;
+  apiTurnRetryLimit?: number;
 };
 
 export type TenguRunResult = {
@@ -233,11 +236,13 @@ type PreparedToolUse =
 export class TenguSession {
   private readonly messages: ApiMessage[] = [];
   private readonly maxTurns: number;
+  private readonly apiTurnRetryLimit: number;
   private nextAssistantId = 1;
   private activeAbortController: AbortController | null = null;
 
   constructor(private readonly options: TenguSessionOptions) {
-    this.maxTurns = options.maxTurns ?? 10;
+    this.maxTurns = options.maxTurns ?? DEFAULT_MAX_AGENT_TURNS;
+    this.apiTurnRetryLimit = options.apiTurnRetryLimit ?? DEFAULT_API_TURN_RETRY_LIMIT;
   }
 
   get history(): ApiMessage[] {
@@ -257,13 +262,13 @@ export class TenguSession {
     this.nextAssistantId = 1;
   }
 
-  cancel(reason = "Interrupted"): void {
-    this.activeAbortController?.abort(new Error(reason));
+  cancel(reason: unknown = new Error("Interrupted")): void {
+    this.activeAbortController?.abort(reason instanceof Error ? reason : reason || new Error("Interrupted"));
   }
 
-  async runUserTurn(prompt: string): Promise<TenguRunResult> {
-    const trimmed = prompt.trim();
-    if (!trimmed) {
+  async runUserTurn(prompt: string | ApiMessageContent, externalSignal?: AbortSignal): Promise<TenguRunResult> {
+    const userContent = normalizeUserPromptContent(prompt);
+    if (isEmptyUserPromptContent(userContent)) {
       throw new Error("Prompt is empty");
     }
     if (this.activeAbortController) {
@@ -271,11 +276,13 @@ export class TenguSession {
     }
 
     const abortController = new AbortController();
+    const unlinkExternalSignal = linkAbortSignal(externalSignal, abortController);
     this.activeAbortController = abortController;
     let finalText = "";
 
     try {
-      this.messages.push({ role: "user", content: trimmed });
+      throwIfAborted(abortController.signal);
+      this.messages.push({ role: "user", content: userContent });
       let finalStopReason: string | null = null;
 
       for (let turn = 0; turn < this.maxTurns; turn++) {
@@ -285,7 +292,7 @@ export class TenguSession {
         await this.emit({ type: "api_request", turn, messages: cloneMessages(requestMessages), tools: this.options.tools });
         await this.emit({ type: "assistant_start", assistantId, turn });
 
-        const assistantTurn = await this.collectAssistantTurn(assistantId, abortController.signal, requestMessages);
+        const assistantTurn = await this.collectAssistantTurnWithRetry(assistantId, abortController.signal, requestMessages);
         finalText = assistantTurn.text;
         finalStopReason = assistantTurn.stopReason;
         await this.emit({
@@ -302,9 +309,6 @@ export class TenguSession {
         }
 
         if (assistantTurn.toolUses.length === 0) {
-          if (assistantTurn.stopReason === "tool_use") {
-            throw new Error("API stopped for tool_use without a tool_use block");
-          }
           const stopHook = await this.runHooks("Stop", {
             stop_reason: assistantTurn.stopReason,
             stop_hook_active: false,
@@ -341,6 +345,7 @@ export class TenguSession {
       }
       throw error;
     } finally {
+      unlinkExternalSignal();
       if (this.activeAbortController === abortController) {
         this.activeAbortController = null;
       }
@@ -461,6 +466,15 @@ export class TenguSession {
           await this.emit({ type: "stream_mode", mode: "tool-use" });
           break;
 
+        case "api_retry":
+          if (shouldShowApiRetry(event.retryAttempt)) {
+            await this.emit({
+              type: "notification",
+              text: formatApiRetryNotification(event.error, event.retryInMs, event.retryAttempt, event.maxRetries),
+            });
+          }
+          break;
+
         case "error":
           throw new Error(event.error);
       }
@@ -493,6 +507,26 @@ export class TenguSession {
       stopReason,
       usage,
     };
+  }
+
+  private async collectAssistantTurnWithRetry(
+    assistantId: string,
+    signal: AbortSignal,
+    requestMessages: ApiMessage[],
+  ): Promise<AssistantTurn> {
+    let lastError: unknown;
+    for (let attempt = 0; attempt <= this.apiTurnRetryLimit; attempt++) {
+      try {
+        return await this.collectAssistantTurn(assistantId, signal, requestMessages);
+      } catch (error) {
+        throwIfAborted(signal);
+        lastError = error;
+        if (attempt >= this.apiTurnRetryLimit || !isRetryableMalformedToolTurnError(error)) {
+          throw error;
+        }
+      }
+    }
+    throw lastError instanceof Error ? lastError : new Error(String(lastError));
   }
 
   private async executeToolUses(
@@ -549,6 +583,13 @@ export class TenguSession {
     throwIfAborted(signal);
     await this.emit({ type: "stream_mode", mode: "tool-use" });
     await this.emit({ type: "tool_start", assistantId, tool: toolUse });
+
+    if (!this.isKnownTool(toolUse.name)) {
+      const result = createUnknownToolResult(toolUse);
+      await this.emit({ type: "tool_result", assistantId, tool: toolUse, result });
+      return { kind: "result", tool: toolUse, result };
+    }
+
     let finalToolUse = toolUse;
 
     const preHook = await this.runHooks("PreToolUse", {
@@ -596,12 +637,35 @@ export class TenguSession {
     finalToolUse: ToolUseContentBlock,
     signal: AbortSignal,
   ): Promise<{ tool: ToolUseContentBlock; result: ToolResultContentBlock }> {
+    let executed: ToolExecutionResult;
     try {
-      const executed = await this.options.executeTool(finalToolUse.name, finalToolUse.input, signal, {
+      executed = await this.options.executeTool(finalToolUse.name, finalToolUse.input, signal, {
         toolUseId: finalToolUse.id,
         emitProgress: progress => this.emit({ type: "tool_progress", assistantId, tool: finalToolUse, progress }),
         emitNotification: text => this.emit({ type: "notification", text }),
       });
+    } catch (error) {
+      if (signal.aborted) throw error;
+      const result = {
+        type: "tool_result" as const,
+        tool_use_id: finalToolUse.id,
+        content: `<tool_use_error>${formatError(error)}</tool_use_error>`,
+        is_error: true,
+      };
+      await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result });
+      return { tool: finalToolUse, result };
+    }
+
+    const visibleContent = boundToolResultContent(executed.content, finalToolUse.name, finalToolUse.id);
+    const visibleResult = {
+      type: "tool_result" as const,
+      tool_use_id: finalToolUse.id,
+      content: visibleContent,
+      is_error: executed.isError || undefined,
+    };
+    await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result: visibleResult, display: executed.display });
+
+    try {
       const postHook = await this.runHooks(executed.isError ? "PostToolUseFailure" : "PostToolUse", {
         tool_name: finalToolUse.name,
         tool_input: finalToolUse.input,
@@ -626,17 +690,19 @@ export class TenguSession {
         content: contentForModel,
         is_error: executed.isError || postHook.blocked || undefined,
       };
-      await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result, display: executed.display });
+      if (postHook.blocked) {
+        await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result, display: executed.display });
+      }
       return { tool: finalToolUse, result };
     } catch (error) {
       if (signal.aborted) throw error;
       const result = {
         type: "tool_result" as const,
         tool_use_id: finalToolUse.id,
-        content: `<tool_use_error>${formatError(error)}</tool_use_error>`,
+        content: appendHookMessage(visibleContent, `PostToolUse hook failed: ${formatError(error)}`),
         is_error: true,
       };
-      await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result });
+      await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result, display: executed.display });
       return { tool: finalToolUse, result };
     }
   }
@@ -686,6 +752,10 @@ export class TenguSession {
     }
 
     return this.options.requestPermission(toolUse);
+  }
+
+  private isKnownTool(name: string): boolean {
+    return this.options.tools.some(tool => tool.name === name || isToolAliasFor(name, tool.name));
   }
 
   private async emit(event: TenguLoopEvent): Promise<void> {
@@ -777,6 +847,29 @@ function cloneMessages(messages: ApiMessage[]): ApiMessage[] {
   return JSON.parse(JSON.stringify(messages));
 }
 
+function normalizeUserPromptContent(prompt: string | ApiMessageContent): ApiMessageContent {
+  if (typeof prompt === "string") return prompt.trim();
+  return prompt
+    .map(block => block.type === "text" ? { ...block, text: block.text } : block)
+    .filter(block => {
+      if (block.type === "text") return block.text.trim().length > 0;
+      if (block.type === "image") return isValidImageContentBlock(block);
+      return true;
+    });
+}
+
+function isEmptyUserPromptContent(content: ApiMessageContent): boolean {
+  if (typeof content === "string") return content.trim().length === 0;
+  return content.length === 0
+    || content.every(block => block.type === "text" ? block.text.trim().length === 0 : false);
+}
+
+function isValidImageContentBlock(block: ImageContentBlock): boolean {
+  return block.source.type === "base64"
+    && block.source.data.trim().length > 0
+    && block.source.media_type.trim().length > 0;
+}
+
 function sanitizeApiMessage(message: ApiMessage): ApiMessage {
   if (message.role !== "assistant" || !Array.isArray(message.content)) return message;
   return {
@@ -787,7 +880,9 @@ function sanitizeApiMessage(message: ApiMessage): ApiMessage {
   };
 }
 
-const DEFAULT_API_HISTORY_TOKEN_BUDGET = 60_000;
+const DEFAULT_MAX_AGENT_TURNS = 30;
+const DEFAULT_API_HISTORY_TOKEN_BUDGET = 24_000;
+const DEFAULT_API_TURN_RETRY_LIMIT = 1;
 
 export function prepareApiMessagesForRequest(
   messages: ApiMessage[],
@@ -922,11 +1017,55 @@ function partitionToolUses(toolUses: ToolUseContentBlock[]): Array<{ concurrent:
 }
 
 function isConcurrencySafeTool(name: string): boolean {
-  return new Set(["Read", "LS", "Glob", "Grep", "WebFetch", "WebSearch", "BashOutput"]).has(name);
+  return new Set([
+    "Read",
+    "LS",
+    "Glob",
+    "Grep",
+    "WebFetch",
+    "WebSearch",
+    "BashOutput",
+    "TaskOutput",
+    "AgentOutputTool",
+    "BashOutputTool",
+  ]).has(name);
+}
+
+function createUnknownToolResult(toolUse: ToolUseContentBlock): ToolResultContentBlock {
+  return {
+    type: "tool_result",
+    tool_use_id: toolUse.id,
+    content: `Error: Tool '${toolUse.name}' not found`,
+    is_error: true,
+  };
+}
+
+function isToolAliasFor(alias: string, canonical: string): boolean {
+  if (alias === "KillShell") return canonical === "TaskStop";
+  if (alias === "AgentOutputTool" || alias === "BashOutputTool") return canonical === "TaskOutput";
+  return false;
 }
 
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function isRetryableMalformedToolTurnError(error: unknown): boolean {
+  const message = formatError(error);
+  return (
+    /Upstream model promised tool work but emitted no tool call/iu.test(message) ||
+    /Upstream model emitted invalid tool call syntax/iu.test(message)
+  );
+}
+
+function shouldShowApiRetry(retryAttempt: number): boolean {
+  return process.env.USER_TYPE === "ant" || retryAttempt >= 4;
+}
+
+function formatApiRetryNotification(error: string, retryInMs: number, retryAttempt: number, maxRetries: number): string {
+  const retryInSeconds = Math.max(0, Math.round(retryInMs / 1000));
+  const unit = retryInSeconds === 1 ? "second" : "seconds";
+  return `${error}\nRetrying in ${retryInSeconds} ${unit}... (attempt ${retryAttempt}/${maxRetries})`;
 }
 
 function appendHookMessage(content: string, message: string): string {
@@ -994,4 +1133,19 @@ function throwIfAborted(signal: AbortSignal): void {
   const reason = signal.reason;
   if (reason instanceof Error) throw reason;
   throw new Error(reason ? String(reason) : "Interrupted");
+}
+
+function linkAbortSignal(source: AbortSignal | undefined, target: AbortController): () => void {
+  if (!source) return () => undefined;
+  const abort = (): void => {
+    target.abort(source.reason ?? new Error("Interrupted"));
+  };
+  if (source.aborted) {
+    abort();
+    return () => undefined;
+  }
+  source.addEventListener("abort", abort, { once: true });
+  return () => {
+    source.removeEventListener("abort", abort);
+  };
 }

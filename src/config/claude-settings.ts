@@ -13,6 +13,7 @@ export type HookCommand =
       async?: boolean;
       asyncRewake?: boolean;
       shell?: string;
+      once?: boolean;
     }
   | {
       type: "http";
@@ -21,11 +22,37 @@ export type HookCommand =
       if?: string;
       timeout?: number;
       headers?: Record<string, string>;
+      statusMessage?: string;
+      once?: boolean;
+    }
+  | {
+      type: "prompt";
+      prompt: string;
+      matcher?: string;
+      if?: string;
+      timeout?: number;
+      model?: string;
+      statusMessage?: string;
+      once?: boolean;
+    }
+  | {
+      type: "agent";
+      prompt: string;
+      matcher?: string;
+      if?: string;
+      timeout?: number;
+      model?: string;
+      statusMessage?: string;
+      once?: boolean;
     };
 
 export type HookMatcher = {
   matcher?: string;
   hooks?: HookCommand[];
+};
+
+export type PermissionEntry = {
+  [key: string]: unknown;
 };
 
 export type ClaudeSettings = {
@@ -38,9 +65,18 @@ export type ClaudeSettings = {
     ask?: unknown;
     deny?: unknown;
     defaultMode?: unknown;
+    disableBypassPermissionsMode?: unknown;
   };
   theme?: unknown;
+  prefersReducedMotion?: boolean;
+  spinnerVerbs?: {
+    mode?: "append" | "replace";
+    verbs?: string[];
+  };
+  [key: string]: unknown;
 };
+
+export type SettingsSource = "userSettings" | "projectSettings" | "localSettings" | "policySettings" | "managedSettings";
 
 let cachedSettings: ClaudeSettings | null | undefined;
 
@@ -100,6 +136,25 @@ export function getSettingsSourcePaths(cwd = process.cwd()): string[] {
   return paths;
 }
 
+export function getSettingsSourcePathsWithLabels(cwd = process.cwd()): { path: string; source: SettingsSource }[] {
+  const projectDirs = getProjectSettingsDirs(cwd);
+  const entries: { path: string; source: SettingsSource }[] = [
+    { path: join(getClaudeConfigDir(), "settings.json"), source: "userSettings" },
+  ];
+  for (const dir of projectDirs) {
+    entries.push({ path: join(dir, ".claude", "settings.json"), source: "projectSettings" });
+    entries.push({ path: join(dir, ".claude", "settings.local.json"), source: "localSettings" });
+  }
+  const flagSettingsPath = process.env.CLAUDE_CODE_SETTINGS_PATH;
+  if (flagSettingsPath) {
+    entries.push({ path: resolve(flagSettingsPath), source: "policySettings" });
+  }
+  for (const path of getManagedSettingsSourcePaths()) {
+    entries.push({ path, source: "managedSettings" });
+  }
+  return entries;
+}
+
 function getClaudeConfigDir(): string {
   return process.env.CLAUDE_CONFIG_DIR || join(homedir(), ".claude");
 }
@@ -117,24 +172,36 @@ function getProjectSettingsDirs(cwd: string): string[] {
 }
 
 function parseSettingsFile(settingsPath: string): ClaudeSettings | null {
-  const parsed = JSON.parse(readFileSync(settingsPath, "utf8"));
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+  try {
+    const parsed = JSON.parse(readFileSync(settingsPath, "utf8"));
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return null;
+    }
+    return parsed as ClaudeSettings;
+  } catch {
     return null;
   }
-  return parsed as ClaudeSettings;
 }
 
 function mergeSettings(base: ClaudeSettings, next: ClaudeSettings): ClaudeSettings {
-  const merged = mergeDeep(base, next) as ClaudeSettings;
-  merged.env = mergeRecords(base.env, next.env);
+  const merged: ClaudeSettings = { ...base };
+
+  // Shallow merge top-level simple values (next wins)
+  for (const key of Object.keys(next)) {
+    if (key === "env" || key === "hooks" || key === "permissions") continue;
+    const nextVal = next[key];
+    const baseVal = base[key];
+    if (isPlainObject(baseVal) && isPlainObject(nextVal)) {
+      merged[key] = mergeDeep(baseVal as Record<string, unknown>, nextVal as Record<string, unknown>);
+    } else {
+      merged[key] = nextVal;
+    }
+  }
+
+  merged.env = mergeRecords(base.env as Record<string, unknown> | undefined, next.env as Record<string, unknown> | undefined) as Record<string, unknown> | undefined;
   merged.hooks = mergeHooks(base.hooks, next.hooks);
-  merged.permissions = {
-    ...(base.permissions || {}),
-    ...(next.permissions || {}),
-    allow: mergeArray(base.permissions?.allow, next.permissions?.allow),
-    ask: mergeArray(base.permissions?.ask, next.permissions?.ask),
-    deny: mergeArray(base.permissions?.deny, next.permissions?.deny),
-  };
+  merged.permissions = mergePermissions(base.permissions, next.permissions);
+
   return merged;
 }
 
@@ -157,6 +224,31 @@ function mergeHooks(
     merged[event] = [...(merged[event] || []), ...matchers];
   }
   return merged;
+}
+
+function mergePermissions(
+  base: ClaudeSettings["permissions"],
+  next: ClaudeSettings["permissions"],
+): ClaudeSettings["permissions"] {
+  if (!base && !next) return undefined;
+  const basePerms = base || {};
+  const nextPerms = next || {};
+  return {
+    ...basePerms,
+    ...nextPerms,
+    allow: mergePermissionEntries(basePerms.allow, nextPerms.allow),
+    ask: mergePermissionEntries(basePerms.ask, nextPerms.ask),
+    deny: mergePermissionEntries(basePerms.deny, nextPerms.deny),
+    defaultMode: nextPerms.defaultMode ?? basePerms.defaultMode,
+    disableBypassPermissionsMode: nextPerms.disableBypassPermissionsMode ?? basePerms.disableBypassPermissionsMode,
+  };
+}
+
+function mergePermissionEntries(base: unknown, next: unknown): unknown[] | undefined {
+  const baseArr = Array.isArray(base) ? base : [];
+  const nextArr = Array.isArray(next) ? next : [];
+  if (baseArr.length === 0 && nextArr.length === 0) return undefined;
+  return [...baseArr, ...nextArr];
 }
 
 function mergeArray(base: unknown, next: unknown): unknown[] | undefined {
@@ -190,7 +282,12 @@ function getManagedSettingsSourcePaths(): string[] {
   if (!existsSync(dropInDir)) return paths;
   try {
     const dropIns = readdirSync(dropInDir, { withFileTypes: true })
-      .filter(entry => (entry.isFile() || entry.isSymbolicLink()) && entry.name.endsWith(".json") && !entry.name.startsWith("."))
+      .filter(
+        entry =>
+          (entry.isFile() || entry.isSymbolicLink()) &&
+          entry.name.endsWith(".json") &&
+          !entry.name.startsWith("."),
+      )
       .map(entry => join(dropInDir, entry.name))
       .sort((a, b) => a.localeCompare(b));
     return [...paths, ...dropIns];

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import {
@@ -13,6 +13,7 @@ import {
   resetToolStateForTests,
   stopBackgroundTask,
 } from "./registry.js";
+import { classifyReadOnlyBashCommand, isReadOnlyExploreToolCall, normalizeSubagentType } from "./read-only.js";
 
 let tempDir: string | null = null;
 
@@ -24,6 +25,15 @@ afterEach(() => {
 });
 
 describe("tool registry", () => {
+  test("unknown tools return the official fallback error", async () => {
+    const result = await executeTool("MissingTool", {});
+
+    expect(result).toEqual({
+      content: "Error: Tool 'MissingTool' not found",
+      isError: true,
+    });
+  });
+
   test("Read uses official 1-based offset and cat -n line format", async () => {
     const file = createTempFile("a\nb\nc\n");
 
@@ -79,6 +89,25 @@ describe("tool registry", () => {
     expect(otherSession.content).toBe("1\ta\n2\tb");
   });
 
+  test("Edit rejects files modified after the last Read in the same session", async () => {
+    const file = createTempFile("alpha\n");
+    const context = { sessionId: "fresh-edit" };
+
+    await executeTool("Read", { file_path: file }, undefined, context);
+    writeFileSync(file, "beta\n");
+    const future = new Date(Date.now() + 2000);
+    utimesSync(file, future, future);
+    const result = await executeTool("Edit", {
+      file_path: file,
+      old_string: "beta",
+      new_string: "gamma",
+    }, undefined, context);
+
+    expect(result.isError).toBe(true);
+    expect(result.content).toContain("modified since it was read");
+    expect(readFileSync(file, "utf8")).toBe("beta\n");
+  });
+
   test("Read defaults to the official 2000 line cap", async () => {
     const file = createTempFile(Array.from({ length: 2002 }, (_, index) => `line-${index + 1}`).join("\n"));
 
@@ -112,6 +141,16 @@ describe("tool registry", () => {
       if (previous === undefined) delete process.env.CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS;
       else process.env.CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS = previous;
     }
+  });
+
+  test("Read rejects invalid offset and limit values before reading", async () => {
+    const file = createTempFile("a\n");
+
+    const invalidOffset = await executeTool("Read", { file_path: file, offset: -1 });
+    const invalidLimit = await executeTool("Read", { file_path: file, limit: 0 });
+
+    expect(invalidOffset).toEqual({ content: "Error: offset must be a non-negative integer", isError: true });
+    expect(invalidLimit).toEqual({ content: "Error: limit must be a positive integer", isError: true });
   });
 
   test("Read reports offsets beyond EOF with official system-reminder content and zero-line display", async () => {
@@ -184,6 +223,75 @@ describe("tool registry", () => {
     expect(result.display.diff).toContain("+gamma");
   });
 
+  test("Edit requires a non-empty unique old_string unless replace_all is set", async () => {
+    const file = createTempFile("alpha\nbeta\nbeta\n");
+
+    const empty = await executeTool("Edit", {
+      file_path: file,
+      old_string: "",
+      new_string: "x",
+    });
+    const duplicate = await executeTool("Edit", {
+      file_path: file,
+      old_string: "beta",
+      new_string: "gamma",
+    });
+    const replaceAll = await executeTool("Edit", {
+      file_path: file,
+      old_string: "beta",
+      new_string: "gamma",
+      replace_all: true,
+    });
+
+    expect(empty).toEqual({ content: "Error: old_string is required", isError: true });
+    expect(duplicate.content).toContain("old_string appears multiple times");
+    expect(duplicate.isError).toBe(true);
+    expect(replaceAll.isError).toBeUndefined();
+    expect(readFileSync(file, "utf8")).toBe("alpha\ngamma\ngamma\n");
+  });
+
+  test("Edit rejects no-op edits, notebooks, and missing replace_all targets", async () => {
+    const textFile = createTempFile("alpha\n");
+    const notebook = createTempFile(JSON.stringify({ cells: [] }), "sample.ipynb");
+
+    const noOp = await executeTool("Edit", {
+      file_path: textFile,
+      old_string: "alpha",
+      new_string: "alpha",
+    });
+    const notebookEdit = await executeTool("Edit", {
+      file_path: notebook,
+      old_string: "cells",
+      new_string: "other",
+    });
+    const missingReplaceAll = await executeTool("Edit", {
+      file_path: textFile,
+      old_string: "missing",
+      new_string: "x",
+      replace_all: true,
+    });
+
+    expect(noOp.content).toContain("No changes to make");
+    expect(noOp.isError).toBe(true);
+    expect(notebookEdit.content).toContain("Use the NotebookEdit tool");
+    expect(notebookEdit.isError).toBe(true);
+    expect(missingReplaceAll.content).toContain("old_string not found");
+    expect(missingReplaceAll.isError).toBe(true);
+  });
+
+  test("MultiEdit requires unique old_string per edit unless replace_all is set", async () => {
+    const file = createTempFile("one two two\n");
+
+    const result = await executeTool("MultiEdit", {
+      file_path: file,
+      edits: [{ old_string: "two", new_string: "three" }],
+    });
+
+    expect(result.content).toContain("old_string appears multiple times in file for edit 1");
+    expect(result.isError).toBe(true);
+    expect(readFileSync(file, "utf8")).toBe("one two two\n");
+  });
+
   test("Grep uses ripgrep include and head_limit semantics", async () => {
     const dir = createTempDir();
     writeFileSync(join(dir, "a.txt"), "target one\ntarget two\n");
@@ -194,9 +302,9 @@ describe("tool registry", () => {
       path: dir,
       include: "*.txt",
       head_limit: 1,
+      output_mode: "content",
     });
 
-    expect(result.content.split("\n")).toHaveLength(1);
     expect(result.content).toContain("a.txt:1:target one");
     expect(result.content).not.toContain("b.md");
   });
@@ -205,17 +313,66 @@ describe("tool registry", () => {
     const dir = createTempDir();
     writeFileSync(join(dir, ".hidden.txt"), "Target\n");
 
-    const withoutHidden = await executeTool("Grep", { pattern: "target", path: dir, case_insensitive: true });
-    const withHidden = await executeTool("Grep", {
+    // Official default includes hidden files for Grep.
+    const result = await executeTool("Grep", {
       pattern: "target",
       path: dir,
       case_insensitive: true,
-      hidden: true,
       output_mode: "files_with_matches",
     });
 
-    expect(withoutHidden.content).toBe("(no matches)");
-    expect(withHidden.content).toContain(".hidden.txt");
+    expect(result.content).toContain("Found 1 file");
+    expect(result.content).toContain(".hidden.txt");
+  });
+
+  test("Grep honors hidden=false and rejects invalid output modes", async () => {
+    const dir = createTempDir();
+    writeFileSync(join(dir, ".hidden.txt"), "target\n");
+    writeFileSync(join(dir, "visible.txt"), "target\n");
+
+    const hiddenOff = await executeTool("Grep", {
+      pattern: "target",
+      path: dir,
+      hidden: false,
+      output_mode: "files_with_matches",
+    });
+    const invalid = await executeTool("Grep", {
+      pattern: "target",
+      path: dir,
+      output_mode: "raw",
+    });
+
+    expect(hiddenOff.content).toContain("visible.txt");
+    expect(hiddenOff.content).not.toContain(".hidden.txt");
+    expect(invalid).toEqual({ content: "Error: invalid output_mode: raw", isError: true });
+  });
+
+  test("Grep supports official glob, offset, context, count, and unlimited limit semantics", async () => {
+    const dir = createTempDir();
+    writeFileSync(join(dir, "a.ts"), "before\nneedle one\nafter\n");
+    writeFileSync(join(dir, "b.tsx"), "needle two\nneedle three\n");
+    writeFileSync(join(dir, "c.md"), "needle ignored\n");
+
+    const content = await executeTool("Grep", {
+      pattern: "needle",
+      path: dir,
+      glob: "*.{ts,tsx}",
+      output_mode: "content",
+      "-A": 1,
+      head_limit: 1,
+      offset: 1,
+    });
+    const count = await executeTool("Grep", {
+      pattern: "needle",
+      path: dir,
+      glob: "*.{ts,tsx}",
+      output_mode: "count",
+      head_limit: 0,
+    });
+
+    expect(content.content).toContain("[Showing results with pagination = limit: 1, offset: 1]");
+    expect(content.content).not.toContain("c.md");
+    expect(count.content).toContain("Found 3 total occurrences across 2 files.");
   });
 
   test("Glob supports hidden and ignore filters", async () => {
@@ -232,6 +389,36 @@ describe("tool registry", () => {
     });
 
     expect(result.content.split("\n")).toEqual([".hidden.ts", "visible.ts"]);
+  });
+
+  test("Glob returns files only and applies ignore patterns to paths and basenames", async () => {
+    const dir = createTempDir();
+    mkdirSync(join(dir, "src"));
+    mkdirSync(join(dir, "src", "nested"));
+    writeFileSync(join(dir, "src", "keep.ts"), "");
+    writeFileSync(join(dir, "src", "skip.test.ts"), "");
+    writeFileSync(join(dir, "src", "nested", "skip.ts"), "");
+
+    const result = await executeTool("Glob", {
+      pattern: "**/*.ts",
+      path: dir,
+      ignore: ["*.test.ts", "src/nested/**"],
+    });
+
+    expect(result.content.split("\n")).toEqual(["src/keep.ts"]);
+  });
+
+  test("Glob supports brace patterns and reports no files with official wording", async () => {
+    const dir = createTempDir();
+    writeFileSync(join(dir, "a.ts"), "");
+    writeFileSync(join(dir, "b.tsx"), "");
+    writeFileSync(join(dir, "c.md"), "");
+
+    const matches = await executeTool("Glob", { pattern: "*.{ts,tsx}", path: dir });
+    const none = await executeTool("Glob", { pattern: "*.go", path: dir });
+
+    expect(matches.content.split("\n")).toEqual(["a.ts", "b.tsx"]);
+    expect(none.content).toBe("No files found");
   });
 
   test("Grep returns no matches for ripgrep exit code 1", async () => {
@@ -332,6 +519,23 @@ describe("tool registry", () => {
       stdout: "out",
       stderr: "err",
       exitCode: 7,
+      cwd: process.cwd(),
+      cwdResetWarning: undefined,
+    });
+  });
+
+  test("Bash hides internal wrapper text for silent non-zero exits", async () => {
+    const result = await executeTool("Bash", { command: "false" });
+
+    expect(result.isError).toBe(true);
+    expect(result.content).toBe("Exit code 1");
+    expect(result.content).not.toContain("claude-code-bash");
+    expect(result.content).not.toContain("Command failed:");
+    expect(result.display).toEqual({
+      type: "bash",
+      stdout: "",
+      stderr: "",
+      exitCode: 1,
       cwd: process.cwd(),
       cwdResetWarning: undefined,
     });
@@ -479,11 +683,13 @@ describe("tool registry", () => {
     ]));
 
     const routedOutput = await readBackgroundTaskOutput(start.display.taskId);
-    expect(routedOutput.content).toContain("Status: completed");
+    expect(routedOutput.content).toContain("<retrieval_status>success</retrieval_status>");
+    expect(routedOutput.content).toContain("<task_type>local_bash</task_type>");
+    expect(routedOutput.content).toContain("<status>completed</status>");
     expect(routedOutput.content).toContain("startdone");
   });
 
-  test("background task routing stops running bash tasks by id", async () => {
+  test("TaskOutput and TaskStop route shell background tasks with official task tools", async () => {
     const start = await executeTool("Bash", {
       command: "sleep 5",
       run_in_background: true,
@@ -491,11 +697,19 @@ describe("tool registry", () => {
     expect(start.display?.type).toBe("bash_background");
     if (start.display?.type !== "bash_background") throw new Error("Expected background display");
 
-    const stopped = await stopBackgroundTask(start.display.taskId);
-    expect(stopped.content).toContain(`Stopped background task: ${start.display.taskId}`);
+    const runningOutput = await executeTool("TaskOutput", { task_id: start.display.taskId, block: false });
+    expect(runningOutput.content).toContain("<retrieval_status>not_ready</retrieval_status>");
+    expect(runningOutput.content).toContain("<task_type>local_bash</task_type>");
+    expect(runningOutput.content).toContain("<status>running</status>");
+
+    const stopped = await executeTool("TaskStop", { shell_id: start.display.taskId });
+    expect(stopped.content).toContain(`"task_id":"${start.display.taskId}"`);
+    expect(stopped.content).toContain('"task_type":"local_bash"');
+    expect(stopped.content).toContain('"command":"sleep 5"');
 
     const output = await readBackgroundTaskOutput(start.display.taskId);
-    expect(output.content).toContain("Status: killed");
+    expect(output.content).toContain("<retrieval_status>success</retrieval_status>");
+    expect(output.content).toContain("<status>killed</status>");
   });
 
   test("WebSearch delegates to Anthropic server-side web_search tool and renders official summary state", async () => {
@@ -598,6 +812,7 @@ describe("tool registry", () => {
 
     expect(task?.description).toContain("complex, multi-step tasks");
     expect(task?.description).toContain("When NOT to use the Task tool");
+    expect(task?.description).toContain('subagent_type to "Explore"');
     expect(task?.description).toContain("do not paste large raw command output");
     expect(task?.input_schema.properties.prompt).toEqual(expect.objectContaining({
       description: expect.stringContaining("do not paste large raw outputs"),
@@ -605,6 +820,37 @@ describe("tool registry", () => {
     expect(task?.input_schema.properties.run_in_background).toEqual(expect.objectContaining({
       description: expect.stringContaining("You will be notified when it completes"),
     }));
+  });
+
+  test("Explore classification only allows read-only search tools and Bash commands", () => {
+    expect(normalizeSubagentType("explore")).toBe("Explore");
+    expect(isReadOnlyExploreToolCall("Read", { file_path: "src/index.ts" })).toBe(true);
+    expect(isReadOnlyExploreToolCall("Grep", { pattern: "Explore" })).toBe(true);
+    expect(classifyReadOnlyBashCommand("find . -type f | head -20 && echo --- && ls -la")).toBe("search");
+    expect(classifyReadOnlyBashCommand('find /Users/lbcheng -name "chat-aa" -type d 2>/dev/null | head -20')).toBe("search");
+    expect(classifyReadOnlyBashCommand("find . -type f >/dev/null")).toBe("search");
+    expect(classifyReadOnlyBashCommand("sed -n '1,80p' src/index.ts")).toBe("read");
+    expect(classifyReadOnlyBashCommand("nl -ba src/index.ts | head -20")).toBe("read");
+    expect(classifyReadOnlyBashCommand('cd /Users/lbcheng/open-claude-code/claude-code-full && echo "=== PACKAGE.JSON ===" && cat package.json && echo "=== TSCONFIG.JSON ===" && cat tsconfig.json')).toBe("read");
+    expect(classifyReadOnlyBashCommand("cd /Users/lbcheng/open-claude-code/claude-code-full && find src -type f | head -20")).toBe("search");
+    expect(classifyReadOnlyBashCommand("git -C /tmp/repo ls-tree -r --name-only HEAD")).toBe("read");
+    expect(classifyReadOnlyBashCommand("git branch --show-current")).toBe("read");
+    expect(classifyReadOnlyBashCommand("git branch --list 'feature/*'")).toBe("read");
+    expect(classifyReadOnlyBashCommand("git worktree list --porcelain")).toBe("read");
+    expect(classifyReadOnlyBashCommand("git stash show --stat")).toBe("read");
+    expect(classifyReadOnlyBashCommand("find . -type f > ./files.txt")).toBe(null);
+    expect(classifyReadOnlyBashCommand("find . -delete")).toBe(null);
+    expect(classifyReadOnlyBashCommand("find . -name '*.tmp' -exec rm {} \\;")).toBe(null);
+    expect(classifyReadOnlyBashCommand("cd /Users/lbcheng/open-claude-code/claude-code-full && rm -rf dist")).toBe(null);
+    expect(classifyReadOnlyBashCommand("sed -i '' 's/a/b/' src/index.ts")).toBe(null);
+    expect(classifyReadOnlyBashCommand("git branch feature/new")).toBe(null);
+    expect(classifyReadOnlyBashCommand("git branch -D feature/old")).toBe(null);
+    expect(classifyReadOnlyBashCommand("git tag v1.0.0")).toBe(null);
+    expect(classifyReadOnlyBashCommand("git remote add origin git@example.com:x/y.git")).toBe(null);
+    expect(classifyReadOnlyBashCommand("git diff -- src/index.ts")).toBe("read");
+    expect(isReadOnlyExploreToolCall("Bash", { command: "echo hi > /tmp/explore-write" })).toBe(false);
+    expect(isReadOnlyExploreToolCall("Bash", { command: "rm -rf dist" })).toBe(false);
+    expect(isReadOnlyExploreToolCall("Edit", { file_path: "src/index.ts" })).toBe(false);
   });
 
   test("Task runs a native in-process subagent through execution context", async () => {
@@ -852,6 +1098,59 @@ describe("tool registry", () => {
     }
   });
 
+  test("TaskStop stops running background subagents with official output shape", async () => {
+    const dir = createTempDir();
+    const previousConfigDir = process.env.CLAUDE_CONFIG_DIR;
+    process.env.CLAUDE_CONFIG_DIR = dir;
+    resetToolStateForTests();
+
+    try {
+      const start = await executeTool(
+        "Task",
+        {
+          description: "inspect code",
+          prompt: "Analyze slowly",
+          run_in_background: true,
+        },
+        undefined,
+        {
+          toolUseId: "toolu_task_bg_stop",
+          sessionId: "session-bg-stop",
+          cwd: dir,
+          runSubagent: async (request, signal) => {
+            await new Promise((_resolve, reject) => {
+              signal?.addEventListener("abort", () => reject(signal.reason), { once: true });
+            });
+            return {
+              agentId: request.agentId || "agent-bg-stop",
+              status: "completed",
+              content: "unreachable",
+              totalDurationMs: 0,
+              totalTokens: 0,
+              totalToolUseCount: 0,
+            };
+          },
+        },
+      );
+
+      expect(start.display?.type).toBe("agent_background");
+      if (start.display?.type !== "agent_background") throw new Error("Expected agent_background display");
+
+      const stopped = await executeTool("TaskStop", { task_id: start.display.taskId });
+      expect(stopped.content).toContain(`"task_id":"${start.display.taskId}"`);
+      expect(stopped.content).toContain('"task_type":"local_agent"');
+      expect(stopped.content).toContain('"command":"inspect code"');
+
+      const output = await executeTool("TaskOutput", { task_id: start.display.taskId, block: false });
+      expect(output.content).toContain("<retrieval_status>success</retrieval_status>");
+      expect(output.content).toContain("<status>killed</status>");
+    } finally {
+      if (previousConfigDir === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+      else process.env.CLAUDE_CONFIG_DIR = previousConfigDir;
+      resetToolStateForTests();
+    }
+  });
+
   test("NotebookEdit replaces, inserts, and deletes real notebook cells", async () => {
     const file = createTempFile(JSON.stringify({
       nbformat: 4,
@@ -862,25 +1161,29 @@ describe("tool registry", () => {
         { id: "code", cell_type: "code", source: "print('old')\n", metadata: {}, execution_count: 3, outputs: [{ output_type: "stream", text: "old" }] },
       ],
     }), "nb.ipynb");
+    const context = { sessionId: "notebook-edit" };
 
+    await executeTool("Read", { file_path: file }, undefined, context);
     const replaced = await executeTool("NotebookEdit", {
       notebook_path: file,
       cell_id: "code",
       new_source: "print('new')\n",
-    });
+    }, undefined, context);
+    await executeTool("Read", { file_path: file }, undefined, context);
     const inserted = await executeTool("NotebookEdit", {
       notebook_path: file,
       cell_id: "intro",
       edit_mode: "insert",
       cell_type: "markdown",
       new_source: "Inserted\n",
-    });
+    }, undefined, context);
+    await executeTool("Read", { file_path: file }, undefined, context);
     const deleted = await executeTool("NotebookEdit", {
       notebook_path: file,
       cell_id: "cell-0",
       edit_mode: "delete",
       new_source: "",
-    });
+    }, undefined, context);
     const notebook = JSON.parse(readFileSync(file, "utf8"));
 
     expect(replaced.isError).toBeUndefined();
@@ -893,6 +1196,25 @@ describe("tool registry", () => {
     expect(notebook.cells[1].source).toBe("print('new')\n");
     expect(notebook.cells[1].execution_count).toBeNull();
     expect(notebook.cells[1].outputs).toEqual([]);
+  });
+
+  test("NotebookEdit requires reading the notebook first", async () => {
+    const file = createTempFile(JSON.stringify({
+      nbformat: 4,
+      nbformat_minor: 5,
+      cells: [
+        { id: "intro", cell_type: "markdown", source: "Old\n", metadata: {} },
+      ],
+    }), "unread.ipynb");
+
+    const result = await executeTool("NotebookEdit", {
+      notebook_path: file,
+      cell_id: "intro",
+      new_source: "New\n",
+    }, undefined, { sessionId: "notebook-unread" });
+
+    expect(result.isError).toBe(true);
+    expect(result.content).toContain("not been read yet");
   });
 });
 
