@@ -3,7 +3,7 @@
 // Usage: node tools/update-from-binary.mjs [path-to-new-binary]
 
 import { execSync } from "child_process";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -11,6 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, "..");
 const versionsDir = join(projectRoot, ".versions");
 const toolsDir = join(__dirname);
+const legacyBaselineBundle = "/Users/lbcheng/open-claude-code/extracted_v4/main_bundle/full_bundle.cjs";
 
 // === Step 1: Extract full_bundle.cjs from binary ===
 async function extractBundle(binaryPath, version) {
@@ -86,6 +87,80 @@ function diffZBlocks(oldBlocks, newBlocks) {
   return { changed, added, removed };
 }
 
+function resolveBaselineBundle(newVersion) {
+  if (process.env.BASELINE_BUNDLE) {
+    return {
+      path: process.env.BASELINE_BUNDLE,
+      label: "BASELINE_BUNDLE",
+      required: true,
+    };
+  }
+
+  if (process.env.BASELINE_VERSION) {
+    return {
+      path: join(versionsDir, process.env.BASELINE_VERSION, "main_bundle", "full_bundle.cjs"),
+      label: `BASELINE_VERSION=${process.env.BASELINE_VERSION}`,
+      required: true,
+    };
+  }
+
+  const previousVersion = findLatestPreviousVersion(newVersion);
+  if (previousVersion) {
+    return {
+      path: join(versionsDir, previousVersion, "main_bundle", "full_bundle.cjs"),
+      label: `.versions/${previousVersion}`,
+      required: false,
+    };
+  }
+
+  if (existsSync(legacyBaselineBundle)) {
+    return {
+      path: legacyBaselineBundle,
+      label: "legacy extracted_v4",
+      required: false,
+    };
+  }
+
+  return null;
+}
+
+function findLatestPreviousVersion(newVersion) {
+  if (!existsSync(versionsDir)) return null;
+  const current = parseVersion(newVersion);
+  if (!current) return null;
+
+  const candidates = readdirSync(versionsDir, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .filter(version => {
+      const parsed = parseVersion(version);
+      if (!parsed) return false;
+      if (compareVersions(parsed, current) >= 0) return false;
+      return existsSync(join(versionsDir, version, "main_bundle", "full_bundle.cjs"));
+    })
+    .sort((a, b) => compareVersions(parseVersion(b), parseVersion(a)));
+
+  return candidates[0] || null;
+}
+
+function parseVersion(version) {
+  const match = String(version || "").match(/^(\d+)\.(\d+)\.(\d+)$/);
+  if (!match) return null;
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function compareVersions(left, right) {
+  for (let i = 0; i < 3; i++) {
+    const diff = left[i] - right[i];
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
+function sameFileContent(leftPath, rightPath) {
+  return readFileSync(leftPath).equals(readFileSync(rightPath));
+}
+
 // === Step 4: Map Z blocks to our TypeScript files ===
 const ZBLOCK_TO_FILE = {
   // Dialog components
@@ -144,23 +219,31 @@ async function main() {
   }
   console.log(`Binary version: ${version}`);
 
-  // Check if we have a current version to diff against
-  const currentBundle = "/Users/lbcheng/open-claude-code/extracted_v4/main_bundle/full_bundle.cjs";
-  if (!existsSync(currentBundle)) {
-    console.log("No current bundle found — extracting new one as baseline.");
-  }
-
   // Extract new bundle
   const { bundlePath } = await extractBundle(binaryPath, version);
 
-  if (!existsSync(currentBundle)) {
-    console.log("\nBaseline created. Run again with a new binary to diff.");
+  const baseline = resolveBaselineBundle(version);
+  if (!baseline) {
+    console.log("\nNo previous bundle found. This extraction is now stored under .versions.");
+    console.log("Run again with a newer binary, or set BASELINE_VERSION / BASELINE_BUNDLE explicitly.");
+    return;
+  }
+  if (!existsSync(baseline.path)) {
+    console.error(`\nBaseline not found (${baseline.label}): ${baseline.path}`);
+    if (!baseline.required) {
+      console.error("Run with BASELINE_VERSION=<old-version> or BASELINE_BUNDLE=<path> after extracting the old binary.");
+    }
+    process.exit(1);
+  }
+  if (sameFileContent(baseline.path, bundlePath)) {
+    console.log(`\nBaseline content equals new extraction (${baseline.label}).`);
+    console.log("No meaningful old→new diff can be produced from this pair.");
     return;
   }
 
   // Diff
-  console.log("\n=== Diffing Z blocks ===");
-  const oldBlocks = extractZBlocks(currentBundle);
+  console.log(`\n=== Diffing Z blocks (${baseline.label} → ${version}) ===`);
+  const oldBlocks = extractZBlocks(baseline.path);
   const newBlocks = extractZBlocks(bundlePath);
   const { changed, added, removed } = diffZBlocks(oldBlocks, newBlocks);
 

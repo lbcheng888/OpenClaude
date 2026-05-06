@@ -43,12 +43,28 @@ describe("terminal tool render grouping", () => {
     expect(prompt).toContain("You are powered by the model deepseek-v4-pro.");
   });
 
+  test("api system prompt preserves appended CLI instructions", () => {
+    const prompt = buildMainSystemPrompt("deepseek-v4-pro", "/tmp/claude-code-full", [], "Always answer with terse status.");
+
+    expect(prompt).toContain(MAIN_SYSTEM_PROMPT);
+    expect(prompt).toContain("Always answer with terse status.");
+    expect(prompt).toContain("# Environment");
+  });
+
   test("subagent prompt carries cwd and path discovery guidance", () => {
     const prompt = buildSubagentSystemPrompt("Explore", "deepseek-v4-pro", "/tmp/claude-code-full");
 
     expect(prompt).toContain("READ-ONLY exploration task");
     expect(prompt).toContain("Primary working directory: /tmp/claude-code-full");
     expect(prompt).toContain("Before using a guessed path, discover it with LS, Glob, Grep, or a read-only Bash command.");
+  });
+
+  test("subagent prompt inherits appended CLI instructions", () => {
+    const prompt = buildSubagentSystemPrompt("Explore", "deepseek-v4-pro", "/tmp/claude-code-full", [], "Respect the caller's extra policy.");
+
+    expect(prompt).toContain("READ-ONLY exploration task");
+    expect(prompt).toContain("Respect the caller's extra policy.");
+    expect(prompt).toContain("# Environment");
   });
 
   test("keeps top-level read-only tools standalone like the official TUI", () => {

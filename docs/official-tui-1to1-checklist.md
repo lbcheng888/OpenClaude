@@ -23,11 +23,11 @@
 - [x] 输入框 inverse-cell 光标、进行中光标、Ctrl/Meta 基础编辑、Shift+Tab。
 - [x] 官方式 spinner tick、shimmer、tool-use、stall、reduced motion。
 - [x] Explore/Agent progress 默认保留重复 toolUseId，只折叠旧行。
-- [x] API 前缀注入 `# Environment`、真实 cwd、git snapshot、CLAUDE.md 基础上下文、当前日期。
+- [x] API 前缀注入 `# Environment`、真实 cwd、git snapshot、managed/user/project/local CLAUDE.md、rules、`@include`、外部 include 开关、conditional rules、Read 后 nested memory、当前日期、当前 output style、language preference、skills 列表与 `Skill` 按需加载、`--append-system-prompt` 主/子代理继承。
 
 ## 当前未完成
 
-- [ ] 官方 context 全量管线：CLAUDE.md `@include`、外部 include 授权、conditional rules frontmatter、nested memory、skills、output style、language、MCP instructions、worktree 提醒。
+- [ ] 官方 context 剩余接线：真实 MCP connected server instructions 实时注入、worktree session 状态来源逐帧验证。
 - [ ] 启动首屏 80/120/137 列 golden 与官方逐字符比对进入 CI。
 - [ ] Markdown renderer 全量对齐：段落、强调、链接、inline code、软换行、列表、引用、代码块、diff。
 - [ ] system-reminder、错误、警告、permission 提示的颜色、缩进、换行 golden。

@@ -23,7 +23,7 @@ catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
 
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 expect "Welcome"
 
 # First Ctrl+C: show exit prompt

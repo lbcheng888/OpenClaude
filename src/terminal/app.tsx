@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Byline, Link, NoSelect, Ratchet, Text, getTheme, stringWidth, useAnimationFrame, useApp, useDeclaredCursor, useInput, useTheme, type InputEvent, type Theme, type ThemeName } from "@anthropic/ink";
+import { Box, Byline, Link, NoSelect, Ratchet, Text, getTheme, stringWidth, useAnimationFrame, useApp, useDeclaredCursor, useInput, useTheme, type InputEvent, type Key, type KeyboardEvent, type Theme, type ThemeName } from "@anthropic/ink";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { isAbsolute, join, relative, resolve } from "path";
@@ -24,14 +24,17 @@ import {
   hasForegroundBashTasks,
   listBackgroundTasks,
   readBackgroundTaskOutput,
+  stopAllRunningBackgroundAgentTasks,
   stopAllRunningTasks,
   stopBackgroundTask,
+  stopBackgroundTaskNow,
   type BackgroundTaskSummary,
 } from "../tools/registry.js";
 import { isReadOnlyExploreToolCall, normalizeSubagentType } from "../tools/read-only.js";
 import { createSession, listSessions, loadSession, saveSession, type SessionData } from "../session/store.js";
 import { addCodeChangesToCostState, addUsageToCostState, createEmptyCostState, formatCostSummary } from "../core/cost.js";
 import { appendOfficialContext } from "../core/context.js";
+import { buildRuntimeOfficialContextOptions } from "../core/context-options.js";
 import { sanitizeAssistantText } from "../core/protocol.js";
 import type { CliOptions } from "../index.js";
 export { buildOfficialEnvironmentContext } from "../core/context.js";
@@ -192,18 +195,33 @@ When using Task, specify subagent_type to select the agent type. If omitted, the
 
 Do not paste large raw command output, whole files, or the full parent transcript into Task prompts. Give paths, goals, constraints, and expected output, then let the subagent inspect files itself.`;
 
-export function buildMainSystemPrompt(model: string | undefined = getConfiguredModel(), cwd = process.cwd(), additionalWorkingDirectories: string[] = []): string {
-  return appendOfficialContext(MAIN_SYSTEM_PROMPT, { model, cwd, additionalWorkingDirectories });
+export function buildMainSystemPrompt(
+  model: string | undefined = getConfiguredModel(),
+  cwd = process.cwd(),
+  additionalWorkingDirectories: string[] = [],
+  appendSystemPrompt?: string,
+): string {
+  return appendOfficialContext(
+    appendSystemPrompt ? `${MAIN_SYSTEM_PROMPT}\n\n${appendSystemPrompt.trim()}` : MAIN_SYSTEM_PROMPT,
+    buildRuntimeOfficialContextOptions(model, cwd, additionalWorkingDirectories),
+  );
 }
 
-export function buildSubagentSystemPrompt(subagentType: string | undefined, model: string | undefined = getConfiguredSubagentModel(getConfiguredModel()), cwd = process.cwd(), additionalWorkingDirectories: string[] = []): string {
+export function buildSubagentSystemPrompt(
+  subagentType: string | undefined,
+  model: string | undefined = getConfiguredSubagentModel(getConfiguredModel()),
+  cwd = process.cwd(),
+  additionalWorkingDirectories: string[] = [],
+  appendSystemPrompt?: string,
+): string {
   const base = subagentType === "Explore" ? EXPLORE_SUBAGENT_SYSTEM_PROMPT : GENERAL_PURPOSE_SUBAGENT_SYSTEM_PROMPT;
   return appendOfficialContext(
     [
       base,
+      appendSystemPrompt?.trim(),
       "Notes:\n- Agent threads should treat the primary working directory as the repository root.\n- Use paths relative to the primary working directory, or absolute paths that are derived from it.\n- Before using a guessed path, discover it with LS, Glob, Grep, or a read-only Bash command.",
-    ].join("\n\n"),
-    { model, cwd, additionalWorkingDirectories },
+    ].filter(Boolean).join("\n\n"),
+    buildRuntimeOfficialContextOptions(model, cwd, additionalWorkingDirectories),
   );
 }
 const GENERAL_PURPOSE_SUBAGENT_SYSTEM_PROMPT = `You are an agent for Claude Code, Anthropic's official CLI for Claude. Given the user's message, you should use the tools available to complete the task. Complete the task fully--don't gold-plate, but don't leave it half-done. When you complete the task, respond with a concise report covering what was done and any key findings -- the caller will relay this to the user, so it only needs the essentials.
@@ -244,6 +262,7 @@ const EXPLORE_SUBAGENT_TOOL_NAMES = new Set([
   "Grep",
   "LS",
   "Read",
+  "Skill",
   "TaskOutput",
   "WebFetch",
   "WebSearch",
@@ -258,6 +277,7 @@ type ClaudeCodeTuiProps = {
   continueSession?: boolean;
   initialPermissionMode?: PermissionMode;
   additionalDirectories?: string[];
+  appendSystemPrompt?: string;
 };
 
 export function ClaudeCodeTui({
@@ -269,6 +289,7 @@ export function ClaudeCodeTui({
   continueSession,
   initialPermissionMode,
   additionalDirectories,
+  appendSystemPrompt,
 }: ClaudeCodeTuiProps): React.ReactElement {
   const { exit } = useApp();
   const cfg = getApiConfig();
@@ -334,10 +355,14 @@ export function ClaudeCodeTui({
   const [expandedOutput, setExpandedOutput] = useState(false);
   const [backgroundTasksVisible, setBackgroundTasksVisible] = useState(false);
   const [selectedBackgroundTaskIndex, setSelectedBackgroundTaskIndex] = useState(0);
+  const [backgroundTaskDetailId, setBackgroundTaskDetailId] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [responseLength, setResponseLength] = useState(0);
   const backgroundTasksVisibleRef = useRef(false);
   const selectedBackgroundTaskIndexRef = useRef(0);
+  const backgroundTaskDetailIdRef = useRef<string | null>(null);
+  const stoppingBackgroundTaskIdsRef = useRef(new Set<string>());
+  const backgroundTaskKillAgentsShortcutArmedRef = useRef(false);
   const loadingStartTimeRef = useRef(Date.now());
   const [backgroundTaskResult, setBackgroundTaskResult] = useState<BackgroundTaskActionResult | null>(null);
   const [usage, setUsage] = useState<Usage>({});
@@ -416,6 +441,11 @@ export function ClaudeCodeTui({
     setSelectedBackgroundTaskIndex(next);
   }, []);
 
+  const setBackgroundTaskDetailIdNow = useCallback((taskId: string | null): void => {
+    backgroundTaskDetailIdRef.current = taskId;
+    setBackgroundTaskDetailId(taskId);
+  }, []);
+
   const setResponseLengthNow = useCallback((nextLength: number): void => {
     const safeLength = Math.max(0, nextLength);
     setResponseLength(safeLength);
@@ -439,6 +469,28 @@ export function ClaudeCodeTui({
   const setStreamingNow = useCallback((nextStreaming: string): void => {
     streamingRef.current = nextStreaming;
     setStreaming(nextStreaming);
+  }, []);
+
+  const commitPartialAssistantMessageNow = useCallback((partial: string): void => {
+    const text = sanitizeAssistantText(partial).trim();
+    if (!text) return;
+    setMessages(previous => {
+      const next = [...previous];
+      for (let index = next.length - 1; index >= 0; index--) {
+        const message = next[index]!;
+        if (message.role !== "assistant") continue;
+        if (!message.content.trim() && (!message.toolUses || message.toolUses.length === 0)) {
+          next[index] = { ...message, content: text };
+          return next;
+        }
+        if (message.content === text) return previous;
+        break;
+      }
+      return [
+        ...previous,
+        { id: `assistant-partial-${Date.now()}-${previous.length}`, role: "assistant", content: text },
+      ];
+    });
   }, []);
 
   const setPermissionPromptSelectionNow = useCallback((nextIndex: number | ((current: number) => number)): void => {
@@ -617,37 +669,72 @@ export function ClaudeCodeTui({
   }, []);
 
   const stopManagedBackgroundTask = useCallback((taskId: string): void => {
+    if (stoppingBackgroundTaskIdsRef.current.has(taskId)) return;
+    stoppingBackgroundTaskIdsRef.current.add(taskId);
+    const result = stopBackgroundTaskNow(taskId, "Stopped");
     setBackgroundTaskResult({
       taskId,
       action: "stop",
-      content: "Stopping task…",
-      pending: true,
+      content: result.content,
+      isError: result.isError,
     });
-    void stopBackgroundTask(taskId)
-      .then(result => {
-        setBackgroundTaskResult({
-          taskId,
-          action: "stop",
-          content: result.content,
-          isError: result.isError,
-        });
-      })
-      .catch(error => {
-        setBackgroundTaskResult({
-          taskId,
-          action: "stop",
-          content: error instanceof Error ? error.message : String(error),
-          isError: true,
-        });
-      });
+    const clearStopping = setTimeout(() => {
+      stoppingBackgroundTaskIdsRef.current.delete(taskId);
+    }, 250);
+    clearStopping.unref?.();
+  }, []);
+
+  const stopAllManagedBackgroundAgents = useCallback((): void => {
+    const stoppedTaskIds = stopAllRunningBackgroundAgentTasks("Stopped");
+    setBackgroundTaskResult({
+      taskId: stoppedTaskIds[0] || "agents",
+      action: "stop",
+      content: stoppedTaskIds.length === 0
+        ? "No running background agents."
+        : `Stopped ${stoppedTaskIds.length} background ${stoppedTaskIds.length === 1 ? "agent" : "agents"}.`,
+      isError: stoppedTaskIds.length === 0 || undefined,
+    });
   }, []);
 
   const openBackgroundTasksPanel = useCallback((): void => {
     const tasks = sortBackgroundTasksForDialog(listBackgroundTasks());
-    setSelectedBackgroundTaskIndexNow(current => clamp(current, 0, Math.max(0, tasks.length - 1)));
+    const selectedIndex = clamp(selectedBackgroundTaskIndexRef.current, 0, Math.max(0, tasks.length - 1));
+    setSelectedBackgroundTaskIndexNow(selectedIndex);
+    const selectedTask = tasks[selectedIndex] || null;
     setBackgroundTaskResult(null);
+    backgroundTaskKillAgentsShortcutArmedRef.current = false;
+    setBackgroundTaskDetailIdNow(tasks.length === 1 && selectedTask ? selectedTask.id : null);
+    if (tasks.length === 1 && selectedTask) showBackgroundTaskOutput(selectedTask.id);
     setBackgroundTasksVisibleNow(true);
-  }, [setBackgroundTasksVisibleNow, setSelectedBackgroundTaskIndexNow]);
+  }, [setBackgroundTaskDetailIdNow, setBackgroundTasksVisibleNow, setSelectedBackgroundTaskIndexNow, showBackgroundTaskOutput]);
+
+  useEffect(() => {
+    if (!backgroundTasksVisible || !backgroundTaskDetailId) return;
+    const refreshCompletedDetailOutput = (): void => {
+      const task = listBackgroundTasks().find(item => item.id === backgroundTaskDetailId);
+      if (!task || task.status === "running") return;
+      if (
+        backgroundTaskResult?.taskId === backgroundTaskDetailId
+        && backgroundTaskResult.action === "stop"
+        && !backgroundTaskResult.pending
+      ) {
+        return;
+      }
+      if (
+        backgroundTaskResult?.taskId === backgroundTaskDetailId
+        && backgroundTaskResult.action === "output"
+        && !backgroundTaskResult.pending
+        && !isTaskOutputNotReady(backgroundTaskResult.content)
+      ) {
+        return;
+      }
+      showBackgroundTaskOutput(backgroundTaskDetailId);
+    };
+
+    refreshCompletedDetailOutput();
+    const timer = setInterval(refreshCompletedDetailOutput, 1000);
+    return () => clearInterval(timer);
+  }, [backgroundTaskDetailId, backgroundTaskResult, backgroundTasksVisible, showBackgroundTaskOutput]);
 
   const emitHookOutcome = useCallback((outcome: {
     notifications?: string[];
@@ -889,7 +976,7 @@ export function ClaudeCodeTui({
           maxTurns: SUBAGENT_MAX_TURNS,
           apiHistoryTokenBudget: SUBAGENT_API_HISTORY_TOKEN_BUDGET,
           tools: getSubagentToolDefs(subagentType),
-          stream: (history, tools, childSignal) => streamMessage(history, buildSubagentSystemPrompt(subagentType, getConfiguredSubagentModel(modelRef.current), sessionRef.current.cwd || process.cwd(), additionalWorkingDirectories), tools, undefined, childSignal, getConfiguredSubagentModel(modelRef.current)),
+          stream: (history, tools, childSignal) => streamMessage(history, buildSubagentSystemPrompt(subagentType, getConfiguredSubagentModel(modelRef.current), sessionRef.current.cwd || process.cwd(), additionalWorkingDirectories, appendSystemPrompt), tools, undefined, childSignal, getConfiguredSubagentModel(modelRef.current)),
           executeTool: (name, input, childSignal, childContext) => {
             if (subagentType === "Explore" && !isReadOnlyExploreToolCall(name, input)) {
               return Promise.resolve(denyExploreMutation(name, input));
@@ -898,6 +985,7 @@ export function ClaudeCodeTui({
               ...childContext,
               sessionId: sessionRef.current.id,
               cwd: sessionRef.current.cwd || process.cwd(),
+              additionalWorkingDirectories,
             });
           },
           checkPermission: tool =>
@@ -963,11 +1051,12 @@ export function ClaudeCodeTui({
 
       return new TenguSession({
         tools: getToolDefs(),
-        stream: (history, tools, signal) => streamMessage(history, buildMainSystemPrompt(modelRef.current, sessionRef.current.cwd || process.cwd(), additionalWorkingDirectories), tools, undefined, signal, modelRef.current),
+        stream: (history, tools, signal) => streamMessage(history, buildMainSystemPrompt(modelRef.current, sessionRef.current.cwd || process.cwd(), additionalWorkingDirectories, appendSystemPrompt), tools, undefined, signal, modelRef.current),
         executeTool: (name, input, signal, context) => executeTool(name, input, signal, {
           ...context,
           sessionId: sessionRef.current.id,
           cwd: sessionRef.current.cwd || process.cwd(),
+          additionalWorkingDirectories,
           runSubagent: createRunSubagent(context),
         }),
         checkPermission: tool =>
@@ -981,7 +1070,7 @@ export function ClaudeCodeTui({
         onEvent: handleAgentEvent,
       });
     },
-    [additionalWorkingDirectories, handleAgentEvent, hookRunner, permissionHandler, requestPermission],
+    [additionalWorkingDirectories, appendSystemPrompt, handleAgentEvent, hookRunner, permissionHandler, requestPermission],
   );
 
   const clearExitPendingTimer = useCallback((): void => {
@@ -1105,6 +1194,7 @@ export function ClaudeCodeTui({
           setCostState(createEmptyCostState());
           setBackgroundTasksVisibleNow(false);
           setSelectedBackgroundTaskIndexNow(0);
+          setBackgroundTaskDetailIdNow(null);
           setBackgroundTaskResult(null);
           if (hookRunner) {
             void hookRunner("SessionStart", {
@@ -1266,6 +1356,7 @@ export function ClaudeCodeTui({
       openBackgroundTasksPanel,
       permissionMode,
       pushSystemMessage,
+      setBackgroundTaskDetailIdNow,
       setBackgroundTasksVisibleNow,
       setSelectedBackgroundTaskIndexNow,
       setStreamingNow,
@@ -1314,6 +1405,7 @@ export function ClaudeCodeTui({
       setHistoryIndex(null);
 
       setBackgroundTasksVisibleNow(false);
+      setBackgroundTaskDetailIdNow(null);
       setBackgroundTaskResult(null);
       const userMessage: ChatMessage = {
         id: `user-${Date.now()}`,
@@ -1343,6 +1435,7 @@ export function ClaudeCodeTui({
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (!isUserInterruptionMessage(message) && message !== "Session reset") {
+          commitPartialAssistantMessageNow(streamingRef.current);
           setMessages(previous => [
             ...previous,
             { id: `system-${Date.now()}`, role: "system", content: message },
@@ -1356,12 +1449,14 @@ export function ClaudeCodeTui({
     },
     [
       agentSession,
+      commitPartialAssistantMessageNow,
       emitHookOutcome,
       handleSlashCommand,
       hookRunner,
       loading,
       openBackgroundTasksPanel,
       permissionMode,
+      setBackgroundTaskDetailIdNow,
       setBackgroundTasksVisibleNow,
       setInputNow,
       setLoadingNow,
@@ -1438,6 +1533,148 @@ export function ClaudeCodeTui({
     }
     if (inputRef.current.trim() === "") openBackgroundTasksPanel();
   }, [applyInputEditNow, historyIndex, navigateHistoryDownNow, openBackgroundTasksPanel]);
+
+  const handleBackgroundTasksShortcut = useCallback((value: string, key: Key): void => {
+    const tasks = sortBackgroundTasksForDialog(listBackgroundTasks());
+    const selectedTask = tasks[clamp(selectedBackgroundTaskIndexRef.current, 0, Math.max(0, tasks.length - 1))];
+    const detailTaskId = backgroundTaskDetailIdRef.current;
+    const detailTask = detailTaskId ? tasks.find(task => task.id === detailTaskId) : null;
+    const actionKey = value.toLowerCase();
+    const isKillAgentsPrefix = key.ctrl && (value === "\x18" || actionKey === "x");
+    const isKillAgentsConfirm = key.ctrl && (value === "\x0b" || actionKey === "k");
+
+    if (isKillAgentsPrefix) {
+      backgroundTaskKillAgentsShortcutArmedRef.current = true;
+      return;
+    }
+    if (isKillAgentsConfirm && backgroundTaskKillAgentsShortcutArmedRef.current) {
+      backgroundTaskKillAgentsShortcutArmedRef.current = false;
+      stopAllManagedBackgroundAgents();
+      return;
+    }
+    if (value || key.escape || key.leftArrow || key.rightArrow || key.upArrow || key.downArrow || key.return) {
+      backgroundTaskKillAgentsShortcutArmedRef.current = false;
+    }
+
+    if (detailTaskId) {
+      if (!detailTask) {
+        setBackgroundTaskDetailIdNow(null);
+        if (tasks.length === 0) setBackgroundTasksVisibleNow(false);
+        return;
+      }
+
+      if (key.leftArrow) {
+        if (tasks.length <= 1) {
+          setBackgroundTasksVisibleNow(false);
+          setBackgroundTaskDetailIdNow(null);
+          setBackgroundTaskResult(null);
+          backgroundTaskKillAgentsShortcutArmedRef.current = false;
+        } else {
+          setBackgroundTaskDetailIdNow(null);
+          setBackgroundTaskResult(null);
+        }
+        return;
+      }
+
+      if (key.escape || key.return || value === "\r" || value === "\n" || value === " ") {
+        setBackgroundTasksVisibleNow(false);
+        setBackgroundTaskDetailIdNow(null);
+        setBackgroundTaskResult(null);
+        backgroundTaskKillAgentsShortcutArmedRef.current = false;
+        return;
+      }
+
+      if (actionKey === "x" && detailTask.status === "running") {
+        stopManagedBackgroundTask(detailTask.id);
+        return;
+      }
+
+      if (actionKey === "r") {
+        showBackgroundTaskOutput(detailTask.id);
+      }
+      return;
+    }
+
+    if (key.escape || key.leftArrow) {
+      setBackgroundTasksVisibleNow(false);
+      setBackgroundTaskDetailIdNow(null);
+      setBackgroundTaskResult(null);
+      backgroundTaskKillAgentsShortcutArmedRef.current = false;
+      return;
+    }
+
+    if (key.upArrow) {
+      setSelectedBackgroundTaskIndexNow(current => Math.max(0, current - 1));
+      setBackgroundTaskResult(null);
+      return;
+    }
+
+    if (key.downArrow) {
+      setSelectedBackgroundTaskIndexNow(current => Math.min(Math.max(0, tasks.length - 1), current + 1));
+      setBackgroundTaskResult(null);
+      return;
+    }
+
+    if ((key.return || value === "\r" || value === "\n" || actionKey === "o") && selectedTask) {
+      setBackgroundTaskDetailIdNow(selectedTask.id);
+      showBackgroundTaskOutput(selectedTask.id);
+      return;
+    }
+
+    if (actionKey === "x" && selectedTask?.status === "running") {
+      stopManagedBackgroundTask(selectedTask.id);
+      return;
+    }
+
+    if (actionKey === "r") {
+      setBackgroundTaskResult(null);
+    }
+  }, [
+    setBackgroundTaskDetailIdNow,
+    setBackgroundTasksVisibleNow,
+    setSelectedBackgroundTaskIndexNow,
+    showBackgroundTaskOutput,
+    stopAllManagedBackgroundAgents,
+    stopManagedBackgroundTask,
+  ]);
+
+  useEffect(() => {
+    const onData = (chunk: Buffer): void => {
+      const value = chunk.toString("utf8");
+      if (!backgroundTasksVisibleRef.current) {
+        const hasBackgroundTasks = listBackgroundTasks().length > 0;
+        const canOpenFromDownArrow = inputRef.current.trim() === "" || (loadingRef.current && hasBackgroundTasks);
+        if (canOpenFromDownArrow && value.includes("\x1b[B")) openBackgroundTasksPanel();
+        return;
+      }
+      for (const char of value) {
+        if (char === "\x18") {
+          handleBackgroundTasksShortcut(char, createSyntheticInputKey({ ctrl: true }));
+          continue;
+        }
+        if (char === "\x0b") {
+          handleBackgroundTasksShortcut(char, createSyntheticInputKey({ ctrl: true }));
+          continue;
+        }
+        if (char === "x" || char === "X" || char === "r" || char === "R") {
+          handleBackgroundTasksShortcut(char, createSyntheticInputKey({ shift: char === char.toUpperCase() }));
+        }
+      }
+    };
+
+    process.stdin.on("data", onData);
+    return () => {
+      process.stdin.off("data", onData);
+    };
+  }, [handleBackgroundTasksShortcut, openBackgroundTasksPanel]);
+
+  useInput((value, key, event: InputEvent) => {
+    if (!backgroundTasksVisibleRef.current) return;
+    if (value === "\x1b[O" || value === "[O" || value === "\x1b[I" || value === "[I") return;
+    if (getExitControlInput(value, key)) return;
+    event.stopImmediatePropagation();
+    handleBackgroundTasksShortcut(value, key);
+  }, { isActive: backgroundTasksVisible });
 
   useInput((value, key, event: InputEvent) => {
     if (value === "\x1b[O" || value === "[O") {
@@ -1532,9 +1769,71 @@ export function ClaudeCodeTui({
     if (backgroundTasksVisible || backgroundTasksVisibleRef.current) {
       const tasks = sortBackgroundTasksForDialog(listBackgroundTasks());
       const selectedTask = tasks[clamp(selectedBackgroundTaskIndexRef.current, 0, Math.max(0, tasks.length - 1))];
+      const detailTaskId = backgroundTaskDetailIdRef.current;
+      const detailTask = detailTaskId ? tasks.find(task => task.id === detailTaskId) : null;
+      const actionKey = value || (key as { name?: string }).name || "";
+      const isKillAgentsPrefix = key.ctrl && (value === "\x18" || actionKey.toLowerCase() === "x");
+      const isKillAgentsConfirm = key.ctrl && (value === "\x0b" || actionKey.toLowerCase() === "k");
+
+      if (isKillAgentsPrefix) {
+        backgroundTaskKillAgentsShortcutArmedRef.current = true;
+        return;
+      }
+      if (isKillAgentsConfirm && backgroundTaskKillAgentsShortcutArmedRef.current) {
+        backgroundTaskKillAgentsShortcutArmedRef.current = false;
+        stopAllManagedBackgroundAgents();
+        return;
+      }
+      if (actionKey || key.escape || key.leftArrow || key.rightArrow || key.upArrow || key.downArrow || key.return) {
+        backgroundTaskKillAgentsShortcutArmedRef.current = false;
+      }
+
+      if (detailTaskId) {
+        if (!detailTask) {
+          setBackgroundTaskDetailIdNow(null);
+          if (tasks.length === 0) setBackgroundTasksVisibleNow(false);
+          return;
+        }
+
+        if (key.leftArrow) {
+          if (tasks.length <= 1) {
+            setBackgroundTasksVisibleNow(false);
+            setBackgroundTaskDetailIdNow(null);
+            setBackgroundTaskResult(null);
+            backgroundTaskKillAgentsShortcutArmedRef.current = false;
+          } else {
+            setBackgroundTaskDetailIdNow(null);
+            setBackgroundTaskResult(null);
+          }
+          return;
+        }
+
+        if (key.escape || key.return || value === "\r" || value === "\n" || value === " ") {
+          setBackgroundTasksVisibleNow(false);
+          setBackgroundTaskDetailIdNow(null);
+          setBackgroundTaskResult(null);
+          backgroundTaskKillAgentsShortcutArmedRef.current = false;
+          return;
+        }
+
+        if (actionKey.toLowerCase() === "x" && detailTask.status === "running") {
+          stopManagedBackgroundTask(detailTask.id);
+          return;
+        }
+
+        if (actionKey.toLowerCase() === "r") {
+          showBackgroundTaskOutput(detailTask.id);
+          return;
+        }
+
+        return;
+      }
 
       if (key.escape || key.leftArrow) {
         setBackgroundTasksVisibleNow(false);
+        setBackgroundTaskDetailIdNow(null);
+        setBackgroundTaskResult(null);
+        backgroundTaskKillAgentsShortcutArmedRef.current = false;
         return;
       }
 
@@ -1550,17 +1849,18 @@ export function ClaudeCodeTui({
         return;
       }
 
-      if ((key.return || value === "\r" || value === "\n" || value === "o" || value === "O") && selectedTask) {
+      if ((key.return || value === "\r" || value === "\n" || actionKey.toLowerCase() === "o") && selectedTask) {
+        setBackgroundTaskDetailIdNow(selectedTask.id);
         showBackgroundTaskOutput(selectedTask.id);
         return;
       }
 
-      if ((value === "x" || value === "X" || value === "s" || value === "S" || value === "k" || value === "K") && selectedTask?.status === "running") {
+      if (actionKey.toLowerCase() === "x" && selectedTask?.status === "running") {
         stopManagedBackgroundTask(selectedTask.id);
         return;
       }
 
-      if (value === "r" || value === "R") {
+      if (actionKey.toLowerCase() === "r") {
         setBackgroundTaskResult(null);
         return;
       }
@@ -1687,6 +1987,7 @@ export function ClaudeCodeTui({
       const textBeforeReturn = normalizedIncoming.split("\n")[0] || "";
       const next = applyInputEditAction(inputRef.current, cursorRef.current, { type: "insert", text: textBeforeReturn });
       setBackgroundTasksVisibleNow(false);
+      setBackgroundTaskDetailIdNow(null);
       resetInputEditTransientState();
       void send(next.input);
       return;
@@ -1722,6 +2023,8 @@ export function ClaudeCodeTui({
 
     if (value && !key.ctrl && value !== "\t" && value !== "\x1b[Z") {
       setBackgroundTasksVisibleNow(false);
+      setBackgroundTaskDetailIdNow(null);
+      setBackgroundTaskResult(null);
       applyInputEditNow({ type: "insert", text: value.replace(/\r\n?/gu, "\n") });
     }
   });
@@ -1748,7 +2051,35 @@ export function ClaudeCodeTui({
         <BackgroundTasksPanel
           tasks={listBackgroundTasks()}
           selectedIndex={selectedBackgroundTaskIndex}
+          detailTaskId={backgroundTaskDetailId}
           result={backgroundTaskResult}
+          onClose={() => {
+            setBackgroundTasksVisibleNow(false);
+            setBackgroundTaskDetailIdNow(null);
+            setBackgroundTaskResult(null);
+            backgroundTaskKillAgentsShortcutArmedRef.current = false;
+          }}
+          onBack={() => {
+            const tasks = sortBackgroundTasksForDialog(listBackgroundTasks());
+            if (tasks.length <= 1) {
+              setBackgroundTasksVisibleNow(false);
+              setBackgroundTaskDetailIdNow(null);
+            } else {
+              setBackgroundTaskDetailIdNow(null);
+            }
+            setBackgroundTaskResult(null);
+          }}
+          onSelect={nextIndex => {
+            setSelectedBackgroundTaskIndexNow(clamp(nextIndex, 0, Math.max(0, listBackgroundTasks().length - 1)));
+            setBackgroundTaskResult(null);
+          }}
+          onView={taskId => {
+            setBackgroundTaskDetailIdNow(taskId);
+            showBackgroundTaskOutput(taskId);
+          }}
+          onStop={taskId => stopManagedBackgroundTask(taskId)}
+          onStopAllAgents={stopAllManagedBackgroundAgents}
+          onRefresh={taskId => showBackgroundTaskOutput(taskId)}
         />
       )}
       {slashCommandMatches.length > 0 && <SlashCommandPanel commands={slashCommandMatches} />}
@@ -1828,7 +2159,7 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
       apiHistoryTokenBudget: SUBAGENT_API_HISTORY_TOKEN_BUDGET,
       tools: getSubagentToolDefs(subagentType),
       stream: (history, tools, childSignal) =>
-        streamMessage(history, buildSubagentSystemPrompt(subagentType, getConfiguredSubagentModel(options.model || getConfiguredModel()), restored?.session?.cwd || process.cwd(), options.addDirs || []), tools, undefined, childSignal, getConfiguredSubagentModel(options.model || getConfiguredModel())),
+        streamMessage(history, buildSubagentSystemPrompt(subagentType, getConfiguredSubagentModel(options.model || getConfiguredModel()), restored?.session?.cwd || process.cwd(), options.addDirs || [], options.appendSystemPrompt), tools, undefined, childSignal, getConfiguredSubagentModel(options.model || getConfiguredModel())),
       executeTool: (name, input, childSignal, childContext) => {
         if (subagentType === "Explore" && !isReadOnlyExploreToolCall(name, input)) {
           return Promise.resolve(denyExploreMutation(name, input));
@@ -1837,6 +2168,7 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
           ...childContext,
           sessionId: restored?.session?.id,
           cwd: restored?.session?.cwd || process.cwd(),
+          additionalWorkingDirectories: options.addDirs || [],
         });
       },
       checkPermission: tool =>
@@ -1865,11 +2197,12 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
 
   const session = new TenguSession({
     tools: getToolDefs(),
-    stream: (history, tools, signal) => streamMessage(history, buildMainSystemPrompt(options.model || getConfiguredModel(), restored?.session?.cwd || process.cwd(), options.addDirs || []), tools, undefined, signal, options.model),
+    stream: (history, tools, signal) => streamMessage(history, buildMainSystemPrompt(options.model || getConfiguredModel(), restored?.session?.cwd || process.cwd(), options.addDirs || [], options.appendSystemPrompt), tools, undefined, signal, options.model),
     executeTool: (name, input, signal, context) => executeTool(name, input, signal, {
       ...context,
       sessionId: restored?.session?.id,
       cwd: restored?.session?.cwd || process.cwd(),
+      additionalWorkingDirectories: options.addDirs || [],
       runSubagent: createPrintSubagentRunner(),
     }),
     checkPermission: tool =>
@@ -2030,7 +2363,13 @@ function estimateToolRows(tool: ToolRender, expandedOutput: boolean): number {
     if (!expandedOutput) return 2;
     return 2 + estimateWrappedLineCount([tool.display.stdout, tool.display.stderr].filter(Boolean).join("\n"), process.stdout.columns || 80);
   }
-  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent") {
+  if (tool.name === "TaskOutput") {
+    if (expandedOutput && tool.display?.type === "agent") {
+      return 4 + estimateWrappedLineCount(tool.display.content || tool.display.error || "", process.stdout.columns || 80);
+    }
+    return 2;
+  }
+  if (tool.name === "Task" && tool.display?.type === "agent") {
     const entries = tool.progress?.type === "agent_progress" ? getRenderableAgentProgressEntries(tool.progress.entries || []) : [];
     const visibleCount = expandedOutput ? entries.length : Math.min(entries.length, MAX_AGENT_PROGRESS_MESSAGES_TO_SHOW);
     const hiddenCount = Math.max(0, entries.length - visibleCount);
@@ -2111,15 +2450,107 @@ function SystemMessageView({ content }: { content: string }): React.ReactElement
 function BackgroundTasksPanel({
   tasks,
   selectedIndex,
+  detailTaskId,
   result,
+  onClose,
+  onBack,
+  onSelect,
+  onView,
+  onStop,
+  onStopAllAgents,
+  onRefresh,
 }: {
   tasks: BackgroundTaskSummary[];
   selectedIndex: number;
+  detailTaskId: string | null;
   result: BackgroundTaskActionResult | null;
+  onClose: () => void;
+  onBack: () => void;
+  onSelect: (nextIndex: number) => void;
+  onView: (taskId: string) => void;
+  onStop: (taskId: string) => void;
+  onStopAllAgents: () => void;
+  onRefresh: (taskId: string) => void;
 }): React.ReactElement {
   const sortedTasks = sortBackgroundTasksForDialog(tasks);
   const safeSelectedIndex = clamp(selectedIndex, 0, Math.max(0, sortedTasks.length - 1));
   const selectedTask = sortedTasks[safeSelectedIndex] || null;
+  const detailTask = detailTaskId ? sortedTasks.find(task => task.id === detailTaskId) || null : null;
+  const handleKeyDown = (event: KeyboardEvent): void => {
+    const eventKey = event.key;
+    const activeTask = detailTask || selectedTask;
+
+    if (event.ctrl && eventKey === "x") {
+      event.preventDefault();
+      return;
+    }
+    if (event.ctrl && eventKey === "k") {
+      event.preventDefault();
+      onStopAllAgents();
+      return;
+    }
+
+    if (detailTask) {
+      if (eventKey === "left") {
+        event.preventDefault();
+        onBack();
+        return;
+      }
+      if (eventKey === "escape" || eventKey === "return" || eventKey === " ") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (eventKey === "x" && detailTask.status === "running") {
+        event.preventDefault();
+        onStop(detailTask.id);
+        return;
+      }
+      if (eventKey === "r") {
+        event.preventDefault();
+        onRefresh(detailTask.id);
+      }
+      return;
+    }
+
+    if (eventKey === "escape" || eventKey === "left") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+    if (eventKey === "up") {
+      event.preventDefault();
+      onSelect(safeSelectedIndex - 1);
+      return;
+    }
+    if (eventKey === "down") {
+      event.preventDefault();
+      onSelect(safeSelectedIndex + 1);
+      return;
+    }
+    if ((eventKey === "return" || eventKey === "o") && activeTask) {
+      event.preventDefault();
+      onView(activeTask.id);
+      return;
+    }
+    if (eventKey === "x" && activeTask?.status === "running") {
+      event.preventDefault();
+      onStop(activeTask.id);
+    }
+  };
+
+  if (detailTask) {
+    return (
+      <Box flexDirection="column" tabIndex={0} autoFocus onKeyDown={handleKeyDown}>
+        <BackgroundTaskDetailPanel
+          task={detailTask}
+          result={result?.taskId === detailTask.id ? result : null}
+          canGoBack={sortedTasks.length > 1}
+        />
+      </Box>
+    );
+  }
+
   const bashTasks = sortedTasks.filter(task => task.kind === "bash");
   const agentTasks = sortedTasks.filter(task => task.kind === "agent");
   const sectionCount = [bashTasks, agentTasks].filter(section => section.length > 0).length;
@@ -2127,13 +2558,13 @@ function BackgroundTasksPanel({
   const runningAgentCount = agentTasks.filter(task => task.status === "running").length;
   const subtitle = formatBackgroundTasksDialogSubtitle(runningBashCount, runningAgentCount);
   return (
-    <Box marginTop={1}>
+    <Box marginTop={1} flexDirection="column" tabIndex={0} autoFocus onKeyDown={handleKeyDown}>
       <Dialog
         title="Background tasks"
         subtitle={subtitle}
-        color="claude"
+        color="background"
         inputGuide={() => (
-          <Text dimColor>{formatBackgroundTasksInputGuide(selectedTask)}</Text>
+          <Text dimColor>{formatBackgroundTasksInputGuide(selectedTask, runningAgentCount > 0)}</Text>
         )}
       >
         {sortedTasks.length === 0 ? (
@@ -2157,22 +2588,106 @@ function BackgroundTasksPanel({
                 marginTop={bashTasks.length > 0 ? 1 : 0}
               />
             )}
-            {result ? (
-              <Box flexDirection="column" marginTop={1}>
-                <Text color={result.isError ? "error" : result.pending ? "subtle" : "success"}>
-                  {result.action === "stop" ? "Stop" : "Output"} · {result.taskId}
-                </Text>
-                <OutputLineView
-                  content={formatManagedTaskResultContent(result.content)}
-                  isError={result.isError}
-                  expanded={false}
-                />
-              </Box>
-            ) : null}
           </Box>
         )}
       </Dialog>
     </Box>
+  );
+}
+
+function BackgroundTaskDetailPanel({
+  task,
+  result,
+  canGoBack,
+}: {
+  task: BackgroundTaskSummary;
+  result: BackgroundTaskActionResult | null;
+  canGoBack: boolean;
+}): React.ReactElement {
+  const title = task.kind === "bash" ? "Shell details" : "agent › " + (task.description || "Async agent");
+  const elapsedMs = task.totalDurationMs ?? Date.now() - task.startedAt;
+  const displayPrompt = task.kind === "agent" ? task.prompt || task.description : task.description;
+  const statusText = formatBackgroundTaskDetailStatus(task.status);
+  const subtitle = (
+    <Text>
+      {task.status !== "running" ? (
+        <>
+          <Text color={getBackgroundTaskDetailStatusColor(task.status)}>
+            {statusText === "completed" ? "✓ Completed" : statusText === "failed" ? "Failed" : "Stopped"}
+          </Text>
+          <Text dimColor> · </Text>
+        </>
+      ) : null}
+      <Text dimColor>
+        {formatDurationMs(elapsedMs)}
+        {typeof task.totalTokens === "number" && task.totalTokens > 0 ? ` · ${formatNumber(task.totalTokens)} tokens` : ""}
+        {typeof task.totalToolUseCount === "number" && task.totalToolUseCount > 0
+          ? ` · ${task.totalToolUseCount} ${task.totalToolUseCount === 1 ? "tool" : "tools"}`
+          : ""}
+      </Text>
+    </Text>
+  );
+  return (
+    <Box marginTop={1}>
+      <Dialog
+        title={title}
+        subtitle={subtitle}
+        color="background"
+        inputGuide={() => (
+          <Text dimColor>{formatBackgroundTaskDetailInputGuide(task, canGoBack)}</Text>
+        )}
+      >
+        <Box flexDirection="column">
+          <Box>
+            <Text bold>Status:</Text>
+            <Text> </Text>
+            <Text color={getBackgroundTaskDetailStatusColor(task.status)}>
+              {formatBackgroundTaskDetailStatus(task.status)}
+              {task.kind === "bash" && task.exitCode !== undefined && task.exitCode !== null ? ` (exit code: ${task.exitCode})` : ""}
+            </Text>
+          </Box>
+          <Box>
+            <Text bold>Runtime:</Text>
+            <Text> {formatDurationMs(elapsedMs)}</Text>
+          </Box>
+          <Box>
+            <Text bold>{task.kind === "bash" ? "Command:" : "Prompt:"}</Text>
+            <Text> {truncateLine(displayPrompt, 280)}</Text>
+          </Box>
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold>{result?.action === "stop" ? "Stop:" : "Output:"}</Text>
+            <BackgroundTaskDetailOutput result={result} />
+          </Box>
+          {task.status === "failed" && task.error ? (
+            <Box flexDirection="column" marginTop={1}>
+              <Text bold color="error">Error</Text>
+              <Text color="error">{task.error}</Text>
+            </Box>
+          ) : null}
+        </Box>
+      </Dialog>
+    </Box>
+  );
+}
+
+function BackgroundTaskDetailOutput({
+  result,
+}: {
+  result: BackgroundTaskActionResult | null;
+}): React.ReactElement {
+  if (!result || result.pending) {
+    return <Text dimColor>Loading output…</Text>;
+  }
+  const content = result.action === "stop"
+    ? formatTaskStopResult(result.content)
+    : formatManagedTaskResultContent(result.content);
+  if (!content.trim()) return <Text dimColor>No output available</Text>;
+  return (
+    <OutputLineView
+      content={content}
+      isError={result.isError}
+      expanded={false}
+    />
   );
 }
 
@@ -2232,6 +2747,27 @@ function BackgroundTaskStatusText({ status }: { status: BackgroundTaskSummary["s
   );
 }
 
+function formatBackgroundTaskDetailStatus(status: BackgroundTaskSummary["status"]): string {
+  if (status === "killed") return "stopped";
+  return status;
+}
+
+function getBackgroundTaskDetailStatusColor(status: BackgroundTaskSummary["status"]): string | undefined {
+  if (status === "running") return "background";
+  if (status === "completed") return "success";
+  if (status === "failed") return "error";
+  if (status === "killed") return "warning";
+  return undefined;
+}
+
+function formatBackgroundTaskDetailInputGuide(task: BackgroundTaskSummary, canGoBack: boolean): string {
+  return [
+    ...(canGoBack ? ["← go back"] : []),
+    "Esc/Enter/Space close",
+    ...(task.status === "running" ? ["x stop"] : []),
+  ].join(" · ");
+}
+
 function formatBackgroundTasksDialogSubtitle(runningBashCount: number, runningAgentCount: number): string | undefined {
   const parts = [
     runningBashCount > 0 ? `${runningBashCount} active ${runningBashCount === 1 ? "shell" : "shells"}` : "",
@@ -2255,11 +2791,12 @@ function backgroundTaskStatusRank(status: BackgroundTaskSummary["status"]): numb
   return 3;
 }
 
-function formatBackgroundTasksInputGuide(selectedTask: BackgroundTaskSummary | null): string {
+function formatBackgroundTasksInputGuide(selectedTask: BackgroundTaskSummary | null, hasRunningAgentTasks: boolean): string {
   return [
     "↑/↓ select",
     "Enter view",
     ...(selectedTask?.status === "running" ? ["x stop"] : []),
+    ...(hasRunningAgentTasks ? ["ctrl+x ctrl+k stop all agents"] : []),
     "←/Esc close",
   ].join(" · ");
 }
@@ -2485,6 +3022,9 @@ function ToolUseView({
         </Box>
         <Text bold>{displayName}</Text>
         {displayInput && <Text dimColor>{`(${displayInput})`}</Text>}
+        {tool.name === "TaskOutput" && typeof tool.input.task_id === "string" ? (
+          <Text dimColor>{` ${tool.input.task_id}`}</Text>
+        ) : null}
       </Box>
       <ToolResultView tool={tool} expandedOutput={expandedOutput} />
     </Box>
@@ -2561,6 +3101,10 @@ function ToolResultView({
     return <OutputLineView content={normalized} expanded={expandedOutput} />;
   }
 
+  if (tool.name === "TaskOutput") {
+    return <TaskOutputResultView tool={tool} expandedOutput={expandedOutput} />;
+  }
+
   if (tool.name === "KillBash" || tool.name === "TaskStop") {
     return (
       <MessageResponseView height={1}>
@@ -2573,7 +3117,7 @@ function ToolResultView({
     return <WebSearchResultView display={tool.display} expandedOutput={expandedOutput} />;
   }
 
-  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent") {
+  if (tool.name === "Task" && tool.display?.type === "agent") {
     return (
       <AgentResultView
         display={tool.display}
@@ -2583,7 +3127,7 @@ function ToolResultView({
     );
   }
 
-  if ((tool.name === "Task" || tool.name === "TaskOutput") && tool.display?.type === "agent_background") {
+  if (tool.name === "Task" && tool.display?.type === "agent_background") {
     return <AgentBackgroundView display={tool.display} expandedOutput={expandedOutput} />;
   }
 
@@ -2898,6 +3442,79 @@ function AgentBackgroundView({
       ) : null}
     </Box>
   );
+}
+
+function TaskOutputResultView({
+  tool,
+  expandedOutput,
+}: {
+  tool: ToolRender;
+  expandedOutput: boolean;
+}): React.ReactElement {
+  const result = tool.result || "";
+  const retrievalStatus = getTaggedResultValue(result, "retrieval_status");
+  const taskStatus = getTaggedResultValue(result, "status");
+  const isStillRunning = retrievalStatus === "not_ready"
+    || retrievalStatus === "timeout"
+    || taskStatus === "running"
+    || taskStatus === "pending"
+    || (tool.display?.type === "agent_background" && (!taskStatus || taskStatus === "running"));
+
+  if (isStillRunning) {
+    return (
+      <MessageResponseView height={1}>
+        <Text dimColor>Task is still running…</Text>
+      </MessageResponseView>
+    );
+  }
+
+  if (tool.display?.type === "agent") {
+    const output = tool.display.content.trim() || tool.display.error?.trim() || "";
+    if (!expandedOutput) {
+      return (
+        <MessageResponseView height={1}>
+          <Text dimColor>Read output (ctrl+o to expand)</Text>
+        </MessageResponseView>
+      );
+    }
+    const lineCount = output ? output.split("\n").length : 0;
+    return (
+      <Box flexDirection="column">
+        <MessageResponseView height={1}>
+          <Text>
+            {tool.display.description} ({lineCount} {lineCount === 1 ? "line" : "lines"})
+          </Text>
+        </MessageResponseView>
+        <Box paddingLeft={2} flexDirection="column">
+          <Text dimColor>{truncateLine(tool.display.prompt, 280)}</Text>
+          {output ? (
+            <Box marginTop={1}>
+              <OutputLineView content={output} isError={tool.display.status === "failed"} expanded />
+            </Box>
+          ) : null}
+        </Box>
+      </Box>
+    );
+  }
+
+  if (tool.isError) {
+    return (
+      <MessageResponseView height={1}>
+        <Text color="error">{firstResultLine(result)}</Text>
+      </MessageResponseView>
+    );
+  }
+
+  return (
+    <MessageResponseView height={1}>
+      <Text dimColor>Task not ready</Text>
+    </MessageResponseView>
+  );
+}
+
+function getTaggedResultValue(content: string, tagName: string): string | null {
+  const match = new RegExp(`<${tagName}>\\s*([^<]+?)\\s*<\\/${tagName}>`, "iu").exec(content);
+  return match?.[1]?.trim() || null;
 }
 
 function WebSearchProgressView({
@@ -3839,6 +4456,12 @@ function formatBackgroundTasks(tasks: BackgroundTaskSummary[]): string {
 function formatManagedTaskResultContent(content: string): string {
   const stopped = parseTaskStopResult(content);
   if (stopped) return stopped;
+  const retrievalStatus = getTaggedResultValue(content, "retrieval_status");
+  if (retrievalStatus === "not_ready" || retrievalStatus === "timeout") return "Task is still running…";
+  const output = getTaggedResultValue(content, "output");
+  if (output) return output;
+  const error = getTaggedResultValue(content, "error");
+  if (error) return error;
   const normalized = content
     .replace(/<\/?retrieval_status>/gu, "")
     .replace(/<\/?task_id>/gu, "")
@@ -3849,6 +4472,13 @@ function formatManagedTaskResultContent(content: string): string {
     .replace(/<\/?error>/gu, "")
     .trim();
   return normalized || content;
+}
+
+function isTaskOutputNotReady(content: string): boolean {
+  const formatted = formatManagedTaskResultContent(content);
+  return /<retrieval_status>\s*not_ready\s*<\/retrieval_status>/iu.test(content)
+    || /^\s*not_ready\b/iu.test(formatted)
+    || /^\s*Task is still running/iu.test(formatted);
 }
 
 function formatTaskStopResult(content: string): string {
@@ -3969,6 +4599,32 @@ export function getInputLineCursorParts(
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
+}
+
+function createSyntheticInputKey(partial: Partial<Key>): Key {
+  return {
+    upArrow: false,
+    downArrow: false,
+    leftArrow: false,
+    rightArrow: false,
+    pageDown: false,
+    pageUp: false,
+    wheelUp: false,
+    wheelDown: false,
+    home: false,
+    end: false,
+    return: false,
+    escape: false,
+    ctrl: false,
+    shift: false,
+    fn: false,
+    tab: false,
+    backspace: false,
+    delete: false,
+    meta: false,
+    super: false,
+    ...partial,
+  };
 }
 
 function getExitControlInput(value: string, key: { ctrl?: boolean }): ExitControlInput | null {
@@ -4737,7 +5393,10 @@ function formatToolUseMessage(name: string, input: Record<string, unknown>): str
   if (name === "Task" && typeof input.description === "string") {
     return truncateLine(input.description, 160);
   }
-  if ((name === "TaskOutput" || name === "TaskStop") && typeof input.task_id === "string") {
+  if (name === "TaskOutput") {
+    return input.block === false ? "non-blocking" : "";
+  }
+  if (name === "TaskStop" && typeof input.task_id === "string") {
     return input.task_id;
   }
   if (name === "TaskStop" && typeof input.shell_id === "string") {

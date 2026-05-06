@@ -1,6 +1,6 @@
 {
   "name": "claude-code-full",
-  "version": "2.1.128",
+  "version": "2.1.131",
   "type": "module",
   "workspaces": [
     "packages/*"
@@ -18,7 +18,8 @@
     "test:tui-startup-layout": "expect tools/tui-startup-layout-smoke.expect",
     "test:tui-image-paste": "expect tools/tui-image-paste-smoke.expect",
     "test:tui-permission": "expect tools/tui-permission-prompt-smoke.expect",
-    "test:tui-tool-render": "expect tools/tui-tool-render-smoke.expect"
+    "test:tui-tool-render": "expect tools/tui-tool-render-smoke.expect",
+    "test:official-parity": "npm run build && node tools/official-parity.mjs"
   },
   "dependencies": {
     "@anthropic/ink": "workspace:*",

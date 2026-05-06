@@ -73,7 +73,7 @@ catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "hello"
 set app_id $spawn_id
 
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 
 # Wait for the SSE streaming to start (spinner visible)
 after 2000

@@ -14,7 +14,7 @@ import { dirname, join } from "path";
 import type { ApiMessage, ApiMessageContent } from "../api/client.js";
 
 const MAX_SANITIZED_LENGTH = 200;
-const VERSION = "2.1.128";
+const VERSION = "2.1.131";
 const MAX_TOMBSTONE_REWRITE_BYTES = 50 * 1024 * 1024;
 
 export interface SessionData {

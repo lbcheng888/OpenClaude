@@ -1,5 +1,5 @@
 // Tool registry and execution engine
-import { getApiConfig, type ToolDef } from "../api/client.js";
+import { getApiConfig, type ApiMessage, type ToolDef } from "../api/client.js";
 import type {
   SubagentExecutionRequest,
   SubagentExecutionResult,
@@ -24,6 +24,8 @@ import { promisify } from "util";
 import { getClaudeConfigDir, getProjectDir } from "../session/store.js";
 import { createUnifiedDiff } from "./diff.js";
 import { normalizeSubagentType } from "./read-only.js";
+import { discoverConditionalMemoryFilesForPath } from "../core/context.js";
+import { loadSkillByName } from "../core/skills.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -31,12 +33,14 @@ export interface ToolResult {
   content: string;
   isError?: boolean;
   display?: ToolDisplay;
+  additionalMessages?: ApiMessage[];
 }
 
 export type ToolExecutionContext = {
   toolUseId?: string;
   sessionId?: string;
   cwd?: string;
+  additionalWorkingDirectories?: string[];
   emitProgress?: (progress: ToolProgressDisplay) => void | Promise<void>;
   emitNotification?: (text: string) => void | Promise<void>;
   runSubagent?: (request: SubagentExecutionRequest, signal?: AbortSignal) => Promise<SubagentExecutionResult>;
@@ -67,6 +71,7 @@ type BackgroundBashTask = {
   command: string;
   cwd: string;
   startedAt: number;
+  endTime?: number;
   status: "running" | "completed" | "failed" | "killed";
   stdout: string;
   stderr: string;
@@ -118,6 +123,7 @@ type BackgroundAgentTask = {
   prompt: string;
   outputFile: string;
   startedAt: number;
+  endTime?: number;
   status: "running" | "completed" | "failed" | "killed";
   output: string;
   error?: string;
@@ -132,12 +138,20 @@ export type BackgroundTaskSummary = {
   kind: "bash" | "agent";
   status: "running" | "completed" | "failed" | "killed";
   description: string;
+  prompt?: string;
   startedAt: number;
+  endTime?: number;
   outputFile?: string;
+  exitCode?: number | null;
+  totalDurationMs?: number;
+  totalTokens?: number;
+  totalToolUseCount?: number;
+  error?: string;
 };
 
 let currentTodos: TodoItem[] = [];
 const readFileState = new Map<string, Map<string, ReadFileCacheEntry>>();
+const nestedMemoryState = new Map<string, Set<string>>();
 let bashCwd = process.cwd();
 let bashEnv: NodeJS.ProcessEnv = { ...process.env };
 let shellPathCache: string | null = null;
@@ -182,6 +196,40 @@ export const FILE_UNCHANGED_STUB = "File unchanged since last read. The content 
 // ============================================================
 
 export const BUILTIN_TOOLS: Tool[] = [
+  {
+    name: "Skill",
+    description: "Load a named skill's instructions when the task matches an available skill",
+    input_schema: {
+      type: "object",
+      properties: {
+        skill: { type: "string", description: "Exact skill name to load" },
+      },
+      required: ["skill"],
+    },
+    async execute(input, _signal, context) {
+      const skillName = typeof input.skill === "string" ? input.skill.trim() : "";
+      if (!skillName) {
+        return { content: "Error: skill is required", isError: true };
+      }
+      const skill = loadSkillByName(
+        skillName,
+        context?.cwd || process.cwd(),
+        context?.additionalWorkingDirectories || [],
+      );
+      if (!skill) {
+        return { content: `Error: Skill '${skillName}' not found`, isError: true };
+      }
+      return {
+        content: [
+          `### Skill: ${skill.name}`,
+          `Path: ${skill.path}`,
+          "",
+          skill.content,
+        ].join("\n"),
+        display: { type: "text", summary: `Loaded skill ${skill.name}` },
+      };
+    },
+  },
   {
     name: "Bash",
     description: "Execute a shell command in the current working directory",
@@ -488,24 +536,11 @@ export const BUILTIN_TOOLS: Tool[] = [
       if (!agentTask && !bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
 
       if (agentTask) {
-        if (agentTask.status !== "running") {
-          return { content: `Error: Task ${taskId} is not running (status: ${agentTask.status})`, isError: true };
-        }
-        agentTask.status = "killed";
-        agentTask.error = "Killed";
-        agentTask.controller.abort(new Error("Killed"));
-        writeBackgroundAgentOutputFile(agentTask);
-        return formatTaskStopOutput(taskId, "local_agent", agentTask.description);
+        return stopBackgroundTaskNow(taskId, "Killed");
       }
 
       if (!bashTask) return { content: `Error: No task found with ID: ${taskId}`, isError: true };
-      if (bashTask.status !== "running") {
-        return { content: `Error: Task ${taskId} is not running (status: ${bashTask.status})`, isError: true };
-      }
-      bashTask.status = "killed";
-      bashTask.controller.abort(new Error("Killed"));
-      bashTask.child.kill("SIGTERM");
-      return formatTaskStopOutput(taskId, "local_bash", bashTask.command);
+      return stopBackgroundTaskNow(taskId, "Killed");
     },
   },
   {
@@ -562,6 +597,7 @@ export const BUILTIN_TOOLS: Tool[] = [
         rememberReadFile(context, fp, stat, offset, explicitLimit);
         return {
           content: "<system-reminder>Warning: the file exists but the contents are empty.</system-reminder>",
+          additionalMessages: getNestedMemoryMessages(fp, context),
           display: {
             type: "read",
             filePath: fp,
@@ -601,6 +637,7 @@ export const BUILTIN_TOOLS: Tool[] = [
         if (selectedLines.length === 0) {
           return {
             content: `<system-reminder>Warning: the file exists but is shorter than the provided offset (${offset}). The file has ${lines.length} lines.</system-reminder>`,
+            additionalMessages: getNestedMemoryMessages(fp, context),
             display: {
               type: "read",
               filePath: fp,
@@ -616,6 +653,7 @@ export const BUILTIN_TOOLS: Tool[] = [
         if (tokenError) return { content: tokenError, isError: true };
         return {
           content: numberedContent,
+          additionalMessages: getNestedMemoryMessages(fp, context),
           display: {
             type: "read",
             filePath: fp,
@@ -1038,7 +1076,7 @@ export const BUILTIN_TOOLS: Tool[] = [
       const url = String(input.url || "");
       if (!/^https?:\/\//u.test(url)) return { content: `Error: invalid URL: ${url}`, isError: true };
       try {
-        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.128" } });
+        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.131" } });
         if (!response.ok) return { content: `Error: HTTP ${response.status} ${response.statusText}`, isError: true };
         const contentType = response.headers.get("content-type") || "";
         const text = await response.text();
@@ -1386,6 +1424,7 @@ function startBackgroundAgentTask({
     if (task.status === "killed") return;
     const status = result.status || "completed";
     task.status = status;
+    task.endTime = Date.now();
     task.output = result.content || (status === "failed" ? result.error || "" : "");
     task.error = status === "failed" ? result.error || task.output || "Subagent failed" : undefined;
     task.totalDurationMs = result.totalDurationMs;
@@ -1396,6 +1435,7 @@ function startBackgroundAgentTask({
   }).catch(error => {
     if (task.status === "killed") return;
     task.status = "failed";
+    task.endTime = Date.now();
     task.error = error instanceof Error ? error.message : String(error);
     task.output = task.error;
     task.totalDurationMs = Date.now() - task.startedAt;
@@ -1499,10 +1539,10 @@ function formatBackgroundAgentTaskOutput(
     task.error ? `<error>${task.error}</error>` : "",
   ].filter(Boolean).join("\n\n");
 
-  if (task.status === "completed" || task.status === "failed") {
+  if (task.status === "completed" || task.status === "failed" || task.status === "killed") {
     return {
       content,
-      isError: task.status === "failed" || undefined,
+      isError: task.status === "failed" || task.status === "killed" || undefined,
       display: {
         type: "agent",
         agentId: task.agentId,
@@ -1568,14 +1608,23 @@ export function listBackgroundTasks(): BackgroundTaskSummary[] {
     status: task.status,
     description: task.command,
     startedAt: task.startedAt,
+    endTime: task.endTime,
+    exitCode: task.exitCode,
+    totalDurationMs: task.endTime ? task.endTime - task.startedAt : undefined,
   }));
   const agentTasks: BackgroundTaskSummary[] = [...backgroundAgentTasks.values()].map(task => ({
     id: task.id,
     kind: "agent",
     status: task.status,
     description: task.description,
+    prompt: task.prompt,
     startedAt: task.startedAt,
+    endTime: task.endTime,
     outputFile: task.outputFile,
+    totalDurationMs: task.totalDurationMs,
+    totalTokens: task.totalTokens,
+    totalToolUseCount: task.totalToolUseCount,
+    error: task.error,
   }));
   return [...bashTasks, ...agentTasks].sort((a, b) => b.startedAt - a.startedAt);
 }
@@ -1602,6 +1651,35 @@ export async function stopBackgroundTask(
   const task = findBackgroundTask(taskId);
   if (!task) return { content: `Background task not found: ${taskId}`, isError: true };
   return executeTool("TaskStop", { task_id: taskId }, signal, context);
+}
+
+export function stopBackgroundTaskNow(taskId: string, reason = "Killed"): ToolResult {
+  const agentTask = backgroundAgentTasks.get(taskId);
+  const bashTask = backgroundBashTasks.get(taskId);
+  if (!agentTask && !bashTask) return { content: `Background task not found: ${taskId}`, isError: true };
+
+  if (agentTask) {
+    if (agentTask.status !== "running") {
+      return { content: `Error: Task ${taskId} is not running (status: ${agentTask.status})`, isError: true };
+    }
+    agentTask.status = "killed";
+    agentTask.endTime = Date.now();
+    agentTask.error = reason;
+    agentTask.totalDurationMs = agentTask.endTime - agentTask.startedAt;
+    agentTask.controller.abort(new Error(reason));
+    writeBackgroundAgentOutputFile(agentTask);
+    return formatTaskStopOutput(taskId, "local_agent", agentTask.description);
+  }
+
+  if (!bashTask) return { content: `Background task not found: ${taskId}`, isError: true };
+  if (bashTask.status !== "running") {
+    return { content: `Error: Task ${taskId} is not running (status: ${bashTask.status})`, isError: true };
+  }
+  bashTask.status = "killed";
+  bashTask.endTime = Date.now();
+  bashTask.controller.abort(new Error(reason));
+  bashTask.child.kill("SIGTERM");
+  return formatTaskStopOutput(taskId, "local_bash", bashTask.command);
 }
 
 function formatSubagentToolResult(result: SubagentExecutionResult): string {
@@ -1665,12 +1743,21 @@ export function stopAllRunningTasks(reason = "Interrupted"): string[] {
     foregroundTask.child.kill("SIGTERM");
     cleanupStateFile(foregroundTask.stateFile);
     foregroundBashTasks.delete(foregroundTask);
-    if (foregroundTask.backgroundTaskId) stoppedTaskIds.push(foregroundTask.backgroundTaskId);
+    if (foregroundTask.backgroundTaskId) {
+      const task = backgroundBashTasks.get(foregroundTask.backgroundTaskId);
+      if (task && task.status === "running") {
+        task.status = "killed";
+        task.endTime = Date.now();
+        task.controller.abort(error);
+      }
+      stoppedTaskIds.push(foregroundTask.backgroundTaskId);
+    }
   }
 
   for (const task of backgroundBashTasks.values()) {
     if (task.status !== "running") continue;
     task.status = "killed";
+    task.endTime = Date.now();
     task.controller.abort(error);
     task.child.kill("SIGTERM");
     stoppedTaskIds.push(task.id);
@@ -1679,7 +1766,27 @@ export function stopAllRunningTasks(reason = "Interrupted"): string[] {
   for (const task of backgroundAgentTasks.values()) {
     if (task.status !== "running") continue;
     task.status = "killed";
+    task.endTime = Date.now();
     task.error = reason;
+    task.totalDurationMs = task.endTime - task.startedAt;
+    task.controller.abort(error);
+    writeBackgroundAgentOutputFile(task);
+    stoppedTaskIds.push(task.id);
+  }
+
+  return stoppedTaskIds;
+}
+
+export function stopAllRunningBackgroundAgentTasks(reason = "Stopped"): string[] {
+  const stoppedTaskIds: string[] = [];
+  const error = new Error(reason);
+
+  for (const task of backgroundAgentTasks.values()) {
+    if (task.status !== "running") continue;
+    task.status = "killed";
+    task.endTime = Date.now();
+    task.error = reason;
+    task.totalDurationMs = task.endTime - task.startedAt;
     task.controller.abort(error);
     writeBackgroundAgentOutputFile(task);
     stoppedTaskIds.push(task.id);
@@ -1693,6 +1800,7 @@ export function resetToolStateForTests(): void {
   bashEnv = { ...process.env };
   currentTodos = [];
   readFileState.clear();
+  nestedMemoryState.clear();
   for (const task of foregroundBashTasks) {
     if (task.progressTimer) clearInterval(task.progressTimer);
     task.child.kill("SIGTERM");
@@ -1727,6 +1835,27 @@ function getReadFileCache(context?: ToolExecutionContext): Map<string, ReadFileC
     readFileState.set(sessionKey, cache);
   }
   return cache;
+}
+
+function getNestedMemoryMessages(filePath: string, context?: ToolExecutionContext): ApiMessage[] {
+  const cwd = context?.cwd || process.cwd();
+  const sessionKey = sanitizeToolResultId(context?.sessionId || "standalone");
+  let loaded = nestedMemoryState.get(sessionKey);
+  if (!loaded) {
+    loaded = new Set();
+    nestedMemoryState.set(sessionKey, loaded);
+  }
+  const files = discoverConditionalMemoryFilesForPath(filePath, cwd, context?.additionalWorkingDirectories || []);
+  const messages: ApiMessage[] = [];
+  for (const file of files) {
+    if (loaded.has(file.path)) continue;
+    loaded.add(file.path);
+    messages.push({
+      role: "user",
+      content: `<system-reminder>Contents of ${file.path}:\n\n${file.content.trim()}</system-reminder>`,
+    });
+  }
+  return messages;
 }
 
 function rememberReadFile(
@@ -1816,6 +1945,7 @@ function startBackgroundBash(
     if (task.status !== "killed") {
       task.exitCode = state.exitCode ?? (typeof (error as any)?.code === "number" ? (error as any).code : 0);
       task.status = error || task.exitCode !== 0 ? "failed" : "completed";
+      task.endTime = Date.now();
       if (timedOut && !task.stderr.includes("timed out")) {
         task.stderr = [task.stderr, `Command timed out after ${formatDurationMs(timeout)}`].filter(Boolean).join("\n");
       }
@@ -1912,6 +2042,7 @@ function runForegroundBash(
           task.stderr = stderr;
           task.exitCode = state.exitCode ?? (typeof (error as any)?.code === "number" ? (error as any).code : 0);
           task.status = error || task.exitCode !== 0 ? "failed" : "completed";
+          task.endTime = Date.now();
           void foregroundTask.emitNotification?.(
             `Background bash ${task.status}: ${task.id} (${truncateOneLine(task.command, 80)})`,
           );

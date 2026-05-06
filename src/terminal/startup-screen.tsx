@@ -12,6 +12,20 @@ const BORDER_PADDING = 4;
 const CONTENT_PADDING = 2;
 const DIVIDER_WIDTH = 1;
 const MAX_RELEASE_NOTES_SHOWN = 5;
+const BUILT_IN_CHANGELOG = [
+  "# Changelog",
+  "",
+  "## 2.1.131",
+  "",
+  "- Fixed VS Code extension failing to activate on Windows due to a hardcoded build path in the bundled SDK (`createRequire` polyfill bug)",
+  "- Fixed Mantle endpoint authentication failing with missing `x-api-key` header",
+  "",
+  "## 2.1.129",
+  "",
+  "- Added `--plugin-url <url>` flag to fetch a plugin `.zip` archive from a URL for the current session",
+  "- Added `CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` env var to force-enable synchronized output on terminals that auto-detection misses (e.g. Emacs `eat`)",
+  "- Added `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`: when set on Homebrew or WinGet installations, Claude Code runs the upgrade command in the background and prompts to restart",
+].join("\n");
 const PROMPT_EXAMPLES = [
   "fix lint errors",
   "fix typecheck errors",
@@ -209,10 +223,12 @@ function createStartupFeed(version: string): FeedConfig {
 
 export function readRecentReleaseNotes(version: string): string[] {
   const changelogPath = getChangelogCachePath();
-  if (!existsSync(changelogPath)) return [];
+  const previousVersion = readLastReleaseNotesSeen();
+  if (!existsSync(changelogPath)) return getRecentReleaseNotes(version, previousVersion, BUILT_IN_CHANGELOG);
 
   const content = readFileSync(changelogPath, "utf8");
-  return getRecentReleaseNotes(version, readLastReleaseNotesSeen(), content);
+  const cachedNotes = getRecentReleaseNotes(version, previousVersion, content);
+  return cachedNotes.length > 0 ? cachedNotes : getRecentReleaseNotes(version, previousVersion, BUILT_IN_CHANGELOG);
 }
 
 export function readAllReleaseNotes(): Array<[string, string[]]> {

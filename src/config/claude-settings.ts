@@ -59,7 +59,10 @@ export type ClaudeSettings = {
   effortLevel?: unknown;
   env?: Record<string, unknown>;
   hooks?: Record<string, HookMatcher[]>;
+  language?: unknown;
   model?: unknown;
+  outputStyle?: unknown;
+  preferredLanguage?: unknown;
   permissions?: {
     allow?: unknown;
     ask?: unknown;

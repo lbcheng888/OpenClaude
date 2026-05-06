@@ -19,7 +19,7 @@ catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
 catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
 catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 send "?"
 expect "Available commands:"
 send "\033\[B"

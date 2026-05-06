@@ -9,7 +9,6 @@ cd $workdir
 set env(TERM) xterm-256color
 set env(HOME) "/tmp/claude-code-full-startup-layout-home"
 set env(CLAUDE_CONFIG_DIR) "/tmp/claude-code-full-startup-layout-home/.claude"
-file mkdir $env(CLAUDE_CONFIG_DIR)
 catch {unset env(ANTHROPIC_AUTH_TOKEN)}
 catch {unset env(ANTHROPIC_API_KEY)}
 catch {unset env(ANTHROPIC_BASE_URL)}
@@ -20,32 +19,41 @@ catch {unset env(ANTHROPIC_DEFAULT_SONNET_MODEL)}
 catch {unset env(CLAUDE_CODE_EFFORT_LEVEL)}
 catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 
+proc reset_home {} {
+  global env
+  file delete -force $env(HOME)
+  file mkdir $env(CLAUDE_CONFIG_DIR)
+}
+
 # Test 80 columns
+reset_home
 set env(COLUMNS) 80
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 expect "Welcome"
-expect "Tips for getting started"
+expect "What's new"
 send "\003\003"
 expect eof
 puts "PASS: 80 columns layout"
 
 # Test 120 columns
+reset_home
 set env(COLUMNS) 120
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 expect "Welcome"
-expect "Tips for getting started"
+expect "What's new"
 send "\003\003"
 expect eof
 puts "PASS: 120 columns layout"
 
 # Test 137 columns
+reset_home
 set env(COLUMNS) 137
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.128"
+expect "Claude Code v2.1.131"
 expect "Welcome"
-expect "Tips for getting started"
+expect "What's new"
 send "\003\003"
 expect eof
 puts "PASS: 137 columns layout"

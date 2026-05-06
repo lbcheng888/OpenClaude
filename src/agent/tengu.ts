@@ -16,15 +16,18 @@ import { existsSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { WorkflowTrace, type WorkflowTraceOptions, type WorkflowTraceSnapshot } from "./workflow-trace.js";
 
 export type ToolExecutionResult = {
   content: string;
   isError?: boolean;
   display?: ToolDisplay;
+  additionalMessages?: ApiMessage[];
 };
 
 export type ToolExecutionContext = {
   toolUseId: string;
+  additionalWorkingDirectories?: string[];
   emitProgress?: (progress: ToolProgressDisplay) => void | Promise<void>;
   emitNotification?: (text: string) => void | Promise<void>;
   runSubagent?: (request: SubagentExecutionRequest, signal?: AbortSignal) => Promise<SubagentExecutionResult>;
@@ -96,7 +99,7 @@ export type ToolDisplay =
       agentId: string;
       description: string;
       prompt: string;
-      status: "completed" | "failed";
+      status: "completed" | "failed" | "killed";
       content: string;
       totalDurationMs: number;
       totalTokens: number;
@@ -212,6 +215,7 @@ export type TenguSessionOptions = {
   maxTurns?: number;
   apiHistoryTokenBudget?: number;
   apiTurnRetryLimit?: number;
+  workflowTrace?: boolean | WorkflowTraceOptions;
 };
 
 export type TenguRunResult = {
@@ -219,6 +223,7 @@ export type TenguRunResult = {
   messages: ApiMessage[];
   stopReason: string | null;
   usage?: Usage;
+  workflowTrace: WorkflowTraceSnapshot;
 };
 
 type AssistantTurn = {
@@ -237,22 +242,29 @@ export class TenguSession {
   private readonly messages: ApiMessage[] = [];
   private readonly maxTurns: number;
   private readonly apiTurnRetryLimit: number;
+  private readonly workflowTrace: WorkflowTrace;
   private nextAssistantId = 1;
   private activeAbortController: AbortController | null = null;
 
   constructor(private readonly options: TenguSessionOptions) {
     this.maxTurns = options.maxTurns ?? DEFAULT_MAX_AGENT_TURNS;
     this.apiTurnRetryLimit = options.apiTurnRetryLimit ?? DEFAULT_API_TURN_RETRY_LIMIT;
+    this.workflowTrace = new WorkflowTrace(options.workflowTrace);
   }
 
   get history(): ApiMessage[] {
     return cloneMessages(this.messages);
   }
 
+  get trace(): WorkflowTraceSnapshot {
+    return this.workflowTrace.snapshot();
+  }
+
   reset(): void {
     this.cancel("Session reset");
     this.messages.length = 0;
     this.nextAssistantId = 1;
+    this.workflowTrace.reset();
   }
 
   hydrate(messages: ApiMessage[]): void {
@@ -260,6 +272,7 @@ export class TenguSession {
     this.messages.length = 0;
     this.messages.push(...cloneMessages(messages).map(sanitizeApiMessage));
     this.nextAssistantId = 1;
+    this.workflowTrace.reset();
   }
 
   cancel(reason: unknown = new Error("Interrupted")): void {
@@ -308,6 +321,10 @@ export class TenguSession {
           this.messages.push({ role: "assistant", content: assistantTurn.content });
         }
 
+        if (assistantTurn.stopReason === "max_tokens") {
+          throw new Error("API Error: Response hit the output token limit before completion.");
+        }
+
         if (assistantTurn.toolUses.length === 0) {
           const stopHook = await this.runHooks("Stop", {
             stop_reason: assistantTurn.stopReason,
@@ -326,11 +343,13 @@ export class TenguSession {
             text: finalText,
             messages: this.history,
             stopReason: finalStopReason,
+            workflowTrace: this.trace,
           };
         }
 
-        const toolResults = await this.executeToolUses(assistantId, assistantTurn.toolUses, abortController.signal);
+        const { results: toolResults, additionalMessages } = await this.executeToolUses(assistantId, assistantTurn.toolUses, abortController.signal);
         this.messages.push({ role: "user", content: toolResults });
+        this.messages.push(...additionalMessages);
         assertResolvedToolResults(this.messages);
         await this.emit({ type: "tool_results_message", results: toolResults });
       }
@@ -533,8 +552,9 @@ export class TenguSession {
     assistantId: string,
     toolUses: ToolUseContentBlock[],
     signal: AbortSignal,
-  ): Promise<ToolResultContentBlock[]> {
+  ): Promise<{ results: ToolResultContentBlock[]; additionalMessages: ApiMessage[] }> {
     const resultsByToolUseId = new Map<string, ToolResultContentBlock>();
+    const additionalMessages: ApiMessage[] = [];
 
     for (const batch of partitionToolUses(toolUses)) {
       if (batch.concurrent) {
@@ -553,6 +573,7 @@ export class TenguSession {
         );
         for (const item of completed) {
           resultsByToolUseId.set(item.tool.id, item.result);
+          additionalMessages.push(...(item.additionalMessages || []));
         }
         continue;
       }
@@ -565,14 +586,18 @@ export class TenguSession {
         }
         const completed = await this.executePreparedToolUse(assistantId, prepared.tool, signal);
         resultsByToolUseId.set(completed.tool.id, completed.result);
+        additionalMessages.push(...(completed.additionalMessages || []));
       }
     }
 
-    return toolUses.map(toolUse => {
-      const result = resultsByToolUseId.get(toolUse.id);
-      if (!result) throw new Error(`Missing tool_result for ${toolUse.id}`);
-      return result;
-    });
+    return {
+      results: toolUses.map(toolUse => {
+        const result = resultsByToolUseId.get(toolUse.id);
+        if (!result) throw new Error(`Missing tool_result for ${toolUse.id}`);
+        return result;
+      }),
+      additionalMessages,
+    };
   }
 
   private async prepareToolUse(
@@ -636,7 +661,7 @@ export class TenguSession {
     assistantId: string,
     finalToolUse: ToolUseContentBlock,
     signal: AbortSignal,
-  ): Promise<{ tool: ToolUseContentBlock; result: ToolResultContentBlock }> {
+  ): Promise<{ tool: ToolUseContentBlock; result: ToolResultContentBlock; additionalMessages?: ApiMessage[] }> {
     let executed: ToolExecutionResult;
     try {
       executed = await this.options.executeTool(finalToolUse.name, finalToolUse.input, signal, {
@@ -693,7 +718,7 @@ export class TenguSession {
       if (postHook.blocked) {
         await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result, display: executed.display });
       }
-      return { tool: finalToolUse, result };
+      return { tool: finalToolUse, result, additionalMessages: executed.additionalMessages };
     } catch (error) {
       if (signal.aborted) throw error;
       const result = {
@@ -759,6 +784,7 @@ export class TenguSession {
   }
 
   private async emit(event: TenguLoopEvent): Promise<void> {
+    this.workflowTrace.record(event);
     await this.options.onEvent?.(event);
   }
 

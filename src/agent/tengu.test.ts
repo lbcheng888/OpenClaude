@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { ApiMessage, ApiStreamEvent, ToolDef } from "../api/client.js";
-import { assertResolvedToolResults, prepareApiMessagesForRequest, TenguSession, type SpinnerMode } from "./tengu.js";
+import { assertResolvedToolResults, prepareApiMessagesForRequest, TenguSession, type SpinnerMode, type TenguLoopEvent } from "./tengu.js";
+import { WorkflowTrace } from "./workflow-trace.js";
 
 const tools: ToolDef[] = [
   {
@@ -28,6 +32,115 @@ const tools: ToolDef[] = [
 ];
 
 describe("Tengu agent loop", () => {
+  test("records a verifiable user API tool API workflow trace", async () => {
+    const session = new TenguSession({
+      tools,
+      stream: history => fromEvents(
+        history.length === 1
+          ? [
+              { type: "request_start" },
+              { type: "text_delta", index: 0, text: "Reading." },
+              {
+                type: "tool_use",
+                index: 1,
+                tool: { type: "tool_use", id: "toolu_trace", name: "Read", input: { file_path: "a.ts" } },
+              },
+              { type: "message_delta", stop_reason: "tool_use" },
+              { type: "message_stop" },
+            ]
+          : [
+              { type: "request_start" },
+              { type: "text_delta", index: 0, text: "Done." },
+              { type: "message_delta", stop_reason: "end_turn" },
+              { type: "message_stop" },
+            ],
+      ),
+      executeTool: async () => ({ content: "file body" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    const result = await session.runUserTurn("inspect");
+    const eventTypes = result.workflowTrace.entries.map(entry => entry.event.type);
+
+    expect(result.workflowTrace.phase).toBe("ready_for_next_request");
+    expect(result.workflowTrace.pendingToolUseIds).toEqual([]);
+    expect(result.workflowTrace.startedToolUseIds).toContain("toolu_trace");
+    expect(result.workflowTrace.completedToolUseIds).toContain("toolu_trace");
+    expect(eventTypes).toEqual([
+      "api_request",
+      "assistant_start",
+      "stream_mode",
+      "stream_mode",
+      "assistant_text_delta",
+      "stream_mode",
+      "stream_mode",
+      "stream_mode",
+      "assistant_complete",
+      "stream_mode",
+      "tool_start",
+      "tool_result",
+      "tool_results_message",
+      "api_request",
+      "assistant_start",
+      "stream_mode",
+      "stream_mode",
+      "assistant_text_delta",
+      "stream_mode",
+      "stream_mode",
+      "assistant_complete",
+    ]);
+  });
+
+  test("workflow trace rejects API continuation before tool results are flushed", () => {
+    const trace = new WorkflowTrace();
+    trace.record({ type: "api_request", turn: 0, messages: [], tools });
+    trace.record({ type: "assistant_start", assistantId: "assistant-1", turn: 0 });
+    trace.record({
+      type: "assistant_complete",
+      assistantId: "assistant-1",
+      content: [{ type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } }],
+      text: "",
+      stopReason: "tool_use",
+    });
+    trace.record({
+      type: "tool_start",
+      assistantId: "assistant-1",
+      tool: { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } },
+    });
+    trace.record({
+      type: "tool_result",
+      assistantId: "assistant-1",
+      tool: { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } },
+      result: { type: "tool_result", tool_use_id: "toolu_read", content: "ok" },
+    });
+
+    expect(() => trace.record({ type: "api_request", turn: 1, messages: [], tools })).toThrow("before tool_results_message");
+  });
+
+  test("workflow trace can persist JSONL for replayable parity proof", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "claude-code-workflow-test-"));
+    const persistPath = join(dir, "workflow.jsonl");
+    const session = new TenguSession({
+      tools,
+      workflowTrace: { persistPath },
+      stream: () => fromEvents([
+        { type: "request_start" },
+        { type: "text_delta", index: 0, text: "visible answer" },
+        { type: "message_delta", stop_reason: "end_turn" },
+        { type: "message_stop" },
+      ]),
+      executeTool: async () => ({ content: "" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    await session.runUserTurn("hello");
+
+    expect(existsSync(persistPath)).toBe(true);
+    const lines = readFileSync(persistPath, "utf8").trim().split("\n").map(line => JSON.parse(line));
+    expect(lines.map(line => line.event.type)).toContain("assistant_text_delta");
+    expect(lines.find(line => line.event.type === "assistant_text_delta")?.event.text).toBe("visible answer");
+  });
+
   test("hydrate removes leaked protocol text from assistant history", () => {
     const session = new TenguSession({
       tools,
@@ -52,6 +165,32 @@ describe("Tengu agent loop", () => {
     expect(Array.isArray(assistant?.content)).toBe(true);
     expect(Array.isArray(assistant?.content) ? assistant.content[0] : undefined).toEqual({ type: "text", text: "ok" });
     expect(Array.isArray(assistant?.content) ? assistant.content[1] : undefined).toMatchObject({ type: "tool_use", id: "toolu_read" });
+  });
+
+  test("does not silently accept output-token truncated assistant turns", async () => {
+    const events: TenguLoopEvent[] = [];
+    const session = new TenguSession({
+      tools,
+      stream: () => fromEvents([
+        { type: "text_delta", index: 0, text: "partial answer" },
+        { type: "message_delta", stop_reason: "max_tokens" },
+        { type: "message_stop" },
+      ]),
+      executeTool: async () => ({ content: "" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+      onEvent: event => {
+        events.push(event);
+      },
+    });
+
+    await expect(session.runUserTurn("answer fully")).rejects.toThrow("output token limit");
+
+    expect(events).toContainEqual({
+      type: "assistant_text_delta",
+      assistantId: "assistant-1",
+      text: "partial answer",
+      fullText: "partial answer",
+    });
   });
 
   test("round-trips assistant tool_use into user tool_result before the next API request", async () => {
@@ -99,6 +238,48 @@ describe("Tengu agent loop", () => {
       role: "user",
       content: [{ type: "tool_result", tool_use_id: "toolu_read", content: "hello" }],
     });
+  });
+
+  test("sends invisible nested memory messages after tool_result blocks", async () => {
+    const requests: ApiMessage[][] = [];
+    const streams: ApiStreamEvent[][] = [
+      [
+        {
+          type: "tool_use",
+          index: 0,
+          tool: { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "src/app.ts" } },
+        },
+        { type: "message_delta", stop_reason: "tool_use" },
+        { type: "message_stop" },
+      ],
+      [
+        { type: "text_delta", index: 0, text: "done" },
+        { type: "message_delta", stop_reason: "end_turn" },
+        { type: "message_stop" },
+      ],
+    ];
+
+    const session = new TenguSession({
+      tools,
+      stream: history => {
+        requests.push(history);
+        return fromEvents(streams.shift() || []);
+      },
+      executeTool: async () => ({
+        content: "file content",
+        additionalMessages: [{ role: "user", content: "<system-reminder>nested memory</system-reminder>" }],
+      }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    await session.runUserTurn("read");
+
+    expect(requests[1][1]).toMatchObject({ role: "assistant" });
+    expect(requests[1][2]).toEqual({
+      role: "user",
+      content: [{ type: "tool_result", tool_use_id: "toolu_read", content: "file content" }],
+    });
+    expect(requests[1][3]).toEqual({ role: "user", content: "<system-reminder>nested memory</system-reminder>" });
   });
 
   test("accepts user image content blocks as first-class API input", async () => {

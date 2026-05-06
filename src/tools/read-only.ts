@@ -117,6 +117,7 @@ export function normalizeSubagentType(value: unknown): string | undefined {
 
 export function isReadOnlyExploreToolCall(name: string, input: Record<string, unknown>): boolean {
   if (name === "Read" || name === "Glob" || name === "Grep" || name === "LS") return true;
+  if (name === "Skill") return true;
   if (name === "WebSearch" || name === "WebFetch") return true;
   if (name === "BashOutput" || name === "TaskOutput") return true;
   if (name !== "Bash") return false;

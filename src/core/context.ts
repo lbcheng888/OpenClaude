@@ -5,6 +5,7 @@ import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path
 import ignore from "ignore";
 import { Lexer } from "marked";
 import { parse as parseYaml } from "yaml";
+import { buildSkillsContext, type SkillSummary } from "./skills.js";
 
 const MEMORY_INSTRUCTION_PROMPT =
   "Codebase and user instructions are shown below. Be sure to adhere to these instructions. IMPORTANT: These instructions OVERRIDE any default behavior and you MUST follow them exactly as written.";
@@ -14,7 +15,7 @@ const MAX_INCLUDE_DEPTH = 5;
 
 type MemoryType = "Managed" | "User" | "Project" | "Local";
 
-type MemoryFile = {
+export type MemoryFile = {
   path: string;
   type: MemoryType;
   content: string;
@@ -29,6 +30,7 @@ export type OfficialContextOptions = {
   languagePreference?: string | null;
   outputStyle?: { name: string; prompt: string } | null;
   mcpInstructions?: Array<{ name: string; instructions?: string | null }>;
+  skills?: SkillSummary[];
   includeExternalClaudeMd?: boolean;
 };
 
@@ -149,6 +151,7 @@ export function buildOfficialContextSections(options: OfficialContextOptions = {
       additionalWorkingDirectories: options.additionalWorkingDirectories,
     }),
     buildMcpInstructionsContext(options.mcpInstructions),
+    buildSkillsContext(options.skills || []),
     buildGitStatusContext(cwd),
     buildClaudeMdContext(cwd, options.additionalWorkingDirectories || [], {
       includeExternal: options.includeExternalClaudeMd,
@@ -252,7 +255,7 @@ export function discoverMemoryFiles(
   additionalWorkingDirectories: string[] = [],
   options: { includeExternal?: boolean } = {},
 ): MemoryFile[] {
-  const resolvedCwd = resolve(cwd);
+  const resolvedCwd = safeRealpath(resolve(cwd));
   const includeExternal = options.includeExternal || hasApprovedExternalIncludes();
   const seen = new Set<string>();
   const files: MemoryFile[] = [];
@@ -288,8 +291,8 @@ export function discoverConditionalMemoryFilesForPath(
   additionalWorkingDirectories: string[] = [],
   options: { includeExternal?: boolean } = {},
 ): MemoryFile[] {
-  const resolvedCwd = resolve(cwd);
-  const resolvedTarget = resolve(resolvedCwd, targetPath);
+  const resolvedCwd = safeRealpath(resolve(cwd));
+  const resolvedTarget = safeRealpath(resolve(resolvedCwd, targetPath));
   const includeExternal = options.includeExternal || hasApprovedExternalIncludes();
   const seen = new Set<string>();
   const files: MemoryFile[] = [];
@@ -297,12 +300,21 @@ export function discoverConditionalMemoryFilesForPath(
   addRuleFiles(files, seen, join(getManagedFilePath(), ".claude", "rules"), "Managed", false, true, resolvedCwd, resolvedTarget);
   addRuleFiles(files, seen, join(getClaudeConfigDir(), "rules"), "User", true, true, resolvedCwd, resolvedTarget);
 
-  const dirs = getAncestorDirs(dirname(resolvedTarget));
-  for (const dir of dirs) {
-    addProjectMemoryFiles(files, seen, dir, includeExternal, resolvedCwd, resolvedTarget);
+  for (const dir of getAncestorDirs(resolvedCwd)) {
+    addRuleFiles(files, seen, join(dir, ".claude", "rules"), "Project", includeExternal, true, resolvedCwd, resolvedTarget);
+  }
+
+  if (pathWithin(resolvedTarget, resolvedCwd)) {
+    for (const dir of getDirsBetween(resolvedCwd, dirname(resolvedTarget))) {
+      addProjectMemoryFiles(files, seen, dir, includeExternal, resolvedCwd);
+    }
   }
   for (const dir of additionalWorkingDirectories) {
-    addProjectMemoryFiles(files, seen, resolve(resolvedCwd, dir), includeExternal, resolvedCwd, resolvedTarget);
+    const resolvedDir = safeRealpath(resolve(resolvedCwd, dir));
+    if (!pathWithin(resolvedTarget, resolvedDir)) continue;
+    for (const nestedDir of getDirsBetween(resolvedDir, dirname(resolvedTarget))) {
+      addProjectMemoryFiles(files, seen, nestedDir, includeExternal, resolvedCwd);
+    }
   }
 
   return files;
@@ -445,9 +457,13 @@ function parseFrontmatterPaths(rawContent: string): { content: string; paths?: s
       frontmatter = parsed as Record<string, unknown>;
     }
   } catch {
-    const parsed = parseYaml(quoteProblematicYamlValues(frontmatterText));
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      frontmatter = parsed as Record<string, unknown>;
+    try {
+      const parsed = parseYaml(quoteProblematicYamlValues(frontmatterText));
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        frontmatter = parsed as Record<string, unknown>;
+      }
+    } catch {
+      frontmatter = {};
     }
   }
 
@@ -596,6 +612,73 @@ function getAncestorDirs(cwd: string): string[] {
   return dirs.reverse();
 }
 
+function getDirsBetween(baseDir: string, targetDir: string): string[] {
+  const base = resolve(baseDir);
+  let current = resolve(targetDir);
+  const dirs: string[] = [];
+  while (pathWithin(current, base) && current !== base) {
+    dirs.push(current);
+    const parent = dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  return dirs.reverse();
+}
+
+function prependBullets(items: Array<string | string[]>): string[] {
+  return items.flatMap(item => Array.isArray(item)
+    ? item.map(subitem => `  - ${subitem}`)
+    : [` - ${item}`]);
+}
+
+function getShellInfoLine(): string {
+  const shell = process.env.SHELL || "unknown";
+  const shellName = shell.includes("zsh") ? "zsh" : shell.includes("bash") ? "bash" : shell;
+  if (process.platform === "win32") {
+    return `Shell: ${shellName} (use Unix shell syntax, not Windows - e.g., /dev/null not NUL, forward slashes in paths)`;
+  }
+  return `Shell: ${shellName}`;
+}
+
+function getUnameSR(): string {
+  if (process.platform === "win32") return `${osVersion()} ${osRelease()}`;
+  return `${osType()} ${osRelease()}`;
+}
+
+function isGitWorktree(cwd: string): boolean {
+  const gitRoot = gitOutput(cwd, ["rev-parse", "--show-toplevel"]);
+  const commonDir = gitOutput(cwd, ["rev-parse", "--path-format=absolute", "--git-common-dir"]);
+  if (!gitRoot || !commonDir) return false;
+  return !pathWithin(commonDir, join(gitRoot, ".git"));
+}
+
+function getManagedFilePath(): string {
+  if (process.env.USER_TYPE === "ant" && process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH) {
+    return process.env.CLAUDE_CODE_MANAGED_SETTINGS_PATH;
+  }
+  if (process.platform === "darwin") return "/Library/Application Support/ClaudeCode";
+  if (process.platform === "win32") return "C:\\Program Files\\ClaudeCode";
+  return "/etc/claude-code";
+}
+
+function hasApprovedExternalIncludes(): boolean {
+  return isTruthyEnv(process.env.CLAUDE_CODE_APPROVE_EXTERNAL_CLAUDE_MD_INCLUDES)
+    || isTruthyEnv(process.env.CLAUDE_CODE_ALLOW_EXTERNAL_CLAUDE_MD_INCLUDES);
+}
+
+function safeRealpath(path: string): string {
+  try {
+    return realpathSync(path);
+  } catch {
+    return resolve(path);
+  }
+}
+
+function pathWithin(path: string, baseDir: string): boolean {
+  const rel = relative(resolve(baseDir), resolve(path));
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+
 function getDefaultBranch(cwd: string): string {
   const remoteHead = gitOutput(cwd, ["symbolic-ref", "refs/remotes/origin/HEAD"]);
   if (remoteHead) return remoteHead.replace(/^refs\/remotes\/origin\//u, "");
@@ -636,5 +719,5 @@ function formatLocalISODate(date: Date): string {
 
 function isTruthyEnv(value: string | undefined): boolean {
   if (!value) return false;
-  return !["0", "false", "no", "off"].includes(value.toLowerCase());
+  return ["1", "true", "yes", "on"].includes(value.toLowerCase().trim());
 }

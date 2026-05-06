@@ -452,6 +452,50 @@ describe("API client", () => {
     expect(events.at(-1)).toEqual({ type: "error", error: "API Error: Stream terminated unexpectedly." });
   });
 
+  test("streamMessage rejects Anthropic-compatible streams that close before message_stop", async () => {
+    installApiEnv();
+    globalThis.fetch = (async () => new Response(
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode("data: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"partial\"}}\n\n"));
+          controller.close();
+        },
+      }),
+      { status: 200 },
+    )) as typeof fetch;
+
+    const events = [];
+    for await (const event of streamMessage([{ role: "user", content: "hello" }])) {
+      events.push(event);
+    }
+
+    expect(events).toContainEqual({ type: "text_delta", index: 0, text: "partial" });
+    expect(events.at(-1)).toEqual({ type: "error", error: "API Error: Stream ended before completion." });
+  });
+
+  test("streamMessage rejects OpenAI-compatible streams without a terminal finish reason", async () => {
+    installApiEnv();
+    process.env.ANTHROPIC_MODEL = "deepseek-v4-pro";
+    process.env.DEEPSEEK_API_KEY = "deepseek-token";
+    globalThis.fetch = (async () => new Response(
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode("data: {\"choices\":[{\"delta\":{\"content\":\"partial\"},\"finish_reason\":null}]}\n\n"));
+          controller.close();
+        },
+      }),
+      { status: 200 },
+    )) as typeof fetch;
+
+    const events = [];
+    for await (const event of streamMessage([{ role: "user", content: "hello" }])) {
+      events.push(event);
+    }
+
+    expect(events).toContainEqual({ type: "text_delta", index: 0, text: "partial" });
+    expect(events.at(-1)).toEqual({ type: "error", error: "API Error: Stream ended before completion." });
+  });
+
   test("streamMessage formats fetch connection causes like the official API error", async () => {
     installApiEnv();
     process.env.CLAUDE_CODE_MAX_RETRIES = "0";

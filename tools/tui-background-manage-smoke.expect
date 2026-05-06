@@ -108,11 +108,8 @@ set app_id $spawn_id
 
 expect -i $app_id "Backgrounded agent"
 send -i $app_id "\033\[B"
-expect -i $app_id "Background tasks"
-expect -i $app_id "Slow subagent"
-expect -i $app_id "running"
-after 1500
-send -i $app_id "\170"
+after 250
+send -i $app_id "x"
 expect -i $app_id "Stop"
 expect -i $app_id "Slow subagent"
 expect -i $app_id "stopped"

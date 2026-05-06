@@ -150,7 +150,7 @@ const bodyStart = match.index + match[0].length - 1;
 let body = extractBody(clean, bodyStart);
 
 console.log(`// ===== DECOMPILED: ${targetName}(${params}) =====`);
-console.log(`// From official Claude Code v2.1.128`);
+console.log(`// From official Claude Code v2.1.131`);
 console.log('');
 
 // Strip cache

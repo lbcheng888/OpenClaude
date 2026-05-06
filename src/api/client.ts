@@ -426,6 +426,7 @@ export async function* streamMessage(
 
         const decoder = new TextDecoder();
         let buffer = "";
+        let sawMessageStop = false;
         const currentTools = new Map<number, {
           id: string;
           name: string;
@@ -444,7 +445,7 @@ export async function* streamMessage(
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
             const data = line.slice(6);
-            if (data === "[DONE]") return;
+            if (data.trim() === "[DONE]") continue;
 
             const event = JSON.parse(data);
             const index = typeof event.index === "number" ? event.index : 0;
@@ -518,6 +519,7 @@ export async function* streamMessage(
 
               case "message_stop":
                 emittedStreamContent = true;
+                sawMessageStop = true;
                 yield { type: "message_stop" };
                 break;
 
@@ -536,6 +538,9 @@ export async function* streamMessage(
               }
             }
           }
+        }
+        if (!sawMessageStop) {
+          yield { type: "error", error: formatIncompleteStreamError() };
         }
         return;
       } catch (e: any) {
@@ -701,6 +706,8 @@ async function* streamOpenAIChatMessage(
         const currentTools = new Map<number, { id: string; name: string; inputJson: string }>();
         let stopReason: string | null = null;
         let usage: Usage | undefined;
+        let sawDone = false;
+        let sawFinishReason = false;
 
         while (true) {
           const { done, value } = await reader.read();
@@ -711,7 +718,11 @@ async function* streamOpenAIChatMessage(
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
             const data = line.slice(6).trim();
-            if (!data || data === "[DONE]") continue;
+            if (!data) continue;
+            if (data === "[DONE]") {
+              sawDone = true;
+              continue;
+            }
             const event = JSON.parse(data);
 
             if (event.error || event.type === "error") {
@@ -731,7 +742,10 @@ async function* streamOpenAIChatMessage(
             usage = mapOpenAIUsage(event.usage) || usage;
             const choice = event.choices?.[0];
             if (!choice) continue;
-            stopReason = mapOpenAIStopReason(choice.finish_reason) || stopReason;
+            if (choice.finish_reason) {
+              sawFinishReason = true;
+              stopReason = mapOpenAIStopReason(choice.finish_reason) || stopReason;
+            }
             const delta = choice.delta || {};
             if (typeof delta.content === "string" && delta.content.length > 0) {
               emittedStreamContent = true;
@@ -763,6 +777,11 @@ async function* streamOpenAIChatMessage(
               }
             }
           }
+        }
+
+        if (!sawDone || !sawFinishReason) {
+          yield { type: "error", error: formatIncompleteStreamError() };
+          return;
         }
 
         for (const [index, tool] of [...currentTools.entries()].sort(([a], [b]) => a - b)) {
@@ -857,6 +876,10 @@ async function* streamGpt55ResponseMessage(
         const currentTools = new Map<string, { index: number; id: string; name: string; inputJson: string; emitted: boolean }>();
         let nextToolIndex = 1;
 
+        let sawCompleted = false;
+        let sawIncomplete = false;
+        let finalUsage: Usage | undefined;
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -929,7 +952,17 @@ async function* streamGpt55ResponseMessage(
             }
 
             if (event.type === "response.completed") {
-              yield { type: "message_delta", stop_reason: "end_turn", usage: mapResponsesUsage(event.response?.usage) };
+              sawCompleted = true;
+              finalUsage = mapResponsesUsage(event.response?.usage);
+              yield { type: "message_delta", stop_reason: "end_turn", usage: finalUsage };
+              yield { type: "message_stop" };
+              return;
+            }
+
+            if (event.type === "response.incomplete") {
+              sawIncomplete = true;
+              finalUsage = mapResponsesUsage(event.response?.usage);
+              yield { type: "message_delta", stop_reason: "max_tokens", usage: finalUsage };
               yield { type: "message_stop" };
               return;
             }
@@ -948,7 +981,9 @@ async function* streamGpt55ResponseMessage(
             }
           }
         }
-        yield { type: "message_stop" };
+        if (!sawCompleted && !sawIncomplete) {
+          yield { type: "error", error: formatIncompleteStreamError() };
+        }
         return;
       } catch (error) {
         if (requestSignal.signal.aborted) {
@@ -983,6 +1018,10 @@ function formatApiStreamError(message: string): string {
   if (/^API Error\b/iu.test(normalized)) return normalized;
   if (normalized === "terminated") return "API Error: Stream terminated unexpectedly.";
   return `API Error: ${normalized}`;
+}
+
+function formatIncompleteStreamError(): string {
+  return formatApiStreamError("Stream ended before completion.");
 }
 
 function versionedEndpoint(baseUrl: string, path: string): string {

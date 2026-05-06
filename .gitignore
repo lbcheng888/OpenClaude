@@ -36,3 +36,6 @@ cursor-source/
 truth-dom
 *.png
 start.sh
+.DS_Store
+lessons.md
+.versions/

@@ -42,6 +42,7 @@ const { waitUntilExit } = await wrappedRender(
     continueSession: options.continueSession,
     initialPermissionMode: options.permissionMode,
     additionalDirectories: options.addDirs,
+    appendSystemPrompt: options.appendSystemPrompt,
   }),
   { exitOnCtrlC: false },
 );
@@ -68,6 +69,7 @@ Options:
   --output-format <format>                          Output format for --print: text
   --model <model>                                   Model for the current session
   --settings <file>                                 Additional settings JSON file
+  --append-system-prompt <prompt>                   Append extra instructions to the system prompt
   --permission-mode <mode>                          default, acceptEdits, plan, dontAsk, bypassPermissions
   -r, --resume [sessionId]                          Resume a saved session
   -c, --continue                                    Continue the most recent session
@@ -84,6 +86,7 @@ export type CliOptions = {
   model?: string;
   settingsPath?: string;
   addDirs: string[];
+  appendSystemPrompt?: string;
   resumeSessionId?: string;
   continueSession: boolean;
   permissionMode?: "default" | "acceptEdits" | "plan" | "dontAsk" | "bypassPermissions";
@@ -95,6 +98,7 @@ function parseCliArgs(argv: string[]): CliOptions {
   let model: string | undefined;
   let settingsPath: string | undefined;
   const addDirs: string[] = [];
+  let appendSystemPrompt: string | undefined;
   let resumeSessionId: string | undefined;
   let continueSession = false;
   let permissionMode: CliOptions["permissionMode"];
@@ -108,11 +112,12 @@ function parseCliArgs(argv: string[]): CliOptions {
       continue;
     }
 
-    if (arg === "--model" || arg === "--output-format" || arg === "--settings" || arg === "--permission-mode" || arg === "--add-dir") {
+    if (arg === "--model" || arg === "--output-format" || arg === "--settings" || arg === "--permission-mode" || arg === "--add-dir" || arg === "--append-system-prompt") {
       if (arg === "--model") model = argv[i + 1];
       if (arg === "--settings") settingsPath = argv[i + 1];
       if (arg === "--permission-mode") permissionMode = parsePermissionMode(argv[i + 1]);
       if (arg === "--add-dir" && argv[i + 1]) addDirs.push(argv[i + 1]);
+      if (arg === "--append-system-prompt") appendSystemPrompt = argv[i + 1];
       skipNext = true;
       continue;
     }
@@ -135,7 +140,6 @@ function parseCliArgs(argv: string[]): CliOptions {
 
     if (
       arg === "--agent" ||
-      arg === "--append-system-prompt" ||
       arg === "--mcp-config"
     ) {
       skipNext = true;
@@ -154,6 +158,11 @@ function parseCliArgs(argv: string[]): CliOptions {
 
     if (arg.startsWith("--add-dir=")) {
       addDirs.push(arg.slice("--add-dir=".length));
+      continue;
+    }
+
+    if (arg.startsWith("--append-system-prompt=")) {
+      appendSystemPrompt = arg.slice("--append-system-prompt=".length);
       continue;
     }
 
@@ -181,6 +190,7 @@ function parseCliArgs(argv: string[]): CliOptions {
     model,
     settingsPath,
     addDirs,
+    appendSystemPrompt,
     resumeSessionId,
     continueSession,
     permissionMode,

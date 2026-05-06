@@ -89,6 +89,50 @@ describe("tool registry", () => {
     expect(otherSession.content).toBe("1\ta\n2\tb");
   });
 
+  test("Read injects matching nested CLAUDE.md rules once per session", async () => {
+    const dir = createTempDir();
+    const srcDir = join(dir, "src");
+    mkdirSync(join(dir, ".claude", "rules"), { recursive: true });
+    mkdirSync(srcDir, { recursive: true });
+    const file = join(srcDir, "app.ts");
+    writeFileSync(file, "export const x = 1;\n", "utf8");
+    writeFileSync(
+      join(dir, ".claude", "rules", "typescript.md"),
+      ["---", "paths: src/**/*.{ts,tsx}", "---", "Use strict TypeScript rules."].join("\n"),
+      "utf8",
+    );
+
+    const first = await executeTool("Read", { file_path: file }, undefined, { sessionId: "nested-memory", cwd: dir });
+    const second = await executeTool("Read", { file_path: file }, undefined, { sessionId: "nested-memory", cwd: dir });
+
+    expect(first.additionalMessages?.[0]?.content).toContain("Use strict TypeScript rules.");
+    expect(second.additionalMessages || []).toEqual([]);
+  });
+
+  test("Skill loads instructions by exact skill name from configured skill dirs", async () => {
+    const originalConfigDir = process.env.CLAUDE_CONFIG_DIR;
+    const dir = createTempDir();
+    const config = join(dir, ".claude");
+    mkdirSync(join(config, "skills", "audit"), { recursive: true });
+    writeFileSync(
+      join(config, "skills", "audit", "SKILL.md"),
+      ["---", "description: Audit code", "---", "Use the audit checklist."].join("\n"),
+      "utf8",
+    );
+    process.env.CLAUDE_CONFIG_DIR = config;
+    try {
+      const result = await executeTool("Skill", { skill: "audit" }, undefined, { cwd: dir });
+
+      expect(result.isError).toBeUndefined();
+      expect(result.content).toContain("### Skill: audit");
+      expect(result.content).toContain("Use the audit checklist.");
+      expect(result.display).toEqual({ type: "text", summary: "Loaded skill audit" });
+    } finally {
+      if (originalConfigDir === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+      else process.env.CLAUDE_CONFIG_DIR = originalConfigDir;
+    }
+  });
+
   test("Edit rejects files modified after the last Read in the same session", async () => {
     const file = createTempFile("alpha\n");
     const context = { sessionId: "fresh-edit" };
