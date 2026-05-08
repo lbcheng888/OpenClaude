@@ -4,6 +4,7 @@ import type {
   ApiStreamEvent,
   AssistantContentBlock,
   ImageContentBlock,
+  PreservedThinkingContentBlock,
   TextContentBlock,
   ToolDef,
   ToolResultContentBlock,
@@ -232,11 +233,30 @@ type AssistantTurn = {
   toolUses: ToolUseContentBlock[];
   stopReason: string | null;
   usage?: Usage;
+  streamingTools?: StreamingToolState;
 };
 
 type PreparedToolUse =
   | { kind: "result"; tool: ToolUseContentBlock; result: ToolResultContentBlock }
   | { kind: "execute"; tool: ToolUseContentBlock };
+
+type CompletedToolUse = {
+  tool: ToolUseContentBlock;
+  result: ToolResultContentBlock;
+  additionalMessages?: ApiMessage[];
+};
+
+type StreamingToolState = {
+  executions: Map<string, Promise<CompletedToolUse>>;
+  abort: (reason: unknown) => void;
+  cleanup: () => void;
+};
+
+type StreamingToolQueueItem = {
+  tool: ToolUseContentBlock;
+  concurrent: boolean;
+  state: "queued" | "running" | "completed";
+};
 
 export class TenguSession {
   private readonly messages: ApiMessage[] = [];
@@ -245,6 +265,7 @@ export class TenguSession {
   private readonly workflowTrace: WorkflowTrace;
   private nextAssistantId = 1;
   private activeAbortController: AbortController | null = null;
+  private messageBytes = 0;
 
   constructor(private readonly options: TenguSessionOptions) {
     this.maxTurns = options.maxTurns ?? DEFAULT_MAX_AGENT_TURNS;
@@ -263,6 +284,7 @@ export class TenguSession {
   reset(): void {
     this.cancel("Session reset");
     this.messages.length = 0;
+    this.messageBytes = 0;
     this.nextAssistantId = 1;
     this.workflowTrace.reset();
   }
@@ -270,7 +292,9 @@ export class TenguSession {
   hydrate(messages: ApiMessage[]): void {
     this.cancel("Session hydrate");
     this.messages.length = 0;
-    this.messages.push(...cloneMessages(messages).map(sanitizeApiMessage));
+    this.messageBytes = 0;
+    const cloned = cloneMessages(messages).map(sanitizeApiMessage);
+    this.pushMessages(cloned);
     this.nextAssistantId = 1;
     this.workflowTrace.reset();
   }
@@ -295,7 +319,7 @@ export class TenguSession {
 
     try {
       throwIfAborted(abortController.signal);
-      this.messages.push({ role: "user", content: userContent });
+      this.pushMessage({ role: "user", content: userContent });
       let finalStopReason: string | null = null;
 
       for (let turn = 0; turn < this.maxTurns; turn++) {
@@ -318,14 +342,17 @@ export class TenguSession {
         });
 
         if (assistantTurn.content.length > 0) {
-          this.messages.push({ role: "assistant", content: assistantTurn.content });
+          this.pushMessage({ role: "assistant", content: assistantTurn.content });
         }
 
         if (assistantTurn.stopReason === "max_tokens") {
+          assistantTurn.streamingTools?.abort(new Error("API Error: Response hit the output token limit before completion."));
+          assistantTurn.streamingTools?.cleanup();
           throw new Error("API Error: Response hit the output token limit before completion.");
         }
 
         if (assistantTurn.toolUses.length === 0) {
+          assistantTurn.streamingTools?.cleanup();
           const stopHook = await this.runHooks("Stop", {
             stop_reason: assistantTurn.stopReason,
             stop_hook_active: false,
@@ -333,7 +360,7 @@ export class TenguSession {
             last_assistant_message: assistantTurn.text,
           }, abortController.signal);
           if (stopHook.blocked) {
-            this.messages.push({
+            this.pushMessage({
               role: "user",
               content: stopHook.message || "Stop hook prevented continuation",
             });
@@ -343,13 +370,19 @@ export class TenguSession {
             text: finalText,
             messages: this.history,
             stopReason: finalStopReason,
+            usage: assistantTurn.usage,
             workflowTrace: this.trace,
           };
         }
 
-        const { results: toolResults, additionalMessages } = await this.executeToolUses(assistantId, assistantTurn.toolUses, abortController.signal);
-        this.messages.push({ role: "user", content: toolResults });
-        this.messages.push(...additionalMessages);
+        const { results: toolResults, additionalMessages } = await this.executeToolUses(
+          assistantId,
+          assistantTurn.toolUses,
+          abortController.signal,
+          assistantTurn.streamingTools,
+        );
+        this.pushMessage({ role: "user", content: toolResults });
+        if (additionalMessages.length > 0) this.pushMessages(additionalMessages);
         assertResolvedToolResults(this.messages);
         await this.emit({ type: "tool_results_message", results: toolResults });
       }
@@ -378,124 +411,158 @@ export class TenguSession {
   ): Promise<AssistantTurn> {
     const blocksByIndex = new Map<number, AssistantContentBlock>();
     const toolInputByIndex = new Map<number, { id: string; name: string; inputJson: string }>();
+    const thinkingByIndex = new Map<number, PreservedThinkingContentBlock>();
     const textStateByIndex = new Map<number, TextStreamState>();
     let stopReason: string | null = null;
     let usage: Usage | undefined;
     let fullText = "";
+    const streamingTools = this.createStreamingToolState(assistantId, signal);
+    let completedStream = false;
 
-    for await (const event of this.options.stream(requestMessages, this.options.tools, signal)) {
-      throwIfAborted(signal);
-      switch (event.type) {
-        case "request_start":
-          await this.emit({ type: "stream_mode", mode: "requesting" });
-          break;
+    try {
+      for await (const event of this.options.stream(requestMessages, this.options.tools, signal)) {
+        throwIfAborted(signal);
+        switch (event.type) {
+          case "request_start":
+            await this.emit({ type: "stream_mode", mode: "requesting" });
+            break;
 
-        case "content_block_start":
-          await this.emit({ type: "stream_mode", mode: getSpinnerModeForContentBlock(event.blockType) });
-          if (event.tool) {
-            toolInputByIndex.set(event.index, {
-              id: event.tool.id,
-              name: event.tool.name,
-              inputJson: "",
-            });
-            await this.emit({
-              type: "tool_input_start",
-              assistantId,
-              index: event.index,
-              tool: { id: event.tool.id, name: event.tool.name, input: {} },
-            });
-          }
-          break;
-
-        case "tool_input_delta":
-          await this.emit({ type: "stream_mode", mode: "tool-input" });
-          {
-            const current = toolInputByIndex.get(event.index);
-            if (current) {
-              current.inputJson += event.partialJson;
+          case "content_block_start":
+            await this.emit({ type: "stream_mode", mode: getSpinnerModeForContentBlock(event.blockType) });
+            if (event.blockType === "thinking" && !thinkingByIndex.has(event.index)) {
+              thinkingByIndex.set(event.index, { type: "thinking", thinking: "" });
+            }
+            if (event.tool) {
+              toolInputByIndex.set(event.index, {
+                id: event.tool.id,
+                name: event.tool.name,
+                inputJson: "",
+              });
               await this.emit({
-                type: "tool_input_delta",
+                type: "tool_input_start",
                 assistantId,
                 index: event.index,
-                toolUseId: current.id,
-                partialJson: event.partialJson,
-                fullInputJson: current.inputJson,
+                tool: { id: event.tool.id, name: event.tool.name, input: {} },
               });
             }
-          }
-          break;
+            break;
 
-        case "thinking_delta":
-          await this.emit({ type: "stream_mode", mode: "thinking" });
-          break;
+          case "tool_input_delta":
+            await this.emit({ type: "stream_mode", mode: "tool-input" });
+            {
+              const current = toolInputByIndex.get(event.index);
+              if (current) {
+                current.inputJson += event.partialJson;
+                await this.emit({
+                  type: "tool_input_delta",
+                  assistantId,
+                  index: event.index,
+                  toolUseId: current.id,
+                  partialJson: event.partialJson,
+                  fullInputJson: current.inputJson,
+                });
+              }
+            }
+            break;
 
-        case "text_delta": {
-          await this.emit({ type: "stream_mode", mode: "responding" });
-          const state = textStateByIndex.get(event.index) || createTextStreamState();
-          state.rawText += event.text;
-          textStateByIndex.set(event.index, state);
-          if (state.suppressed) break;
-          const sanitizedText = stripInternalProtocolLeak(state.rawText);
-          if (sanitizedText.truncated) {
-            state.suppressed = true;
-          }
-          const visibleText = sanitizedText.truncated
-            ? sanitizedText.text
-            : stripDanglingInternalProtocolPrefix(sanitizedText.text);
-          const visibleDelta = visibleText.slice(state.visibleText.length);
-          if (!visibleDelta) break;
-          const existing = blocksByIndex.get(event.index);
-          if (existing && existing.type !== "text") {
-            throw new Error(`Text delta collided with ${existing.type} block at index ${event.index}`);
-          }
-          const block: TextContentBlock = existing || { type: "text", text: "" };
-          block.text += visibleDelta;
-          blocksByIndex.set(event.index, block);
-          state.visibleText += visibleDelta;
-          fullText += visibleDelta;
-          await this.emit({
-            type: "assistant_text_delta",
-            assistantId,
-            text: visibleDelta,
-            fullText,
-          });
-          break;
-        }
+          case "thinking_delta":
+            await this.emit({ type: "stream_mode", mode: "thinking" });
+            {
+              const current = thinkingByIndex.get(event.index);
+              if (current?.type === "thinking") {
+                current.thinking += event.thinking;
+              } else {
+                thinkingByIndex.set(event.index, { type: "thinking", thinking: event.thinking });
+              }
+            }
+            break;
 
-        case "tool_use": {
-          await this.emit({ type: "stream_mode", mode: "tool-input" });
-          if (blocksByIndex.has(event.index)) {
-            throw new Error(`Duplicate content block at index ${event.index}`);
-          }
-          blocksByIndex.set(event.index, event.tool);
-          break;
-        }
+          case "thinking_block":
+            await this.emit({ type: "stream_mode", mode: "thinking" });
+            if (blocksByIndex.has(event.index)) {
+              throw new Error(`Duplicate content block at index ${event.index}`);
+            }
+            blocksByIndex.set(event.index, event.block);
+            thinkingByIndex.delete(event.index);
+            break;
 
-        case "message_delta":
-          await this.emit({ type: "stream_mode", mode: "responding" });
-          if (event.stop_reason !== undefined) {
-            stopReason = event.stop_reason;
-          }
-          if (event.usage) {
-            usage = { ...usage, ...event.usage };
-          }
-          break;
-
-        case "message_stop":
-          await this.emit({ type: "stream_mode", mode: "tool-use" });
-          break;
-
-        case "api_retry":
-          if (shouldShowApiRetry(event.retryAttempt)) {
+          case "text_delta": {
+            await this.emit({ type: "stream_mode", mode: "responding" });
+            const state = textStateByIndex.get(event.index) || createTextStreamState();
+            state.rawText += event.text;
+            textStateByIndex.set(event.index, state);
+            if (state.suppressed) break;
+            const sanitizedText = stripInternalProtocolLeak(state.rawText);
+            if (sanitizedText.truncated) {
+              state.suppressed = true;
+            }
+            const visibleText = sanitizedText.truncated
+              ? sanitizedText.text
+              : stripDanglingInternalProtocolPrefix(sanitizedText.text);
+            const visibleDelta = visibleText.slice(state.visibleText.length);
+            if (!visibleDelta) break;
+            const existing = blocksByIndex.get(event.index);
+            if (existing && existing.type !== "text") {
+              throw new Error(`Text delta collided with ${existing.type} block at index ${event.index}`);
+            }
+            const block: TextContentBlock = existing || { type: "text", text: "" };
+            block.text += visibleDelta;
+            blocksByIndex.set(event.index, block);
+            state.visibleText += visibleDelta;
+            fullText += visibleDelta;
             await this.emit({
-              type: "notification",
-              text: formatApiRetryNotification(event.error, event.retryInMs, event.retryAttempt, event.maxRetries),
+              type: "assistant_text_delta",
+              assistantId,
+              text: visibleDelta,
+              fullText,
             });
+            break;
           }
-          break;
 
-        case "error":
-          throw new Error(event.error);
+          case "tool_use": {
+            await this.emit({ type: "stream_mode", mode: "tool-input" });
+            if (blocksByIndex.has(event.index)) {
+              throw new Error(`Duplicate content block at index ${event.index}`);
+            }
+            blocksByIndex.set(event.index, event.tool);
+            this.enqueueStreamingTool(streamingTools, event.tool);
+            break;
+          }
+
+          case "message_delta":
+            await this.emit({ type: "stream_mode", mode: "responding" });
+            if (event.stop_reason !== undefined) {
+              stopReason = event.stop_reason;
+            }
+            if (event.usage) {
+              usage = { ...usage, ...event.usage };
+            }
+            break;
+
+          case "message_stop":
+            await this.emit({ type: "stream_mode", mode: "tool-use" });
+            break;
+
+          case "api_retry":
+            if (shouldShowApiRetry(event.retryAttempt)) {
+              await this.emit({
+                type: "notification",
+                text: formatApiRetryNotification(event.error, event.retryInMs, event.retryAttempt, event.maxRetries),
+              });
+            }
+            break;
+
+          case "error":
+            throw new Error(event.error);
+        }
+      }
+      completedStream = true;
+    } catch (error) {
+      streamingTools.abort(error);
+      throw error;
+    } finally {
+      if (!completedStream) {
+        streamingTools.cleanup();
       }
     }
 
@@ -509,22 +576,35 @@ export class TenguSession {
       }
     }
 
-    const content = [...blocksByIndex.entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([, block]) => block)
-      .filter(block => block.type !== "text" || block.text.length > 0);
-    const toolUses = content.filter((block): block is ToolUseContentBlock => block.type === "tool_use");
+    for (const [index, block] of thinkingByIndex) {
+      if (blocksByIndex.has(index)) continue;
+      if (block.type === "thinking" && block.thinking.length === 0 && !block.signature) continue;
+      if (block.type === "redacted_thinking" && block.data.length === 0) continue;
+      blocksByIndex.set(index, block);
+    }
+
+    const sortedIndices = [...blocksByIndex.keys()].sort((a, b) => a - b);
+    const content: AssistantContentBlock[] = [];
+    const toolUses: ToolUseContentBlock[] = [];
+    const textParts: string[] = [];
+    for (const index of sortedIndices) {
+      const block = blocksByIndex.get(index)!;
+      if (block.type === "text" && block.text.length === 0) continue;
+      if (block.type === "thinking" && block.thinking.length === 0 && !block.signature) continue;
+      if (block.type === "redacted_thinking" && block.data.length === 0) continue;
+      content.push(block);
+      if (block.type === "tool_use") toolUses.push(block);
+      if (block.type === "text") textParts.push(block.text);
+    }
 
     assertUniqueToolUseIds(content);
     return {
       content,
-      text: content
-        .filter((block): block is { type: "text"; text: string } => block.type === "text")
-        .map(block => block.text)
-        .join(""),
+      text: textParts.join(""),
       toolUses,
       stopReason,
       usage,
+      streamingTools,
     };
   }
 
@@ -548,46 +628,149 @@ export class TenguSession {
     throw lastError instanceof Error ? lastError : new Error(String(lastError));
   }
 
+  private createStreamingToolState(assistantId: string, parentSignal: AbortSignal): StreamingToolState {
+    const controller = new AbortController();
+    const unlinkParentSignal = linkAbortSignal(parentSignal, controller);
+    const queue: StreamingToolQueueItem[] = [];
+    const executions = new Map<string, Promise<CompletedToolUse>>();
+    const tryStartQueued = (): void => {
+      for (const item of queue) {
+        if (item.state !== "queued") continue;
+        const previous = queue.slice(0, queue.indexOf(item));
+        const previousIncomplete = previous.filter(entry => entry.state !== "completed");
+        if (previousIncomplete.length > 0 && (!item.concurrent || previousIncomplete.some(entry => !entry.concurrent))) {
+          return;
+        }
+        this.startStreamingToolItem(assistantId, item, controller.signal, tryStartQueued, executions);
+        if (!item.concurrent) return;
+      }
+    };
+
+    return {
+      executions,
+      abort: reason => {
+        if (!controller.signal.aborted) {
+          controller.abort(reason instanceof Error ? reason : reason || new Error("Interrupted"));
+        }
+      },
+      cleanup: () => {
+        unlinkParentSignal();
+      },
+      // queue is closed over by enqueueStreamingTool.
+      get _queue() {
+        return queue;
+      },
+      get _tryStartQueued() {
+        return tryStartQueued;
+      },
+    } as StreamingToolState & {
+      _queue: StreamingToolQueueItem[];
+      _tryStartQueued: () => void;
+    };
+  }
+
+  private enqueueStreamingTool(streamingTools: StreamingToolState, tool: ToolUseContentBlock): void {
+    const state = streamingTools as StreamingToolState & {
+      _queue: StreamingToolQueueItem[];
+      _tryStartQueued: () => void;
+    };
+    if (state.executions.has(tool.id) || state._queue.some(item => item.tool.id === tool.id)) return;
+    state._queue.push({
+      tool,
+      concurrent: isConcurrencySafeTool(tool.name),
+      state: "queued",
+    });
+    state._tryStartQueued();
+  }
+
+  private startStreamingToolItem(
+    assistantId: string,
+    item: StreamingToolQueueItem,
+    signal: AbortSignal,
+    onSettled: () => void,
+    executions: Map<string, Promise<CompletedToolUse>>,
+  ): void {
+    item.state = "running";
+    const execution = this.executeStreamingToolUse(assistantId, item.tool, signal)
+      .finally(() => {
+        item.state = "completed";
+        onSettled();
+      });
+    executions.set(item.tool.id, execution);
+    execution.catch(() => undefined);
+  }
+
+  private async executeStreamingToolUse(
+    assistantId: string,
+    toolUse: ToolUseContentBlock,
+    signal: AbortSignal,
+  ): Promise<CompletedToolUse> {
+    const prepared = await this.prepareToolUse(assistantId, toolUse, signal);
+    if (prepared.kind === "result") {
+      return { tool: prepared.tool, result: prepared.result };
+    }
+    return this.executePreparedToolUse(assistantId, prepared.tool, signal);
+  }
+
   private async executeToolUses(
     assistantId: string,
     toolUses: ToolUseContentBlock[],
     signal: AbortSignal,
+    streamingTools?: StreamingToolState,
   ): Promise<{ results: ToolResultContentBlock[]; additionalMessages: ApiMessage[] }> {
     const resultsByToolUseId = new Map<string, ToolResultContentBlock>();
     const additionalMessages: ApiMessage[] = [];
 
-    for (const batch of partitionToolUses(toolUses)) {
-      if (batch.concurrent) {
-        const prepared: PreparedToolUse[] = [];
-        for (const toolUse of batch.toolUses) {
-          const item = await this.prepareToolUse(assistantId, toolUse, signal);
-          if (item.kind === "result") {
-            resultsByToolUseId.set(item.tool.id, item.result);
-          } else {
-            prepared.push(item);
+    try {
+      for (const batch of partitionToolUses(toolUses)) {
+        if (batch.concurrent) {
+          const prepared: PreparedToolUse[] = [];
+          const pendingStreaming: Array<Promise<CompletedToolUse>> = [];
+          for (const toolUse of batch.toolUses) {
+            const streamed = streamingTools?.executions.get(toolUse.id);
+            if (streamed) {
+              pendingStreaming.push(streamed);
+              continue;
+            }
+            const item = await this.prepareToolUse(assistantId, toolUse, signal);
+            if (item.kind === "result") {
+              resultsByToolUseId.set(item.tool.id, item.result);
+            } else {
+              prepared.push(item);
+            }
           }
-        }
 
-        const completed = await Promise.all(
-          prepared.map(item => this.executePreparedToolUse(assistantId, item.tool, signal)),
-        );
-        for (const item of completed) {
-          resultsByToolUseId.set(item.tool.id, item.result);
-          additionalMessages.push(...(item.additionalMessages || []));
-        }
-        continue;
-      }
-
-      for (const toolUse of batch.toolUses) {
-        const prepared = await this.prepareToolUse(assistantId, toolUse, signal);
-        if (prepared.kind === "result") {
-          resultsByToolUseId.set(prepared.tool.id, prepared.result);
+          const completed = await Promise.all([
+            ...pendingStreaming,
+            ...prepared.map(item => this.executePreparedToolUse(assistantId, item.tool, signal)),
+          ]);
+          for (const item of completed) {
+            resultsByToolUseId.set(item.tool.id, item.result);
+            additionalMessages.push(...(item.additionalMessages || []));
+          }
           continue;
         }
-        const completed = await this.executePreparedToolUse(assistantId, prepared.tool, signal);
-        resultsByToolUseId.set(completed.tool.id, completed.result);
-        additionalMessages.push(...(completed.additionalMessages || []));
+
+        for (const toolUse of batch.toolUses) {
+          const streamed = streamingTools?.executions.get(toolUse.id);
+          if (streamed) {
+            const completed = await streamed;
+            resultsByToolUseId.set(completed.tool.id, completed.result);
+            additionalMessages.push(...(completed.additionalMessages || []));
+            continue;
+          }
+          const prepared = await this.prepareToolUse(assistantId, toolUse, signal);
+          if (prepared.kind === "result") {
+            resultsByToolUseId.set(prepared.tool.id, prepared.result);
+            continue;
+          }
+          const completed = await this.executePreparedToolUse(assistantId, prepared.tool, signal);
+          resultsByToolUseId.set(completed.tool.id, completed.result);
+          additionalMessages.push(...(completed.additionalMessages || []));
+        }
       }
+    } finally {
+      streamingTools?.cleanup();
     }
 
     return {
@@ -663,10 +846,15 @@ export class TenguSession {
     signal: AbortSignal,
   ): Promise<{ tool: ToolUseContentBlock; result: ToolResultContentBlock; additionalMessages?: ApiMessage[] }> {
     let executed: ToolExecutionResult;
+    let acceptsProgress = true;
+    const emitProgress = async (progress: ToolProgressDisplay): Promise<void> => {
+      if (!acceptsProgress || signal.aborted) return;
+      await this.emit({ type: "tool_progress", assistantId, tool: finalToolUse, progress });
+    };
     try {
       executed = await this.options.executeTool(finalToolUse.name, finalToolUse.input, signal, {
         toolUseId: finalToolUse.id,
-        emitProgress: progress => this.emit({ type: "tool_progress", assistantId, tool: finalToolUse, progress }),
+        emitProgress,
         emitNotification: text => this.emit({ type: "notification", text }),
       });
     } catch (error) {
@@ -678,6 +866,7 @@ export class TenguSession {
         is_error: true,
       };
       await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result });
+      acceptsProgress = false;
       return { tool: finalToolUse, result };
     }
 
@@ -689,6 +878,7 @@ export class TenguSession {
       is_error: executed.isError || undefined,
     };
     await this.emit({ type: "tool_result", assistantId, tool: finalToolUse, result: visibleResult, display: executed.display });
+    acceptsProgress = false;
 
     try {
       const postHook = await this.runHooks(executed.isError ? "PostToolUseFailure" : "PostToolUse", {
@@ -788,8 +978,18 @@ export class TenguSession {
     await this.options.onEvent?.(event);
   }
 
+  private pushMessage(msg: ApiMessage): void {
+    this.messageBytes += messageByteSize(msg);
+    this.messages.push(msg);
+  }
+
+  private pushMessages(msgs: ApiMessage[]): void {
+    for (const msg of msgs) this.messageBytes += messageByteSize(msg);
+    this.messages.push(...msgs);
+  }
+
   private apiRequestHistory(): ApiMessage[] {
-    return prepareApiMessagesForRequest(this.messages, this.options.apiHistoryTokenBudget);
+    return prepareApiMessagesForRequest(this.messages, this.options.apiHistoryTokenBudget, this.messageBytes);
   }
 
   private async runHooks(
@@ -870,7 +1070,7 @@ function assertUniqueToolUseIds(content: AssistantContentBlock[]): void {
 }
 
 function cloneMessages(messages: ApiMessage[]): ApiMessage[] {
-  return JSON.parse(JSON.stringify(messages));
+  return structuredClone(messages);
 }
 
 function normalizeUserPromptContent(prompt: string | ApiMessageContent): ApiMessageContent {
@@ -913,10 +1113,11 @@ const DEFAULT_API_TURN_RETRY_LIMIT = 1;
 export function prepareApiMessagesForRequest(
   messages: ApiMessage[],
   tokenBudget = DEFAULT_API_HISTORY_TOKEN_BUDGET,
+  knownBytes?: number,
 ): ApiMessage[] {
   const prepared = cloneMessages(messages).map(sanitizeApiMessage);
   const maxBytes = Math.max(1_000, Math.floor(tokenBudget) * BYTES_PER_TOKEN);
-  let currentBytes = estimateApiMessagesBytes(prepared);
+  let currentBytes = knownBytes ?? estimateApiMessagesBytes(prepared);
   if (currentBytes <= maxBytes) return prepared;
 
   const toolNames = collectToolUseNames(prepared);
@@ -936,6 +1137,10 @@ export function prepareApiMessagesForRequest(
   }
 
   return prepared;
+}
+
+function messageByteSize(msg: ApiMessage): number {
+  return Buffer.byteLength(JSON.stringify(msg), "utf8");
 }
 
 function collectToolUseNames(messages: ApiMessage[]): Map<string, string> {
@@ -1042,19 +1247,21 @@ function partitionToolUses(toolUses: ToolUseContentBlock[]): Array<{ concurrent:
   }, []);
 }
 
+const CONCURRENCY_SAFE_TOOLS = new Set([
+  "Read",
+  "LS",
+  "Glob",
+  "Grep",
+  "WebFetch",
+  "WebSearch",
+  "BashOutput",
+  "TaskOutput",
+  "AgentOutputTool",
+  "BashOutputTool",
+]);
+
 function isConcurrencySafeTool(name: string): boolean {
-  return new Set([
-    "Read",
-    "LS",
-    "Glob",
-    "Grep",
-    "WebFetch",
-    "WebSearch",
-    "BashOutput",
-    "TaskOutput",
-    "AgentOutputTool",
-    "BashOutputTool",
-  ]).has(name);
+  return CONCURRENCY_SAFE_TOOLS.has(name);
 }
 
 function createUnknownToolResult(toolUse: ToolUseContentBlock): ToolResultContentBlock {

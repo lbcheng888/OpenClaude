@@ -58,12 +58,17 @@ function formatToken(
     }
     case "hr":
       return "---" + EOL;
-    case "image":
-      return token.href ?? "";
+    case "image": {
+      const imgToken = token as Tokens.Image;
+      const alt = imgToken.text || "Image";
+      const href = imgToken.href || "";
+      return dim(italic(`[${alt}](${href})`));
+    }
     case "link": {
       const linkText = (token.tokens ?? []).map(child => formatToken(child, 0, null, token)).join("");
       if (token.href?.startsWith("mailto:")) return token.href.replace(/^mailto:/u, "");
-      return linkText || token.href || "";
+      if (!token.href || token.href === linkText) return linkText || token.href || "";
+      return `${linkText || token.href} (${token.href})`;
     }
     case "list":
       return renderList(token as Tokens.List, listDepth);
@@ -87,9 +92,18 @@ function formatToken(
       return renderTable(token as Tokens.Table);
     case "escape":
       return token.text;
-    case "def":
     case "del":
-    case "html":
+      return strikethrough((token.tokens ?? []).map(child => formatToken(child, listDepth, orderedListNumber, parent)).join(""));
+    case "html": {
+      const htmlText = (token as Tokens.HTML).text || token.text || "";
+      // Render inline HTML: <br> → newline, <hr> → rule, strip tags otherwise
+      if (/^<br\s*\/?>/iu.test(htmlText)) return EOL;
+      if (/^<hr\s*\/?>/iu.test(htmlText)) return "---" + EOL;
+      // Strip HTML tags and render text content
+      const stripped = htmlText.replace(/<[^>]*>/gu, "").trim();
+      return stripped ? stripped + EOL : "";
+    }
+    case "def":
       return "";
     default:
       return "";
@@ -263,6 +277,10 @@ function italic(text: string): string {
 
 function underline(text: string): string {
   return sgr(4, text, 24);
+}
+
+function strikethrough(text: string): string {
+  return sgr(9, text, 29);
 }
 
 function red(text: string): string {

@@ -9,8 +9,14 @@ export interface ApiConfig {
 }
 
 export type ApiProvider = "anthropic" | "deepseek-v4" | "gpt-5.5";
+export const DEFAULT_MODEL = "claude-opus-4-7";
+const DEFAULT_CONTEXT_LIMIT = 200_000;
+const ONE_MILLION_CONTEXT_LIMIT = 1_000_000;
 
 export type TextContentBlock = { type: "text"; text: string };
+export type ThinkingContentBlock = { type: "thinking"; thinking: string; signature?: string };
+export type RedactedThinkingContentBlock = { type: "redacted_thinking"; data: string };
+export type PreservedThinkingContentBlock = ThinkingContentBlock | RedactedThinkingContentBlock;
 export type ImageSource = {
   type: "base64";
   media_type: string;
@@ -36,12 +42,15 @@ export type ToolResultContentBlock = {
   is_error?: boolean;
 };
 export type UserContentBlock = TextContentBlock | ImageContentBlock | ToolResultContentBlock;
-export type AssistantContentBlock = TextContentBlock | ToolUseContentBlock;
-export type ApiMessageContent = string | Array<UserContentBlock | ToolUseContentBlock>;
+export type AssistantContentBlock = TextContentBlock | PreservedThinkingContentBlock | ToolUseContentBlock;
+export type ApiMessageContent = string | Array<UserContentBlock | AssistantContentBlock>;
 
 export interface ContentBlock {
-  type: "text" | "tool_use";
+  type: "text" | "thinking" | "redacted_thinking" | "tool_use";
   text?: string;
+  thinking?: string;
+  signature?: string;
+  data?: string;
   id?: string;
   name?: string;
   input?: Record<string, unknown>;
@@ -71,6 +80,7 @@ export type ApiStreamEvent =
     }
   | { type: "tool_input_delta"; index: number; partialJson: string }
   | { type: "thinking_delta"; index: number; thinking: string }
+  | { type: "thinking_block"; index: number; block: PreservedThinkingContentBlock }
   | { type: "text_delta"; index: number; text: string }
   | { type: "tool_use"; index: number; tool: ToolUseContentBlock }
   | { type: "message_delta"; stop_reason?: string | null; usage?: Usage }
@@ -116,7 +126,7 @@ export function getApiConfig(modelOverride?: string): ApiConfig | null {
 }
 
 export function getConfiguredModel(): string {
-  return process.env.ANTHROPIC_MODEL || readClaudeSettingString("model") || "claude-sonnet-4-6";
+  return process.env.ANTHROPIC_MODEL || readClaudeSettingString("model") || DEFAULT_MODEL;
 }
 
 export function getConfiguredSubagentModel(parentModel: string): string {
@@ -131,9 +141,48 @@ export function getConfiguredProvider(model: string = getConfiguredModel()): Api
   if (explicit === "openai" || explicit === "gpt") return "gpt-5.5";
 
   const normalizedModel = model.toLowerCase();
+  if (normalizedModel.includes("deepseek") && isAnthropicCompatibleBaseUrl(process.env.ANTHROPIC_BASE_URL)) {
+    return "anthropic";
+  }
+  if (normalizedModel.includes("deepseek") && process.env.ANTHROPIC_BASE_URL && !hasOpenAICompatibleDeepSeekEnv()) {
+    return "anthropic";
+  }
   if (normalizedModel.includes("deepseek")) return "deepseek-v4";
   if (normalizedModel.includes("gpt-5.5") || normalizedModel.startsWith("gpt-")) return "gpt-5.5";
   return "anthropic";
+}
+
+function isAnthropicCompatibleBaseUrl(value: string | undefined): boolean {
+  const normalized = (value || "").trim().replace(/\/+$/u, "").toLowerCase();
+  return normalized.endsWith("/anthropic") || normalized.includes("/anthropic/");
+}
+
+function hasOpenAICompatibleDeepSeekEnv(): boolean {
+  return Boolean(process.env.DEEPSEEK_BASE_URL || process.env.DEEPSEEK_API_KEY || process.env.OPENAI_BASE_URL || process.env.OPENAI_API_KEY);
+}
+
+export function getModelContextLimit(model: string | undefined): number {
+  const normalized = (model || "").trim().toLowerCase();
+  const explicitLimit = parseContextLimitSuffix(normalized);
+  if (explicitLimit) return explicitLimit;
+  if (
+    normalized === DEFAULT_MODEL ||
+    normalized === "opus" ||
+    normalized.includes("claude-opus-4-7") ||
+    normalized.includes("deepseek-v4-pro[1m]")
+  ) {
+    return ONE_MILLION_CONTEXT_LIMIT;
+  }
+  return DEFAULT_CONTEXT_LIMIT;
+}
+
+function parseContextLimitSuffix(model: string): number | null {
+  const match = model.match(/\[(\d+(?:\.\d+)?)\s*([km])\]/u);
+  if (!match) return null;
+  const value = Number.parseFloat(match[1] || "");
+  if (!Number.isFinite(value) || value <= 0) return null;
+  const unit = match[2];
+  return Math.round(value * (unit === "m" ? 1_000_000 : 1_000));
 }
 
 function getProviderBaseUrl(provider: ApiProvider): string {
@@ -141,7 +190,6 @@ function getProviderBaseUrl(provider: ApiProvider): string {
     case "deepseek-v4":
       return process.env.DEEPSEEK_BASE_URL
         || process.env.OPENAI_BASE_URL
-        || process.env.ANTHROPIC_BASE_URL
         || "https://api.deepseek.com";
     case "gpt-5.5":
       return process.env.OPENAI_BASE_URL
@@ -341,11 +389,7 @@ export async function sendMessage(
 
       const data: any = await res.json();
       return {
-        content: (data.content || []).map((b: any) =>
-          b.type === "tool_use"
-            ? { type: "tool_use", id: b.id, name: b.name, input: b.input }
-            : { type: "text", text: b.text }
-        ),
+        content: parseAnthropicResponseContent(data.content),
         usage: data.usage,
         stop_reason: data.stop_reason,
       };
@@ -432,6 +476,7 @@ export async function* streamMessage(
           name: string;
           inputJson: string;
         }>();
+        const currentThinking = new Map<number, PreservedThinkingContentBlock>();
 
         while (true) {
           const { done, value } = await reader.read();
@@ -445,7 +490,7 @@ export async function* streamMessage(
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
             const data = line.slice(6);
-            if (data.trim() === "[DONE]") continue;
+            if (data === "[DONE]") continue;
 
             const event = JSON.parse(data);
             const index = typeof event.index === "number" ? event.index : 0;
@@ -455,42 +500,81 @@ export async function* streamMessage(
                 emittedStreamContent = true;
                 if (event.content_block?.type === "tool_use") {
                   currentTools.set(index, {
-                    id: String(event.content_block.id),
-                    name: String(event.content_block.name),
+                    id: event.content_block.id,
+                    name: event.content_block.name,
                     inputJson: "",
                   });
+                  yield {
+                    type: "content_block_start",
+                    index,
+                    blockType: "tool_use",
+                    tool: {
+                      id: event.content_block.id,
+                      name: event.content_block.name,
+                    },
+                  };
+                } else if (event.content_block?.type === "thinking") {
+                  const thinkingBlock: PreservedThinkingContentBlock = {
+                    type: "thinking",
+                    thinking: event.content_block.thinking || "",
+                  };
+                  if (typeof event.content_block.signature === "string") {
+                    thinkingBlock.signature = event.content_block.signature;
+                  }
+                  currentThinking.set(index, thinkingBlock);
+                  yield { type: "content_block_start", index, blockType: "thinking" };
+                } else if (event.content_block?.type === "redacted_thinking") {
+                  currentThinking.set(index, {
+                    type: "redacted_thinking",
+                    data: event.content_block.data || "",
+                  });
+                  yield { type: "content_block_start", index, blockType: "redacted_thinking" };
+                } else {
+                  yield {
+                    type: "content_block_start",
+                    index,
+                    blockType: event.content_block?.type || "unknown",
+                  };
                 }
-                yield {
-                  type: "content_block_start",
-                  index,
-                  blockType: String(event.content_block?.type || "unknown"),
-                  ...(event.content_block?.type === "tool_use"
-                    ? {
-                        tool: {
-                          id: String(event.content_block.id),
-                          name: String(event.content_block.name),
-                        },
-                      }
-                    : {}),
-                };
                 break;
 
               case "content_block_delta":
                 emittedStreamContent = true;
                 if (event.delta?.type === "text_delta") {
-                  yield { type: "text_delta", index, text: String(event.delta.text || "") };
+                  yield { type: "text_delta", index, text: (event.delta.text as string) || "" };
                 } else if (event.delta?.type === "input_json_delta" && currentTools.has(index)) {
                   const currentTool = currentTools.get(index)!;
-                  const partialJson = String(event.delta.partial_json || "");
+                  const partialJson = (event.delta.partial_json as string) || "";
                   currentTool.inputJson += partialJson;
                   yield { type: "tool_input_delta", index, partialJson };
                 } else if (event.delta?.type === "thinking_delta") {
-                  yield { type: "thinking_delta", index, thinking: String(event.delta.thinking || "") };
+                  const thinking = (event.delta.thinking as string) || "";
+                  const current = currentThinking.get(index);
+                  if (current?.type === "thinking") {
+                    current.thinking += thinking;
+                  } else {
+                    currentThinking.set(index, { type: "thinking", thinking });
+                  }
+                  yield { type: "thinking_delta", index, thinking };
+                } else if (event.delta?.type === "signature_delta") {
+                  const signature = (event.delta.signature as string) || "";
+                  const current = currentThinking.get(index);
+                  if (current?.type === "thinking") {
+                    current.signature = (current.signature || "") + signature;
+                  } else {
+                    currentThinking.set(index, { type: "thinking", thinking: "", signature });
+                  }
                 }
                 break;
 
               case "content_block_stop": {
                 emittedStreamContent = true;
+                const thinking = currentThinking.get(index);
+                if (thinking) {
+                  yield { type: "thinking_block", index, block: thinking };
+                  currentThinking.delete(index);
+                  break;
+                }
                 const currentTool = currentTools.get(index);
                 if (currentTool) {
                   yield {
@@ -613,6 +697,47 @@ async function sendOpenAIChatMessage(
   return { content: [{ type: "text", text: "API Error: Stream failed." }] };
 }
 
+function parseAnthropicResponseContent(content: unknown): ContentBlock[] {
+  const blocks: ContentBlock[] = [];
+  for (const block of Array.isArray(content) ? content : []) {
+    if (block?.type === "tool_use") {
+      blocks.push({
+        type: "tool_use",
+        id: String(block.id),
+        name: String(block.name),
+        input: parseToolInput(block.input),
+      });
+      continue;
+    }
+    if (block?.type === "thinking") {
+      blocks.push({
+        type: "thinking",
+        thinking: String(block.thinking || ""),
+        ...(typeof block.signature === "string" ? { signature: block.signature } : {}),
+      });
+      continue;
+    }
+    if (block?.type === "redacted_thinking") {
+      blocks.push({
+        type: "redacted_thinking",
+        data: String(block.data || ""),
+      });
+      continue;
+    }
+    if (block?.type === "text") {
+      blocks.push({
+        type: "text",
+        text: String(block.text || ""),
+      });
+    }
+  }
+  return blocks;
+}
+
+function parseToolInput(input: unknown): Record<string, unknown> {
+  return input && typeof input === "object" && !Array.isArray(input) ? input as Record<string, unknown> : {};
+}
+
 async function sendGpt55ResponseMessage(
   cfg: ApiConfig,
   messages: ApiMessage[],
@@ -704,6 +829,23 @@ async function* streamOpenAIChatMessage(
         const decoder = new TextDecoder();
         let buffer = "";
         const currentTools = new Map<number, { id: string; name: string; inputJson: string }>();
+        const drainCurrentToolUses = (): ApiStreamEvent[] => {
+          const events: ApiStreamEvent[] = [];
+          for (const [index, tool] of [...currentTools.entries()].sort(([a], [b]) => a - b)) {
+            events.push({
+              type: "tool_use",
+              index,
+              tool: {
+                type: "tool_use",
+                id: tool.id,
+                name: tool.name,
+                input: parseJsonObject(tool.inputJson),
+              },
+            });
+            currentTools.delete(index);
+          }
+          return events;
+        };
         let stopReason: string | null = null;
         let usage: Usage | undefined;
         let sawDone = false;
@@ -717,12 +859,12 @@ async function* streamOpenAIChatMessage(
           buffer = lines.pop() || "";
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
-            const data = line.slice(6).trim();
-            if (!data) continue;
+            const data = line.slice(6);
             if (data === "[DONE]") {
               sawDone = true;
               continue;
             }
+            if (!data) continue;
             const event = JSON.parse(data);
 
             if (event.error || event.type === "error") {
@@ -776,6 +918,9 @@ async function* streamOpenAIChatMessage(
                 yield { type: "tool_input_delta", index: contentIndex, partialJson };
               }
             }
+            if (stopReason === "tool_use") {
+              for (const toolEvent of drainCurrentToolUses()) yield toolEvent;
+            }
           }
         }
 
@@ -784,18 +929,7 @@ async function* streamOpenAIChatMessage(
           return;
         }
 
-        for (const [index, tool] of [...currentTools.entries()].sort(([a], [b]) => a - b)) {
-          yield {
-            type: "tool_use",
-            index,
-            tool: {
-              type: "tool_use",
-              id: tool.id,
-              name: tool.name,
-              input: parseJsonObject(tool.inputJson),
-            },
-          };
-        }
+        for (const toolEvent of drainCurrentToolUses()) yield toolEvent;
         yield { type: "message_delta", stop_reason: stopReason, usage };
         yield { type: "message_stop" };
         return;
@@ -888,8 +1022,8 @@ async function* streamGpt55ResponseMessage(
           buffer = lines.pop() || "";
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
-            const data = line.slice(6).trim();
-            if (!data || data === "[DONE]") continue;
+            const data = line.slice(6);
+            if (data === "[DONE]" || !data) continue;
             const event = JSON.parse(data);
 
             if (event.type === "response.output_text.delta" && typeof event.delta === "string") {

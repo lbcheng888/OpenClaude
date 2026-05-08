@@ -1,40 +1,42 @@
 #!/usr/bin/env node
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const repo = resolve(dirname(new URL(import.meta.url).pathname), "..");
-const officialEntry = process.env.OFFICIAL_CLAUDE_CLI;
+const requestedScenarioName = process.env.OFFICIAL_PARITY_SCENARIO || "all";
+if (requestedScenarioName === "all" && !process.env.OFFICIAL_CLAUDE_CLI) {
+  resolveOfficialEntry(resolveOfficialTruthSource());
+}
+if (requestedScenarioName === "all") {
+  runAllScenarios();
+}
+const scenarioName = requestedScenarioName;
+const scenario = createScenario(scenarioName);
+const officialTruthSource = resolveOfficialTruthSource();
+const officialEntry = resolveOfficialEntry(officialTruthSource);
 const currentEntry = process.env.CURRENT_CLAUDE_CLI || join(repo, "dist", "index.js");
-const officialRuntime = process.env.OFFICIAL_CLAUDE_RUNTIME || "node";
+const officialRuntime = process.env.OFFICIAL_CLAUDE_RUNTIME || inferRuntime(officialEntry);
 const currentRuntime = process.env.CURRENT_CLAUDE_RUNTIME || "node";
 const artifactDir = process.env.OFFICIAL_PARITY_ARTIFACT_DIR || join(tmpdir(), "claude-code-full-official-parity");
 const profile = process.env.OFFICIAL_PARITY_PROFILE || "isolated";
 const baselineWorkdir = resolve(process.env.OFFICIAL_PARITY_WORKDIR || process.cwd());
-const columns = (process.env.OFFICIAL_PARITY_COLUMNS || "80,120,137")
+const columns = (process.env.OFFICIAL_PARITY_COLUMNS || scenario.defaultColumns)
   .split(",")
   .map(value => Number.parseInt(value.trim(), 10))
   .filter(value => Number.isFinite(value) && value > 0);
 const rows = Number.parseInt(process.env.OFFICIAL_PARITY_ROWS || "64", 10);
-const settleMs = Number.parseInt(process.env.OFFICIAL_PARITY_SETTLE_MS || "900", 10);
-const exitMode = process.env.OFFICIAL_PARITY_EXIT_MODE || "close";
+const settleMs = Number.parseInt(process.env.OFFICIAL_PARITY_SETTLE_MS || String(scenario.settleMs), 10);
+const exitMode = process.env.OFFICIAL_PARITY_EXIT_MODE || scenario.exitMode || "close";
 
-const scenario = {
-  name: "startup",
-  args: ["--dangerously-skip-permissions"],
-  requiredText: ["Claude Code v"],
-};
-
-if (!officialEntry) {
-  fail("Set OFFICIAL_CLAUDE_CLI to the exact official CLI entry used as the parity baseline.");
-}
 if (!existsSync(officialEntry)) {
   fail(`Missing official CLI: ${officialEntry}`);
 }
 if (!existsSync(currentEntry)) {
   fail(`Missing current CLI: ${currentEntry}. Run npm run build first.`);
 }
+assertOfficialEntryVersion(officialEntry, officialRuntime, officialTruthSource.version);
 if (columns.length === 0) {
   fail("OFFICIAL_PARITY_COLUMNS did not contain any valid terminal widths.");
 }
@@ -46,13 +48,20 @@ if (!["close", "ctrlc"].includes(exitMode)) {
 }
 
 mkdirSync(artifactDir, { recursive: true });
+writeFileSync(join(artifactDir, "official-truth-source.txt"), [
+  `version=${officialTruthSource.version}`,
+  `dir=${officialTruthSource.dir}`,
+  `bundle=${officialTruthSource.bundle}`,
+  `official_cli=${officialEntry}`,
+  `official_runtime=${officialRuntime}`,
+].join("\n") + "\n", "utf8");
 
 const results = [];
 for (const width of columns) {
   const official = captureTarget("official", { runtime: officialRuntime, entry: officialEntry }, width);
   const current = captureTarget("current", { runtime: currentRuntime, entry: currentEntry }, width);
   const diff = diffLines(official.normalized, current.normalized);
-  const passed = diff.length === 0;
+  const passed = scenario.skipScreenDiff === true || diff.length === 0;
   const diffPath = join(artifactDir, `${scenario.name}-${width}.diff`);
   writeFileSync(diffPath, diff.join("\n") + (diff.length > 0 ? "\n" : ""), "utf8");
   results.push({ width, passed, official, current, diffPath });
@@ -79,7 +88,10 @@ if (failed) {
 
 function captureTarget(label, target, width) {
   const base = join(artifactDir, `${scenario.name}-${width}-${label}`);
-  const workdir = profile === "isolated" ? join(artifactDir, `${scenario.name}-${width}-work`) : baselineWorkdir;
+  const usesFixtureWorkdir = scenarioUsesFixtureWorkdir();
+  const workdir = profile === "isolated" || usesFixtureWorkdir
+    ? join(artifactDir, `${scenario.name}-${width}-work`)
+    : baselineWorkdir;
   const home = profile === "local"
     ? (process.env.HOME || homedir())
     : join(artifactDir, `${scenario.name}-${width}-${label}-home`);
@@ -89,18 +101,24 @@ function captureTarget(label, target, width) {
   const rawPath = `${base}.raw`;
   const normalizedPath = `${base}.txt`;
   const expectPath = `${base}.expect`;
+  if (profile === "isolated" || usesFixtureWorkdir) {
+    rmSync(home, { recursive: true, force: true });
+    rmSync(workdir, { recursive: true, force: true });
+  }
   mkdirSync(workdir, { recursive: true });
   mkdirSync(configDir, { recursive: true });
+  prepareScenarioWorkdir(workdir);
   if (profile === "isolated") {
     seedClaudeConfig({ configDir, workdir });
   } else if (profile === "local-copy") {
-    copyLocalClaudeConfig(configDir);
+    copyLocalClaudeConfig(configDir, { scrubApiEnv: Boolean(scenario.serverScript) });
   }
 
   writeFileSync(expectPath, buildExpectScript({
     entry: target.entry,
     runtime: target.runtime,
     rawPath,
+    serverPath: scenario.serverScript ? writeScenarioServer(base, scenario.serverScript) : null,
     workdir,
     home,
     configDir,
@@ -120,6 +138,12 @@ function captureTarget(label, target, width) {
   }
 
   const raw = readFileSync(rawPath, "utf8");
+  const searchableRaw = normalizeRawForNeedleSearch(raw);
+  for (const required of scenario.requiredRawText || []) {
+    if (!searchableRaw.includes(required)) {
+      fail(`${label} raw capture at ${width} cols did not contain ${JSON.stringify(required)}.`);
+    }
+  }
   const normalized = normalizeTerminalCapture(raw, { workdir, home, configDir, width });
   writeFileSync(normalizedPath, normalized, "utf8");
   for (const required of scenario.requiredText) {
@@ -130,7 +154,384 @@ function captureTarget(label, target, width) {
   return { rawPath, normalizedPath, normalized };
 }
 
-function buildExpectScript({ runtime, entry, rawPath, workdir, home, configDir, width, profile }) {
+function createScenario(name) {
+  switch (name) {
+    case "startup":
+      return {
+        name,
+        args: ["--dangerously-skip-permissions"],
+        requiredText: ["Claude Code v"],
+        waitText: "/effort",
+        defaultColumns: "80,120,137",
+        settleMs: 900,
+        needsApi: false,
+      };
+    case "explore-renderer":
+      return {
+        name,
+        args: ["--dangerously-skip-permissions", "Explore renderer fixture"],
+        requiredText: ["Explore", "Parity complete."],
+        requiredRawText: [],
+        waitText: "complete.",
+        defaultColumns: "120",
+        settleMs: 300,
+        needsApi: true,
+        exitMode: "ctrlc",
+        serverScript: getExploreRendererServerScript(),
+      };
+    case "explore-expanded-renderer":
+      return {
+        name,
+        args: ["--dangerously-skip-permissions", "Explore renderer fixture"],
+        requiredText: ["Explore", "Parity complete."],
+        requiredRawText: [],
+        waitText: "complete.",
+        defaultColumns: "120",
+        settleMs: 80,
+        needsApi: true,
+        exitMode: "ctrlc",
+        skipScreenDiff: true,
+        expandOutput: true,
+        expandOutputDelayMs: 120,
+        serverScript: getExploreRendererServerScript(),
+      };
+    case "explore-running-picker":
+      return {
+        name,
+        args: ["--dangerously-skip-permissions", "Explore renderer fixture"],
+        requiredText: ["Explore", "Bash(tail -f /dev/null)", "bypass permissions"],
+        requiredRawText: ["main", "↑/↓", "Enter"],
+        skipScreenDiff: true,
+        waitText: "/dev/null",
+        defaultColumns: "120",
+        settleMs: 80,
+        needsApi: true,
+        expandOutput: true,
+        expandOutputDelayMs: 160,
+        expandOutputInput: "\x1b[111;5u",
+        serverScript: getExploreRendererServerScript({ bashCommand: "tail -f /dev/null" }),
+      };
+    case "markdown-renderer":
+      return {
+        name,
+        args: ["--dangerously-skip-permissions", "Markdown renderer fixture"],
+        requiredText: ["Heading", "ordered item", "quoted line", "-old", "+new"],
+        waitText: "+new",
+        defaultColumns: "120",
+        settleMs: 1200,
+        needsApi: true,
+        exitMode: "ctrlc",
+        serverScript: getMarkdownRendererServerScript(),
+      };
+    default:
+      fail(`Unknown OFFICIAL_PARITY_SCENARIO: ${name}`);
+  }
+}
+
+function prepareScenarioWorkdir(workdir) {
+  if (!scenarioUsesFixtureWorkdir()) return;
+  mkdirSync(join(workdir, "src"), { recursive: true });
+  writeFileSync(join(workdir, "package.json"), `${JSON.stringify({
+    name: "official-parity-fixture",
+    version: "1.0.0",
+    type: "module",
+  }, null, 2)}\n`, "utf8");
+  writeFileSync(join(workdir, "src", "index.ts"), "export const answer = 42;\n", "utf8");
+  writeFileSync(join(workdir, "README.md"), "# Official parity fixture\n", "utf8");
+}
+
+function scenarioUsesFixtureWorkdir() {
+  return ["explore-renderer", "explore-expanded-renderer", "explore-running-picker"].includes(scenario.name);
+}
+
+function writeScenarioServer(base, source) {
+  const serverPath = `${base}.server.mjs`;
+  writeFileSync(serverPath, source, "utf8");
+  return serverPath;
+}
+
+function getMarkdownRendererServerScript() {
+  const markdown = [
+    "# Heading",
+    "",
+    "Plain **bold** and *italic* with `inline_code` plus [a link](https://example.com).",
+    "",
+    "- unordered item",
+    "- second item",
+    "",
+    "1. ordered item",
+    "   1. nested ordered item",
+    "",
+    "> quoted line",
+    "",
+    "```diff",
+    "-old",
+    "+new",
+    "@@ hunk",
+    "```",
+  ].join("\n");
+
+  return String.raw`import http from "node:http";
+
+const markdown = ${JSON.stringify(markdown)};
+
+function writeEvent(res, event) {
+  res.write("event: " + event.type + "\n");
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+function startMessage(res) {
+  writeEvent(res, {
+    type: "message_start",
+    message: {
+      id: "msg_markdown_" + Date.now(),
+      type: "message",
+      role: "assistant",
+      model: "claude-opus-4-7",
+      content: [],
+      stop_reason: null,
+      stop_sequence: null,
+      usage: { input_tokens: 1, output_tokens: 1 },
+    },
+  });
+}
+
+function finishMessage(res) {
+  writeEvent(res, {
+    type: "message_delta",
+    delta: { stop_reason: "end_turn", stop_sequence: null },
+    usage: { input_tokens: 32, output_tokens: 64 },
+  });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") {
+    res.writeHead(404).end();
+    return;
+  }
+
+  req.resume();
+  req.on("end", () => {
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+    startMessage(res);
+    writeEvent(res, {
+      type: "content_block_start",
+      index: 0,
+      content_block: { type: "text", text: "" },
+    });
+    writeEvent(res, {
+      type: "content_block_delta",
+      index: 0,
+      delta: { type: "text_delta", text: markdown },
+    });
+    writeEvent(res, { type: "content_block_stop", index: 0 });
+    finishMessage(res);
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+`;
+}
+
+function getExploreRendererServerScript(options = {}) {
+  const bashCommand = options.bashCommand || "pwd";
+  return String.raw`import http from "node:http";
+
+let nextToolId = 1;
+
+function writeEvent(res, event) {
+  res.write("event: " + event.type + "\n");
+  res.write("data: " + JSON.stringify(event) + "\n\n");
+}
+
+function startMessage(res) {
+  writeEvent(res, {
+    type: "message_start",
+    message: {
+      id: "msg_parity_" + Date.now(),
+      type: "message",
+      role: "assistant",
+      model: "claude-opus-4-7",
+      content: [],
+      stop_reason: null,
+      stop_sequence: null,
+      usage: { input_tokens: 1, output_tokens: 1 },
+    },
+  });
+}
+
+function finishMessage(res, stopReason) {
+  writeEvent(res, {
+    type: "message_delta",
+    delta: { stop_reason: stopReason, stop_sequence: null },
+    usage: { input_tokens: 32, output_tokens: 8 },
+  });
+  writeEvent(res, { type: "message_stop" });
+  res.end();
+}
+
+function respondWithText(res, text) {
+  startMessage(res);
+  writeEvent(res, {
+    type: "content_block_start",
+    index: 0,
+    content_block: { type: "text", text: "" },
+  });
+  writeEvent(res, {
+    type: "content_block_delta",
+    index: 0,
+    delta: { type: "text_delta", text },
+  });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  finishMessage(res, "end_turn");
+}
+
+function respondWithToolUse(res, name, input) {
+  startMessage(res);
+  writeEvent(res, {
+    type: "content_block_start",
+    index: 0,
+    content_block: { type: "tool_use", id: "toolu_parity_" + nextToolId++, name, input: {} },
+  });
+  writeEvent(res, {
+    type: "content_block_delta",
+    index: 0,
+    delta: { type: "input_json_delta", partial_json: JSON.stringify(input) },
+  });
+  writeEvent(res, { type: "content_block_stop", index: 0 });
+  finishMessage(res, "tool_use");
+}
+
+function toolNames(payload) {
+  return (payload.tools || []).map(tool => String(tool.name || tool?.function?.name || ""));
+}
+
+function toolResultCount(payload) {
+  return JSON.stringify(payload.messages || []).split('"tool_result"').length - 1;
+}
+
+function isParentTurn(payload) {
+  const names = toolNames(payload);
+  const messages = JSON.stringify(payload.messages || []);
+  return names.includes("Task") || messages.includes("Explore renderer fixture");
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST") {
+    res.writeHead(404).end();
+    return;
+  }
+
+  let body = "";
+  req.on("data", chunk => {
+    body += chunk;
+  });
+  req.on("end", () => {
+    const payload = JSON.parse(body || "{}");
+    res.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      "connection": "keep-alive",
+    });
+
+    const count = toolResultCount(payload);
+    if (isParentTurn(payload)) {
+      if (count === 0) {
+        respondWithToolUse(res, "Task", {
+          description: "Explore project structure",
+          prompt: "Explore project structure. Use read-only tools. List the root, read package.json, and run pwd.",
+          subagent_type: "Explore",
+        });
+        return;
+      }
+      respondWithText(res, "Parity complete.");
+      return;
+    }
+
+    switch (count) {
+      case 0:
+        respondWithToolUse(res, "LS", { path: "." });
+        return;
+      case 1:
+        respondWithToolUse(res, "Read", { file_path: "package.json" });
+        return;
+      case 2:
+        respondWithToolUse(res, "Bash", { command: ${JSON.stringify(bashCommand)}, description: "Print working directory" });
+        return;
+      default:
+        respondWithText(res, "Explore complete.");
+    }
+  });
+});
+
+server.listen(0, "127.0.0.1", () => {
+  console.log("PORT " + server.address().port);
+});
+`;
+}
+
+function resolveOfficialTruthSource() {
+  const version = process.env.OFFICIAL_TRUTH_VERSION || "2.1.132";
+  const dir = resolve(process.env.OFFICIAL_TRUTH_DIR || join(repo, ".versions", version));
+  const bundle = join(dir, "main_bundle", "full_bundle.cjs");
+
+  if (!existsSync(bundle)) {
+    fail(`Missing official truth bundle: ${bundle}`);
+  }
+
+  const header = readFileSync(bundle, "utf8").slice(0, 4096);
+  const foundVersion = header.match(/Version:\s*([0-9]+\.[0-9]+\.[0-9]+)/u)?.[1];
+  if (foundVersion !== version) {
+    fail(`Official truth bundle version mismatch: expected ${version}, got ${foundVersion || "unknown"} at ${bundle}`);
+  }
+
+  return { version, dir, bundle };
+}
+
+function resolveOfficialEntry(officialTruth) {
+  if (process.env.OFFICIAL_CLAUDE_CLI) return resolve(process.env.OFFICIAL_CLAUDE_CLI);
+
+  fail([
+    `Official truth source is fixed at ${officialTruth.dir}.`,
+    "Set OFFICIAL_CLAUDE_CLI to the executable from that same 2.1.132 package before running parity capture.",
+    "Refusing to auto-detect global claude, nvm packages, or /Users/lbcheng/claude-code because that can compare against the wrong build.",
+  ].join("\n"));
+}
+
+function assertOfficialEntryVersion(entry, runtime, expectedVersion) {
+  if (process.env.OFFICIAL_PARITY_SKIP_VERSION_CHECK === "1") return;
+
+  const command = runtime === "direct" ? entry : runtime;
+  const args = runtime === "direct" ? ["--version"] : [entry, "--version"];
+  const result = spawnSync(command, args, { encoding: "utf8", timeout: 5000 });
+  const output = `${result.stdout || ""}${result.stderr || ""}`;
+  if (result.error) {
+    fail(`Could not read official CLI version from ${entry}: ${result.error.message}`);
+  }
+  if (result.status !== 0) {
+    fail(`Official CLI version check failed for ${entry}:\n${truncateForError(output)}`);
+  }
+
+  const actualVersion = output.match(/\b([0-9]+\.[0-9]+\.[0-9]+)\b/u)?.[1];
+  if (actualVersion !== expectedVersion) {
+    fail(`Official CLI version mismatch: expected ${expectedVersion} from .versions, got ${actualVersion || "unknown"} from ${entry}.`);
+  }
+}
+
+function inferRuntime(entry) {
+  if (/\.(?:js|cjs|mjs)$/u.test(entry)) return "node";
+  return "direct";
+}
+
+function buildExpectScript({ runtime, entry, rawPath, serverPath, workdir, home, configDir, width, profile }) {
   const spawnLine = runtime === "direct"
     ? `spawn -noecho ${tclQuote(entry)} ${scenario.args.map(tclQuote).join(" ")}`
     : `spawn -noecho ${tclQuote(runtime)} ${tclQuote(entry)} ${scenario.args.map(tclQuote).join(" ")}`;
@@ -146,12 +547,27 @@ function buildExpectScript({ runtime, entry, rawPath, workdir, home, configDir, 
     "set env(IS_DEMO) 0",
   ];
 
+  if (serverPath) {
+    lines.push(
+      `spawn -noecho node ${tclQuote(serverPath)}`,
+      "set parity_server_id $spawn_id",
+      "expect -i $parity_server_id -re {PORT ([0-9]+)}",
+      "set parity_server_port $expect_out(1,string)",
+      "set env(ANTHROPIC_BASE_URL) \"http://127.0.0.1:$parity_server_port\"",
+      "set env(ANTHROPIC_AUTH_TOKEN) parity-token",
+      "set env(ANTHROPIC_API_KEY) parity-token",
+      "set env(CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC) 1",
+    );
+  }
+
   if (profile === "isolated") {
     lines.push(
       "set env(CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC) 1",
-      "catch {unset env(ANTHROPIC_AUTH_TOKEN)}",
-      "catch {unset env(ANTHROPIC_API_KEY)}",
-      "catch {unset env(ANTHROPIC_BASE_URL)}",
+      ...(scenario.needsApi ? [] : [
+        "catch {unset env(ANTHROPIC_AUTH_TOKEN)}",
+        "catch {unset env(ANTHROPIC_API_KEY)}",
+        "catch {unset env(ANTHROPIC_BASE_URL)}",
+      ]),
       "catch {unset env(ANTHROPIC_MODEL)}",
       "catch {unset env(ANTHROPIC_DEFAULT_HAIKU_MODEL)}",
       "catch {unset env(ANTHROPIC_DEFAULT_OPUS_MODEL)}",
@@ -168,22 +584,29 @@ function buildExpectScript({ runtime, entry, rawPath, workdir, home, configDir, 
 
   lines.push(
     `cd ${tclQuote(workdir)}`,
+    `set stty_init ${tclQuote(`rows ${rows} columns ${width}`)}`,
     spawnLine,
+    `catch {stty rows ${rows} columns ${width} < $spawn_out(slave,name)}`,
     "expect {",
     "  \"Accessing workspace:\" { send \"\\r\"; exp_continue }",
     "  \"Choose the text style\" { send \"\\r\"; exp_continue }",
     "  \"Yes, I trust this folder\" { send \"\\r\"; exp_continue }",
-    "  \"bypass\" {}",
+    `  ${tclQuote(scenario.waitText)} {}`,
     "  timeout { exit 2 }",
     "  eof { exit 3 }",
     "}",
+    ...(scenario.afterWaitInput ? [`send ${tclQuote(scenario.afterWaitInput)}`, `after ${scenario.afterWaitInputDelayMs || 200}`] : []),
+    ...(scenario.expandOutput ? [`send ${tclQuote(scenario.expandOutputInput || "\x0f")}`, `after ${scenario.expandOutputDelayMs || 900}`] : []),
     `after ${settleMs}`,
   );
 
   if (exitMode === "close") {
+    if (serverPath) {
+      lines.push("catch {exec kill [exp_pid -i $parity_server_id]}");
+    }
     lines.push(
-      "close",
-      "wait",
+      "catch {close}",
+      "catch {wait}",
       "exit 0",
       "",
     );
@@ -197,11 +620,15 @@ function buildExpectScript({ runtime, entry, rawPath, workdir, home, configDir, 
     "  eof {}",
     "  timeout {}",
     "}",
-    "send \"\\003\"",
-    "expect {",
-    "  eof {}",
-    "  timeout { send \"\\003\"; expect eof }",
-    "}",
+    "after 500",
+  );
+  if (serverPath) {
+    lines.push("catch {exec kill [exp_pid -i $parity_server_id]}");
+  }
+  lines.push(
+    "catch {close}",
+    "catch {wait}",
+    "exit 0",
     "",
   );
 
@@ -229,16 +656,65 @@ function normalizeTerminalCapture(raw, paths) {
     rows,
   })
     .replace(/Claude Code v[0-9]+(?:\.[0-9]+)*/gu, "Claude Code v<VERSION>")
+    .replace(/^✻ .+ for (?:\d+ms|\d+(?:\.\d+)?s|\d+m(?: \d+s)?)$/gmu, "✻ <turn-duration>")
+    .replace(/^[✢✳✶✻✽·] .+…(?: \([^)]*\))?$/gmu, "✻ <active-spinner>")
+    .replace(/^(\s*)Press Ctrl-C again to exit.*$/gmu, "$1⏵⏵ bypass permissions on (shift+tab to cycle)")
+    .replace(/local_agent_\d+/gu, "local_agent_N")
+    .replace(/\b\d+m \d+s\b/gu, "<duration>")
+    .replace(/\b\d+s\b/gu, "<duration>")
+    .replace(/^❯(?: |\u00a0)Try ".+"$/gmu, '❯ Try "<prompt-placeholder>"')
     .replace(new RegExp(escapeRegExp(paths.workdir), "gu"), "<cwd>")
+    .replace(/\/…\/claude-parity-[^/\s]+\/[^\s]+-work/gu, "/…<cwd>")
     .replace(new RegExp(escapeRegExp(paths.home), "gu"), "<home>")
-    .replace(new RegExp(escapeRegExp(paths.configDir), "gu"), "<config>");
-  const startupIndex = stripped.indexOf("Claude Code v");
-  return (startupIndex === -1 ? stripped : stripped.slice(startupIndex))
+    .replace(new RegExp(escapeRegExp(paths.configDir), "gu"), "<config>")
+    .replace(/\/…\/claude-code-full-official-parity\//gu, "/…/");
+  const cropped = cropRenderedFrame(stripped);
+  return cropped
     .split("\n")
     .map(line => line.replace(/[^\S\n]+$/gu, ""))
+    .filter(line => !/^\s*\[\d*\s*$/u.test(line))
     .filter(line => !/^\s*$/.test(line))
     .join("\n")
     .trimEnd() + "\n";
+}
+
+function cropRenderedFrame(rendered) {
+  if (scenario.name === "startup") {
+    const lines = rendered.split("\n");
+    const startupLineIndex = lines.findIndex(line => line.includes("Claude Code v"));
+    return startupLineIndex === -1 ? rendered : lines.slice(startupLineIndex).join("\n");
+  }
+
+  const startupIndex = rendered.indexOf("Claude Code v");
+  return startupIndex === -1 ? rendered : rendered.slice(startupIndex);
+}
+
+function normalizeRawForNeedleSearch(raw) {
+  return raw
+    .replace(/\x1b\[[0-?]*[ -/]*[@-~]/gu, "")
+    .replace(/\x1b\][^\x07]*(?:\x07|\x1b\\)/gu, "")
+    .replace(/\x1b[ -/]*[@-~]/gu, "")
+    .replace(/\r/gu, "\n")
+    .replace(/[^\S\n]+/gu, " ");
+}
+
+function runAllScenarios() {
+  const script = new URL(import.meta.url).pathname;
+  let failed = false;
+  for (const name of ["startup", "explore-renderer", "explore-expanded-renderer", "explore-running-picker", "markdown-renderer"]) {
+    const result = spawnSync(process.execPath, [script], {
+      cwd: repo,
+      stdio: "inherit",
+      env: {
+        ...process.env,
+        OFFICIAL_PARITY_SCENARIO: name,
+      },
+    });
+    if (result.status !== 0) {
+      failed = true;
+    }
+  }
+  process.exit(failed ? 1 : 0);
 }
 
 function renderTerminalFrame(raw, size) {
@@ -472,7 +948,7 @@ function seedClaudeConfig({ configDir, workdir }) {
     installMethod: "global",
     theme: "dark",
     hasCompletedOnboarding: true,
-    lastOnboardingVersion: "2.1.131",
+    lastOnboardingVersion: "2.1.132",
     lastReleaseNotesSeen: process.env.OFFICIAL_PARITY_LAST_RELEASE_NOTES_SEEN || "2.1.128",
     preferredNotifChannel: "auto",
     verbose: false,
@@ -549,18 +1025,67 @@ function seedClaudeConfig({ configDir, workdir }) {
   }, null, 2), "utf8");
 }
 
-function copyLocalClaudeConfig(targetConfigDir) {
+function copyLocalClaudeConfig(targetConfigDir, options = {}) {
+  const sourceHome = process.env.OFFICIAL_PARITY_SOURCE_HOME
+    || process.env.HOME
+    || homedir();
   const sourceConfigDir = process.env.OFFICIAL_PARITY_SOURCE_CONFIG_DIR
     || process.env.CLAUDE_CONFIG_DIR
-    || join(process.env.HOME || homedir(), ".claude");
+    || join(sourceHome, ".claude");
+  const globalConfigCandidates = [
+    process.env.OFFICIAL_PARITY_SOURCE_GLOBAL_CONFIG,
+    process.env.CLAUDE_CONFIG_DIR ? join(process.env.CLAUDE_CONFIG_DIR, ".claude.json") : join(sourceHome, ".claude.json"),
+    join(sourceConfigDir, ".claude.json"),
+  ].filter(Boolean);
+  for (const source of globalConfigCandidates) {
+    if (!existsSync(source)) continue;
+    copyIfExists(source, join(targetConfigDir, ".claude.json"));
+    break;
+  }
   for (const relativePath of [
-    ".claude.json",
     "settings.json",
     "settings.local.json",
     "cache/changelog.md",
   ]) {
     copyIfExists(join(sourceConfigDir, relativePath), join(targetConfigDir, relativePath));
   }
+  if (options.scrubApiEnv) {
+    scrubCopiedApiEnv(join(targetConfigDir, "settings.json"));
+    scrubCopiedApiEnv(join(targetConfigDir, "settings.local.json"));
+  }
+  if (process.env.OFFICIAL_PARITY_LAST_RELEASE_NOTES_SEEN) {
+    setCopiedGlobalConfigValue(
+      join(targetConfigDir, ".claude.json"),
+      "lastReleaseNotesSeen",
+      process.env.OFFICIAL_PARITY_LAST_RELEASE_NOTES_SEEN,
+    );
+  }
+}
+
+function setCopiedGlobalConfigValue(configPath, key, value) {
+  const config = existsSync(configPath)
+    ? JSON.parse(readFileSync(configPath, "utf8"))
+    : {};
+  config[key] = value;
+  writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+}
+
+function scrubCopiedApiEnv(settingsPath) {
+  if (!existsSync(settingsPath)) return;
+  const settings = JSON.parse(readFileSync(settingsPath, "utf8"));
+  if (!settings.env || typeof settings.env !== "object") return;
+  for (const key of [
+    "ANTHROPIC_BASE_URL",
+    "ANTHROPIC_AUTH_TOKEN",
+    "ANTHROPIC_API_KEY",
+    "DEEPSEEK_BASE_URL",
+    "DEEPSEEK_API_KEY",
+    "OPENAI_BASE_URL",
+    "OPENAI_API_KEY",
+  ]) {
+    delete settings.env[key];
+  }
+  writeFileSync(settingsPath, JSON.stringify(settings, null, 2), "utf8");
 }
 
 function copyIfExists(source, target) {

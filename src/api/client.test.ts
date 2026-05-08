@@ -8,6 +8,7 @@ import {
   getConfiguredModel,
   getConfiguredProvider,
   getConfiguredSubagentModel,
+  getModelContextLimit,
   sendMessage,
   streamMessage,
   toDeepSeekV4ChatMessages,
@@ -152,10 +153,122 @@ describe("API client", () => {
 
   test("configured provider follows explicit env before model inference", () => {
     installApiEnv();
+    delete process.env.ANTHROPIC_BASE_URL;
     expect(getConfiguredProvider("deepseek-v4-pro")).toBe("deepseek-v4");
     expect(getConfiguredProvider("gpt-5.5")).toBe("gpt-5.5");
+    process.env.ANTHROPIC_BASE_URL = "https://api.deepseek.com/anthropic";
+    expect(getConfiguredProvider("deepseek-v4-pro")).toBe("anthropic");
     process.env.CLAUDE_CODE_API_PROVIDER = "anthropic";
     expect(getConfiguredProvider("gpt-5.5")).toBe("anthropic");
+    process.env.CLAUDE_CODE_API_PROVIDER = "deepseek";
+    expect(getConfiguredProvider("deepseek-v4-pro")).toBe("deepseek-v4");
+  });
+
+  test("model context limit follows explicit model suffix and known model metadata", () => {
+    expect(getModelContextLimit("deepseek-v4-pro[1m]")).toBe(1_000_000);
+    expect(getModelContextLimit("claude-opus-4-7")).toBe(1_000_000);
+    expect(getModelContextLimit("custom-model[256k]")).toBe(256_000);
+    expect(getModelContextLimit("claude-sonnet-4-6")).toBe(200_000);
+  });
+
+  test("streamMessage honors official DeepSeek Anthropic-compatible env", async () => {
+    const urls: string[] = [];
+    const bodies: Array<Record<string, any>> = [];
+    installApiEnv();
+    process.env.ANTHROPIC_MODEL = "deepseek-v4-pro[1m]";
+    process.env.ANTHROPIC_BASE_URL = "https://api.deepseek.com/anthropic";
+    process.env.ANTHROPIC_AUTH_TOKEN = "deepseek-token";
+    globalThis.fetch = (async (input, init) => {
+      urls.push(String(input));
+      bodies.push(JSON.parse(String(init?.body)));
+      expect((init?.headers as Record<string, string>)["x-api-key"]).toBe("deepseek-token");
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode([
+              "data: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}",
+              "data: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"ok\"}}",
+              "data: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"},\"usage\":{\"input_tokens\":2,\"output_tokens\":1}}",
+              "data: {\"type\":\"message_stop\"}",
+              "",
+            ].join("\n\n")));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      );
+    }) as typeof fetch;
+
+    const events = [];
+    for await (const event of streamMessage([{ role: "user", content: "hello" }])) {
+      events.push(event);
+    }
+
+    expect(getApiConfig()?.provider).toBe("anthropic");
+    expect(urls[0]).toBe("https://api.deepseek.com/anthropic/v1/messages");
+    expect(bodies[0].model).toBe("deepseek-v4-pro[1m]");
+    expect(bodies[0].messages).toEqual([{ role: "user", content: "hello" }]);
+    expect(events).toContainEqual({ type: "text_delta", index: 0, text: "ok" });
+    expect(events.at(-1)).toEqual({ type: "message_stop" });
+  });
+
+  test("streamMessage preserves Anthropic thinking blocks for the next request", async () => {
+    const bodies: Array<Record<string, any>> = [];
+    installApiEnv();
+    process.env.ANTHROPIC_MODEL = "deepseek-v4-pro[1m]";
+    process.env.ANTHROPIC_BASE_URL = "https://api.deepseek.com/anthropic";
+    process.env.ANTHROPIC_AUTH_TOKEN = "deepseek-token";
+    globalThis.fetch = (async (_input, init) => {
+      bodies.push(JSON.parse(String(init?.body)));
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode([
+              "data: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"thinking\",\"thinking\":\"\"}}",
+              "data: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\"hidden plan\"}}",
+              "data: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"signature_delta\",\"signature\":\"sig-1\"}}",
+              "data: {\"type\":\"content_block_stop\",\"index\":0}",
+              "data: {\"type\":\"content_block_start\",\"index\":1,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}",
+              "data: {\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\"ok\"}}",
+              "data: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"}}",
+              "data: {\"type\":\"message_stop\"}",
+              "",
+            ].join("\n\n")));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      );
+    }) as typeof fetch;
+
+    const previousMessages = [
+      { role: "user" as const, content: "hello" },
+      {
+        role: "assistant" as const,
+        content: [
+          { type: "thinking" as const, thinking: "prior hidden plan", signature: "prior-sig" },
+          { type: "text" as const, text: "done" },
+        ],
+      },
+      { role: "user" as const, content: "again" },
+    ];
+    const events = [];
+    for await (const event of streamMessage(previousMessages)) {
+      events.push(event);
+    }
+
+    expect(bodies[0].messages[1].content[0]).toEqual({
+      type: "thinking",
+      thinking: "prior hidden plan",
+      signature: "prior-sig",
+    });
+    expect(events).toContainEqual({
+      type: "thinking_block",
+      index: 0,
+      block: { type: "thinking", thinking: "hidden plan", signature: "sig-1" },
+    });
+    expect(events).toContainEqual({ type: "text_delta", index: 1, text: "ok" });
+    expect(events.at(-1)).toEqual({ type: "message_stop" });
   });
 
   test("streamMessage routes DeepSeekV4 images through OpenAI-compatible chat completions", async () => {
@@ -256,6 +369,51 @@ describe("API client", () => {
       index: 1,
       tool: { type: "tool_use", id: "call_1", name: "Read", input: { file_path: "package.json" } },
     });
+  });
+
+  test("streamMessage flushes OpenAI-compatible tool_use before the terminal DONE frame", async () => {
+    installApiEnv();
+    process.env.ANTHROPIC_MODEL = "deepseek-v4-pro";
+    process.env.DEEPSEEK_API_KEY = "deepseek-token";
+    const encoder = new TextEncoder();
+    let controller!: ReadableStreamDefaultController<Uint8Array>;
+    const events: Array<{ type: string }> = [];
+    const tool = {
+      name: "Read",
+      description: "Read a file",
+      input_schema: {
+        type: "object" as const,
+        properties: { file_path: { type: "string" } },
+        required: ["file_path"],
+      },
+    };
+    globalThis.fetch = (async () => new Response(
+      new ReadableStream<Uint8Array>({
+        start(streamController) {
+          controller = streamController;
+          controller.enqueue(encoder.encode([
+            "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_early\",\"function\":{\"name\":\"Read\",\"arguments\":\"{\\\"file_path\\\"\"}}]},\"finish_reason\":null}]}",
+            "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\":\\\"package.json\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}]}",
+            "",
+          ].join("\n\n")));
+        },
+      }),
+      { status: 200 },
+    )) as typeof fetch;
+
+    const consume = (async () => {
+      for await (const event of streamMessage([{ role: "user", content: "read package" }], undefined, [tool])) {
+        events.push(event);
+      }
+    })();
+
+    await waitUntil(() => events.some(event => event.type === "tool_use"));
+
+    expect(events.some(event => event.type === "message_stop")).toBe(false);
+    controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+    controller.close();
+    await consume;
+    expect(events.at(-1)).toEqual({ type: "message_stop" });
   });
 
   test("streamMessage retries DeepSeekV4 stream error events and can be interrupted during retry", async () => {
@@ -773,4 +931,14 @@ function restoreEnv(key: keyof typeof originalEnv, value: string | undefined): v
     return;
   }
   process.env[key] = value;
+}
+
+async function waitUntil(predicate: () => boolean, timeoutMs = 500): Promise<void> {
+  const startedAt = Date.now();
+  while (!predicate()) {
+    if (Date.now() - startedAt > timeoutMs) {
+      throw new Error("Timed out waiting for condition");
+    }
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
 }

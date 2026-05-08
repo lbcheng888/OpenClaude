@@ -5,10 +5,20 @@ import {
   applyInputEditAction,
   buildMainSystemPrompt,
   buildSubagentSystemPrompt,
+  formatAgentResultStatusLine,
+  formatCoordinatorTaskHint,
+  getModeFooterBackgroundTaskTexts,
+  formatOutputPickerDuration,
+  formatOutputPickerAgentLine,
+  formatOutputPickerMainLine,
+  formatTurnDurationText,
   formatToolInputPreview,
   formatToolUseMessageForColumns,
+  getBottomSeparatorText,
   getInputLineCursorParts,
   getOfficialSpinnerAnimationState,
+  getExitControlInput,
+  getModeFooterParts,
   getRenderableAgentProgressEntries,
   getVisibleAgentProgressEntries,
   groupToolRenderItems,
@@ -118,6 +128,22 @@ describe("terminal tool render grouping", () => {
     expect(grouped).toHaveLength(1);
     expect(grouped[0]?.type).toBe("agent_group");
     expect(grouped[0]?.type === "agent_group" ? grouped[0].tools.map(entry => entry.id) : []).toEqual(["task-1", "task-2"]);
+  });
+
+  test("hides non-blocking TaskOutput polling while background agents are still running", () => {
+    const grouped = groupToolRenderItems([
+      tool({
+        id: "task-output-1",
+        name: "TaskOutput",
+        input: { task_id: "local_agent_1", block: false },
+        result: "<retrieval_status>not_ready</retrieval_status>\n<status>running</status>",
+      }),
+      tool({ id: "grep-1", name: "Grep", input: { pattern: "needle" }, result: "Found 1 match" }),
+    ]);
+
+    expect(grouped).toHaveLength(1);
+    expect(grouped[0]?.type).toBe("tool");
+    expect(grouped[0]?.type === "tool" ? grouped[0].tool.id : "").toBe("grep-1");
   });
 
   test("truncates tool input chrome to the current terminal columns", () => {
@@ -285,5 +311,206 @@ describe("terminal tool render grouping", () => {
       input: "ask  now",
       cursor: imageStart,
     });
+  });
+
+  test("exit control parser handles raw ETX/EOT and CSI-u forms", () => {
+    expect(getExitControlInput("\x03", { ctrl: false })).toEqual({ keyName: "Ctrl-C", count: 1 });
+    expect(getExitControlInput("\x03\x03\x03", { ctrl: false })).toEqual({ keyName: "Ctrl-C", count: 3 });
+    expect(getExitControlInput("\x04", { ctrl: false })).toEqual({ keyName: "Ctrl-D", count: 1 });
+    expect(getExitControlInput("\x1b[99;5u", { ctrl: false })).toEqual({ keyName: "Ctrl-C", count: 1 });
+    expect(getExitControlInput("[99;5u", { ctrl: false })).toEqual({ keyName: "Ctrl-C", count: 1 });
+    expect(getExitControlInput("\x1b[100;5u", { ctrl: false })).toEqual({ keyName: "Ctrl-D", count: 1 });
+    expect(getExitControlInput("[100;5u", { ctrl: false })).toEqual({ keyName: "Ctrl-D", count: 1 });
+    expect(getExitControlInput("c", { ctrl: true })).toEqual({ keyName: "Ctrl-C", count: 1 });
+  });
+
+  test("footer keeps permission mode and interrupt hint in the official left zone", () => {
+    const previousToken = process.env.ANTHROPIC_AUTH_TOKEN;
+    process.env.ANTHROPIC_AUTH_TOKEN = "test-token";
+    try {
+      const parts = getModeFooterParts({
+        permissionMode: "bypassPermissions",
+        model: "deepseek-v4-pro[1m]",
+        expandedOutput: false,
+        loading: true,
+        hasCoordinatorTasks: true,
+        coordinatorActive: false,
+        usage: { input_tokens: 5330 },
+        exitMessage: { show: false },
+        temporaryNotice: null,
+      });
+
+      expect(parts.modeText).toBe("⏵⏵ bypass permissions on");
+      expect(parts.modeColor).toBe("error");
+      expect(parts.modeShortcutText).toBe("(shift+tab to cycle)");
+      expect(parts.backgroundTaskTexts).toEqual([]);
+      expect(parts.hintText).toBe("esc to interrupt");
+      expect(parts.taskHintText).toBe("↓ to manage");
+      expect(parts.usageText).toBe("");
+      expect(parts.rightText).toBe("◈ max · /effort");
+    } finally {
+      if (previousToken === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+      else process.env.ANTHROPIC_AUTH_TOKEN = previousToken;
+    }
+  });
+
+  test("footer keeps the official byline even after coordinator tasks exist", () => {
+    const previousToken = process.env.ANTHROPIC_AUTH_TOKEN;
+    process.env.ANTHROPIC_AUTH_TOKEN = "test-token";
+    try {
+      const parts = getModeFooterParts({
+        permissionMode: "bypassPermissions",
+        model: "deepseek-v4-pro[1m]",
+        expandedOutput: false,
+        loading: true,
+        hasCoordinatorTasks: true,
+        coordinatorActive: false,
+        usage: { input_tokens: 5330 },
+        exitMessage: { show: false },
+        temporaryNotice: null,
+        isEmptySession: false,
+      });
+
+      expect(parts.modeText).toBe("⏵⏵ bypass permissions on");
+      expect(parts.modeShortcutText).toBe("(shift+tab to cycle)");
+      expect(parts.hintText).toBe("esc to interrupt");
+      expect(parts.taskHintText).toBe("↓ to manage");
+      expect(parts.rightText).toBe("◈ max · /effort");
+    } finally {
+      if (previousToken === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+      else process.env.ANTHROPIC_AUTH_TOKEN = previousToken;
+    }
+  });
+
+  test("footer shows official effort status when no task panel owns the right zone", () => {
+    const previousToken = process.env.ANTHROPIC_AUTH_TOKEN;
+    process.env.ANTHROPIC_AUTH_TOKEN = "test-token";
+    try {
+      const parts = getModeFooterParts({
+        permissionMode: "default",
+        model: "deepseek-v4-pro[1m]",
+        expandedOutput: false,
+        loading: false,
+        hasCoordinatorTasks: false,
+        coordinatorActive: false,
+        usage: {},
+        exitMessage: { show: false },
+        temporaryNotice: null,
+        isEmptySession: false,
+      });
+
+      expect(parts.rightText).toBe("◈ max · /effort");
+    } finally {
+      if (previousToken === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+      else process.env.ANTHROPIC_AUTH_TOKEN = previousToken;
+    }
+  });
+
+  test("bottom separator stays plain; manage hint belongs to the footer byline", () => {
+    expect(getBottomSeparatorText(12)).toBe("────────────");
+  });
+
+  test("footer mirrors official background task byline when shells or agents are running", () => {
+    const previousToken = process.env.ANTHROPIC_AUTH_TOKEN;
+    process.env.ANTHROPIC_AUTH_TOKEN = "test-token";
+    try {
+      const backgroundTasks = [
+        { kind: "bash" as const, status: "running" as const },
+        { kind: "bash" as const, status: "running" as const },
+        { kind: "agent" as const, status: "completed" as const },
+      ];
+      const parts = getModeFooterParts({
+        permissionMode: "bypassPermissions",
+        model: "deepseek-v4-pro[1m]",
+        expandedOutput: false,
+        loading: true,
+        hasCoordinatorTasks: false,
+        coordinatorActive: false,
+        backgroundTasks,
+        hasTaskList: true,
+        tasksVisible: true,
+        usage: {},
+        exitMessage: { show: false },
+        temporaryNotice: null,
+      });
+
+      expect(getModeFooterBackgroundTaskTexts(backgroundTasks)).toEqual(["2 shells"]);
+      expect(parts.backgroundTaskTexts).toEqual(["2 shells"]);
+      expect(parts.hintText).toBe("esc to interrupt");
+      expect(parts.taskToggleText).toBe("ctrl+t to hide tasks");
+      expect(parts.taskHintText).toBe("↓ to manage");
+    } finally {
+      if (previousToken === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+      else process.env.ANTHROPIC_AUTH_TOKEN = previousToken;
+    }
+  });
+
+  test("footer exit message suppresses usage status like the official footer", () => {
+    const parts = getModeFooterParts({
+      permissionMode: "bypassPermissions",
+      model: "deepseek-v4-pro[1m]",
+      expandedOutput: false,
+      loading: true,
+      hasCoordinatorTasks: true,
+      coordinatorActive: true,
+      usage: { input_tokens: 5330 },
+      exitMessage: { show: true, key: "Ctrl-C" },
+      temporaryNotice: null,
+    });
+
+    expect(parts.exitText).toBe("Press Ctrl-C again to exit");
+    expect(parts.modeText).toBe("");
+    expect(parts.modeShortcutText).toBe("");
+    expect(parts.hintText).toBe("");
+    expect(parts.taskHintText).toBe("");
+    expect(parts.usageText).toBe("");
+    expect(parts.rightText).toBe("");
+  });
+
+  test("turn duration text uses real elapsed time instead of a hard-coded zero", () => {
+    expect(formatTurnDurationText("Cooked", 49_400)).toBe("Cooked for 49s");
+    expect(formatTurnDurationText("Worked", 61_000)).toBe("Worked for 1m 1s");
+  });
+
+  test("output picker follows official coordinator panel row shape", () => {
+    expect(formatOutputPickerMainLine(true)).toBe("› ⏺ main");
+    expect(formatOutputPickerMainLine(false)).toBe("  ⏺ main");
+    expect(formatOutputPickerMainLine(false, false)).toBe("  ○ main");
+    const inactiveLine = formatOutputPickerAgentLine("Explore cheng codebase structure", "43s", false, false, true, 80, undefined, 0, "Explore");
+    expect(inactiveLine.startsWith("  ◯ Explore  Explore cheng codebase structure")).toBe(true);
+    expect(inactiveLine.endsWith("43s")).toBe(true);
+    expect(stringWidth(inactiveLine)).toBe(80);
+    const selectedRunningLine = formatOutputPickerAgentLine("Explore cheng codebase structure", "43s", true, false, true, 80, undefined, 0, "Explore");
+    expect(selectedRunningLine.startsWith("› ◯ Explore  Explore cheng codebase structure")).toBe(true);
+    expect(selectedRunningLine.endsWith("▶ 43s · x to stop")).toBe(true);
+    expect(formatOutputPickerAgentLine("Explore cheng codebase structure", "43s", true, true, true, 80, undefined, 0, "Explore").endsWith("▶ 43s")).toBe(true);
+    expect(formatOutputPickerAgentLine("Explore cheng codebase structure", "43s", true, false, false, 80, undefined, 0, "Explore").endsWith("⏸ 43s · x to clear")).toBe(true);
+    expect(formatCoordinatorTaskHint(false)).toBe("↓ to manage");
+    expect(formatCoordinatorTaskHint(true)).toBe("Enter to view tasks");
+  });
+
+  test("agent result metrics match official failure line semantics", () => {
+    expect(formatAgentResultStatusLine("failed", 1, 0, 192_100)).toEqual({
+      label: "Failed",
+      metrics: "1 tool use · 3m 12s",
+    });
+    expect(formatAgentResultStatusLine("completed", 2, 12_345, 43_700)).toEqual({
+      label: "Done",
+      metrics: "2 tool uses · 12,345 tokens · 43s",
+    });
+  });
+
+  test("output picker duration uses official minute formatting while running", () => {
+    expect(formatOutputPickerDuration(tool({
+      id: "task-1",
+      name: "Task",
+      input: { description: "Analyze codebase issues" },
+      progress: {
+        type: "agent_progress",
+        description: "Analyze codebase issues",
+        message: "Running...",
+        elapsedTimeSeconds: 210,
+      },
+    }))).toBe("3m 30s");
   });
 });

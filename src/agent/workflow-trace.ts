@@ -156,7 +156,11 @@ export class WorkflowTrace {
 
       case "tool_start":
         this.assertActiveAssistant(event.assistantId, event.type);
-        this.assertKnownPendingTool(event.tool.id, event);
+        if (!this.activeAssistant!.completed) {
+          this.activeAssistant!.pendingToolUseIds.add(event.tool.id);
+        } else {
+          this.assertKnownPendingTool(event.tool.id, event);
+        }
         this.activeAssistant!.startedToolUseIds.add(event.tool.id);
         this.allStartedToolUseIds.add(event.tool.id);
         this.phase = "tools_running";
@@ -200,7 +204,8 @@ export class WorkflowTrace {
 
   private assertKnownPendingTool(toolUseId: string, event: TenguLoopEvent): void {
     if (!this.activeAssistant?.completed) {
-      this.fail(event, `tool ${toolUseId} started before assistant_complete`);
+      if (this.activeAssistant?.pendingToolUseIds.has(toolUseId)) return;
+      this.fail(event, `tool ${toolUseId} produced output before it was declared`);
     }
     if (!this.activeAssistant.pendingToolUseIds.has(toolUseId)) {
       this.fail(event, `tool ${toolUseId} was not declared by assistant content`);

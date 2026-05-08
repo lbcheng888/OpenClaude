@@ -2,18 +2,39 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "
 import { homedir } from "node:os";
 import { dirname, join, sep } from "node:path";
 import React from "react";
-import { Box, Text, color, stringWidth } from "@anthropic/ink";
+import { Box, Text, stringWidth } from "@anthropic/ink";
 import { readClaudeSettingString } from "../config/claude-settings.js";
+import { DEFAULT_MODEL } from "../api/client.js";
 
 export const CHANGELOG_URL = "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md";
 const RAW_CHANGELOG_URL = "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md";
-const LEFT_PANEL_MAX_WIDTH = 50;
-const BORDER_PADDING = 4;
-const CONTENT_PADDING = 2;
-const DIVIDER_WIDTH = 1;
-const MAX_RELEASE_NOTES_SHOWN = 5;
+const MAX_RELEASE_NOTES_SHOWN = 3;
 const BUILT_IN_CHANGELOG = [
   "# Changelog",
+  "",
+  "## 2.1.132",
+  "",
+  "- New `CLAUDE_CODE_SESSION_ID_IN_BASH=1` env var passes session ID to Bash subprocesses",
+  "- New `CLAUDE_CODE_ALTERNATE_SCREEN=0` env var opts out of alternate-screen renderer to preserve native terminal scrollback",
+  "- External SIGINT now triggers graceful exit with terminal state restoration",
+  "- Fixed blank screens after sleep/wake and Ctrl+Z/fg cycles in fullscreen mode",
+  "- Fixed cursor positioning for Indic conjuncts and ZWJ emoji characters",
+  "- Vim operators now correctly handle NFD accented characters",
+  "- Fixed pasted text beginning with `/` being misinterpreted",
+  "- Fixed stray escape sequences during bracketed paste in certain terminals",
+  "- Fixed mouse wheel acceleration issues in VS Code/Cursor (upstream xterm.js)",
+  "- Fixed scroll-wheel problems in JetBrains IDE terminals",
+  "- Fixed dead keyboard state after re-opening background task sessions",
+  "- Fixed 10GB+ RSS memory growth from stdio MCP servers writing non-protocol output",
+  "- MCP servers that fail `tools/list` now retry once and show \"connected · tools fetch failed\" in `/mcp`",
+  "- Unauthorized claude.ai connectors now correctly display \"needs auth\"",
+  "- Fixed `/usage` clipboard operations on Linux/X11",
+  "- Fixed `/terminal-setup` errors in Windows Terminal",
+  "- Fixed `CLAUDE_CODE_EFFORT_LEVEL` being ignored by the effort picker UI",
+  "- Autocomplete popup now scales properly with terminal height",
+  "- Statusline `context_window` now reflects current usage instead of cumulative totals",
+  "- Alt+T thinking toggle now works on macOS without Option-as-Meta enabled",
+  "- Fixed Bedrock and Vertex 400 errors when `ENABLE_PROMPT_CACHING_1H` is set",
   "",
   "## 2.1.131",
   "",
@@ -29,19 +50,14 @@ const BUILT_IN_CHANGELOG = [
 const PROMPT_EXAMPLES = [
   "fix lint errors",
   "fix typecheck errors",
+  "how does <filepath> work?",
   "refactor <filepath>",
   "how do I log an error?",
+  "edit <filepath> to...",
   "write a test for <filepath>",
+  "create a util logging.py that...",
 ];
 
-type ThemeName = "dark" | "light" | "light-daltonized" | "dark-daltonized" | "light-ansi" | "dark-ansi";
-type LayoutMode = "horizontal" | "compact";
-type FeedConfig = {
-  title: string;
-  lines: string[];
-  footer?: string;
-  emptyMessage?: string;
-};
 type EffortLevel = "low" | "medium" | "high" | "xhigh" | "max";
 
 export function StartupScreen({
@@ -56,81 +72,147 @@ export function StartupScreen({
   }, [version]);
 
   const columns = Math.max(40, process.stdout.columns || 80);
-  const theme = getThemeName();
-  const layoutMode: LayoutMode = columns >= 70 ? "horizontal" : "compact";
-  const cwd = displayPath(process.cwd());
-  const modelDisplay = truncateToWidth(`${model}${getEffortSuffix(model)}`, 30);
-  const modelLine = `${modelDisplay} · API Usage Billing`;
-  const cwdLine = truncatePath(cwd, LEFT_PANEL_MAX_WIDTH);
-  const welcomeMessage = "Welcome back!";
-  const leftWidth = Math.min(
-    LEFT_PANEL_MAX_WIDTH,
-    Math.max(24, Math.max(stringWidth(welcomeMessage), stringWidth(cwdLine), stringWidth(modelLine), 20) + 4),
-  );
-  const totalWidth =
-    layoutMode === "horizontal"
-      ? Math.max(40, columns - 2)
-      : Math.min(Math.max(40, columns - 2), LEFT_PANEL_MAX_WIDTH + BORDER_PADDING + 20);
-  const rightWidth = Math.max(
-    28,
-    totalWidth - leftWidth - BORDER_PADDING - CONTENT_PADDING - DIVIDER_WIDTH,
-  );
-  const borderTitle = ` ${color("claude", theme)("Claude Code")} ${color("inactive", theme)(`v${version}`)} `;
-  const feed = createStartupFeed(version);
+  const releaseNotes = readRecentReleaseNotes(version);
+  if (releaseNotes.length > 0) {
+    return (
+      <Box flexDirection="column">
+        {getNarrowStartupScreenLines({
+          version,
+          model,
+          cwd: process.cwd(),
+          columns,
+          releaseNotes,
+        }).map((line, index) => (
+          <Text key={`startup-narrow-${index}`}>{line}</Text>
+        ))}
+      </Box>
+    );
+  }
+
+  const rows = getStartupScreenRows({ version, model, cwd: process.cwd(), columns });
+  const notice = getStartupNotice(model);
 
   return (
-    <Box
-      flexDirection="column"
-      borderStyle="round"
-      borderColor="claude"
-      borderText={{ content: borderTitle, position: "top", align: "start", offset: 3 }}
-      width={totalWidth}
-    >
-      <Box flexDirection={layoutMode === "horizontal" ? "row" : "column"} paddingX={1} gap={1}>
-        <Box
-          flexDirection="column"
-          width={layoutMode === "horizontal" ? leftWidth : totalWidth - BORDER_PADDING}
-          justifyContent="space-between"
-          alignItems="center"
-          minHeight={9}
-        >
-          <Box marginTop={1}>
-            <Text bold>{welcomeMessage}</Text>
-          </Box>
+    <Box flexDirection="column">
+      <Box flexDirection="row">
+        <Box width={11}>
           <ClawdMark />
-          <Box flexDirection="column" alignItems="center">
-            <Text dimColor wrap="truncate">{truncateToWidth(modelLine, Math.max(10, leftWidth))}</Text>
-            <Text dimColor wrap="truncate">{truncatePath(cwdLine, Math.max(10, leftWidth))}</Text>
-          </Box>
         </Box>
-
-        {layoutMode === "horizontal" && (
-          <>
-            <Box
-              height="100%"
-              borderStyle="single"
-              borderColor="claude"
-              borderDimColor
-              borderTop={false}
-              borderBottom={false}
-              borderLeft={false}
-            />
-            <FeedView config={feed} width={rightWidth} />
-          </>
-        )}
+        <Box flexDirection="column" flexShrink={1}>
+          <Text wrap="truncate">
+            <Text bold color="claude">Claude Code</Text>
+            <Text dimColor>{` v${version}`}</Text>
+          </Text>
+          <Text dimColor wrap="truncate">{rows.model}</Text>
+          <Text dimColor wrap="truncate">{rows.cwd}</Text>
+        </Box>
       </Box>
+      {notice ? (
+        <Box paddingLeft={2}>
+          <Text dimColor wrap="truncate">{notice}</Text>
+        </Box>
+      ) : null}
     </Box>
   );
 }
 
-export function getPromptPlaceholder(): string {
-  const index = Math.abs(hashString(process.cwd())) % PROMPT_EXAMPLES.length;
-  return `Try "${PROMPT_EXAMPLES[index]}"`;
+export function getStartupScreenRows({
+  version,
+  model,
+  cwd,
+  columns,
+}: {
+  version: string;
+  model: string;
+  cwd: string;
+  columns: number;
+}): { title: string; model: string; cwd: string } {
+  const textWidth = Math.max(10, Math.max(40, columns) - 12);
+  return {
+    title: `Claude Code v${version}`,
+    model: truncateToWidth(`${getModelDisplayName(model)}${getEffortSuffix(model)} · API Usage Billing`, textWidth),
+    cwd: truncatePath(displayPath(cwd), textWidth),
+  };
+}
+
+export function getNarrowStartupScreenLines({
+  version,
+  model,
+  cwd,
+  columns,
+  releaseNotes,
+}: {
+  version: string;
+  model: string;
+  cwd: string;
+  columns: number;
+  releaseNotes: string[];
+}): string[] {
+  const width = Math.max(60, columns);
+  const leftWidth = Math.max(32, Math.min(52, width - 28));
+  const rightWidth = Math.max(18, width - leftWidth - 3);
+  const rightRows = getStartupAsideRows(releaseNotes);
+  const title = `Claude Code v${version}`;
+  const topRuleWidth = Math.max(1, width - stringWidth(title) - 7);
+  const modelText = getNarrowModelText(model, Math.max(1, leftWidth - 2));
+  const cwdText = truncateToWidth(cwd, Math.max(1, leftWidth - 4));
+  const rows = [
+    ["", rightRows[0] || ""],
+    ["Welcome back!", rightRows[1] || ""],
+    ["", rightRows[2] || ""],
+    ["▐▛███▜▌", rightRows[3] || ""],
+    ["▝▜█████▛▘", rightRows[4] || ""],
+    ["▘▘ ▝▝", ""],
+    ["", ""],
+    [modelText, ""],
+    [cwdText, ""],
+  ];
+
+  const notice = getStartupNotice(model);
+  const output = [
+    `${title} ${"─".repeat(topRuleWidth)}╮`,
+    ...rows.map(([left, right]) => `│${centerToWidth(left, leftWidth)}│${formatRightAside(right, rightWidth)}│`),
+    `╰${"─".repeat(Math.max(1, width - 2))}╯`,
+  ];
+  if (notice) output.push(`  ${notice}`);
+  return output;
+}
+
+export function getPromptPlaceholder(exampleFiles: string[] = [], random: () => number = Math.random): string {
+  const filePath = sample(exampleFiles, random) || "<filepath>";
+  const examples = PROMPT_EXAMPLES.map(example => example.replaceAll("<filepath>", filePath));
+  return `Try "${sample(examples, random) || examples[0]}"`;
+}
+
+export function shouldShowPromptPlaceholder(): boolean {
+  const config = readGlobalConfig(getGlobalConfigPath());
+  const features = config.cachedGrowthBookFeatures;
+  if (!features || typeof features !== "object" || Array.isArray(features)) return false;
+  const value = (features as Record<string, unknown>).tengu_prompt_suggestion;
+  if (value === true) return true;
+  if (value === false) return false;
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return (value as Record<string, unknown>).enabled === true;
+  }
+  return false;
 }
 
 export function getEffortStatus(model: string): string {
+  if (!modelSupportsEffort(model)) return "";
   const level = getDisplayedEffortLevel(model);
   return `${effortLevelToSymbol(level)} ${level} · /effort`;
+}
+
+export function getStartupNotice(model: string): string | null {
+  if (!modelSupportsEffort(model)) return null;
+  if (isOpus47Model(model)) return "Welcome to Opus 4.7 xhigh! · /effort to tune speed vs. intelligence";
+  if (hasCompletedOpusProMigration()) return null;
+  return "Opus 4.7 xhigh is now available! · /model to switch";
+}
+
+export function getModelDisplayName(model: string): string {
+  if (isOpus47Model(model)) return "Opus 4.7 (1M context)";
+  return model;
 }
 
 function ClawdMark(): React.ReactElement {
@@ -177,54 +259,14 @@ function isAppleTerminal(): boolean {
   return process.env.TERM_PROGRAM === "Apple_Terminal";
 }
 
-function FeedView({ config, width }: { config: FeedConfig; width: number }): React.ReactElement {
-  return (
-    <Box flexDirection="column" width={width}>
-      <Text bold color="claude" wrap="truncate">
-        {config.title}
-      </Text>
-      {config.lines.length > 0 ? (
-        <>
-          {config.lines.map((line, index) => (
-            <Text key={`${line}-${index}`} wrap="truncate">{truncateToWidth(line, width)}</Text>
-          ))}
-          {config.footer && (
-            <Text dimColor italic wrap="truncate">
-              {truncateToWidth(config.footer, width)}
-            </Text>
-          )}
-        </>
-      ) : (
-        <Text dimColor wrap="truncate">{truncateToWidth(config.emptyMessage || "", width)}</Text>
-      )}
-    </Box>
-  );
-}
-
-function createStartupFeed(version: string): FeedConfig {
-  const releaseNotes = readRecentReleaseNotes(version);
-  if (releaseNotes.length > 0) {
-    return {
-      title: "What's new",
-      lines: releaseNotes,
-      footer: "/release-notes for more",
-    };
-  }
-
-  return {
-    title: "Tips for getting started",
-    lines: [
-      "Run /init to create a CLAUDE.md file",
-      'Try "refactor <filepath>"',
-      "/mcp to configure MCP servers",
-    ],
-  };
-}
-
 export function readRecentReleaseNotes(version: string): string[] {
   const changelogPath = getChangelogCachePath();
   const previousVersion = readLastReleaseNotesSeen();
-  if (!existsSync(changelogPath)) return getRecentReleaseNotes(version, previousVersion, BUILT_IN_CHANGELOG);
+  if (!existsSync(changelogPath)) {
+    return isTruthyEnv(process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
+      ? []
+      : getRecentReleaseNotes(version, previousVersion, BUILT_IN_CHANGELOG);
+  }
 
   const content = readFileSync(changelogPath, "utf8");
   const cachedNotes = getRecentReleaseNotes(version, previousVersion, content);
@@ -238,6 +280,7 @@ export function readAllReleaseNotes(): Array<[string, string[]]> {
 }
 
 export async function refreshChangelogCache(currentVersion: string, timeoutMs = 5_000): Promise<boolean> {
+  if (isTruthyEnv(process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)) return false;
   const cachedChangelog = readCachedChangelog();
   if (readLastReleaseNotesSeen() === currentVersion && cachedChangelog) return false;
   const controller = new AbortController();
@@ -412,14 +455,55 @@ function coerceVersion(value: string): [number, number, number] | null {
 }
 
 function getEffortSuffix(model: string): string {
-  const explicitEffort = getExplicitEffortLevel();
-  if (!explicitEffort || !modelSupportsEffort(model)) return "";
-  return ` with ${explicitEffort} effort`;
+  if (!modelSupportsEffort(model)) return "";
+  if (isOpus47Model(model)) return "";
+  return ` with ${getDisplayedEffortLevel(model)} effort`;
+}
+
+function hasCompletedOpusProMigration(): boolean {
+  return readGlobalConfig(getGlobalConfigPath()).opusProMigrationComplete === true;
+}
+
+function getNarrowModelText(model: string, width: number): string {
+  if (modelSupportsEffort(model) && !isOpus47Model(model)) {
+    return truncateToWidth(`${getModelDisplayName(model)} with ${getDisplayedEffortLevel(model)} … · API Usage Billing`, width);
+  }
+  return truncateToWidth(`${getModelDisplayName(model)} · API Usage Billing`, width);
+}
+
+function getStartupAsideRows(releaseNotes: string[]): string[] {
+  if (releaseNotes.length > 0) {
+    return ["What's new", ...releaseNotes.slice(0, 3), "/release-notes for more"];
+  }
+  return [
+    "Tips for getting started",
+    "Run /init to create a CLAUDE.md file",
+    'Try "refactor <filepath>"',
+    "/mcp to configure MCP servers",
+  ];
+}
+
+function formatRightAside(value: string, width: number): string {
+  if (!value) return " ".repeat(width);
+  return ` ${padEndToWidth(truncateToWidth(value, Math.max(1, width - 2)), Math.max(1, width - 2))} `;
+}
+
+function centerToWidth(value: string, width: number): string {
+  const clipped = truncateToWidth(value, width);
+  const missing = Math.max(0, width - stringWidth(clipped));
+  const left = Math.ceil(missing / 2);
+  return `${" ".repeat(left)}${clipped}${" ".repeat(missing - left)}`;
+}
+
+function padEndToWidth(value: string, width: number): string {
+  return `${value}${" ".repeat(Math.max(0, width - stringWidth(value)))}`;
 }
 
 function getDisplayedEffortLevel(model: string): EffortLevel {
   const explicitEffort = getExplicitEffortLevel();
   if (explicitEffort && modelSupportsEffort(model)) return explicitEffort;
+  if (isOpus47Model(model)) return "xhigh";
+  if (model.toLowerCase().includes("deepseek-v4-pro")) return "max";
   return "high";
 }
 
@@ -434,6 +518,8 @@ function getExplicitEffortLevel(): EffortLevel | undefined {
 function modelSupportsEffort(model: string): boolean {
   const normalized = model.toLowerCase();
   return (
+    normalized === "opus" ||
+    normalized === "opus[1m]" ||
     normalized.includes("opus-4-7") ||
     normalized.includes("opus-4-6") ||
     normalized.includes("sonnet-4-6") ||
@@ -450,25 +536,26 @@ function effortLevelToSymbol(level: EffortLevel): string {
     case "high":
       return "●";
     case "xhigh":
-      return "⦿";
-    case "max":
       return "◉";
+    case "max":
+      return "◈";
   }
 }
 
-function getThemeName(): ThemeName {
-  const theme = readClaudeSettingString("theme");
-  if (
-    theme === "dark" ||
-    theme === "light" ||
-    theme === "light-daltonized" ||
-    theme === "dark-daltonized" ||
-    theme === "light-ansi" ||
-    theme === "dark-ansi"
-  ) {
-    return theme;
-  }
-  return "dark";
+function isOpus47Model(model: string): boolean {
+  const normalized = model.toLowerCase();
+  return normalized === DEFAULT_MODEL || normalized === "opus" || normalized === "opus[1m]" || normalized.includes("opus-4-7");
+}
+
+function sample<T>(items: readonly T[], random: () => number): T | undefined {
+  if (items.length === 0) return undefined;
+  const index = Math.min(items.length - 1, Math.floor(random() * items.length));
+  return items[index];
+}
+
+function isTruthyEnv(value: string | undefined): boolean {
+  if (!value) return false;
+  return ["1", "true", "yes", "on"].includes(value.toLowerCase().trim());
 }
 
 function displayPath(path: string): string {
@@ -482,10 +569,16 @@ function truncatePath(path: string, maxWidth: number): string {
   if (stringWidth(path) <= maxWidth) return path;
   const parts = path.split("/");
   if (parts.length <= 2) return truncateToWidth(path, maxWidth);
-  const last = parts[parts.length - 1] || "";
-  const first = parts[0] || "";
-  const prefix = first ? `${first}/` : "/";
-  const candidate = `${prefix}…/${last}`;
+  let suffix = parts[parts.length - 1] || "";
+  for (let index = parts.length - 2; index >= 0; index--) {
+    const part = parts[index];
+    if (!part) continue;
+    const candidate = `${part}/${suffix}`;
+    const compressed = `/…/${candidate}`;
+    if (stringWidth(compressed) > maxWidth) break;
+    suffix = candidate;
+  }
+  const candidate = `/…/${suffix}`;
   if (stringWidth(candidate) <= maxWidth) return candidate;
   return truncateToWidth(candidate, maxWidth);
 }
@@ -501,12 +594,4 @@ function truncateToWidth(value: string, maxWidth: number): string {
     output += char;
   }
   return `${output}…`;
-}
-
-function hashString(value: string): number {
-  let hash = 0;
-  for (const char of value) {
-    hash = (hash * 31 + char.charCodeAt(0)) | 0;
-  }
-  return hash;
 }

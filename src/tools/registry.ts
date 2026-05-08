@@ -1076,7 +1076,7 @@ export const BUILTIN_TOOLS: Tool[] = [
       const url = String(input.url || "");
       if (!/^https?:\/\//u.test(url)) return { content: `Error: invalid URL: ${url}`, isError: true };
       try {
-        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.131" } });
+        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.132" } });
         if (!response.ok) return { content: `Error: HTTP ${response.status} ${response.statusText}`, isError: true };
         const contentType = response.headers.get("content-type") || "";
         const text = await response.text();

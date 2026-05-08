@@ -25,13 +25,22 @@ proc reset_home {} {
   file mkdir $env(CLAUDE_CONFIG_DIR)
 }
 
+proc expect_compact_startup {} {
+  expect {
+    "╭" {
+      puts "FAIL: bordered startup card rendered"
+      exit 1
+    }
+    "Claude Code v2.1.132" {}
+  }
+  expect "API Usage Billing"
+}
+
 # Test 80 columns
 reset_home
 set env(COLUMNS) 80
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.131"
-expect "Welcome"
-expect "What's new"
+expect_compact_startup
 send "\003\003"
 expect eof
 puts "PASS: 80 columns layout"
@@ -40,9 +49,7 @@ puts "PASS: 80 columns layout"
 reset_home
 set env(COLUMNS) 120
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.131"
-expect "Welcome"
-expect "What's new"
+expect_compact_startup
 send "\003\003"
 expect eof
 puts "PASS: 120 columns layout"
@@ -51,9 +58,7 @@ puts "PASS: 120 columns layout"
 reset_home
 set env(COLUMNS) 137
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.131"
-expect "Welcome"
-expect "What's new"
+expect_compact_startup
 send "\003\003"
 expect eof
 puts "PASS: 137 columns layout"

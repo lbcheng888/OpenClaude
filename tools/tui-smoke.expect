@@ -21,7 +21,7 @@ catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "hello"
 
 expect {
-  -re "v2\\.1\\.128" {}
+  -re "v2\\.1\\.132" {}
   timeout {
     puts "missing startup title"
     exit 1
@@ -29,9 +29,9 @@ expect {
 }
 
 expect {
-  -re "Welcome" {}
+  -re "Billing" {}
   timeout {
-    puts "missing startup welcome"
+    puts "missing startup model line"
     exit 1
   }
 }

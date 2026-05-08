@@ -23,8 +23,8 @@ catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
 
-expect "Claude Code v2.1.131"
-expect "Welcome"
+expect "Claude Code v2.1.132"
+expect "API Usage Billing"
 
 # First Ctrl+C: should show "Press Ctrl-C again to exit"
 send "\003"

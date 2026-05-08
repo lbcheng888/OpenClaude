@@ -24,7 +24,7 @@ catch {unset env(DEEPSEEK_API_KEY)}
 catch {unset env(OPENAI_API_KEY)}
 
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions
-expect "Claude Code v2.1.131"
+expect "Claude Code v2.1.132"
 
 send "\033\[200~$image_path\033\[201~"
 expect -re {\[Image #1\]}

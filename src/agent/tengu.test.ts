@@ -74,11 +74,11 @@ describe("Tengu agent loop", () => {
       "assistant_text_delta",
       "stream_mode",
       "stream_mode",
-      "stream_mode",
-      "assistant_complete",
-      "stream_mode",
       "tool_start",
+      "stream_mode",
+      "stream_mode",
       "tool_result",
+      "assistant_complete",
       "tool_results_message",
       "api_request",
       "assistant_start",
@@ -115,6 +115,55 @@ describe("Tengu agent loop", () => {
     });
 
     expect(() => trace.record({ type: "api_request", turn: 1, messages: [], tools })).toThrow("before tool_results_message");
+  });
+
+  test("starts complete tool_use blocks before the assistant stream stops", async () => {
+    let toolStarted = false;
+    let messageStopped = false;
+    let releaseTool!: () => void;
+    const toolMayFinish = new Promise<void>(resolve => {
+      releaseTool = resolve;
+    });
+    const requests: ApiMessage[][] = [];
+
+    const session = new TenguSession({
+      tools,
+      stream: async function* (history) {
+        requests.push(history);
+        if (requests.length > 1) {
+          yield { type: "text_delta", index: 0, text: "done" };
+          yield { type: "message_delta", stop_reason: "end_turn" };
+          yield { type: "message_stop" };
+          return;
+        }
+        yield {
+          type: "tool_use",
+          index: 0,
+          tool: { type: "tool_use", id: "toolu_streamed", name: "Read", input: { file_path: "a.ts" } },
+        };
+        await waitUntil(() => toolStarted);
+        expect(messageStopped).toBe(false);
+        yield { type: "message_delta", stop_reason: "tool_use" };
+        messageStopped = true;
+        yield { type: "message_stop" };
+      },
+      executeTool: async () => {
+        toolStarted = true;
+        await toolMayFinish;
+        return { content: "streamed file" };
+      },
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    const pending = session.runUserTurn("read");
+    await waitUntil(() => toolStarted);
+    releaseTool();
+    await pending;
+
+    expect(requests[1][2]).toEqual({
+      role: "user",
+      content: [{ type: "tool_result", tool_use_id: "toolu_streamed", content: "streamed file" }],
+    });
   });
 
   test("workflow trace can persist JSONL for replayable parity proof", async () => {
@@ -237,6 +286,56 @@ describe("Tengu agent loop", () => {
     expect(requests[1][2]).toEqual({
       role: "user",
       content: [{ type: "tool_result", tool_use_id: "toolu_read", content: "hello" }],
+    });
+  });
+
+  test("round-trips assistant thinking blocks before the next API request", async () => {
+    const requests: ApiMessage[][] = [];
+    const streams: ApiStreamEvent[][] = [
+      [
+        { type: "content_block_start", index: 0, blockType: "thinking" },
+        { type: "thinking_delta", index: 0, thinking: "hidden plan" },
+        {
+          type: "thinking_block",
+          index: 0,
+          block: { type: "thinking", thinking: "hidden plan", signature: "sig-1" },
+        },
+        { type: "content_block_start", index: 1, blockType: "tool_use", tool: { id: "toolu_read", name: "Read" } },
+        { type: "tool_input_delta", index: 1, partialJson: "{\"file_path\":\"a.ts\"}" },
+        {
+          type: "tool_use",
+          index: 1,
+          tool: { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } },
+        },
+        { type: "message_delta", stop_reason: "tool_use" },
+        { type: "message_stop" },
+      ],
+      [
+        { type: "text_delta", index: 0, text: "Done." },
+        { type: "message_delta", stop_reason: "end_turn" },
+        { type: "message_stop" },
+      ],
+    ];
+
+    const session = new TenguSession({
+      tools,
+      stream: history => {
+        requests.push(JSON.parse(JSON.stringify(history)));
+        return fromEvents(streams.shift() || []);
+      },
+      executeTool: async () => ({ content: "hello" }),
+      checkPermission: async () => ({ behavior: "allow" }),
+    });
+
+    await session.runUserTurn("read a.ts");
+
+    expect(requests.length).toBe(2);
+    expect(requests[1][1]).toEqual({
+      role: "assistant",
+      content: [
+        { type: "thinking", thinking: "hidden plan", signature: "sig-1" },
+        { type: "tool_use", id: "toolu_read", name: "Read", input: { file_path: "a.ts" } },
+      ],
     });
   });
 
@@ -765,6 +864,56 @@ describe("Tengu agent loop", () => {
     await expect(session.runUserTurn("run bash")).rejects.toThrow("Agent loop exceeded");
 
     expect(progressEvents).toEqual(["toolu_bash:bash_progress:one"]);
+  });
+
+  test("ignores late progress after a tool_result is already emitted", async () => {
+    let requestCount = 0;
+    const progressEvents: string[] = [];
+    const session = new TenguSession({
+      tools,
+      stream: () => {
+        requestCount++;
+        return requestCount === 1
+          ? fromEvents([
+              {
+                type: "tool_use",
+                index: 0,
+                tool: { type: "tool_use", id: "toolu_background", name: "Bash", input: { command: "sleep 1" } },
+              },
+              { type: "message_delta", stop_reason: "tool_use" },
+              { type: "message_stop" },
+            ])
+          : delayedEvents([
+              { type: "text_delta", index: 0, text: "done" },
+              { type: "message_delta", stop_reason: "end_turn" },
+              { type: "message_stop" },
+            ], 25);
+      },
+      executeTool: async (_name, _input, _signal, context) => {
+        setTimeout(() => {
+          void context?.emitProgress?.({
+            type: "bash_progress",
+            output: "late",
+            fullOutput: "late",
+            elapsedTimeSeconds: 1,
+            totalLines: 1,
+            totalBytes: 4,
+          });
+        }, 0);
+        return { content: "backgrounded" };
+      },
+      checkPermission: async () => ({ behavior: "allow" }),
+      onEvent: event => {
+        if (event.type === "tool_progress") {
+          progressEvents.push(event.progress.type);
+        }
+      },
+    });
+
+    const result = await session.runUserTurn("run in background");
+
+    expect(result.text).toBe("done");
+    expect(progressEvents).toEqual([]);
   });
 
   test("denied permission becomes an is_error tool_result and does not execute the tool", async () => {
@@ -1395,6 +1544,11 @@ async function* fromEvents(events: ApiStreamEvent[]): AsyncGenerator<ApiStreamEv
   for (const event of events) {
     yield event;
   }
+}
+
+async function* delayedEvents(events: ApiStreamEvent[], delayMs: number): AsyncGenerator<ApiStreamEvent> {
+  await new Promise(resolve => setTimeout(resolve, delayMs));
+  yield* fromEvents(events);
 }
 
 async function waitUntil(predicate: () => boolean, timeoutMs = 500): Promise<void> {

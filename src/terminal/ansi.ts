@@ -62,11 +62,12 @@ export function createAnsiTextLines(
   terminalWidth: number,
   expanded: boolean,
   maxLinesToShow = 3,
+  wrapOffset = 10,
 ): { lines: AnsiTextLine[]; remainingLines: number } {
   const trimmed = value.trimEnd();
   if (!trimmed) return { lines: [], remainingLines: 0 };
 
-  const wrapWidth = Math.max(terminalWidth - 10, 10);
+  const wrapWidth = Math.max(terminalWidth - wrapOffset, 10);
   const wrapped = wrapAnsiSegments(parseAnsiSegments(trimmed), wrapWidth);
   if (expanded) return { lines: wrapped, remainingLines: 0 };
 

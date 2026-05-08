@@ -194,7 +194,7 @@ const body = extractBody(clean, bodyStart);
 const translated = translateBody(body);
 
 console.log(`// Decompiled: ${targetName}(${params})`);
-console.log(`// From official Claude Code v2.1.131 full_bundle.cjs`);
+console.log(`// From official Claude Code v2.1.132 full_bundle.cjs`);
 console.log(`// Body size: ${body.length} bytes`);
 console.log('');
 console.log('// --- Raw minified body ---');
@@ -205,5 +205,5 @@ console.log(translated.slice(0, 2000));
 
 // Also write to file
 const outPath = `/Users/lbcheng/open-claude-code/claude-code-full/dist/decompiled-${targetName}.txt`;
-writeFileSync(outPath, `// Decompiled: ${targetName}(${params})\n// From official v2.1.131\n\n// === RAW ===\n${body}\n\n// === TRANSLATED ===\n${translated}`);
+writeFileSync(outPath, `// Decompiled: ${targetName}(${params})\n// From official v2.1.132\n\n// === RAW ===\n${body}\n\n// === TRANSLATED ===\n${translated}`);
 console.log(`\nFull output → ${outPath}`);

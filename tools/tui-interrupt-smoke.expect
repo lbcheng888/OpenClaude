@@ -73,22 +73,22 @@ catch {unset env(CLAUDE_CODE_SUBAGENT_MODEL)}
 spawn -noecho node [file join $repo dist index.js] --dangerously-skip-permissions "hello"
 set app_id $spawn_id
 
-expect "Claude Code v2.1.131"
+expect "Claude Code v2.1.132"
 
 # Wait for the SSE streaming to start (spinner visible)
 after 2000
 
-# First Ctrl+C: interrupt the request
-send -i $app_id "\003"
+# Esc: interrupt the request without arming the exit prompt
+send -i $app_id "\033"
 expect -i $app_id "Request interrupted by user"
 
 after 500
 
-# Second Ctrl+C: show exit prompt
+# First Ctrl+C after interruption: show exit prompt
 send -i $app_id "\003"
 expect -i $app_id "Press Ctrl-C again to exit"
 
-# Third Ctrl+C: must exit
+# Second Ctrl+C after interruption: must exit
 send -i $app_id "\003"
 expect -i $app_id eof
 

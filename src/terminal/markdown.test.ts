@@ -30,6 +30,12 @@ describe("terminal markdown renderer", () => {
     expect(segments.some(segment => segment.text.includes("quoted") && segment.italic)).toBe(true);
   });
 
+  test("renders links with the official href suffix", () => {
+    const plain = stripAnsiSequences(renderMarkdownToAnsi("See [docs](https://example.com)."));
+
+    expect(plain).toBe("See docs (https://example.com).");
+  });
+
   test("removes code fences and colors diff code blocks", () => {
     const rendered = renderMarkdownToAnsi("```diff\n-old\n+new\n@@ hunk\n```");
     const plain = stripAnsiSequences(rendered);

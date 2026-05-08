@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Byline, Link, NoSelect, Ratchet, Text, getTheme, stringWidth, useAnimationFrame, useApp, useDeclaredCursor, useInput, useTheme, type InputEvent, type Key, type KeyboardEvent, type Theme, type ThemeName } from "@anthropic/ink";
+import { Box, Byline, KeyboardShortcutHint, Link, NoSelect, Ratchet, Text, getTheme, stringWidth, useAnimationFrame, useApp, useDeclaredCursor, useInput, useTheme, type InputEvent, type Key, type KeyboardEvent, type Theme, type ThemeName } from "@anthropic/ink";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { isAbsolute, join, relative, resolve } from "path";
@@ -49,8 +49,9 @@ import {
   fetchReleaseNotesForCommand,
   formatReleaseNotes,
   StartupScreen,
-  getEffortStatus,
   getPromptPlaceholder,
+  getEffortStatus,
+  shouldShowPromptPlaceholder,
 } from "./startup-screen.js";
 import { Dialog } from "./components/wrappers.js";
 import { renderMarkdownToAnsi } from "./markdown.js";
@@ -106,11 +107,25 @@ type AgentGroupStat = {
   output: string;
 };
 
+type OutputPickerItem = {
+  id: string;
+  description: string;
+  name?: string;
+  duration: string;
+  tokenCount?: number;
+  queuedCount?: number;
+  isRunning: boolean;
+};
+
+type AgentResultStatus = "completed" | "failed" | "killed";
+
 export type ChatMessage = {
   id: string;
   role: Role;
   content: string;
   toolUses?: ToolRender[];
+  subtype?: "turn_duration";
+  durationMs?: number;
 };
 
 type PermissionPrompt = {
@@ -142,6 +157,17 @@ const TRANSCRIPT_RESERVED_ROWS = 6;
 const SUBAGENT_MAX_TURNS = 30;
 const SUBAGENT_API_HISTORY_TOKEN_BUDGET = 12_000;
 const MAX_AGENT_PROGRESS_MESSAGES_TO_SHOW = 3;
+const TURN_DURATION_MESSAGE_THRESHOLD_MS = 0;
+const TURN_COMPLETION_VERBS = [
+  "Baked",
+  "Brewed",
+  "Churned",
+  "Cogitated",
+  "Cooked",
+  "Crunched",
+  "Sautéed",
+  "Worked",
+];
 const PERMISSION_PROMPT_OPTIONS: PermissionPromptOption[] = [
   {
     label: "Yes",
@@ -353,6 +379,10 @@ export function ClaudeCodeTui({
   const [permissionPromptSelection, setPermissionPromptSelection] = useState(0);
   const permissionPromptSelectionRef = useRef(0);
   const [expandedOutput, setExpandedOutput] = useState(false);
+  const [outputPickerVisible, setOutputPickerVisible] = useState(false);
+  const [tasksHidden, setTasksHidden] = useState(false);
+  const [selectedOutputPickerIndex, setSelectedOutputPickerIndex] = useState(0);
+  const [viewedOutputPickerId, setViewedOutputPickerId] = useState<string | null>(null);
   const [backgroundTasksVisible, setBackgroundTasksVisible] = useState(false);
   const [selectedBackgroundTaskIndex, setSelectedBackgroundTaskIndex] = useState(0);
   const [backgroundTaskDetailId, setBackgroundTaskDetailId] = useState<string | null>(null);
@@ -363,6 +393,8 @@ export function ClaudeCodeTui({
   const backgroundTaskDetailIdRef = useRef<string | null>(null);
   const stoppingBackgroundTaskIdsRef = useRef(new Set<string>());
   const backgroundTaskKillAgentsShortcutArmedRef = useRef(false);
+  const lastCtrlOHandledAtRef = useRef(0);
+  const lastRawExitControlHandledAtRef = useRef(0);
   const loadingStartTimeRef = useRef(Date.now());
   const [backgroundTaskResult, setBackgroundTaskResult] = useState<BackgroundTaskActionResult | null>(null);
   const [usage, setUsage] = useState<Usage>({});
@@ -382,6 +414,34 @@ export function ClaudeCodeTui({
     () => getVisibleMessages(messages, expandedOutput, terminalRows),
     [expandedOutput, messages, terminalRows],
   );
+  const hasTaskToolMessages = useMemo(
+    () => messages.some(message => message.toolUses?.some(tool => tool.name === "Task")),
+    [messages],
+  );
+  const [outputPickerTick, setOutputPickerTick] = useState(0);
+  const backgroundTasks = useMemo(
+    () => listBackgroundTasks(),
+    [backgroundTaskResult, backgroundTasksVisible, loading, messages, outputPickerTick],
+  );
+  const hasRunningBackgroundTasks = backgroundTasks.some(task => task.status === "running");
+  useEffect(() => {
+    if (!hasTaskToolMessages && !hasRunningBackgroundTasks) return undefined;
+    const interval = setInterval(() => setOutputPickerTick(tick => tick + 1), 1000);
+    return () => clearInterval(interval);
+  }, [hasRunningBackgroundTasks, hasTaskToolMessages]);
+  useEffect(() => {
+    if (!loading) {
+      setTasksHidden(false);
+      setOutputPickerVisible(false);
+      setSelectedOutputPickerIndex(0);
+      setViewedOutputPickerId(null);
+    }
+  }, [loading]);
+  const outputPickerItems = useMemo(() => getOutputPickerItems(messages), [messages, outputPickerTick]);
+  const hasRunningCoordinatorTasks = outputPickerItems.some(item => item.isRunning);
+  const autoShowOutputPicker = loading && hasRunningCoordinatorTasks && !tasksHidden;
+  const showOutputPicker = outputPickerVisible || autoShowOutputPicker;
+  const hasCoordinatorTasks = loading && hasRunningCoordinatorTasks;
   const visibleStreaming = useMemo(() => sanitizeAssistantText(streaming), [streaming]);
   const isEmptySession = messages.every(message => message.role === "startup") && !loading && !visibleStreaming;
   const slashCommandMatches = useMemo(() => (
@@ -700,13 +760,11 @@ export function ClaudeCodeTui({
     const tasks = sortBackgroundTasksForDialog(listBackgroundTasks());
     const selectedIndex = clamp(selectedBackgroundTaskIndexRef.current, 0, Math.max(0, tasks.length - 1));
     setSelectedBackgroundTaskIndexNow(selectedIndex);
-    const selectedTask = tasks[selectedIndex] || null;
     setBackgroundTaskResult(null);
     backgroundTaskKillAgentsShortcutArmedRef.current = false;
-    setBackgroundTaskDetailIdNow(tasks.length === 1 && selectedTask ? selectedTask.id : null);
-    if (tasks.length === 1 && selectedTask) showBackgroundTaskOutput(selectedTask.id);
+    setBackgroundTaskDetailIdNow(null);
     setBackgroundTasksVisibleNow(true);
-  }, [setBackgroundTaskDetailIdNow, setBackgroundTasksVisibleNow, setSelectedBackgroundTaskIndexNow, showBackgroundTaskOutput]);
+  }, [setBackgroundTaskDetailIdNow, setBackgroundTasksVisibleNow, setSelectedBackgroundTaskIndexNow]);
 
   useEffect(() => {
     if (!backgroundTasksVisible || !backgroundTaskDetailId) return;
@@ -1127,21 +1185,40 @@ export function ClaudeCodeTui({
     return false;
   }, [clearExitPending, exitApplication]);
 
+  const interruptActiveRequest = useCallback((): boolean => {
+    if (!loadingRef.current || requestCanExitRef.current) return false;
+    clearExitPending();
+    commitPartialAssistantMessageNow(streamingRef.current);
+    agentSession.cancel("user-cancel");
+    setLoadingNow(false);
+    setStreamingNow("");
+    setStreamModeNow("responding");
+    pushSystemMessage("[Request interrupted by user]");
+    return true;
+  }, [
+    agentSession,
+    clearExitPending,
+    commitPartialAssistantMessageNow,
+    pushSystemMessage,
+    setLoadingNow,
+    setStreamingNow,
+    setStreamModeNow,
+  ]);
+
   const handleExitControlInput = useCallback((control: ExitControlInput): void => {
     if (control.keyName === "Ctrl-C" && loadingRef.current && !requestCanExitRef.current) {
-      clearExitPending();
-      const partialText = sanitizeAssistantText(streamingRef.current).trim();
-      if (partialText) {
-        setMessages(previous => [
-          ...previous,
-          { id: `assistant-interrupted-${Date.now()}-${previous.length}`, role: "assistant", content: partialText },
-        ]);
+      if (exitPendingRef.current.key === "Ctrl-C") {
+        for (let index = 0; index < control.count; index++) {
+          const exited = handleExitDoublePress("Ctrl-C");
+          if (exited) return;
+        }
+        return;
       }
-      agentSession.cancel("user-cancel");
-      setLoadingNow(false);
-      setStreamingNow("");
-      setStreamModeNow("responding");
-      pushSystemMessage("[Request interrupted by user]");
+      interruptActiveRequest();
+      for (let index = 0; index < control.count; index++) {
+        const exited = handleExitDoublePress("Ctrl-C");
+        if (exited) return;
+      }
       return;
     }
 
@@ -1170,7 +1247,7 @@ export function ClaudeCodeTui({
       const exited = handleExitDoublePress("Ctrl-D");
       if (exited) return;
     }
-  }, [agentSession, clearExitPending, handleExitDoublePress, pushSystemMessage, setLoadingNow, setStreamingNow, setStreamModeNow]);
+  }, [clearExitPending, handleExitDoublePress, interruptActiveRequest]);
 
   useEffect(() => {
     const onSigint = (): void => handleExitControlInput({ keyName: "Ctrl-C", count: 1 });
@@ -1420,9 +1497,11 @@ export function ClaudeCodeTui({
       setLoadingNow(true);
       setStreamingNow("");
       setStreamModeNow("requesting");
+      const turnStartedAt = Date.now();
 
       try {
         await agentSession.runUserTurn(userContent.content);
+        const turnDurationMs = Date.now() - turnStartedAt;
         saveCurrentSession(sessionRef.current, agentSession.history, permissionMode);
         if (userContent.imageIds.length > 0) {
           const nextImages = { ...pastedImagesRef.current };
@@ -1431,6 +1510,18 @@ export function ClaudeCodeTui({
           }
           pastedImagesRef.current = nextImages;
           setPastedImages(nextImages);
+        }
+        if (turnDurationMs > TURN_DURATION_MESSAGE_THRESHOLD_MS) {
+          setMessages(previous => [
+            ...previous,
+            {
+              id: `turn-duration-${Date.now()}-${previous.length}`,
+              role: "system",
+              subtype: "turn_duration",
+              durationMs: turnDurationMs,
+              content: "",
+            },
+          ]);
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -1584,7 +1675,7 @@ export function ClaudeCodeTui({
         return;
       }
 
-      if (actionKey === "x" && detailTask.status === "running") {
+      if (isBackgroundTaskStopKey(actionKey) && detailTask.status === "running") {
         stopManagedBackgroundTask(detailTask.id);
         return;
       }
@@ -1621,7 +1712,7 @@ export function ClaudeCodeTui({
       return;
     }
 
-    if (actionKey === "x" && selectedTask?.status === "running") {
+    if (isBackgroundTaskStopKey(actionKey) && selectedTask?.status === "running") {
       stopManagedBackgroundTask(selectedTask.id);
       return;
     }
@@ -1638,10 +1729,42 @@ export function ClaudeCodeTui({
     stopManagedBackgroundTask,
   ]);
 
+  const handleCtrlOShortcut = useCallback(() => {
+    const now = Date.now();
+    if (now - lastCtrlOHandledAtRef.current < 30) return;
+    lastCtrlOHandledAtRef.current = now;
+
+    const pickerItems = getOutputPickerItems(messages);
+    if (loading && pickerItems.length > 0) {
+      setSelectedOutputPickerIndex(current => clamp(current, 0, pickerItems.length));
+      setOutputPickerVisible(current => !current);
+      return;
+    }
+    setExpandedOutput(current => {
+      if (!current && pickerItems.length > 0) {
+        setOutputPickerVisible(true);
+      } else {
+        setOutputPickerVisible(false);
+      }
+      return !current;
+    });
+  }, [loading, messages]);
+
   useEffect(() => {
     const onData = (chunk: Buffer): void => {
       const value = chunk.toString("utf8");
+      const rawExitControl = getExitControlInput(value, createSyntheticInputKey({}));
+      if (backgroundTasksVisibleRef.current && rawExitControl) {
+        lastRawExitControlHandledAtRef.current = Date.now();
+        handleExitControlInput(rawExitControl);
+        return;
+      }
       if (!backgroundTasksVisibleRef.current) {
+        if (value === "\x1b" && interruptActiveRequest()) return;
+        if (value.includes("\x0f") || value.includes("\x1b[111;5u") || value.includes("111;5u")) {
+          handleCtrlOShortcut();
+          return;
+        }
         const hasBackgroundTasks = listBackgroundTasks().length > 0;
         const canOpenFromDownArrow = inputRef.current.trim() === "" || (loadingRef.current && hasBackgroundTasks);
         if (canOpenFromDownArrow && value.includes("\x1b[B")) openBackgroundTasksPanel();
@@ -1666,12 +1789,18 @@ export function ClaudeCodeTui({
     return () => {
       process.stdin.off("data", onData);
     };
-  }, [handleBackgroundTasksShortcut, openBackgroundTasksPanel]);
+  }, [handleBackgroundTasksShortcut, handleCtrlOShortcut, handleExitControlInput, interruptActiveRequest, openBackgroundTasksPanel]);
 
   useInput((value, key, event: InputEvent) => {
     if (!backgroundTasksVisibleRef.current) return;
     if (value === "\x1b[O" || value === "[O" || value === "\x1b[I" || value === "[I") return;
-    if (getExitControlInput(value, key)) return;
+    const exitControl = getExitControlInput(value, key);
+    if (exitControl) {
+      if (Date.now() - lastRawExitControlHandledAtRef.current > 20) {
+        handleExitControlInput(exitControl);
+      }
+      return;
+    }
     event.stopImmediatePropagation();
     handleBackgroundTasksShortcut(value, key);
   }, { isActive: backgroundTasksVisible });
@@ -1688,9 +1817,13 @@ export function ClaudeCodeTui({
 
     const exitControl = getExitControlInput(value, key);
     if (exitControl) {
-      handleExitControlInput(exitControl);
+      if (Date.now() - lastRawExitControlHandledAtRef.current > 20) {
+        handleExitControlInput(exitControl);
+      }
       return;
     }
+
+    if (!permissionPromptRef.current && key.escape && interruptActiveRequest()) return;
 
     clearExitPending();
 
@@ -1718,8 +1851,9 @@ export function ClaudeCodeTui({
       return;
     }
 
-    if (key.ctrl && (value === "o" || value === "O")) {
-      setExpandedOutput(current => !current);
+    const isCtrlO = (key.ctrl && (value === "o" || value === "O")) || value === "\x0f" || value === "\x1b[111;5u" || value.includes("111;5u");
+    if (isCtrlO) {
+      handleCtrlOShortcut();
       return;
     }
 
@@ -1816,7 +1950,7 @@ export function ClaudeCodeTui({
           return;
         }
 
-        if (actionKey.toLowerCase() === "x" && detailTask.status === "running") {
+        if (isBackgroundTaskStopKey(actionKey) && detailTask.status === "running") {
           stopManagedBackgroundTask(detailTask.id);
           return;
         }
@@ -1855,13 +1989,54 @@ export function ClaudeCodeTui({
         return;
       }
 
-      if (actionKey.toLowerCase() === "x" && selectedTask?.status === "running") {
+      if (isBackgroundTaskStopKey(actionKey) && selectedTask?.status === "running") {
         stopManagedBackgroundTask(selectedTask.id);
         return;
       }
 
       if (actionKey.toLowerCase() === "r") {
         setBackgroundTaskResult(null);
+        return;
+      }
+    }
+
+    const pickerItemsForInput = getOutputPickerItems(messages);
+    if (!outputPickerVisible && loading && pickerItemsForInput.length > 0 && key.downArrow) {
+      setSelectedOutputPickerIndex(0);
+      setOutputPickerVisible(true);
+      return;
+    }
+
+    if (outputPickerVisible) {
+      const pickerItems = pickerItemsForInput;
+      if (key.escape || key.leftArrow) {
+        setOutputPickerVisible(false);
+        return;
+      }
+      if (key.upArrow) {
+        setSelectedOutputPickerIndex(current => {
+          if (current <= 0) {
+            setOutputPickerVisible(false);
+            return 0;
+          }
+          return current - 1;
+        });
+        return;
+      }
+      if (key.downArrow) {
+        setSelectedOutputPickerIndex(current => Math.min(pickerItems.length, current + 1));
+        return;
+      }
+      if (key.return || value === "\r" || value === "\n") {
+        if (selectedOutputPickerIndex === 0) {
+          setViewedOutputPickerId(null);
+          return;
+        }
+        const selectedItem = pickerItems[selectedOutputPickerIndex - 1];
+        if (selectedItem) {
+          setViewedOutputPickerId(selectedItem.id);
+          setExpandedOutput(true);
+        }
         return;
       }
     }
@@ -1913,6 +2088,13 @@ export function ClaudeCodeTui({
         case "p":
           moveUpOrHistoryUpNow();
           return;
+        case "t":
+          if (loading && (outputPickerItems.length > 0 || hasRunningBackgroundTasks)) {
+            setTasksHidden(hidden => !hidden);
+            setOutputPickerVisible(false);
+            return;
+          }
+          break;
         case "u":
           applyInputEditNow("killLineStart");
           return;
@@ -2025,15 +2207,24 @@ export function ClaudeCodeTui({
       setBackgroundTasksVisibleNow(false);
       setBackgroundTaskDetailIdNow(null);
       setBackgroundTaskResult(null);
+      setOutputPickerVisible(false);
       applyInputEditNow({ type: "insert", text: value.replace(/\r\n?/gu, "\n") });
     }
   });
 
   return (
-    <Box flexDirection="column" paddingX={1}>
+    <Box flexDirection="column">
       <Box flexDirection="column" minHeight={1}>
         {visibleMessages.map(message => (
-          <MessageView key={message.id} message={message} expandedOutput={expandedOutput} version={version} model={model} />
+          <React.Fragment key={message.id}>
+            <MessageView
+              message={message}
+              expandedOutput={expandedOutput}
+              outputPickerActive={showOutputPicker}
+              version={version}
+              model={model}
+            />
+          </React.Fragment>
         ))}
         {visibleStreaming && <AssistantStreaming text={visibleStreaming} />}
         {loading && !visibleStreaming && (
@@ -2048,8 +2239,8 @@ export function ClaudeCodeTui({
       </Box>
       {permissionPrompt && <PermissionPromptView prompt={permissionPrompt} selectedIndex={permissionPromptSelection} />}
       {backgroundTasksVisible && (
-        <BackgroundTasksPanel
-          tasks={listBackgroundTasks()}
+      <BackgroundTasksPanel
+          tasks={backgroundTasks}
           selectedIndex={selectedBackgroundTaskIndex}
           detailTaskId={backgroundTaskDetailId}
           result={backgroundTaskResult}
@@ -2080,26 +2271,45 @@ export function ClaudeCodeTui({
           onStop={taskId => stopManagedBackgroundTask(taskId)}
           onStopAllAgents={stopAllManagedBackgroundAgents}
           onRefresh={taskId => showBackgroundTaskOutput(taskId)}
+          onExitControl={handleExitControlInput}
         />
       )}
       {slashCommandMatches.length > 0 && <SlashCommandPanel commands={slashCommandMatches} />}
-      <Box marginTop={1}>
-        <Text dimColor>{"─".repeat(Math.max(10, (process.stdout.columns || 80) - 2))}</Text>
+      <Box key={`composer-${messages.length}-${loading ? "loading" : "idle"}`} flexDirection="column">
+        <Box marginTop={1}>
+          <Text dimColor>{"─".repeat(Math.max(10, process.stdout.columns || 80))}</Text>
+        </Box>
+        <InputLine
+          value={input}
+          cursor={cursor}
+          loading={loading}
+          placeholder={isEmptySession && getApiConfig(model) && shouldShowPromptPlaceholder() ? getPromptPlaceholder() : undefined}
+        />
+        <BottomSeparator />
+        <ModeFooter
+          permissionMode={permissionMode}
+          model={model}
+          expandedOutput={expandedOutput}
+          loading={loading}
+          hasCoordinatorTasks={hasCoordinatorTasks}
+          coordinatorActive={outputPickerVisible}
+          backgroundTasks={backgroundTasks}
+          hasTaskList={loading && (outputPickerItems.length > 0 || hasRunningBackgroundTasks)}
+          tasksVisible={showOutputPicker || (!tasksHidden && hasRunningBackgroundTasks)}
+          usage={usage}
+          exitMessage={exitMessage}
+          temporaryNotice={temporaryNotice}
+          isEmptySession={isEmptySession}
+        />
+        {showOutputPicker && (
+          <OutputPickerPanel
+            items={outputPickerItems}
+            selectedIndex={selectedOutputPickerIndex}
+            viewedItemId={viewedOutputPickerId}
+            selectionActive={outputPickerVisible}
+          />
+        )}
       </Box>
-      <InputLine
-        value={input}
-        cursor={cursor}
-        loading={loading}
-        placeholder={isEmptySession ? getPromptPlaceholder() : undefined}
-      />
-      <ModeFooter
-        permissionMode={permissionMode}
-        model={model}
-        expandedOutput={expandedOutput}
-        usage={usage}
-        exitMessage={exitMessage}
-        temporaryNotice={temporaryNotice}
-      />
     </Box>
   );
 }
@@ -2240,14 +2450,130 @@ export async function runPrintMode(options: CliOptions): Promise<void> {
   process.stdout.write("\n");
 }
 
+function OutputPickerPanel({
+  items,
+  selectedIndex,
+  viewedItemId,
+  selectionActive,
+}: {
+  items: OutputPickerItem[];
+  selectedIndex: number;
+  viewedItemId: string | null;
+  selectionActive: boolean;
+}): React.ReactElement | null {
+  if (items.length === 0) return null;
+  const columns = process.stdout.columns || 80;
+  const safeSelectedIndex = selectionActive ? clamp(selectedIndex, 0, items.length) : -1;
+  const hasViewedAgent = viewedItemId !== null && items.some(item => item.id === viewedItemId);
+  const mainViewed = !hasViewedAgent;
+
+  return (
+    <Box flexDirection="column" marginTop={1}>
+      <Box flexDirection="row" justifyContent="space-between">
+        <Text bold={mainViewed} dimColor={safeSelectedIndex !== 0 && !mainViewed}>
+          {formatOutputPickerMainLine(safeSelectedIndex === 0, mainViewed)}
+        </Text>
+        <Text dimColor>↑/↓ to select · Enter to view</Text>
+      </Box>
+      {items.map((item, index) => {
+        const selected = index + 1 === safeSelectedIndex;
+        const viewed = item.id === viewedItemId;
+        const line = formatOutputPickerAgentLine(
+          item.description,
+          item.duration,
+          selected,
+          viewed,
+          item.isRunning,
+          columns,
+          item.tokenCount,
+          item.queuedCount,
+          item.name,
+        );
+        return (
+          <Text key={item.id} dimColor={!selected && !viewed} bold={viewed}>{line}</Text>
+        );
+      })}
+    </Box>
+  );
+}
+
+export function formatOutputPickerMainLine(selected: boolean, viewed = true): string {
+  return `${selected ? "› " : "  "}${viewed ? "⏺" : "○"} main`;
+}
+
+export function formatOutputPickerAgentLine(
+  description: string,
+  duration: string,
+  selected: boolean,
+  viewed: boolean,
+  isRunning: boolean,
+  columns: number,
+  tokenCount?: number,
+  queuedCount = 0,
+  name?: string,
+): string {
+  const prefix = `${selected ? "› " : "  "}${viewed ? "⏺" : "◯"} `;
+  const namePart = name ? `${name}  ` : "";
+  const sep = selected ? (isRunning ? "▶" : "⏸") : "";
+  const tokenText = tokenCount !== undefined && tokenCount > 0 ? ` · ↓ ${formatNumber(tokenCount)} tokens` : "";
+  const queuedText = queuedCount > 0 ? ` · ${queuedCount} queued` : "";
+  const hint = selected && !viewed ? ` · x to ${isRunning ? "stop" : "clear"}` : "";
+  const suffix = `${sep ? `${sep} ` : ""}${duration}${tokenText}${queuedText}${hint}`;
+  const availableDescriptionWidth = Math.max(0, columns - stringWidth(prefix) - stringWidth(namePart) - stringWidth(suffix) - 1);
+  const descriptionText = truncateToWidth(description, availableDescriptionWidth);
+  const gap = Math.max(1, columns - stringWidth(prefix) - stringWidth(namePart) - stringWidth(descriptionText) - stringWidth(suffix));
+  return `${prefix}${namePart}${descriptionText}${" ".repeat(gap)}${suffix}`;
+}
+
+function getOutputPickerItems(messages: ChatMessage[]): OutputPickerItem[] {
+  const items: OutputPickerItem[] = [];
+  const backgroundTasksById = new Map(listBackgroundTasks().map(task => [task.id, task]));
+  for (const message of messages) {
+    for (const tool of message.toolUses || []) {
+      if (tool.name !== "Task") continue;
+      const stat = getAgentGroupStat(tool);
+      const backgroundDisplay = tool.display?.type === "agent_background" ? tool.display : undefined;
+      const backgroundTask = backgroundDisplay ? backgroundTasksById.get(backgroundDisplay.taskId) : undefined;
+      const isRunning = backgroundTask ? backgroundTask.status === "running" : tool.result === undefined;
+      items.push({
+        id: stat.id,
+        description: backgroundTask?.description || stat.taskDescription || stat.description || getAgentGroupStatusText(stat),
+        name: stat.name || stat.agentType,
+        duration: backgroundTask ? formatOutputPickerBackgroundDuration(backgroundTask) : formatOutputPickerDuration(tool),
+        tokenCount: backgroundTask?.totalTokens ?? stat.tokens ?? undefined,
+        queuedCount: 0,
+        isRunning,
+      });
+    }
+  }
+  return items;
+}
+
+function formatOutputPickerBackgroundDuration(task: BackgroundTaskSummary): string {
+  const elapsedMs = task.status === "running"
+    ? Date.now() - task.startedAt
+    : task.totalDurationMs ?? Math.max(0, (task.endTime ?? Date.now()) - task.startedAt);
+  return formatOfficialDurationMs(elapsedMs);
+}
+
+export function formatOutputPickerDuration(tool: ToolRender): string {
+  if (tool.result === undefined && tool.startedAt) return formatOfficialDurationMs(Date.now() - tool.startedAt);
+  if (tool.display?.type === "agent") return formatAgentDurationMs(tool.display.totalDurationMs);
+  if (tool.progress?.type === "agent_progress") return formatOfficialDurationMs(tool.progress.elapsedTimeSeconds * 1000);
+  if (tool.startedAt) return formatOfficialDurationMs(Date.now() - tool.startedAt);
+  return "0s";
+}
+
 function MessageView({
   message,
   expandedOutput,
+  outputPickerActive,
   version,
   model,
 }: {
   message: ChatMessage;
   expandedOutput: boolean;
+  outputPickerActive: boolean;
   version: string;
   model: string;
 }): React.ReactElement {
@@ -2264,6 +2590,10 @@ function MessageView({
     );
   }
 
+  if (message.subtype === "turn_duration" && message.durationMs !== undefined) {
+    return <TurnDurationMessage durationMs={message.durationMs} />;
+  }
+
   if (message.role === "system") {
     return <SystemMessageView content={message.content} />;
   }
@@ -2273,16 +2603,44 @@ function MessageView({
   return (
     <Box flexDirection="column" marginTop={1}>
       {assistantContent.trim() && (
-        <MarkdownBlock content={assistantContent} prefix="● " prefixColor="text" />
+        <MarkdownBlock content={assistantContent} prefix="⏺ " prefixColor="text" />
       )}
       {groupToolRenderItems(message.toolUses || []).map(item => {
         if (item.type === "agent_group") {
           return <AgentGroupView key={item.tools.map(tool => tool.id).join(":")} tools={item.tools} expandedOutput={expandedOutput} />;
         }
-        return <ToolUseView key={item.tool.id} tool={item.tool} expandedOutput={expandedOutput} />;
+        return <ToolUseView key={item.tool.id} tool={item.tool} expandedOutput={expandedOutput} outputPickerActive={outputPickerActive} />;
       })}
     </Box>
   );
+}
+
+function TurnDurationMessage({ durationMs }: { durationMs: number }): React.ReactElement {
+  const [verb] = useState(
+    () => TURN_COMPLETION_VERBS[Math.floor(Math.random() * TURN_COMPLETION_VERBS.length)] || "Worked",
+  );
+  return (
+    <Box flexDirection="row" marginTop={1} width="100%">
+      <Box minWidth={2}>
+        <Text dimColor>✻</Text>
+      </Box>
+      <Text dimColor>{formatTurnDurationText(verb, durationMs)}</Text>
+    </Box>
+  );
+}
+
+export function formatTurnDurationText(verb: string, durationMs: number): string {
+  return `${verb} for ${formatTurnDurationMs(durationMs)}`;
+}
+
+function formatTurnDurationMs(value: number): string {
+  return formatOfficialDurationMs(value);
+}
+
+function formatOfficialDurationMs(value: number): string {
+  if (value <= 0) return "0s";
+  if (value < 60_000) return `${Math.floor(value / 1000)}s`;
+  return formatDurationMs(value);
 }
 
 function createStartupMessage(): ChatMessage {
@@ -2324,8 +2682,9 @@ function getVisibleMessages(messages: ChatMessage[], expandedOutput: boolean, te
 }
 
 function estimateMessageRows(message: ChatMessage, expandedOutput: boolean): number {
-  if (message.role === "startup") return 12;
+  if (message.role === "startup") return 6;
   if (message.role === "user") return 1 + estimateWrappedLineCount(message.content, process.stdout.columns || 80);
+  if (message.subtype === "turn_duration") return 2;
   if (message.role === "system") return Math.max(1, normalizeSystemMessage(message.content).split("\n").length) + 1;
 
   const assistantContent = sanitizeAssistantText(message.content);
@@ -2426,7 +2785,14 @@ function isAgentToolRender(tool: ToolRender): boolean {
 }
 
 function isInvisibleToolRender(tool: ToolRender): boolean {
+  if (isNonBlockingTaskOutputPoll(tool)) return true;
   return isInvisibleToolName(tool.name);
+}
+
+function isNonBlockingTaskOutputPoll(tool: ToolRender): boolean {
+  if (tool.name !== "TaskOutput" || tool.input.block !== false) return false;
+  if (tool.result === undefined) return true;
+  return isTaskOutputNotReady(tool.result);
 }
 
 function isInvisibleToolName(name: string): boolean {
@@ -2459,6 +2825,7 @@ function BackgroundTasksPanel({
   onStop,
   onStopAllAgents,
   onRefresh,
+  onExitControl,
 }: {
   tasks: BackgroundTaskSummary[];
   selectedIndex: number;
@@ -2471,6 +2838,7 @@ function BackgroundTasksPanel({
   onStop: (taskId: string) => void;
   onStopAllAgents: () => void;
   onRefresh: (taskId: string) => void;
+  onExitControl: (control: ExitControlInput) => void;
 }): React.ReactElement {
   const sortedTasks = sortBackgroundTasksForDialog(tasks);
   const safeSelectedIndex = clamp(selectedIndex, 0, Math.max(0, sortedTasks.length - 1));
@@ -2478,7 +2846,15 @@ function BackgroundTasksPanel({
   const detailTask = detailTaskId ? sortedTasks.find(task => task.id === detailTaskId) || null : null;
   const handleKeyDown = (event: KeyboardEvent): void => {
     const eventKey = event.key;
+    const actionKey = eventKey.toLowerCase();
     const activeTask = detailTask || selectedTask;
+    const exitControl = getExitControlInput(eventKey, { ctrl: event.ctrl });
+
+    if (exitControl) {
+      event.preventDefault();
+      onExitControl(exitControl);
+      return;
+    }
 
     if (event.ctrl && eventKey === "x") {
       event.preventDefault();
@@ -2501,12 +2877,12 @@ function BackgroundTasksPanel({
         onClose();
         return;
       }
-      if (eventKey === "x" && detailTask.status === "running") {
+      if (isBackgroundTaskStopKey(actionKey) && detailTask.status === "running") {
         event.preventDefault();
         onStop(detailTask.id);
         return;
       }
-      if (eventKey === "r") {
+      if (actionKey === "r") {
         event.preventDefault();
         onRefresh(detailTask.id);
       }
@@ -2528,14 +2904,19 @@ function BackgroundTasksPanel({
       onSelect(safeSelectedIndex + 1);
       return;
     }
-    if ((eventKey === "return" || eventKey === "o") && activeTask) {
+    if ((eventKey === "return" || actionKey === "o") && activeTask) {
       event.preventDefault();
       onView(activeTask.id);
       return;
     }
-    if (eventKey === "x" && activeTask?.status === "running") {
+    if (isBackgroundTaskStopKey(actionKey) && activeTask?.status === "running") {
       event.preventDefault();
       onStop(activeTask.id);
+      return;
+    }
+    if (actionKey === "r" && activeTask) {
+      event.preventDefault();
+      onRefresh(activeTask.id);
     }
   };
 
@@ -2551,46 +2932,25 @@ function BackgroundTasksPanel({
     );
   }
 
-  const bashTasks = sortedTasks.filter(task => task.kind === "bash");
-  const agentTasks = sortedTasks.filter(task => task.kind === "agent");
-  const sectionCount = [bashTasks, agentTasks].filter(section => section.length > 0).length;
-  const runningBashCount = bashTasks.filter(task => task.status === "running").length;
-  const runningAgentCount = agentTasks.filter(task => task.status === "running").length;
-  const subtitle = formatBackgroundTasksDialogSubtitle(runningBashCount, runningAgentCount);
   return (
     <Box marginTop={1} flexDirection="column" tabIndex={0} autoFocus onKeyDown={handleKeyDown}>
-      <Dialog
-        title="Background tasks"
-        subtitle={subtitle}
-        color="background"
-        inputGuide={() => (
-          <Text dimColor>{formatBackgroundTasksInputGuide(selectedTask, runningAgentCount > 0)}</Text>
-        )}
-      >
-        {sortedTasks.length === 0 ? (
-          <Text dimColor>No tasks currently running</Text>
-        ) : (
-          <Box flexDirection="column">
-            {bashTasks.length > 0 && (
-              <BackgroundTaskSection
-                title="Shells"
-                tasks={bashTasks}
-                selectedTaskId={selectedTask?.id}
-                showHeader={sectionCount > 1}
-              />
-            )}
-            {agentTasks.length > 0 && (
-              <BackgroundTaskSection
-                title="Local agents"
-                tasks={agentTasks}
-                selectedTaskId={selectedTask?.id}
-                showHeader={sectionCount > 1}
-                marginTop={bashTasks.length > 0 ? 1 : 0}
-              />
-            )}
-          </Box>
-        )}
-      </Dialog>
+      <Text>
+        <Text color="claude">Background tasks</Text>
+        <Text dimColor> ({formatBackgroundTasksInputGuide(selectedTask)})</Text>
+      </Text>
+      {sortedTasks.length === 0 ? (
+        <Text dimColor>  No background tasks</Text>
+      ) : (
+        <Box flexDirection="column">
+          {sortedTasks.map((task, index) => (
+            <BackgroundTaskListItem
+              key={task.id}
+              task={task}
+              selected={index === safeSelectedIndex}
+            />
+          ))}
+        </Box>
+      )}
     </Box>
   );
 }
@@ -2604,78 +2964,47 @@ function BackgroundTaskDetailPanel({
   result: BackgroundTaskActionResult | null;
   canGoBack: boolean;
 }): React.ReactElement {
-  const title = task.kind === "bash" ? "Shell details" : "agent › " + (task.description || "Async agent");
   const elapsedMs = task.totalDurationMs ?? Date.now() - task.startedAt;
   const displayPrompt = task.kind === "agent" ? task.prompt || task.description : task.description;
-  const statusText = formatBackgroundTaskDetailStatus(task.status);
-  const subtitle = (
-    <Text>
-      {task.status !== "running" ? (
-        <>
-          <Text color={getBackgroundTaskDetailStatusColor(task.status)}>
-            {statusText === "completed" ? "✓ Completed" : statusText === "failed" ? "Failed" : "Stopped"}
-          </Text>
-          <Text dimColor> · </Text>
-        </>
-      ) : null}
-      <Text dimColor>
-        {formatDurationMs(elapsedMs)}
-        {typeof task.totalTokens === "number" && task.totalTokens > 0 ? ` · ${formatNumber(task.totalTokens)} tokens` : ""}
-        {typeof task.totalToolUseCount === "number" && task.totalToolUseCount > 0
-          ? ` · ${task.totalToolUseCount} ${task.totalToolUseCount === 1 ? "tool" : "tools"}`
-          : ""}
-      </Text>
-    </Text>
-  );
   return (
-    <Box marginTop={1}>
-      <Dialog
-        title={title}
-        subtitle={subtitle}
-        color="background"
-        inputGuide={() => (
-          <Text dimColor>{formatBackgroundTaskDetailInputGuide(task, canGoBack)}</Text>
-        )}
-      >
-        <Box flexDirection="column">
-          <Box>
-            <Text bold>Status:</Text>
-            <Text> </Text>
-            <Text color={getBackgroundTaskDetailStatusColor(task.status)}>
-              {formatBackgroundTaskDetailStatus(task.status)}
-              {task.kind === "bash" && task.exitCode !== undefined && task.exitCode !== null ? ` (exit code: ${task.exitCode})` : ""}
-            </Text>
-          </Box>
-          <Box>
-            <Text bold>Runtime:</Text>
-            <Text> {formatDurationMs(elapsedMs)}</Text>
-          </Box>
-          <Box>
-            <Text bold>{task.kind === "bash" ? "Command:" : "Prompt:"}</Text>
-            <Text> {truncateLine(displayPrompt, 280)}</Text>
-          </Box>
-          <Box flexDirection="column" marginTop={1}>
-            <Text bold>{result?.action === "stop" ? "Stop:" : "Output:"}</Text>
-            <BackgroundTaskDetailOutput result={result} />
-          </Box>
-          {task.status === "failed" && task.error ? (
-            <Box flexDirection="column" marginTop={1}>
-              <Text bold color="error">Error</Text>
-              <Text color="error">{task.error}</Text>
-            </Box>
-          ) : null}
+    <Box marginTop={1} flexDirection="column">
+      <Text>
+        <Text color="claude">Background tasks</Text>
+        <Text dimColor> ({formatBackgroundTaskDetailInputGuide(task, canGoBack)})</Text>
+      </Text>
+      <BackgroundTaskListItem task={task} selected={false} />
+      <Box marginTop={1} flexDirection="column">
+        <Text dimColor>{truncateLine(displayPrompt, Math.max(20, (process.stdout.columns || 80) - 4))}</Text>
+        <Text dimColor>
+          {formatDurationMs(elapsedMs)}
+          {typeof task.totalTokens === "number" && task.totalTokens > 0 ? ` · ${formatNumber(task.totalTokens)} tokens` : ""}
+          {typeof task.totalToolUseCount === "number" && task.totalToolUseCount > 0
+            ? ` · ${task.totalToolUseCount} ${task.totalToolUseCount === 1 ? "tool" : "tools"}`
+            : ""}
+        </Text>
+      </Box>
+      <Box flexDirection="column" marginTop={1}>
+        <Text>{result?.action === "stop" ? "Stop output" : "Task output"}</Text>
+        <BackgroundTaskDetailOutput task={task} result={result} />
+      </Box>
+      {task.status === "failed" && task.error ? (
+        <Box flexDirection="column" marginTop={1}>
+          <Text color="error">{task.error}</Text>
         </Box>
-      </Dialog>
+      ) : null}
     </Box>
   );
 }
 
 function BackgroundTaskDetailOutput({
+  task,
   result,
 }: {
+  task: BackgroundTaskSummary;
   result: BackgroundTaskActionResult | null;
 }): React.ReactElement {
   if (!result || result.pending) {
+    if (task.status === "running") return <Text dimColor>Task is still running...</Text>;
     return <Text dimColor>Loading output…</Text>;
   }
   const content = result.action === "stop"
@@ -2691,63 +3020,35 @@ function BackgroundTaskDetailOutput({
   );
 }
 
-function BackgroundTaskSection({
-  title,
-  tasks,
-  selectedTaskId,
-  showHeader,
-  marginTop = 0,
-}: {
-  title: string;
-  tasks: BackgroundTaskSummary[];
-  selectedTaskId?: string;
-  showHeader: boolean;
-  marginTop?: number;
-}): React.ReactElement {
-  return (
-    <Box flexDirection="column" marginTop={marginTop}>
-      {showHeader && (
-        <Text dimColor>
-          <Text bold>{`  ${title}`}</Text> ({tasks.length})
-        </Text>
-      )}
-      {tasks.map(task => (
-        <BackgroundTaskItem key={task.id} task={task} selected={task.id === selectedTaskId} />
-      ))}
-    </Box>
-  );
-}
-
-function BackgroundTaskItem({
+function BackgroundTaskListItem({
   task,
   selected,
 }: {
   task: BackgroundTaskSummary;
   selected: boolean;
 }): React.ReactElement {
-  const maxActivityWidth = Math.max(30, (process.stdout.columns || 80) - 26);
-  const label = truncateLine(task.description, maxActivityWidth);
+  const maxDescriptionWidth = Math.max(20, (process.stdout.columns || 80) - 4);
   return (
-    <Box>
-      <Text dimColor>{selected ? "› " : "  "}</Text>
-      <Text color={selected ? "suggestion" : undefined}>
-        {label} <BackgroundTaskStatusText status={task.status} />
+    <Box flexDirection="column">
+      <Text>
+        <Text>{selected ? "› " : "  "}</Text>
+        <Text bold={selected}>{task.id}</Text>
+        <Text dimColor> {formatBackgroundTaskKind(task)} · </Text>
+        <Text color={getBackgroundTaskDetailStatusColor(task.status)}>
+          {formatBackgroundTaskStatus(task.status)}
+        </Text>
+        <Text dimColor> · {formatDurationMs(task.totalDurationMs ?? Date.now() - task.startedAt)}</Text>
       </Text>
+      <Text dimColor>{`  ${truncateLine(task.description || "(no description)", maxDescriptionWidth)}`}</Text>
     </Box>
   );
 }
 
-function BackgroundTaskStatusText({ status }: { status: BackgroundTaskSummary["status"] }): React.ReactElement {
-  const label = status === "completed" ? "done" : status === "failed" ? "error" : status === "killed" ? "stopped" : status;
-  const color = status === "completed" ? "success" : status === "failed" ? "error" : status === "killed" ? "warning" : undefined;
-  return (
-    <Text color={color} dimColor>
-      ({label})
-    </Text>
-  );
+function formatBackgroundTaskKind(task: BackgroundTaskSummary): string {
+  return task.kind === "agent" ? "agent" : "shell";
 }
 
-function formatBackgroundTaskDetailStatus(status: BackgroundTaskSummary["status"]): string {
+function formatBackgroundTaskStatus(status: BackgroundTaskSummary["status"]): string {
   if (status === "killed") return "stopped";
   return status;
 }
@@ -2763,17 +3064,10 @@ function getBackgroundTaskDetailStatusColor(status: BackgroundTaskSummary["statu
 function formatBackgroundTaskDetailInputGuide(task: BackgroundTaskSummary, canGoBack: boolean): string {
   return [
     ...(canGoBack ? ["← go back"] : []),
-    "Esc/Enter/Space close",
-    ...(task.status === "running" ? ["x stop"] : []),
+    ...(task.status === "running" ? ["S stop"] : []),
+    "R refresh",
+    "Esc close",
   ].join(" · ");
-}
-
-function formatBackgroundTasksDialogSubtitle(runningBashCount: number, runningAgentCount: number): string | undefined {
-  const parts = [
-    runningBashCount > 0 ? `${runningBashCount} active ${runningBashCount === 1 ? "shell" : "shells"}` : "",
-    runningAgentCount > 0 ? `${runningAgentCount} active ${runningAgentCount === 1 ? "agent" : "agents"}` : "",
-  ].filter(Boolean);
-  return parts.length > 0 ? parts.join(" · ") : undefined;
 }
 
 function sortBackgroundTasksForDialog(tasks: BackgroundTaskSummary[]): BackgroundTaskSummary[] {
@@ -2791,14 +3085,19 @@ function backgroundTaskStatusRank(status: BackgroundTaskSummary["status"]): numb
   return 3;
 }
 
-function formatBackgroundTasksInputGuide(selectedTask: BackgroundTaskSummary | null, hasRunningAgentTasks: boolean): string {
+function formatBackgroundTasksInputGuide(selectedTask: BackgroundTaskSummary | null): string {
   return [
-    "↑/↓ select",
-    "Enter view",
-    ...(selectedTask?.status === "running" ? ["x stop"] : []),
-    ...(hasRunningAgentTasks ? ["ctrl+x ctrl+k stop all agents"] : []),
-    "←/Esc close",
+    "↑↓ select",
+    "Enter output",
+    ...(selectedTask?.status === "running" ? ["S stop"] : []),
+    "R refresh",
+    "Esc close",
   ].join(" · ");
+}
+
+function isBackgroundTaskStopKey(actionKey: string): boolean {
+  const normalized = actionKey.toLowerCase();
+  return normalized === "s" || normalized === "x";
 }
 
 function normalizeSystemMessage(content: string): string {
@@ -2822,7 +3121,7 @@ function isSystemMessageError(line: string): boolean {
 function AssistantStreaming({ text }: { text: string }): React.ReactElement {
   return (
     <Box flexDirection="column">
-      <MarkdownBlock content={text} prefix="● " prefixColor="text" />
+      <MarkdownBlock content={text} prefix="⏺ " prefixColor="text" />
       <Box>
         <Text color="text">  </Text>
         <Text dimColor>│</Text>
@@ -2836,7 +3135,7 @@ function CtrlOToExpandHint(): React.ReactElement {
 }
 
 function ManageShortcutHint(): React.ReactElement {
-  return <Text dimColor>(↓ manage)</Text>;
+  return <Text dimColor><KeyboardShortcutHint shortcut="↓" action="manage" parens /></Text>;
 }
 
 function AgentGroupView({
@@ -2955,7 +3254,7 @@ function MarkdownBlock({
   prefixColor: string;
 }): React.ReactElement {
   const rendered = renderMarkdownToAnsi(content);
-  const { lines } = createAnsiTextLines(rendered || content, process.stdout.columns || 80, true);
+  const { lines } = createAnsiTextLines(rendered || content, process.stdout.columns || 80, true, 3, 2);
 
   return (
     <Box flexDirection="column">
@@ -3001,9 +3300,11 @@ function MarkdownLine({
 function ToolUseView({
   tool,
   expandedOutput,
+  outputPickerActive,
 }: {
   tool: ToolRender;
   expandedOutput: boolean;
+  outputPickerActive: boolean;
 }): React.ReactElement {
   const rawDisplayInput = tool.inputPreview
     ? formatToolInputPreview(tool.name, tool.inputPreview)
@@ -3022,11 +3323,8 @@ function ToolUseView({
         </Box>
         <Text bold>{displayName}</Text>
         {displayInput && <Text dimColor>{`(${displayInput})`}</Text>}
-        {tool.name === "TaskOutput" && typeof tool.input.task_id === "string" ? (
-          <Text dimColor>{` ${tool.input.task_id}`}</Text>
-        ) : null}
       </Box>
-      <ToolResultView tool={tool} expandedOutput={expandedOutput} />
+      <ToolResultView tool={tool} expandedOutput={expandedOutput} outputPickerActive={outputPickerActive} />
     </Box>
   );
 }
@@ -3034,9 +3332,11 @@ function ToolUseView({
 function ToolResultView({
   tool,
   expandedOutput,
+  outputPickerActive,
 }: {
   tool: ToolRender;
   expandedOutput: boolean;
+  outputPickerActive: boolean;
 }): React.ReactElement {
   const isPendingBash = tool.result === undefined && tool.name === "Bash";
   const isPendingWebSearch = tool.result === undefined && tool.name === "WebSearch";
@@ -3072,7 +3372,7 @@ function ToolResultView({
     }
     if (isPendingTask) {
       const progress = tool.progress?.type === "agent_progress" ? tool.progress : undefined;
-      return <AgentProgressView progress={progress} input={tool.input} expandedOutput={expandedOutput} />;
+      return <AgentProgressView progress={progress} input={tool.input} expandedOutput={expandedOutput} compact={outputPickerActive} />;
     }
     return (
       <MessageResponseView height={1}>
@@ -3222,16 +3522,31 @@ function AgentProgressView({
   progress,
   input,
   expandedOutput,
+  compact,
 }: {
   progress?: Extract<ToolProgressDisplay, { type: "agent_progress" }>;
   input: Record<string, unknown>;
   expandedOutput: boolean;
+  compact: boolean;
 }): React.ReactElement {
   const description = progress?.description || (typeof input.description === "string" ? input.description : "Agent");
   const message = progress?.message || "Initializing…";
   const toolUseCount = progress?.totalToolUseCount || 0;
   if (toolUseCount > 0) {
     const entries = getRenderableAgentProgressEntries(progress?.entries || []);
+    if (compact) {
+      const compactEntries = entries.slice(-2);
+      return (
+        <MessageResponseView>
+          <Box flexDirection="column">
+            {compactEntries.map(entry => (
+              <CompactAgentProgressEntryView key={entry.toolUseId} entry={entry} />
+            ))}
+            <Text dimColor>Running…</Text>
+          </Box>
+        </MessageResponseView>
+      );
+    }
     const visibleEntries = getVisibleAgentProgressEntries(entries, expandedOutput);
     const hiddenCount = Math.max(0, entries.length - visibleEntries.length);
     if (visibleEntries.length === 0) {
@@ -3288,6 +3603,16 @@ function AgentProgressEntryView({
   );
 }
 
+function CompactAgentProgressEntryView({ entry }: { entry: AgentProgressEntry }): React.ReactElement {
+  const label = formatToolUseMessage(entry.toolName, entry.input);
+  return (
+    <Text dimColor>
+      {getUserFacingToolName(entry.toolName)}
+      {label ? `(${label})` : ""}
+    </Text>
+  );
+}
+
 export function getVisibleAgentProgressEntries(entries: AgentProgressEntry[], expandedOutput: boolean): AgentProgressEntry[] {
   return expandedOutput ? entries : entries.slice(-MAX_AGENT_PROGRESS_MESSAGES_TO_SHOW);
 }
@@ -3335,7 +3660,7 @@ function getAgentGroupStat(tool: ToolRender): AgentGroupStat {
     taskDescription: name ? inputDescription : undefined,
     name,
     toolUseCount: agentDisplay?.totalToolUseCount ?? progress?.totalToolUseCount ?? 0,
-    tokens: agentDisplay?.totalTokens ?? progress?.totalTokens ?? null,
+    tokens: normalizeAgentTokenCount(agentDisplay?.totalTokens ?? progress?.totalTokens ?? null),
     isResolved: tool.result !== undefined,
     isError: Boolean(tool.isError || agentDisplay?.status === "failed"),
     isAsync,
@@ -3344,9 +3669,13 @@ function getAgentGroupStat(tool: ToolRender): AgentGroupStat {
   };
 }
 
+function normalizeAgentTokenCount(value: number | null | undefined): number | null {
+  return typeof value === "number" && value > 0 ? value : null;
+}
+
 function getTaskDisplayType(tool: ToolRender): string {
   const subagentType = normalizeSubagentType(tool.input.subagent_type);
-  if (!subagentType || subagentType === "general-purpose" || subagentType === "worker") return "Agent";
+  if (!subagentType || subagentType === "general-purpose" || subagentType === "worker") return "Task";
   return subagentType;
 }
 
@@ -3375,17 +3704,17 @@ function AgentResultView({
   progress?: Extract<ToolProgressDisplay, { type: "agent_progress" }>;
   expandedOutput: boolean;
 }): React.ReactElement {
-  const parts = [
-    display.totalToolUseCount === 1 ? "1 tool use" : `${display.totalToolUseCount} tool uses`,
-    `${display.totalTokens} tokens`,
-    formatDurationMs(display.totalDurationMs),
-  ];
-  const label = display.status === "failed" ? "Failed" : "Done";
+  const { label, metrics } = formatAgentResultStatusLine(
+    display.status,
+    display.totalToolUseCount,
+    display.totalTokens,
+    display.totalDurationMs,
+  );
   const output = display.content.trim() || display.error?.trim() || "";
   const entries = getRenderableAgentProgressEntries(progress?.entries || []);
   const visibleEntries = getVisibleAgentProgressEntries(entries, expandedOutput);
   const hiddenCount = Math.max(0, entries.length - visibleEntries.length);
-  const entryTree = entries.length > 0 ? (
+  const entryTree = expandedOutput && entries.length > 0 ? (
     <MessageResponseView>
       <Box flexDirection="column">
       {visibleEntries.map((entry, index) => (
@@ -3404,7 +3733,8 @@ function AgentResultView({
       <Box flexDirection="column">
         {entryTree}
         <MessageResponseView height={1}>
-          <Text color={display.status === "failed" ? "error" : undefined}>{label} ({parts.join(" · ")})</Text>
+          <Text color={display.status === "failed" ? "error" : undefined}>{label}</Text>
+          <Text dimColor>{` (${metrics})`}</Text>
         </MessageResponseView>
         <OutputLineView content={output} isError={display.status === "failed"} expanded />
       </Box>
@@ -3414,11 +3744,31 @@ function AgentResultView({
     <Box flexDirection="column">
       {entryTree}
       <MessageResponseView height={1}>
-        <Text color={display.status === "failed" ? "error" : undefined}>{label} ({parts.join(" · ")})</Text>
+        <Text color={display.status === "failed" ? "error" : undefined}>{label}</Text>
+        <Text dimColor>{` (${metrics})`}</Text>
       </MessageResponseView>
       <Text dimColor>{"  "}(ctrl+o to expand)</Text>
     </Box>
   );
+}
+
+export function formatAgentResultStatusLine(
+  status: AgentResultStatus,
+  totalToolUseCount: number,
+  totalTokens: number,
+  totalDurationMs: number,
+): { label: string; metrics: string } {
+  const parts = [
+    totalToolUseCount === 1 ? "1 tool use" : `${totalToolUseCount} tool uses`,
+  ];
+  if (totalTokens > 0) {
+    parts.push(`${formatNumber(totalTokens)} tokens`);
+  }
+  parts.push(formatAgentDurationMs(totalDurationMs));
+  return {
+    label: status === "completed" ? "Done" : status === "killed" ? "Stopped" : "Failed",
+    metrics: parts.join(" · "),
+  };
 }
 
 function AgentBackgroundView({
@@ -3432,13 +3782,12 @@ function AgentBackgroundView({
     <Box flexDirection="column">
       <MessageResponseView height={1}>
         <Text>
-          Backgrounded agent <Text bold>{display.taskId}</Text>
-          <Text dimColor>{` (${truncateLine(display.description, 48)})`}</Text>
-          <Text dimColor> (↓ manage)</Text>
+          Backgrounded agent
+          <Text dimColor> (↓ to manage · ctrl+o to expand)</Text>
         </Text>
       </MessageResponseView>
       {expandedOutput ? (
-        <Text dimColor>{`  output_file: ${display.outputFile}`}</Text>
+        <Text dimColor>{`  ${display.taskId} · ${truncateLine(display.description, 72)} · ${display.outputFile}`}</Text>
       ) : null}
     </Box>
   );
@@ -3463,7 +3812,7 @@ function TaskOutputResultView({
   if (isStillRunning) {
     return (
       <MessageResponseView height={1}>
-        <Text dimColor>Task is still running…</Text>
+        <Text dimColor>Task is still running...</Text>
       </MessageResponseView>
     );
   }
@@ -4320,7 +4669,7 @@ function InputLine({
     <Box flexDirection="column">
       {displayLines.map((line, lineIndex) => (
         <Box key={`input-${lineIndex}`}>
-          <Text dimColor={loading}>{lineIndex === 0 ? "❯ " : "  "}</Text>
+          <Text dimColor={loading}>{lineIndex === 0 ? "❯\u00a0" : "  "}</Text>
           <InputLineText
             line={line}
             isPlaceholder={value.length === 0}
@@ -4368,49 +4717,240 @@ function InputLineText({
   );
 }
 
-function ModeFooter({
+export function getModeFooterParts({
   permissionMode,
   model,
   expandedOutput,
+  loading,
+  hasCoordinatorTasks,
+  coordinatorActive,
+  backgroundTasks = [],
+  hasTaskList = false,
+  tasksVisible = false,
   usage,
   exitMessage,
   temporaryNotice,
+  isEmptySession = true,
 }: {
   permissionMode: PermissionMode;
   model: string;
   expandedOutput: boolean;
+  loading: boolean;
+  hasCoordinatorTasks: boolean;
+  coordinatorActive: boolean;
+  backgroundTasks?: readonly ModeFooterBackgroundTask[];
+  hasTaskList?: boolean;
+  tasksVisible?: boolean;
   usage: Usage;
   exitMessage: ExitMessage;
   temporaryNotice: TemporaryNotice;
-}): React.ReactElement {
-  const left = exitMessage.show ? `Press ${exitMessage.key} again to exit` : temporaryNotice?.text ?? formatPermissionMode(permissionMode);
-  const expanded = !exitMessage.show && !temporaryNotice && expandedOutput ? " · expanded" : "";
-  const requestedUsageText = formatUsageStatus(model, usage);
-  const right = getEffortStatus(model);
-  const columns = Math.max(30, process.stdout.columns || 80);
-  const leftWidth = stringWidth(left) + stringWidth(expanded);
-  const rightWidth = stringWidth(right);
-  const separatorWidth = left || expanded ? 2 : 0;
-  const availableForUsage = Math.max(0, columns - leftWidth - rightWidth - separatorWidth - 1);
-  const usageText = left || availableForUsage <= 0
-    ? ""
-    : truncateToWidth(requestedUsageText, availableForUsage);
-  const gap = Math.max(
-    1,
-    columns - leftWidth - rightWidth - separatorWidth - stringWidth(usageText),
-  );
+  isEmptySession?: boolean;
+}): {
+  modeText: string;
+  modeColor?: string;
+  modeShortcutText: string;
+  backgroundTaskTexts: string[];
+  noticeText: string;
+  noticeColor?: string;
+  hintText: string;
+  taskToggleText: string;
+  taskHintText: string;
+  expandedText: string;
+  exitText: string;
+  usageText: string;
+  rightText: string;
+} {
+  const usageText = getApiConfig(model) ? "" : "Not logged in · Run /login";
+  if (exitMessage.show) {
+    return {
+      modeText: "",
+      modeShortcutText: "",
+      backgroundTaskTexts: [],
+      noticeText: "",
+      hintText: "",
+      taskToggleText: "",
+      taskHintText: "",
+      expandedText: "",
+      exitText: `Press ${exitMessage.key} again to exit`,
+      usageText: "",
+      rightText: "",
+    };
+  }
 
+  const backgroundTaskTexts = getModeFooterBackgroundTaskTexts(backgroundTasks);
+  const hasManageableTasks = hasCoordinatorTasks || backgroundTasks.length > 0;
+  const rightText = temporaryNotice ? "" : getEffortStatus(model);
+
+  return {
+    modeText: temporaryNotice ? "" : formatPermissionMode(permissionMode),
+    modeColor: getModeColor(permissionMode),
+    modeShortcutText: temporaryNotice ? "" : formatPermissionModeShortcut(permissionMode),
+    backgroundTaskTexts: temporaryNotice ? [] : backgroundTaskTexts,
+    noticeText: temporaryNotice?.text ?? "",
+    noticeColor: temporaryNotice?.color,
+    hintText: temporaryNotice || !loading ? "" : "esc to interrupt",
+    taskToggleText: temporaryNotice || backgroundTaskTexts.length === 0 || !hasTaskList ? "" : `ctrl+t to ${tasksVisible ? "hide tasks" : "show tasks"}`,
+    taskHintText: temporaryNotice || !hasManageableTasks ? "" : formatCoordinatorTaskHint(coordinatorActive),
+    expandedText: !temporaryNotice && expandedOutput ? "expanded" : "",
+    exitText: "",
+    usageText,
+    rightText,
+  };
+}
+
+export function getBottomSeparatorText(columns: number): string {
+  return "─".repeat(Math.max(10, columns));
+}
+
+function BottomSeparator(): React.ReactElement {
+  const columns = Math.max(10, process.stdout.columns || 80);
   return (
     <Box>
-      <Text color={temporaryNotice?.color ?? (!exitMessage.show ? getModeColor(permissionMode) : undefined)} dimColor={exitMessage.show}>
-        {left}
-      </Text>
-      <Text dimColor>{expanded}</Text>
-      {usageText && <Text dimColor>{left || expanded ? "  " : ""}{usageText}</Text>}
-      <Text dimColor>{" ".repeat(gap)}</Text>
-      <Text dimColor>{right}</Text>
+      <Text dimColor>{getBottomSeparatorText(columns)}</Text>
     </Box>
   );
+}
+
+function ModeFooter({
+  permissionMode,
+  model,
+  expandedOutput,
+  loading,
+  hasCoordinatorTasks,
+  coordinatorActive,
+  backgroundTasks = [],
+  hasTaskList = false,
+  tasksVisible = false,
+  usage,
+  exitMessage,
+  temporaryNotice,
+  isEmptySession = true,
+}: {
+  permissionMode: PermissionMode;
+  model: string;
+  expandedOutput: boolean;
+  loading: boolean;
+  hasCoordinatorTasks: boolean;
+  coordinatorActive: boolean;
+  backgroundTasks?: readonly ModeFooterBackgroundTask[];
+  hasTaskList?: boolean;
+  tasksVisible?: boolean;
+  usage: Usage;
+  exitMessage: ExitMessage;
+  temporaryNotice: TemporaryNotice;
+  isEmptySession?: boolean;
+}): React.ReactElement {
+  const columns = Math.max(30, process.stdout.columns || 80);
+  const isNarrow = columns < 80;
+  const parts = getModeFooterParts({
+    permissionMode,
+    model,
+    expandedOutput,
+    loading,
+    hasCoordinatorTasks,
+    coordinatorActive,
+    backgroundTasks,
+    hasTaskList,
+    tasksVisible,
+    usage,
+    exitMessage,
+    temporaryNotice,
+    isEmptySession,
+  });
+  const hasTaskFooterHints = Boolean(parts.hintText || parts.taskToggleText || parts.taskHintText);
+  const topRightText = parts.usageText || (hasTaskFooterHints ? "" : parts.rightText);
+  const bottomRightText = parts.usageText && parts.rightText
+    ? parts.rightText
+    : hasTaskFooterHints
+      ? parts.rightText
+      : "";
+  const modePart = parts.modeText || parts.modeShortcutText ? (
+    <Text key="mode" color={parts.modeColor}>
+      {parts.modeText}
+      {parts.modeShortcutText && (
+        <Text dimColor>{parts.modeText ? " " : ""}{parts.modeShortcutText}</Text>
+      )}
+    </Text>
+  ) : null;
+
+  return (
+    <Box
+      key="footer"
+      flexDirection="column"
+      paddingLeft={2}
+      paddingRight={2}
+    >
+      <Box
+        flexDirection={isNarrow ? "column" : "row"}
+        justifyContent={isNarrow ? "flex-start" : "space-between"}
+        gap={isNarrow ? 0 : 1}
+      >
+        <Box flexDirection="column" flexShrink={0}>
+          <Box height={1} overflow="hidden">
+            {parts.exitText ? (
+              <Text dimColor>{parts.exitText}</Text>
+            ) : parts.noticeText ? (
+              <Text color={parts.noticeColor}>{parts.noticeText}</Text>
+            ) : (
+              <Text wrap="truncate">
+                <Byline>
+                  {modePart}
+                  {parts.expandedText ? <Text dimColor key="expanded">{parts.expandedText}</Text> : null}
+                  {parts.backgroundTaskTexts.map(text => (
+                    <Text color="cyan" key={`background-${text}`}>{text}</Text>
+                  ))}
+                  {parts.hintText ? (
+                    <Text dimColor key="interrupt">
+                      <KeyboardShortcutHint shortcut="esc" action="interrupt" />
+                    </Text>
+                  ) : null}
+                  {parts.taskToggleText ? (
+                    <Text dimColor key="task-toggle">
+                      <KeyboardShortcutHint
+                        shortcut="ctrl+t"
+                        action={tasksVisible ? "hide tasks" : "show tasks"}
+                      />
+                    </Text>
+                  ) : null}
+                  {parts.taskHintText ? (
+                    <Text dimColor key="tasks">
+                      <KeyboardShortcutHint
+                        shortcut={coordinatorActive ? "Enter" : "↓"}
+                        action={coordinatorActive ? "view tasks" : "manage"}
+                      />
+                    </Text>
+                  ) : null}
+                </Byline>
+              </Text>
+            )}
+          </Box>
+        </Box>
+        {topRightText ? (
+          <Box flexShrink={1}>
+            <Text color={parts.usageText ? "error" : undefined} dimColor={!parts.usageText} wrap="truncate">{topRightText}</Text>
+          </Box>
+        ) : null}
+      </Box>
+      {bottomRightText && (
+        <Box flexDirection="row" justifyContent="flex-end">
+          <Text dimColor>{bottomRightText}</Text>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+type ModeFooterBackgroundTask = Pick<BackgroundTaskSummary, "kind" | "status">;
+
+export function getModeFooterBackgroundTaskTexts(
+  backgroundTasks: readonly ModeFooterBackgroundTask[] = [],
+): string[] {
+  const runningShells = backgroundTasks.filter(task => task.kind === "bash" && task.status === "running").length;
+  const runningAgents = backgroundTasks.filter(task => task.kind === "agent" && task.status === "running").length;
+  const texts: string[] = [];
+  if (runningShells > 0) texts.push(`${runningShells} ${runningShells === 1 ? "shell" : "shells"}`);
+  if (runningAgents > 0) texts.push(`${runningAgents} ${runningAgents === 1 ? "agent" : "agents"}`);
+  return texts;
 }
 
 function truncateLine(value: string, max: number): string {
@@ -4441,6 +4981,10 @@ function formatDurationMs(value: number): string {
   return remainder ? `${minutes}m ${remainder}s` : `${minutes}m`;
 }
 
+function formatAgentDurationMs(value: number): string {
+  return formatOfficialDurationMs(value);
+}
+
 function formatBackgroundTasks(tasks: BackgroundTaskSummary[]): string {
   if (tasks.length === 0) return "No background tasks.";
 
@@ -4457,7 +5001,7 @@ function formatManagedTaskResultContent(content: string): string {
   const stopped = parseTaskStopResult(content);
   if (stopped) return stopped;
   const retrievalStatus = getTaggedResultValue(content, "retrieval_status");
-  if (retrievalStatus === "not_ready" || retrievalStatus === "timeout") return "Task is still running…";
+  if (retrievalStatus === "not_ready" || retrievalStatus === "timeout") return "Task is still running...";
   const output = getTaggedResultValue(content, "output");
   if (output) return output;
   const error = getTaggedResultValue(content, "error");
@@ -4627,7 +5171,7 @@ function createSyntheticInputKey(partial: Partial<Key>): Key {
   };
 }
 
-function getExitControlInput(value: string, key: { ctrl?: boolean }): ExitControlInput | null {
+export function getExitControlInput(value: string, key: { ctrl?: boolean }): ExitControlInput | null {
   let ctrlCCount = 0;
   let ctrlDCount = 0;
   for (const char of value) {
@@ -4635,16 +5179,16 @@ function getExitControlInput(value: string, key: { ctrl?: boolean }): ExitContro
     if (char === "\x04") ctrlDCount++;
   }
 
-  const csiUCtrlCMatches = value.match(/\x1b\[(?:67|99);5u/gu);
+  const csiUCtrlCMatches = value.match(/(?:\x1b)?\[(?:67|99);5u/gu);
   ctrlCCount += csiUCtrlCMatches?.length || 0;
 
-  const csiUCtrlDMatches = value.match(/\x1b\[(?:68|100);5u/gu);
+  const csiUCtrlDMatches = value.match(/(?:\x1b)?\[(?:68|100);5u/gu);
   ctrlDCount += csiUCtrlDMatches?.length || 0;
 
-  const modifyOtherKeysCtrlCMatches = value.match(/\x1b\[27;5;(?:67|99)~/gu);
+  const modifyOtherKeysCtrlCMatches = value.match(/(?:\x1b)?\[27;5;(?:67|99)~/gu);
   ctrlCCount += modifyOtherKeysCtrlCMatches?.length || 0;
 
-  const modifyOtherKeysCtrlDMatches = value.match(/\x1b\[27;5;(?:68|100)~/gu);
+  const modifyOtherKeysCtrlDMatches = value.match(/(?:\x1b)?\[27;5;(?:68|100)~/gu);
   ctrlDCount += modifyOtherKeysCtrlDMatches?.length || 0;
 
   if (ctrlCCount === 0 && ctrlDCount === 0 && key.ctrl) {
@@ -4686,7 +5230,7 @@ function permissionModeTitle(mode: PermissionMode): string {
     case "acceptEdits": return "Accept edits";
     case "plan": return "Plan Mode";
     case "auto": return "Auto";
-    case "bypassPermissions": return "Bypass";
+    case "bypassPermissions": return "Bypass permissions";
     case "dontAsk": return "Don't Ask";
   }
 }
@@ -4703,7 +5247,16 @@ function formatPermissionMode(mode: PermissionMode): string {
   if (mode === "default" || !mode) return "";
   const sym = permissionModeSymbol(mode);
   const title = permissionModeTitle(mode).toLowerCase();
-  return `${sym} ${title} on (shift+tab to cycle)`;
+  return `${sym} ${title} on`;
+}
+
+function formatPermissionModeShortcut(mode: PermissionMode): string {
+  if (mode === "default" || !mode) return "";
+  return "(shift+tab to cycle)";
+}
+
+export function formatCoordinatorTaskHint(active: boolean): string {
+  return active ? "Enter to view tasks" : "↓ to manage";
 }
 
 function formatNoClipboardImageMessage(): string {
@@ -4711,17 +5264,6 @@ function formatNoClipboardImageMessage(): string {
     return "No image found in clipboard. You're SSH'd; try scp?";
   }
   return "No image found in clipboard. Use ctrl+v to paste images.";
-}
-
-function formatUsageStatus(model: string, usage: Usage): string {
-  const contextLimit = 200_000;
-  const inputTokens = usage.input_tokens ?? 0;
-  const percent = Math.min(100, Math.max(0, Math.round((inputTokens / contextLimit) * 100)));
-  return `${model} | Context ${percent}% (${inputTokens}/${formatTokenLimit(contextLimit)}) |`;
-}
-
-function formatTokenLimit(value: number): string {
-  return `${(value / 1000).toFixed(1)}k`;
 }
 
 function helpCommandText(): string {
@@ -5394,7 +5936,7 @@ function formatToolUseMessage(name: string, input: Record<string, unknown>): str
     return truncateLine(input.description, 160);
   }
   if (name === "TaskOutput") {
-    return input.block === false ? "non-blocking" : "";
+    return typeof input.task_id === "string" ? input.task_id : "";
   }
   if (name === "TaskStop" && typeof input.task_id === "string") {
     return input.task_id;
