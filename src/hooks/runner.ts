@@ -37,6 +37,7 @@ export type HookInput = {
   hook_event_name?: HookEventName;
   session_id?: string;
   transcript_path?: string;
+  effort?: { level?: unknown };
   cwd?: string;
   permission_mode?: string;
   agent_id?: string;
@@ -199,6 +200,11 @@ export async function runSettingsHooks(
 ): Promise<HookOutcome> {
   const matchers = settings.hooks?.[event] || [];
   const outcome = createHookOutcome();
+
+  // Inject effort level from settings into all hook payloads
+  if (settings.effortLevel !== undefined) {
+    input.effort = { level: settings.effortLevel };
+  }
 
   for (const matcher of matchers) {
     if (!matchesHookMatcherForInput(matcher.matcher, event, input)) continue;

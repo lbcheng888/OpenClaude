@@ -26,6 +26,8 @@ import { createUnifiedDiff } from "./diff.js";
 import { normalizeSubagentType } from "./read-only.js";
 import { discoverConditionalMemoryFilesForPath } from "../core/context.js";
 import { loadSkillByName } from "../core/skills.js";
+import { readClaudeSettings, getClaudeEnvFileVars } from "../config/claude-settings.js";
+import { PLUGIN_UNINSTALL_TOOL, PLUGIN_ENABLE_TOOL, PLUGIN_DISABLE_TOOL } from "./plugin.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -154,6 +156,10 @@ const readFileState = new Map<string, Map<string, ReadFileCacheEntry>>();
 const nestedMemoryState = new Map<string, Set<string>>();
 let bashCwd = process.cwd();
 let bashEnv: NodeJS.ProcessEnv = { ...process.env };
+
+// MCP tool storage — persists across /clear and reset operations
+const mcpToolDefs: ToolDef[] = [];
+const mcpToolExecutors = new Map<string, (input: Record<string, unknown>, signal?: AbortSignal, context?: ToolExecutionContext) => Promise<ToolResult>>();
 let shellPathCache: string | null = null;
 let shellSnapshotCache: { shellPath: string; path: string } | null = null;
 let backgroundTaskSeq = 1;
@@ -1076,7 +1082,7 @@ export const BUILTIN_TOOLS: Tool[] = [
       const url = String(input.url || "");
       if (!/^https?:\/\//u.test(url)) return { content: `Error: invalid URL: ${url}`, isError: true };
       try {
-        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.132" } });
+        const response = await fetch(url, { signal, headers: { "User-Agent": "claude-code-full/2.1.136" } });
         if (!response.ok) return { content: `Error: HTTP ${response.status} ${response.statusText}`, isError: true };
         const contentType = response.headers.get("content-type") || "";
         const text = await response.text();
@@ -1087,14 +1093,41 @@ export const BUILTIN_TOOLS: Tool[] = [
       }
     },
   },
+  PLUGIN_UNINSTALL_TOOL,
+  PLUGIN_ENABLE_TOOL,
+  PLUGIN_DISABLE_TOOL,
 ];
 
 export function getToolDefs(): ToolDef[] {
-  return BUILTIN_TOOLS.map((t) => ({
+  const builtin = BUILTIN_TOOLS.map((t) => ({
     name: t.name,
     description: t.description,
     input_schema: t.input_schema,
   }));
+  // MCP tools persist across /clear and are appended to the built-in tools
+  return [...builtin, ...mcpToolDefs];
+}
+
+export function registerMCPTool(name: string, description: string, input_schema: ToolDef["input_schema"], executor: (input: Record<string, unknown>, signal?: AbortSignal, context?: ToolExecutionContext) => Promise<ToolResult>): void {
+  // Skip if already registered
+  if (mcpToolDefs.some(t => t.name === name)) return;
+  mcpToolDefs.push({ name, description, input_schema });
+  mcpToolExecutors.set(name, executor);
+}
+
+export function unregisterMCPTool(name: string): void {
+  const idx = mcpToolDefs.findIndex(t => t.name === name);
+  if (idx >= 0) mcpToolDefs.splice(idx, 1);
+  mcpToolExecutors.delete(name);
+}
+
+export function clearMCPToolsForTests(): void {
+  mcpToolDefs.length = 0;
+  mcpToolExecutors.clear();
+}
+
+export function listMCPToolDefs(): ToolDef[] {
+  return [...mcpToolDefs];
 }
 
 export async function executeTool(
@@ -1105,13 +1138,18 @@ export async function executeTool(
 ): Promise<ToolResult> {
   const resolvedName = resolveToolAlias(name);
   const tool = BUILTIN_TOOLS.find((t) => t.name === resolvedName);
-  if (!tool) {
-    return {
-      content: `Error: Tool '${name}' not found`,
-      isError: true,
-    };
+  if (tool) {
+    return tool.execute(input, signal, context);
   }
-  return tool.execute(input, signal, context);
+  // Try MCP tool executor
+  const mcpExecutor = mcpToolExecutors.get(resolvedName);
+  if (mcpExecutor) {
+    return mcpExecutor(input, signal, context);
+  }
+  return {
+    content: `Error: Tool '${name}' not found`,
+    isError: true,
+  };
 }
 
 function resolveToolAlias(name: string): string {
@@ -2646,8 +2684,9 @@ function hasHiddenPathPart(filePath: string): boolean {
 
 function truncateOneLine(value: string, max: number): string {
   const normalized = value.replace(/\s+/gu, " ").trim();
-  if (normalized.length <= max) return normalized;
-  return `${normalized.slice(0, Math.max(0, max - 1))}…`;
+  const chars = [...normalized];
+  if (chars.length <= max) return normalized;
+  return `${chars.slice(0, Math.max(0, max - 1)).join("")}…`;
 }
 
 type BashState = {
@@ -2683,11 +2722,14 @@ function getShellPath(): string {
 }
 
 function getShellEnv(shellPath: string): NodeJS.ProcessEnv {
+  const settings = readClaudeSettings();
   return {
     ...bashEnv,
+    ...getClaudeEnvFileVars(),
     SHELL: shellPath,
     GIT_EDITOR: "true",
     CLAUDECODE: "1",
+    CLAUDE_EFFORT: settings?.effortLevel !== undefined ? String(settings.effortLevel) : "",
   };
 }
 
@@ -3110,4 +3152,59 @@ function cleanupStateFile(stateFile: string): void {
 
 function shellQuote(value: string): string {
   return `'${value.replace(/'/gu, "'\\''")}'`;
+}
+
+// Plugin marketplace validation (v2.1.136)
+export const OFFICIAL_MARKETPLACE_DOMAINS = new Set([
+  "claude-code-marketplace",
+  "claude-code-plugins",
+  "claude-plugins-official",
+  "anthropic-marketplace",
+  "anthropic-plugins",
+  "agent-skills",
+  "life-sciences",
+  "knowledge-work-plugins",
+]);
+
+export const OFFICIAL_MARKETPLACE_RE =
+  /(?:official[^a-z0-9]*(?:anthropic|claude)|(?:anthropic|claude)[^a-z0-9]*official|^(?:anthropic|claude)[^a-z0-9]*(?:marketplace|plugin))/iu;
+
+export const ALLOWED_PLUGIN_URL_SCHEMES = new Set([
+  "https:",
+  "http:",
+  "git:",
+  "git+https:",
+  "git+http:",
+  "git+ssh:",
+  "ssh:",
+]);
+
+export function isOfficialMarketplace(source: string): boolean {
+  return OFFICIAL_MARKETPLACE_RE.test(source)
+    || [...OFFICIAL_MARKETPLACE_DOMAINS].some((d) => source.toLowerCase().includes(d.toLowerCase()));
+}
+
+export function isValidPluginSourceUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return ALLOWED_PLUGIN_URL_SCHEMES.has(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
+// Security review always-allow git commands (v2.1.136)
+export const SECURITY_REVIEW_GIT_COMMANDS = [
+  "git diff",
+  "git status",
+  "git log",
+  "git show",
+  "git remote show",
+];
+
+export function getSecurityReviewAlwaysAllowRules(): string[] {
+  return SECURITY_REVIEW_GIT_COMMANDS.flatMap((cmd) => [
+    `Bash(${cmd} *)`,
+    `Bash(${cmd})`,
+  ]);
 }

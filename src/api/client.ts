@@ -117,6 +117,61 @@ export type Gpt55ResponsesInputItem =
   | { type: "message"; role: "system" | "user" | "assistant"; content: Gpt55ResponsesContent[] }
   | { type: "function_call_output"; call_id: string; output: string };
 
+// Control message types the daemon can receive.
+// These represent action/control messages that can be sent between client and daemon.
+export const CONTROL_MESSAGE_TYPES: ReadonlySet<string> = new Set([
+  "interrupt",
+  "set_permission_mode",
+  "set_model",
+  "set_max_thinking_tokens",
+  "set_color",
+  "mcp_toggle",
+  "message_rated",
+  "can_use_tool",
+  "request_user_dialog",
+  "elicitation",
+]);
+
+// Content block ordering values for the Anthropic Messages API.
+// The API requires blocks in order: redacted_thinking/thinking → text → tool_use.
+const BLOCK_ORDER: Readonly<Record<string, number>> = {
+  redacted_thinking: 0,
+  thinking: 1,
+  text: 2,
+  tool_use: 3,
+};
+
+/**
+ * Normalise assistant-message content blocks to the order required by the
+ * Anthropic Messages API: thinking/redacted_thinking → text → tool_use.
+ *
+ * The API returns 400 when blocks arrive in the wrong order. This can happen
+ * when the previous response contained a redacted_thinking block that arrived
+ * after a tool_use block — the caller must reorder before sending it back.
+ */
+export function normalizeMessages(messages: ApiMessage[]): ApiMessage[] {
+  const needsNormalize = messages.some(
+    msg => msg.role === "assistant" && Array.isArray(msg.content),
+  );
+  if (!needsNormalize) return messages;
+
+  return messages.map(msg => {
+    if (msg.role !== "assistant" || typeof msg.content === "string") return msg;
+    const blocks = [...msg.content];
+    blocks.sort((a, b) => (BLOCK_ORDER[a.type] ?? 9) - (BLOCK_ORDER[b.type] ?? 9));
+    return { ...msg, content: blocks };
+  });
+}
+
+export function isValidControlMessageType(type: string): boolean {
+  return CONTROL_MESSAGE_TYPES.has(type);
+}
+
+/** Re-read the auth token from the environment (may have been rotated). */
+function refreshToken(model: string): string {
+  return getProviderToken(getConfiguredProvider(model));
+}
+
 export function getApiConfig(modelOverride?: string): ApiConfig | null {
   const model = modelOverride || getConfiguredModel();
   const provider = getConfiguredProvider(model);
@@ -360,7 +415,7 @@ export async function sendMessage(
   const body: Record<string, unknown> = {
     model: cfg.model,
     max_tokens: maxTokens,
-    messages,
+    messages: normalizeMessages(messages),
   };
   if (system) body.system = system;
   if (tools && tools.length > 0) body.tools = tools;
@@ -380,7 +435,11 @@ export async function sendMessage(
 
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        if (attempt <= maxRetries && shouldRetryHttpError(res.status, res.headers, text)) {
+        const isCredentialError = res.status === 401;
+        if (attempt <= maxRetries && (shouldRetryHttpError(res.status, res.headers, text) || isCredentialError)) {
+          if (isCredentialError) {
+            cfg.token = refreshToken(cfg.model);
+          }
           await sleep(getRetryDelayMs(attempt, res.headers));
           continue;
         }
@@ -428,7 +487,7 @@ export async function* streamMessage(
   const body: Record<string, unknown> = {
     model: cfg.model,
     max_tokens: maxTokens,
-    messages,
+    messages: normalizeMessages(messages),
     stream: true,
   };
   if (system) body.system = system;
@@ -455,7 +514,11 @@ export async function* streamMessage(
         if (!res.ok) {
           const text = await res.text().catch(() => "");
           const error = formatApiStreamError(formatApiHttpError(res.status, text));
-          if (attempt <= maxRetries && shouldRetryHttpError(res.status, res.headers, text)) {
+          const isCredentialError = res.status === 401;
+          if (attempt <= maxRetries && (shouldRetryHttpError(res.status, res.headers, text) || isCredentialError)) {
+            if (isCredentialError) {
+              cfg.token = refreshToken(cfg.model);
+            }
             const retryInMs = getRetryDelayMs(attempt, res.headers);
             yield { type: "api_retry", error, retryInMs, retryAttempt: attempt, maxRetries };
             await sleep(retryInMs, requestSignal.signal);

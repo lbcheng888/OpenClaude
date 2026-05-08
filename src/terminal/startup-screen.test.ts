@@ -34,29 +34,29 @@ afterEach(() => {
 });
 
 describe("startup release notes", () => {
-  test("prompt placeholder uses official 2.1.132 examples and sampled files", () => {
+  test("prompt placeholder uses official 2.1.136 examples and sampled files", () => {
     expect(getPromptPlaceholder([], () => 0.99)).toBe('Try "create a util logging.py that..."');
     expect(getPromptPlaceholder(["src/index.ts"], () => 0.25)).toBe('Try "how does src/index.ts work?"');
   });
 
-  test("2.1.132 compact startup rows keep DeepSeek effort in the model row", () => {
+  test("2.1.136 compact startup rows keep DeepSeek effort in the model row", () => {
     const rows = getStartupScreenRows({
-      version: "2.1.132",
+      version: "2.1.136",
       model: "deepseek-v4-pro[1m]",
       cwd: "/Users/lbcheng/cheng-lang",
       columns: 120,
     });
 
     expect(Object.values(rows).join("\n")).toBe([
-      "Claude Code v2.1.132",
+      "Claude Code v2.1.136",
       "deepseek-v4-pro[1m] with max effort · API Usage Billing",
       "~/cheng-lang",
     ].join("\n"));
   });
 
-  test("2.1.132 Opus startup row and notice match the official entry", () => {
+  test("2.1.136 Opus startup row and notice match the official entry", () => {
     const rows = getStartupScreenRows({
-      version: "2.1.132",
+      version: "2.1.136",
       model: "claude-opus-4-7",
       cwd: "/Users/lbcheng/cheng-lang",
       columns: 120,
@@ -66,7 +66,7 @@ describe("startup release notes", () => {
     expect(getStartupNotice("claude-opus-4-7")).toBe("Welcome to Opus 4.7 xhigh! · /effort to tune speed vs. intelligence");
   });
 
-  test("2.1.132 non-Opus startup shows the official model switch notice", () => {
+  test("2.1.136 non-Opus startup shows the official model switch notice", () => {
     tempDir = mkdtempSync(join(tmpdir(), "claude-code-full-opus-switch-"));
     process.env.CLAUDE_CONFIG_DIR = join(tempDir, ".claude");
     mkdirSync(process.env.CLAUDE_CONFIG_DIR, { recursive: true });
@@ -74,7 +74,7 @@ describe("startup release notes", () => {
     expect(getStartupNotice("deepseek-v4-pro[1m]")).toBe("Opus 4.7 xhigh is now available! · /model to switch");
   });
 
-  test("2.1.132 hides Opus switch notice after official migration is complete", () => {
+  test("2.1.136 hides Opus switch notice after official migration is complete", () => {
     tempDir = mkdtempSync(join(tmpdir(), "claude-code-full-opus-switch-"));
     const configDir = join(tempDir, ".claude");
     process.env.CLAUDE_CONFIG_DIR = configDir;
@@ -90,7 +90,7 @@ describe("startup release notes", () => {
     mkdirSync(process.env.CLAUDE_CONFIG_DIR, { recursive: true });
 
     const lines = getNarrowStartupScreenLines({
-      version: "2.1.132",
+      version: "2.1.136",
       model: "deepseek-v4-pro[1m]",
       cwd: "/Users/lbcheng/open-claude-code/claude-code-full",
       columns: 80,
@@ -101,7 +101,7 @@ describe("startup release notes", () => {
       ],
     });
 
-    expect(lines[0]).toBe("Claude Code v2.1.132 ─────────────────────────────────────────────────────╮");
+    expect(lines[0]).toBe("Claude Code v2.1.136 ─────────────────────────────────────────────────────╮");
     expect(lines[1]).toBe("│                                                    │ What's new              │");
     expect(lines[4]).toContain("Added a \"Pasting...\" f…");
     expect(lines[8]).toBe("│ deepseek-v4-pro[1m] with max … · API Usage Billing │                         │");
@@ -110,8 +110,13 @@ describe("startup release notes", () => {
   });
 
   test("wide startup also uses bordered card when release notes are visible", () => {
+    tempDir = mkdtempSync(join(tmpdir(), "claude-code-full-wide-startup-"));
+    process.env.CLAUDE_CONFIG_DIR = join(tempDir, ".claude");
+    mkdirSync(process.env.CLAUDE_CONFIG_DIR, { recursive: true });
+    writeFileSync(join(process.env.CLAUDE_CONFIG_DIR, ".claude.json"), JSON.stringify({ opusProMigrationComplete: true }));
+
     const lines = getNarrowStartupScreenLines({
-      version: "2.1.132",
+      version: "2.1.136",
       model: "deepseek-v4-pro[1m]",
       cwd: "/Users/lbcheng/open-claude-code/claude-code-full",
       columns: 137,
@@ -122,7 +127,7 @@ describe("startup release notes", () => {
       ],
     });
 
-    expect(lines[0]).toContain("Claude Code v2.1.132");
+    expect(lines[0]).toContain("Claude Code v2.1.136");
     expect(lines[1]).toContain("What's new");
     expect(lines[4]).toContain('Added a "Pasting..." footer hint while a Ctrl+V image paste is being');
     expect(lines[8]).toContain("deepseek-v4-pro[1m] with max");
@@ -144,18 +149,18 @@ describe("startup release notes", () => {
 
   test("parses changelog sections with date suffixes", () => {
     expect(parseChangelog(sampleChangelog())).toEqual({
-      "2.1.132": ["A", "B"],
+      "2.1.136": ["A", "B"],
       "2.1.130": ["C"],
       "2.1.129": ["D"],
     });
   });
 
   test("shows notes newer than the last seen version, newest first", () => {
-    expect(getRecentReleaseNotes("2.1.132", "2.1.129", sampleChangelog())).toEqual(["A", "B", "C"]);
+    expect(getRecentReleaseNotes("2.1.136", "2.1.129", sampleChangelog())).toEqual(["A", "B", "C"]);
   });
 
   test("shows no notes after the current version has already been seen", () => {
-    expect(getRecentReleaseNotes("2.1.132", "2.1.132", sampleChangelog())).toEqual([]);
+    expect(getRecentReleaseNotes("2.1.136", "2.1.136", sampleChangelog())).toEqual([]);
   });
 
   test("reads official cache and global lastReleaseNotesSeen paths", () => {
@@ -166,7 +171,7 @@ describe("startup release notes", () => {
     writeFileSync(join(configDir, "cache", "changelog.md"), sampleChangelog());
     writeFileSync(join(configDir, ".claude.json"), JSON.stringify({ lastReleaseNotesSeen: "2.1.130" }));
 
-    expect(readRecentReleaseNotes("2.1.132")).toEqual(["A", "B"]);
+    expect(readRecentReleaseNotes("2.1.136")).toEqual(["A", "B"]);
   });
 
   test("uses bundled notes when the cache is absent", () => {
@@ -176,10 +181,10 @@ describe("startup release notes", () => {
     mkdirSync(configDir, { recursive: true });
     writeFileSync(join(configDir, ".claude.json"), JSON.stringify({ lastReleaseNotesSeen: "2.1.128" }));
 
-    expect(readRecentReleaseNotes("2.1.132")).toEqual([
-      "New `CLAUDE_CODE_SESSION_ID_IN_BASH=1` env var passes session ID to Bash subprocesses",
-      "New `CLAUDE_CODE_ALTERNATE_SCREEN=0` env var opts out of alternate-screen renderer to preserve native terminal scrollback",
-      "External SIGINT now triggers graceful exit with terminal state restoration",
+    expect(readRecentReleaseNotes("2.1.136")).toEqual([
+      "Added `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` to re-enable the session quality survey for enterprises capturing responses through OpenTelemetry",
+      "Added `settings.autoMode.hard_deny` for auto mode classifier rules that block unconditionally regardless of user intent or allow exceptions",
+      "Fixed MCP servers configured in `.mcp.json`, plugins, and claude.ai connectors silently disappearing after `/clear`",
     ]);
   });
 
@@ -191,7 +196,7 @@ describe("startup release notes", () => {
     mkdirSync(configDir, { recursive: true });
     writeFileSync(join(configDir, ".claude.json"), JSON.stringify({ lastReleaseNotesSeen: "2.1.128" }));
 
-    expect(readRecentReleaseNotes("2.1.132")).toEqual([]);
+    expect(readRecentReleaseNotes("2.1.136")).toEqual([]);
   });
 
   test("does not refresh changelog when nonessential traffic is disabled", async () => {
@@ -204,18 +209,18 @@ describe("startup release notes", () => {
       throw new Error("network should stay off");
     }) as typeof fetch;
 
-    await expect(refreshChangelogCache("2.1.132")).resolves.toBe(false);
+    await expect(refreshChangelogCache("2.1.136")).resolves.toBe(false);
     expect(called).toBe(false);
   });
 
   test("formats all cached release notes newest first", () => {
     expect(getAllReleaseNotes(sampleChangelog())).toEqual([
-      ["2.1.132", ["A", "B"]],
+      ["2.1.136", ["A", "B"]],
       ["2.1.130", ["C"]],
       ["2.1.129", ["D"]],
     ]);
 
-    expect(formatReleaseNotes([["2.1.132", ["A", "B"]]])).toBe("Version 2.1.132:\n· A\n· B");
+    expect(formatReleaseNotes([["2.1.136", ["A", "B"]]])).toBe("Version 2.1.136:\n· A\n· B");
     expect(formatReleaseNotes([])).toContain(CHANGELOG_URL);
   });
 
@@ -227,11 +232,11 @@ describe("startup release notes", () => {
     mkdirSync(configDir, { recursive: true });
     writeFileSync(globalConfigPath, JSON.stringify({ theme: "dark" }));
 
-    markReleaseNotesSeen("2.1.132");
+    markReleaseNotesSeen("2.1.136");
 
     expect(JSON.parse(readFileSync(globalConfigPath, "utf8"))).toEqual({
       theme: "dark",
-      lastReleaseNotesSeen: "2.1.132",
+      lastReleaseNotesSeen: "2.1.136",
     });
   });
 });
@@ -240,7 +245,7 @@ function sampleChangelog(): string {
   return [
     "# Changelog",
     "",
-    "## 2.1.132 - 2026-05-05",
+    "## 2.1.136 - 2026-05-05",
     "- A",
     "- B",
     "",

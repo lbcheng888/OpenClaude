@@ -12,6 +12,56 @@ const MAX_RELEASE_NOTES_SHOWN = 3;
 const BUILT_IN_CHANGELOG = [
   "# Changelog",
   "",
+  "## 2.1.136",
+  "",
+  "- Added `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` to re-enable the session quality survey for enterprises capturing responses through OpenTelemetry",
+  "- Added `settings.autoMode.hard_deny` for auto mode classifier rules that block unconditionally regardless of user intent or allow exceptions",
+  "- Fixed MCP servers configured in `.mcp.json`, plugins, and claude.ai connectors silently disappearing after `/clear`",
+  "- Fixed a rare login loop where a concurrent credential write could overwrite a freshly-rotated OAuth token and force re-login",
+  "- Fixed MCP OAuth refresh tokens being lost when multiple servers refresh concurrently",
+  "- Fixed an API error (400) when extended thinking emitted a redacted thinking block after a tool call",
+  "- Fixed `--resume` / `--continue` not finding sessions when the project path contains underscores",
+  "- Fixed plan mode not blocking file writes when a matching `Edit(...)` allow rule exists",
+  "- WSL2: image paste from Windows clipboard now works via a PowerShell fallback",
+  "- Fixed plugin `Stop`/`UserPromptSubmit` hooks failing when cache cleanup deletes a version still in use by a running session",
+  "- Improved visual consistency across slash command dialogs",
+  "- Fixed colors appearing at wrong positions in bash command output and markdown code blocks",
+  "- Fixed ReasonML diffs rendering corrupted \"undefined\" text artifacts at word-diff boundaries",
+  "- Fixed worktree exit dialog warning about uncommitted files in the wrong directory after worktree removal",
+  "- Fixed `@` file picker not matching files created mid-session in small non-git directories",
+  "- Fixed Backspace and Ctrl+Backspace getting swapped after using Ctrl+G to open an external editor",
+  "- Fixed `/usage` weekly reset showing time of day instead of the calendar date",
+  "- Fixed welcome banner ellipsis causing column overflow on CJK terminals",
+  "- Fixed `/insights` crash when session history contains tool calls with malformed input fields",
+  "- Fixed a renderer crash when a tool's collapsibility classification changes mid-session",
+  "- Fixed `skills` entry in `plugin.json` hiding the plugin's default `skills/` directory",
+  "- Fixed IDE shell-integration lock files not respecting `CLAUDE_CONFIG_DIR`",
+  "- Fixed trailing whitespace in copied terminal output during streaming",
+  "- Fixed plugin uninstall and enable/disable not matching slugs case-insensitively",
+  "- Fixed tool error truncation marker showing a negative count for surrogate-pair strings",
+  "- Fixed env vars from `CLAUDE_ENV_FILE` SessionStart hooks going stale after `/resume` or `/clear`",
+  "- Fixed `/branch` saving a multi-line session title when given a pasted multi-line name",
+  "",
+  "## 2.1.133",
+  "",
+  "- Added `worktree.baseRef` setting (`fresh` | `head`) to choose whether worktrees branch from `origin/<default>` or local `HEAD`",
+  "- Added `sandbox.bwrapPath` and `sandbox.socatPath` managed settings (Linux/WSL) to specify custom bubblewrap and socat binary locations",
+  "- Added `parentSettingsBehavior` admin-tier key (`'first-wins' | 'merge'`) to let admins opt SDK `managedSettings` (parent tier) into the policy merge",
+  "- Hooks now receive the active effort level via the `effort.level` JSON input field and the `$CLAUDE_EFFORT` environment variable",
+  "- Improved focus mode behavior",
+  "- Improved memory usage by releasing warm-spare background workers under memory pressure",
+  "- Fixed parallel sessions all dead-ending at 401 after a refresh-token race wiped shared credentials",
+  "- Fixed `Edit`/`Write` allow rules scoped to a drive root (`C:\\`) or POSIX `/` matching incorrectly and always prompting",
+  "- Fixed an unhandled rejection (`ECOMPROMISED`) when a history or session-log file lock is compromised by clock skew or slow disk",
+  "- Fixed pressing Esc during conversation compaction showing a spurious \"Error compacting conversation\" notification",
+  "- Fixed `HTTP(S)_PROXY` / `NO_PROXY` / mTLS not being respected for the full MCP OAuth flow",
+  "- Fixed Read/Write/Edit being denied on mapped network drives passed via `--add-dir` / SDK `additionalDirectories`",
+  "- Fixed Remote Control stop/interrupt from claude.ai not fully canceling the CLI session the same way local Esc does",
+  "- Fixed `/effort` in one session unexpectedly changing the effort level of other concurrent sessions",
+  "- Fixed subagents not discovering project, user, or plugin skills via the Skill tool",
+  "- `claude --help` now lists `--remote-control` alongside `--remote-control-session-name-prefix`",
+  "- [VSCode] Fixed `claudeCode.claudeProcessWrapper` failing with \"Unsupported platform\" when the extension build doesn't bundle a Claude binary",
+  "",
   "## 2.1.132",
   "",
   "- New `CLAUDE_CODE_SESSION_ID_IN_BASH=1` env var passes session ID to Bash subprocesses",
@@ -19,33 +69,9 @@ const BUILT_IN_CHANGELOG = [
   "- External SIGINT now triggers graceful exit with terminal state restoration",
   "- Fixed blank screens after sleep/wake and Ctrl+Z/fg cycles in fullscreen mode",
   "- Fixed cursor positioning for Indic conjuncts and ZWJ emoji characters",
-  "- Vim operators now correctly handle NFD accented characters",
-  "- Fixed pasted text beginning with `/` being misinterpreted",
-  "- Fixed stray escape sequences during bracketed paste in certain terminals",
-  "- Fixed mouse wheel acceleration issues in VS Code/Cursor (upstream xterm.js)",
-  "- Fixed scroll-wheel problems in JetBrains IDE terminals",
-  "- Fixed dead keyboard state after re-opening background task sessions",
   "- Fixed 10GB+ RSS memory growth from stdio MCP servers writing non-protocol output",
-  "- MCP servers that fail `tools/list` now retry once and show \"connected · tools fetch failed\" in `/mcp`",
-  "- Unauthorized claude.ai connectors now correctly display \"needs auth\"",
-  "- Fixed `/usage` clipboard operations on Linux/X11",
-  "- Fixed `/terminal-setup` errors in Windows Terminal",
   "- Fixed `CLAUDE_CODE_EFFORT_LEVEL` being ignored by the effort picker UI",
-  "- Autocomplete popup now scales properly with terminal height",
-  "- Statusline `context_window` now reflects current usage instead of cumulative totals",
-  "- Alt+T thinking toggle now works on macOS without Option-as-Meta enabled",
   "- Fixed Bedrock and Vertex 400 errors when `ENABLE_PROMPT_CACHING_1H` is set",
-  "",
-  "## 2.1.131",
-  "",
-  "- Fixed VS Code extension failing to activate on Windows due to a hardcoded build path in the bundled SDK (`createRequire` polyfill bug)",
-  "- Fixed Mantle endpoint authentication failing with missing `x-api-key` header",
-  "",
-  "## 2.1.129",
-  "",
-  "- Added `--plugin-url <url>` flag to fetch a plugin `.zip` archive from a URL for the current session",
-  "- Added `CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` env var to force-enable synchronized output on terminals that auto-detection misses (e.g. Emacs `eat`)",
-  "- Added `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`: when set on Homebrew or WinGet installations, Claude Code runs the upgrade command in the background and prompts to restart",
 ].join("\n");
 const PROMPT_EXAMPLES = [
   "fix lint errors",
@@ -415,9 +441,7 @@ function getChangelogCachePath(): string {
 
 function getGlobalConfigPath(): string {
   const configHome = getClaudeConfigHomeDir();
-  const legacyPath = join(configHome, ".config.json");
-  if (existsSync(legacyPath)) return legacyPath;
-  return join(process.env.CLAUDE_CONFIG_DIR || homedir(), ".claude.json");
+  return join(configHome, ".claude.json");
 }
 
 function writeJsonAtomically(filePath: string, value: unknown): void {
@@ -561,14 +585,33 @@ function isTruthyEnv(value: string | undefined): boolean {
 function displayPath(path: string): string {
   const home = homedir();
   if (path === home) return "~";
-  if (path.startsWith(`${home}${sep}`)) return `~/${path.slice(home.length + 1)}`;
+  if (path.startsWith(`${home}${sep}`)) return `~${sep}${path.slice(home.length + 1)}`;
   return path;
 }
 
 function truncatePath(path: string, maxWidth: number): string {
-  if (stringWidth(path) <= maxWidth) return path;
-  const parts = path.split("/");
-  if (parts.length <= 2) return truncateToWidth(path, maxWidth);
+  // Home paths: only compress when needed
+  if (path.startsWith("~")) {
+    if (stringWidth(path) <= maxWidth) return path;
+    const rest = path.slice(2);
+    const parts = rest.split("/");
+    let suffix = parts[parts.length - 1] || "";
+    for (let index = parts.length - 2; index >= 0; index--) {
+      const part = parts[index];
+      if (!part) continue;
+      const candidate = `${part}/${suffix}`;
+      const compressed = `~/…/${candidate}`;
+      if (stringWidth(compressed) > maxWidth) break;
+      suffix = candidate;
+    }
+    const candidate = `~/…/${suffix}`;
+    if (stringWidth(candidate) <= maxWidth) return candidate;
+    return truncateToWidth(candidate, maxWidth);
+  }
+
+  // Non-home paths: always compress to /… format
+  const parts = path.split("/").filter(Boolean);
+  if (parts.length <= 1) return path;
   let suffix = parts[parts.length - 1] || "";
   for (let index = parts.length - 2; index >= 0; index--) {
     const part = parts[index];

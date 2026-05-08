@@ -47,7 +47,14 @@ describe("session store", () => {
     expect(entries[1].type).toBe("assistant");
     expect(entries[1].parentUuid).toBe(entries[0].uuid);
     expect(entries[1].message.content).toEqual([{ type: "text", text: "hi there" }]);
-    expect(entries[2]).toEqual({ type: "last-prompt", lastPrompt: "hello", sessionId: session.id });
+    const lastPrompt = entries.filter(e => e.type === "last-prompt").at(-1);
+    expect(lastPrompt).toEqual({ type: "last-prompt", lastPrompt: "hello", sessionId: session.id });
+
+    expect(entries.at(-1)).toEqual({
+      type: "bundled-package",
+      sessionId: session.id,
+      packageMetadata: [{ name: "@aws-sdk/client-sts", version: "3.936.0", buildScripts: {} }],
+    });
 
     const loaded = loadSession(session.id);
     expect(loaded?.messages.map(message => message.role)).toEqual(["user", "assistant"]);
@@ -93,7 +100,8 @@ describe("session store", () => {
     saveSession(session);
 
     const entries = readJsonl(getTranscriptPath(session.id, cwd));
-    expect(entries.at(-1)).toEqual({ type: "last-prompt", lastPrompt: "hello", sessionId: session.id });
+    const lastPrompt = entries.filter(e => e.type === "last-prompt").at(-1);
+    expect(lastPrompt).toEqual({ type: "last-prompt", lastPrompt: "hello", sessionId: session.id });
   });
 });
 

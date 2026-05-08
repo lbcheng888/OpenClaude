@@ -7,6 +7,7 @@ import { readClaudeSettings } from "../config/claude-settings.js";
 
 export type PermissionBehavior = "allow" | "deny" | "ask";
 export type PermissionMode = "default" | "acceptEdits" | "plan" | "auto" | "bypassPermissions" | "dontAsk";
+export type PermissionRuleType = "allow" | "deny" | "ask" | "hard_deny";
 
 export interface PermissionResult {
   behavior: PermissionBehavior;
@@ -28,6 +29,7 @@ export class PermissionHandler {
   private allowlist: string[] = [];
   private asklist: string[] = [];
   private denylist: string[] = [];
+  private hardDenyList: string[] = [];
   private sessionApprovals = new Map<string, PermissionBehavior>();
 
   constructor() {
@@ -35,9 +37,13 @@ export class PermissionHandler {
     const allow = Array.isArray(permissions?.allow) ? permissions.allow.filter(isString) : [];
     const ask = Array.isArray(permissions?.ask) ? permissions.ask.filter(isString) : [];
     const deny = Array.isArray(permissions?.deny) ? permissions.deny.filter(isString) : [];
+    const hardDeny = Array.isArray((permissions as Record<string, unknown>)?.hard_deny)
+      ? ((permissions as Record<string, unknown>).hard_deny as unknown[]).filter(isString)
+      : [];
     this.allowlist = [...new Set(["Read", "Glob", "Grep", "LS", "TodoWrite", "WebFetch", ...allow])];
     this.asklist = [...new Set(ask)];
     this.denylist = [...new Set(deny)];
+    this.hardDenyList = [...new Set(hardDeny)];
     if (isPermissionMode(permissions?.defaultMode)) {
       this.mode = permissions.defaultMode;
     }
@@ -54,12 +60,22 @@ export class PermissionHandler {
   async checkPermission(request: PermissionRequest): Promise<PermissionResult> {
     const { toolName, input } = request;
 
-    // Plan mode - deny edits and bash
+    // hard_deny: unconditional block regardless of mode or user intent
+    if (this.hardDenyList.some((r) => matchRule(r, toolName, input, "deny"))) {
+      return { behavior: "deny", message: `Blocked by hard_deny rule: ${toolName}` };
+    }
+
+    // Plan mode - deny edits and bash UNLESS a matching allow rule exists
     if (
       this.mode === "plan" &&
       (toolName === "Write" || toolName === "Edit" || toolName === "MultiEdit" || toolName === "Bash")
     ) {
-      return { behavior: "deny", message: "Plan mode: edits and commands are blocked until plan is approved." };
+      const planAllowed = toolName === "Bash"
+        ? bashCommandAllowedByRules(this.allowlist, input)
+        : this.allowlist.some((r) => matchRule(r, toolName, input, "allow"));
+      if (!planAllowed) {
+        return { behavior: "deny", message: "Plan mode: edits and commands are blocked until plan is approved." };
+      }
     }
 
     // Safety checks

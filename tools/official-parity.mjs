@@ -479,7 +479,7 @@ server.listen(0, "127.0.0.1", () => {
 }
 
 function resolveOfficialTruthSource() {
-  const version = process.env.OFFICIAL_TRUTH_VERSION || "2.1.132";
+  const version = process.env.OFFICIAL_TRUTH_VERSION || "2.1.136";
   const dir = resolve(process.env.OFFICIAL_TRUTH_DIR || join(repo, ".versions", version));
   const bundle = join(dir, "main_bundle", "full_bundle.cjs");
 
@@ -501,7 +501,7 @@ function resolveOfficialEntry(officialTruth) {
 
   fail([
     `Official truth source is fixed at ${officialTruth.dir}.`,
-    "Set OFFICIAL_CLAUDE_CLI to the executable from that same 2.1.132 package before running parity capture.",
+    "Set OFFICIAL_CLAUDE_CLI to the executable from that same 2.1.136 package before running parity capture.",
     "Refusing to auto-detect global claude, nvm packages, or /Users/lbcheng/claude-code because that can compare against the wrong build.",
   ].join("\n"));
 }
@@ -948,7 +948,7 @@ function seedClaudeConfig({ configDir, workdir }) {
     installMethod: "global",
     theme: "dark",
     hasCompletedOnboarding: true,
-    lastOnboardingVersion: "2.1.132",
+    lastOnboardingVersion: "2.1.136",
     lastReleaseNotesSeen: process.env.OFFICIAL_PARITY_LAST_RELEASE_NOTES_SEEN || "2.1.128",
     preferredNotifChannel: "auto",
     verbose: false,

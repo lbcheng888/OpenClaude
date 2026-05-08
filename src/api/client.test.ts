@@ -9,6 +9,7 @@ import {
   getConfiguredProvider,
   getConfiguredSubagentModel,
   getModelContextLimit,
+  normalizeMessages,
   sendMessage,
   streamMessage,
   toDeepSeekV4ChatMessages,
@@ -906,6 +907,97 @@ describe("API client", () => {
 
     process.env.CLAUDE_CODE_SUBAGENT_MODEL = "deepseek-v4-flash";
     expect(getConfiguredSubagentModel("parent-model")).toBe("deepseek-v4-flash");
+  });
+
+  test("normalizeMessages reorders assistant content blocks for API ordering", () => {
+    const messages = [
+      { role: "user" as const, content: "hello" },
+      {
+        role: "assistant" as const,
+        content: [
+          { type: "tool_use" as const, id: "call_1", name: "Read", input: {} },
+          { type: "redacted_thinking" as const, data: "redacted" },
+          { type: "text" as const, text: "result" },
+        ],
+      },
+    ];
+
+    const normalized = normalizeMessages(messages);
+    const blocks = normalized[1]!.content as Array<Record<string, unknown>>;
+    expect(blocks.map(b => b.type)).toEqual(["redacted_thinking", "text", "tool_use"]);
+    // Ensure data is preserved
+    expect(blocks[0]).toEqual({ type: "redacted_thinking", data: "redacted" });
+    expect(blocks[2]).toEqual({ type: "tool_use", id: "call_1", name: "Read", input: {} });
+  });
+
+  test("normalizeMessages preserves string content messages", () => {
+    const messages = [
+      { role: "user" as const, content: "hello" },
+      { role: "assistant" as const, content: "world" },
+    ];
+    expect(normalizeMessages(messages)).toBe(messages); // same reference, no copy
+  });
+
+  test("normalizeMessages preserves user message content untouched", () => {
+    const messages = [
+      {
+        role: "user" as const,
+        content: [
+          { type: "text" as const, text: "hi" },
+          { type: "image" as const, source: { type: "base64" as const, media_type: "image/png", data: "abc" } },
+        ],
+      },
+    ];
+    const normalized = normalizeMessages(messages);
+    expect(normalized).toBe(messages); // no assistant array content, no copy
+  });
+
+  test("normalizeMessages is a no-op for already-ordered blocks", () => {
+    const messages = [
+      {
+        role: "assistant" as const,
+        content: [
+          { type: "thinking" as const, thinking: "plan", signature: "sig" },
+          { type: "text" as const, text: "done" },
+          { type: "tool_use" as const, id: "call_1", name: "Read", input: {} },
+        ],
+      },
+    ];
+    const normalized = normalizeMessages(messages);
+    const blocks = (normalized[0]!.content) as Array<Record<string, unknown>>;
+    expect(blocks.map(b => b.type)).toEqual(["thinking", "text", "tool_use"]);
+  });
+
+  test("streamMessage retries 401 with refreshed token", async () => {
+    installApiEnv();
+    process.env.CLAUDE_CODE_MAX_RETRIES = "1";
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      if (calls === 1) {
+        return new Response(JSON.stringify({ error: { message: "unauthorized", type: "authentication_error" } }), {
+          status: 401,
+        });
+      }
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode("data: {\"type\":\"message_stop\"}\n\n"));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      );
+    }) as typeof fetch;
+
+    const events = [];
+    for await (const event of streamMessage([{ role: "user", content: "hello" }])) {
+      events.push(event);
+    }
+
+    expect(calls).toBe(2);
+    expect(events.some(event => event.type === "api_retry" && event.retryAttempt === 1)).toBe(true);
+    expect(events.at(-1)).toEqual({ type: "message_stop" });
   });
 });
 

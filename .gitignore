@@ -1,18 +1,25 @@
 node_modules/
-.github/
-coverage/
-.cache/
-.vite/
-ts/node_modules/
-.venv-whisper/
-cheng-code/transcribe/runtime/
-cheng-code/harness-runtime-core/runtime/
+node_modules.asar
 
-ts/dist/
-electron/renderer-dist/
 dist/
 out/
 release/
+bin/
+ts/dist/
+electron/renderer-dist/
+
+.github/
+.vscode/
+.devcontainer/
+.versions/
+.cache/
+.vite/
+.claude/
+.claude-plugins/
+.cursorignore
+.cursorindexingignore
+.truth-userdata/
+.venv-whisper/
 
 .DS_Store
 *.log
@@ -25,17 +32,20 @@ yarn-error.log*
 !.env.example
 
 coverage/
-.cache/
-.vite/
-bin/
-node_modules.asar
-cursor-source/
-.cursorignore
-.cursorindexingignore
-.truth-userdata/
 truth-dom
 *.png
 start.sh
-.DS_Store
 lessons.md
-.versions/
+cursor-source/
+cheng-code/transcribe/runtime/
+cheng-code/harness-runtime-core/runtime/
+
+# upstream artifacts (not part of this fork)
+.claude-plugin/
+CHANGELOG.md
+SECURITY.md
+demo.gif
+examples/
+plugins/
+scripts/
+Script/

@@ -196,15 +196,16 @@ function mergeOverlappingHunks(hunks: Array<{ start: number; end: number }>): Ar
 function createHunkHeader(operations: AnnotatedDiffOperation[]): string {
   const first = operations[0];
   if (!first) return "@@ -0,0 +0,0 @@";
-  const oldStart = first.oldLine;
-  const newStart = first.newLine;
+  const oldStart = first.oldLine ?? 0;
+  const newStart = first.newLine ?? 0;
   const oldCount = operations.filter(operation => operation.type !== "add").length;
   const newCount = operations.filter(operation => operation.type !== "remove").length;
   return `@@ -${oldStart},${oldCount} +${newStart},${newCount} @@`;
 }
 
 function formatDiffOperation(operation: DiffOperation): string {
-  if (operation.type === "add") return `+${operation.line}`;
-  if (operation.type === "remove") return `-${operation.line}`;
-  return ` ${operation.line}`;
+  const content = operation.line ?? "";
+  if (operation.type === "add") return `+${content}`;
+  if (operation.type === "remove") return `-${content}`;
+  return ` ${content}`;
 }

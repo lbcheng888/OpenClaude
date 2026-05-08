@@ -711,8 +711,9 @@ export function isCellSelected(
 
 /** Extract text from one screen row. When the next row is a soft-wrap
  *  continuation (screen.softWrap[row+1]>0), clamp to that content-end
- *  column and skip the trailing trim so the word-separator space survives
- *  the join. See Screen.softWrap for why the clamp is necessary. */
+ *  column. Trailing whitespace is always trimmed; joinRows re-inserts a
+ *  word-separator space when needed. See Screen.softWrap for why the
+ *  clamp is necessary. */
 function extractRowText(
   screen: Screen,
   row: number,
@@ -740,20 +741,32 @@ function extractRowText(
     }
     line += cell.char
   }
-  return contentEnd > 0 ? line : line.replace(/\s+$/, '')
+  return line.replace(/\s+$/, '')
 }
 
 /** Accumulator for selected text that merges soft-wrapped rows back
  *  into logical lines. push(text, sw) appends a newline before text
  *  only when sw=false (i.e. the row starts a new logical line). Rows
- *  with sw=true are concatenated onto the previous row. */
+ *  with sw=true are concatenated onto the previous row. When both
+ *  segments have content and no whitespace boundary exists between them,
+ *  a space is inserted to preserve word separation. */
 function joinRows(
   lines: string[],
   text: string,
   sw: boolean | undefined,
 ): void {
   if (sw && lines.length > 0) {
-    lines[lines.length - 1] += text
+    const prev = lines[lines.length - 1]
+    if (
+      prev.length > 0 &&
+      text.length > 0 &&
+      !/\s$/u.test(prev) &&
+      !/^\s/u.test(text)
+    ) {
+      lines[lines.length - 1] = prev + ' ' + text
+    } else {
+      lines[lines.length - 1] = prev + text
+    }
   } else {
     lines.push(text)
   }

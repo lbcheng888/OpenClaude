@@ -14,6 +14,7 @@ import {
   type ToolDisplay,
   type ToolProgressDisplay,
 } from "../agent/tengu.js";
+import { refreshClaudeEnvFile } from "../config/claude-settings.js";
 import { createSettingsHookRunner } from "../hooks/runner.js";
 import { PermissionHandler, type PermissionBehavior, type PermissionMode } from "../permissions/handler.js";
 import {
@@ -188,6 +189,23 @@ const PERMISSION_PROMPT_OPTIONS: PermissionPromptOption[] = [
     decision: { behavior: "deny" },
   },
 ];
+
+const KEYBINDINGS_SCHEMA_URL = "https://www.schemastore.org/claude-code-keybindings.json";
+const KEYBINDINGS_DOCS_URL = "https://code.claude.com/docs/en/keybindings";
+
+const DEFAULT_KEYBINDINGS: {
+  $schema: string;
+  $docs: string;
+  bindings: Record<string, string[]>;
+} = {
+  $schema: KEYBINDINGS_SCHEMA_URL,
+  $docs: KEYBINDINGS_DOCS_URL,
+  bindings: {
+    "chat:externalEditor": ["ctrl+g", "ctrl+e"],
+    "app:toggleTodos": ["ctrl+k ctrl+t"],
+  },
+};
+
 type ExitControlKeyName = "Ctrl-C" | "Ctrl-D";
 type ExitMessage = { show: boolean; key?: ExitControlKeyName };
 type ExitControlInput = { keyName: ExitControlKeyName; count: number };
@@ -212,6 +230,7 @@ export type InputEditAction =
   | { type: "insert"; text: string };
 const CLIPBOARD_IMAGE_HINT_DEBOUNCE_MS = 1_000;
 const CLIPBOARD_IMAGE_HINT_COOLDOWN_MS = 30_000;
+const IN_PASTE = "IN_PASTE";
 export const MAIN_SYSTEM_PROMPT = `You are Claude Code, Anthropic's official CLI for Claude. You help users work inside their local project by answering directly, using tools when needed, and keeping tool output concise.
 
 Use direct file/search tools for simple, directed codebase searches, such as finding a specific file, class, function, or string.
@@ -387,6 +406,7 @@ export function ClaudeCodeTui({
   const [selectedBackgroundTaskIndex, setSelectedBackgroundTaskIndex] = useState(0);
   const [backgroundTaskDetailId, setBackgroundTaskDetailId] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const [responseLength, setResponseLength] = useState(0);
   const backgroundTasksVisibleRef = useRef(false);
   const selectedBackgroundTaskIndexRef = useRef(0);
@@ -812,6 +832,7 @@ export function ClaudeCodeTui({
   }, [pushSystemMessage]);
 
   useEffect(() => {
+    refreshClaudeEnvFile();
     if (!hookRunner) return;
     void hookRunner("SessionStart", {
       source: restoredSession?.source || "startup",
@@ -1257,6 +1278,18 @@ export function ClaudeCodeTui({
     };
   }, [handleExitControlInput]);
 
+  useEffect(() => {
+    const onSigcont = (): void => {
+      if (process.stdin.readableLength > 0) {
+        process.stdin.read();
+      }
+    };
+    process.on("SIGCONT", onSigcont);
+    return () => {
+      process.off("SIGCONT", onSigcont);
+    };
+  }, []);
+
   const handleSlashCommand = useCallback(
     (commandLine: string): true | string => {
       const [command = "", ...args] = commandLine.trim().split(/\s+/u);
@@ -1264,6 +1297,7 @@ export function ClaudeCodeTui({
 
       switch (command) {
         case "/clear":
+          refreshClaudeEnvFile();
           agentSession.reset();
           setMessages([createStartupMessage()]);
           setStreamingNow("");
@@ -1305,6 +1339,11 @@ export function ClaudeCodeTui({
 
         case "/feedback":
           pushSystemMessage("Feedback surveys are disabled.");
+          return true;
+
+        case "/focus":
+          setFocusMode(!focusMode);
+          pushSystemMessage(focusMode ? "Focus mode off." : "Focus mode on — non-essential UI hidden.");
           return true;
 
         case "/release-notes":
@@ -1786,8 +1825,28 @@ export function ClaudeCodeTui({
     };
 
     process.stdin.on("data", onData);
+
+    const handleReadable = (): void => {
+      if (process.stdin.readableLength === 0) return;
+      const chunk = process.stdin.read();
+      if (chunk) {
+        onData(chunk instanceof Buffer ? chunk : Buffer.from(chunk));
+      }
+    };
+
+    const onStdinError = (): void => {
+      process.stdin.off("data", onData);
+      process.stdin.off("readable", handleReadable);
+      process.stdin.on("data", onData);
+      process.stdin.on("readable", handleReadable);
+    };
+
+    process.stdin.on("readable", handleReadable);
+    process.stdin.on("error", onStdinError);
     return () => {
       process.stdin.off("data", onData);
+      process.stdin.off("readable", handleReadable);
+      process.stdin.off("error", onStdinError);
     };
   }, [handleBackgroundTasksShortcut, handleCtrlOShortcut, handleExitControlInput, interruptActiveRequest, openBackgroundTasksPanel]);
 
@@ -2274,7 +2333,7 @@ export function ClaudeCodeTui({
           onExitControl={handleExitControlInput}
         />
       )}
-      {slashCommandMatches.length > 0 && <SlashCommandPanel commands={slashCommandMatches} />}
+      {!focusMode && slashCommandMatches.length > 0 && <SlashCommandPanel commands={slashCommandMatches} />}
       <Box key={`composer-${messages.length}-${loading ? "loading" : "idle"}`} flexDirection="column">
         <Box marginTop={1}>
           <Text dimColor>{"─".repeat(Math.max(10, process.stdout.columns || 80))}</Text>
@@ -2285,8 +2344,8 @@ export function ClaudeCodeTui({
           loading={loading}
           placeholder={isEmptySession && getApiConfig(model) && shouldShowPromptPlaceholder() ? getPromptPlaceholder() : undefined}
         />
-        <BottomSeparator />
-        <ModeFooter
+        {!focusMode && <BottomSeparator />}
+        {!focusMode && <ModeFooter
           permissionMode={permissionMode}
           model={model}
           expandedOutput={expandedOutput}
@@ -2300,7 +2359,7 @@ export function ClaudeCodeTui({
           exitMessage={exitMessage}
           temporaryNotice={temporaryNotice}
           isEmptySession={isEmptySession}
-        />
+        />}
         {showOutputPicker && (
           <OutputPickerPanel
             items={outputPickerItems}
@@ -2738,6 +2797,9 @@ function estimateToolRows(tool: ToolRender, expandedOutput: boolean): number {
   }
   if (tool.display?.type === "edit" && expandedOutput && tool.display.diff) {
     return 2 + estimateWrappedLineCount(tool.display.diff, process.stdout.columns || 80);
+  }
+  if (tool.isError && expandedOutput) {
+    return 2 + estimateWrappedLineCount(tool.result || "", process.stdout.columns || 80);
   }
   if (expandedOutput && (tool.name === "Glob" || tool.name === "Grep" || tool.name === "LS")) {
     return 2 + estimateWrappedLineCount(tool.result || "", process.stdout.columns || 80);
@@ -3474,7 +3536,15 @@ function ToolResultView({
   }
 
   if (tool.isError) {
-    return <OutputLineView content={result || "Error"} isError expanded={expandedOutput} />;
+    if (expandedOutput) {
+      return <OutputLineView content={result || "Error"} isError expanded />;
+    }
+    return (
+      <MessageResponseView height={1}>
+        <Text color="error">{firstResultLine(result) || "Error"}</Text>
+        {(result?.split("\n").length || 0) > 1 ? <Text dimColor> (ctrl+o to expand)</Text> : null}
+      </MessageResponseView>
+    );
   }
 
   if (tool.name === "Glob" || tool.name === "Grep" || tool.name === "LS") {
@@ -4038,7 +4108,6 @@ function MessageResponseView({
     </MessageResponseContext.Provider>
   );
 
-  if (height !== undefined) return content;
   return <Ratchet lock="offscreen">{content}</Ratchet>;
 }
 
@@ -4639,14 +4708,18 @@ function PermissionPromptView({
 
 function SlashCommandPanel({ commands }: { commands: string[] }): React.ReactElement {
   return (
-    <Box flexDirection="column" marginTop={1} paddingX={2}>
-      {commands.map((command, index) => (
-        <Box key={command}>
-          <Text color={index === 0 ? "claude" : undefined}>{index === 0 ? "› " : "  "}</Text>
-          <Text>{command}</Text>
-          <Text dimColor>{`  ${slashCommandDescription(command)}`}</Text>
-        </Box>
-      ))}
+    <Box flexDirection="column" marginTop={1} marginX={2} borderStyle="round" borderColor="subtle">
+      <Box flexDirection="column" paddingX={1}>
+        {commands.map((command, index) => (
+          <Box key={command} minHeight={1}>
+            <Box minWidth={2}>
+              <Text color={index === 0 ? "claude" : "dim"}>{index === 0 ? "❯" : " "}</Text>
+            </Box>
+            <Text color={index === 0 ? undefined : "dim"}>{command}</Text>
+            <Text dimColor>{`  ${slashCommandDescription(command)}`}</Text>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }
@@ -4803,10 +4876,10 @@ export function getBottomSeparatorText(columns: number): string {
 }
 
 function BottomSeparator(): React.ReactElement {
-  const columns = Math.max(10, process.stdout.columns || 80);
+  const width = Math.max(10, process.stdout.columns || 80);
   return (
-    <Box>
-      <Text dimColor>{getBottomSeparatorText(columns)}</Text>
+    <Box flexShrink={0} minWidth={width}>
+      <Text dimColor>{"─".repeat(width)}</Text>
     </Box>
   );
 }
@@ -5767,7 +5840,9 @@ function saveCurrentSession(session: SessionData, history: ApiMessage[], permiss
     timestamp: Date.now() - (history.length - index),
   }));
   session.permissionMode = permissionMode;
-  session.cwd ||= process.cwd();
+  if (!session.cwd || !existsSync(session.cwd)) {
+    session.cwd = process.cwd();
+  }
   saveSession(session);
 }
 

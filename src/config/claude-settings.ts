@@ -62,6 +62,7 @@ export type ClaudeSettings = {
   language?: unknown;
   model?: unknown;
   outputStyle?: unknown;
+  parentSettingsBehavior?: "first-wins" | "merge";
   preferredLanguage?: unknown;
   permissions?: {
     allow?: unknown;
@@ -70,11 +71,18 @@ export type ClaudeSettings = {
     defaultMode?: unknown;
     disableBypassPermissionsMode?: unknown;
   };
+  sandbox?: {
+    bwrapPath?: string;
+    socatPath?: string;
+  };
   theme?: unknown;
   prefersReducedMotion?: boolean;
   spinnerVerbs?: {
     mode?: "append" | "replace";
     verbs?: string[];
+  };
+  worktree?: {
+    baseRef?: "fresh" | "head";
   };
   [key: string]: unknown;
 };
@@ -113,9 +121,86 @@ export function loadClaudeSettingsEnv(): void {
   }
 }
 
+// ── CLAUDE_ENV_FILE support (v2.1.136) ──
+
+let cachedEnvFileVars: Record<string, string> = {};
+
+export function getClaudeEnvFileVars(): Record<string, string> {
+  return { ...cachedEnvFileVars };
+}
+
+export function loadClaudeEnvFile(): void {
+  cachedEnvFileVars = {};
+  const envFilePath = process.env.CLAUDE_ENV_FILE;
+  if (!envFilePath) return;
+
+  try {
+    const content = readFileSync(envFilePath, "utf8");
+    for (const line of content.split(/\r?\n/u)) {
+      const trimmed = line.trim();
+      // Skip empty lines and comments
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eqIdx = trimmed.indexOf("=");
+      if (eqIdx <= 0) continue;
+      const key = trimmed.slice(0, eqIdx).trim();
+      const value = trimmed.slice(eqIdx + 1).trim();
+      if (key) {
+        cachedEnvFileVars[key] = value;
+        // Set into process.env if not already set (env file vars take lower priority)
+        if (process.env[key] === undefined) {
+          process.env[key] = value;
+        }
+      }
+    }
+  } catch {
+    // CLAUDE_ENV_FILE is optional — silently ignore missing/unreadable files
+  }
+}
+
+export function refreshClaudeEnvFile(): void {
+  // Re-read the env file on resume/clear to pick up changes
+  loadClaudeEnvFile();
+}
+
 export function readClaudeSettingString(key: keyof ClaudeSettings): string | undefined {
   const value = readClaudeSettings()?.[key];
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+export function getWorktreeBaseRef(): "fresh" | "head" {
+  const settings = readClaudeSettings();
+  const worktree = settings?.worktree;
+  if (worktree && typeof worktree === "object" && !Array.isArray(worktree)) {
+    const baseRef = (worktree as Record<string, unknown>).baseRef;
+    if (baseRef === "head") return "head";
+  }
+  return "fresh";
+}
+
+export function getSandboxBwrapPath(): string {
+  const settings = readClaudeSettings();
+  const sandbox = settings?.sandbox;
+  if (sandbox && typeof sandbox === "object" && !Array.isArray(sandbox)) {
+    const customPath = (sandbox as Record<string, unknown>).bwrapPath;
+    if (typeof customPath === "string" && customPath.trim()) return customPath.trim();
+  }
+  return "bwrap";
+}
+
+export function getSandboxSocatPath(): string {
+  const settings = readClaudeSettings();
+  const sandbox = settings?.sandbox;
+  if (sandbox && typeof sandbox === "object" && !Array.isArray(sandbox)) {
+    const customPath = (sandbox as Record<string, unknown>).socatPath;
+    if (typeof customPath === "string" && customPath.trim()) return customPath.trim();
+  }
+  return "socat";
+}
+
+export function getParentSettingsBehavior(): "first-wins" | "merge" {
+  const value = readClaudeSettings()?.parentSettingsBehavior;
+  if (value === "first-wins") return "first-wins";
+  return "merge";
 }
 
 export function clearClaudeSettingsCache(): void {
@@ -303,4 +388,64 @@ function defaultManagedSettingsDir(): string {
   if (process.platform === "darwin") return "/Library/Application Support/ClaudeCode";
   if (process.platform === "win32") return "C:\\Program Files\\ClaudeCode";
   return "/etc/claude-code";
+}
+
+// ── Lightweight schema validation ──
+
+export type StringFormat = "email" | "url" | "guid" | "uuid";
+
+export interface StringField {
+  type: "string";
+  format?: StringFormat;
+}
+
+export type SettingsField = StringField;
+
+export interface ValidationError {
+  path: string;
+  message: string;
+}
+
+const FORMAT_REGEX: Record<StringFormat, RegExp> = {
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  url: /^https?:\/\/[^\s/$.?#][^\s]*$/i,
+  guid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+  uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+};
+
+export function validateString(value: unknown, schema: StringField): string | null {
+  if (typeof value !== "string") return "Expected string";
+  if (schema.format) {
+    const regex = FORMAT_REGEX[schema.format];
+    if (regex && !regex.test(value)) return `Invalid ${schema.format}`;
+  }
+  return null;
+}
+
+export function validateSettings(
+  schema: Record<string, SettingsField>,
+  data: unknown,
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    errors.push({ path: "", message: "Expected an object" });
+    return errors;
+  }
+  const obj = data as Record<string, unknown>;
+  for (const [key, field] of Object.entries(schema)) {
+    if (field.type === "string") {
+      const err = validateString(obj[key], field);
+      if (err) errors.push({ path: key, message: err });
+    }
+  }
+  return errors;
+}
+
+export function isValidMarketplaceUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
 }

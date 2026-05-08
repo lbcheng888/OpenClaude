@@ -14,8 +14,17 @@ import { dirname, join } from "path";
 import type { ApiMessage, ApiMessageContent } from "../api/client.js";
 
 const MAX_SANITIZED_LENGTH = 200;
-const VERSION = "2.1.132";
+const VERSION = "2.1.136";
 const MAX_TOMBSTONE_REWRITE_BYTES = 50 * 1024 * 1024;
+
+// Bundled package metadata for Bedrock/Vertex authentication
+const BUNDLED_PACKAGES: BundledPackageMetadata[] = [
+  {
+    name: "@aws-sdk/client-sts",
+    version: "3.936.0",
+    buildScripts: {},
+  },
+];
 
 export interface SessionData {
   id: string;
@@ -129,6 +138,18 @@ type CompactBoundaryEntry = {
   };
 };
 
+type BundledPackageMetadata = {
+  name: string;
+  version: string;
+  buildScripts?: Record<string, string>;
+};
+
+type BundledPackageEntry = {
+  type: "bundled-package";
+  sessionId: string;
+  packageMetadata: BundledPackageMetadata[];
+};
+
 type TranscriptEntry =
   | TranscriptMessageEntry
   | LastPromptEntry
@@ -148,6 +169,7 @@ type TranscriptEntry =
   | WorktreeStateEntry
   | ContentReplacementEntry
   | CompactBoundaryEntry
+  | BundledPackageEntry
   | Record<string, unknown>;
 
 // ---- Session save/load ----
@@ -227,6 +249,13 @@ export function saveSession(session: SessionData): void {
       agentSetting: session.agentSetting,
     } as AgentSettingEntry);
   }
+
+  // Append bundled package metadata for Bedrock/Vertex auth
+  finalEntries.push({
+    type: "bundled-package",
+    sessionId: session.id,
+    packageMetadata: BUNDLED_PACKAGES,
+  } as BundledPackageEntry);
 
   mkdirSync(dirname(transcriptPath), { recursive: true });
   writeJsonlAtomically(transcriptPath, finalEntries);
@@ -453,10 +482,11 @@ export function setSessionSummary(sessionId: string, summary: string, leafUuid?:
 }
 
 export function setSessionCustomTitle(sessionId: string, customTitle: string): void {
+  const sanitizedTitle = customTitle.split("\n")[0].trim();
   appendMetadataEntry(sessionId, {
     type: "custom-title",
     sessionId,
-    customTitle,
+    customTitle: sanitizedTitle,
   } as CustomTitleEntry);
 }
 
@@ -515,7 +545,7 @@ export function getTranscriptPath(sessionId: string, cwd = process.cwd()): strin
 }
 
 export function sanitizePath(name: string): string {
-  const sanitized = name.replace(/[^a-zA-Z0-9]/g, "-");
+  const sanitized = name.replace(/[^a-zA-Z0-9_]/g, "-");
   if (sanitized.length <= MAX_SANITIZED_LENGTH) return sanitized;
   return `${sanitized.slice(0, MAX_SANITIZED_LENGTH)}-${Math.abs(djb2Hash(name)).toString(36)}`;
 }
@@ -739,12 +769,23 @@ function readTranscriptFile(transcriptPath: string): TranscriptEntry[] {
 
 function writeJsonlAtomically(path: string, entries: TranscriptEntry[]): void {
   const tempPath = `${path}.${process.pid}.${Date.now()}.tmp`;
-  writeFileSync(
-    tempPath,
-    entries.map(entry => JSON.stringify(entry)).join("\n") + "\n",
-    "utf8",
-  );
-  renameSync(tempPath, path);
+  const content = entries.map(entry => JSON.stringify(entry)).join("\n") + "\n";
+  writeFileSync(tempPath, content, "utf8");
+  try {
+    renameSync(tempPath, path);
+  } catch (error) {
+    // Clean up temp file
+    try {
+      unlinkSync(tempPath);
+    } catch {}
+    // On ECOMPROMISED (file lock compromised by clock skew or slow disk),
+    // fall back to a direct write instead of atomic rename
+    if ((error as any)?.code === "ECOMPROMISED") {
+      writeFileSync(path, content, "utf8");
+      return;
+    }
+    throw error;
+  }
 }
 
 export function isTranscriptMessageEntry(entry: TranscriptEntry): entry is TranscriptMessageEntry {

@@ -8,8 +8,9 @@ const options = parseCliArgs(args);
 if (options.settingsPath) {
   process.env.CLAUDE_CODE_SETTINGS_PATH = options.settingsPath;
 }
-const { loadClaudeSettingsEnv } = await import("./config/claude-settings.js");
+const { loadClaudeSettingsEnv, loadClaudeEnvFile } = await import("./config/claude-settings.js");
 loadClaudeSettingsEnv();
+loadClaudeEnvFile();
 
 if (options.version) {
   process.stdout.write(`${version} (Claude Code)\n`);
@@ -30,8 +31,9 @@ if (options.print || !process.stdin.isTTY) {
 const React = await import("react");
 const { wrappedRender } = await import("@anthropic/ink");
 const { ClaudeCodeTui } = await import("./terminal/app.js");
-const { refreshChangelogCache } = await import("./terminal/startup-screen.js");
+const { refreshChangelogCache, markReleaseNotesSeen } = await import("./terminal/startup-screen.js");
 void refreshChangelogCache(version);
+markReleaseNotesSeen(version);
 const { waitUntilExit } = await wrappedRender(
   React.createElement(ClaudeCodeTui, {
     version,
@@ -73,6 +75,8 @@ Options:
   --permission-mode <mode>                          default, acceptEdits, plan, dontAsk, bypassPermissions
   -r, --resume [sessionId]                          Resume a saved session
   -c, --continue                                    Continue the most recent session
+  --remote-control                                  Enables Remote Control for the session
+  --remote-control-session-name-prefix <prefix>     Custom prefix for Remote Control session name
   -h, --help                                        Display help for command
   -v, -V, --version                                 Display version
 `;

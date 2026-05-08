@@ -53,6 +53,87 @@ export type SubagentExecutionResult = {
   error?: string;
 };
 
+// Platform/environment info collection (v2.1.136 PP9 block)
+export type PlatformInfo = {
+  platform: string;
+  nodeVersion: string;
+  terminal: string;
+  packageManagers: string;
+  runtimes: string;
+  isRunningWithBun: boolean;
+  isCI: boolean;
+  githubEventName?: string;
+  githubActionsRunnerEnvironment?: string;
+  githubActionsRunnerOS?: string;
+  githubActionRef?: string;
+  wslVersion?: string;
+  isClaudeCodeRemote: boolean;
+  claudeCodeContainerId?: string;
+  claudeCodeRemoteSessionId?: string;
+};
+
+export type RepositoryInfo = {
+  actorId: string;
+  repositoryId: string;
+  repositoryOwnerId: string;
+};
+
+// Transport protocol message types (v2.1.136 nx8 block)
+export type TransportMessageType =
+  | "system"
+  | "mirror_error"
+  | "stop_task"
+  | "control_response"
+  | "control_request"
+  | "control_cancel_request"
+  | "keep_alive"
+  | "transcript_mirror"
+  | "post_turn_summary"
+  | "task_summary"
+  | "result";
+
+// Feature tips / onboarding (v2.1.136 MQ8 block)
+export type FeatureTip = {
+  id: string;
+  condition: string;
+  title: string;
+  description: string;
+  cooldownSessions?: number;
+};
+
+export const BUILT_IN_FEATURE_TIPS: FeatureTip[] = [
+  {
+    id: "new-user-warmup",
+    condition: "numStartups < 10",
+    title: "Start small",
+    description: "Start with small features or bug fixes, tell Claude to propose a plan, and verify its suggested edits before committing.",
+  },
+  {
+    id: "plan-mode-for-complex-tasks",
+    condition: "complex task detected",
+    title: "Plan mode",
+    description: "Use /plan (or EnterPlanMode tool) to get Claude to design an implementation approach before writing code.",
+  },
+  {
+    id: "default-permission-mode-config",
+    condition: "permission prompts frequent",
+    title: "Permission mode",
+    description: "Use /config to change your default permission mode (including Plan Mode).",
+  },
+  {
+    id: "git-worktrees",
+    condition: "multi-session",
+    title: "Git worktrees",
+    description: "Use git worktrees to run multiple Claude sessions in parallel.",
+  },
+  {
+    id: "color-when-multi-clauding",
+    condition: "multi-session",
+    title: "Multi-session colors",
+    description: "Running multiple Claude sessions? Use /color and /rename to tell them apart at a glance.",
+  },
+];
+
 export type ToolDisplay =
   | {
       type: "bash";
@@ -1343,8 +1424,14 @@ function generatePreview(content: string, maxBytes: number): string {
   if (buffer.byteLength <= maxBytes) return content;
   const decoded = new TextDecoder("utf-8", { fatal: false }).decode(buffer.subarray(0, maxBytes));
   const lastNewline = decoded.lastIndexOf("\n");
-  const cutPoint = lastNewline > decoded.length / 2 ? lastNewline : decoded.length;
-  return decoded.slice(0, cutPoint).replace(/\uFFFD$/u, "");
+  // Use spread operator for surrogate-pair-aware character count
+  const decodedChars = [...decoded];
+  const cutPoint = lastNewline > decodedChars.length / 2 ? lastNewline : decodedChars.length;
+  // Build result using spread to avoid splitting surrogate pairs
+  const resultChars = decodedChars.slice(0, cutPoint);
+  const result = resultChars.join("");
+  // Remove trailing replacement character from truncated UTF-8 sequences
+  return result.endsWith("\uFFFD") ? result.slice(0, -1) : result;
 }
 
 function sanitizeToolResultId(value: string): string {

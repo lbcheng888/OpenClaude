@@ -1,6 +1,6 @@
 {
   "name": "claude-code-full",
-  "version": "2.1.132",
+  "version": "2.1.136",
   "type": "module",
   "workspaces": [
     "packages/*"
