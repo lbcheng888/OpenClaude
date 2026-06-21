@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Kit} from "./m3661.ts";
+import {bge} from "./m3659.ts";
+var bEa=X((tat)=>{Object.defineProperty(tat,"__esModule",{value:!0});tat.SumAggregator=tat.SumAccumulation=void 0;var alp=Kit(),llp=bge();class C3e{startTime;monotonic;_current;reset;constructor(e,t,n=0,r=!1){this.startTime=e,this.monotonic=t,this._current=n,this.reset=r}record(e){if(this.monotonic&&e<0)return;this._current+=e}setStartTime(e){this.startTime=e}toPointValue(){return this._current}}tat.SumAccumulation=C3e;class SEa{kind=alp.AggregatorKind.SUM;monotonic;constructor(e){this.monotonic=e}createAccumulation(e){return new C3e(e,this.monotonic)}merge(e,t){let n=e.toPointValue(),r=t.toPointValue();if(t.reset)return new C3e(t.startTime,this.monotonic,r,t.reset);return new C3e(e.startTime,this.monotonic,n+r)}diff(e,t){let n=e.toPointValue(),r=t.toPointValue();if(this.monotonic&&n>r)return new C3e(t.startTime,this.monotonic,r,!0);return new C3e(t.startTime,this.monotonic,r-n)}toMetricData(e,t,n,r){return{descriptor:e,aggregationTemporality:t,dataPointType:llp.DataPointType.SUM,dataPoints:n.map(([o,s])=>({attributes:o,startTime:s.startTime,endTime:r,value:s.toPointValue()})),isMonotonic:this.monotonic}}}tat.SumAggregator=SEa});
+export {bEa};

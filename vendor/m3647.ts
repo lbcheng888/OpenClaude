@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+import {aFt} from "./m3626.ts";
+import {ono} from "./m3646.ts";
+var wba=X((ZF)=>{Object.defineProperty(ZF,"__esModule",{value:!0});ZF.W3CTraceContextPropagator=ZF.parseTraceParent=ZF.TRACE_STATE_HEADER=ZF.TRACE_PARENT_HEADER=void 0;var NMn=Xi(),Mip=aFt(),Nip=ono();ZF.TRACE_PARENT_HEADER="traceparent";ZF.TRACE_STATE_HEADER="tracestate";var Bip="00",Fip="(?!ff)[\\da-f]{2}",Uip="(?![0]{32})[\\da-f]{32}",$ip="(?![0]{16})[\\da-f]{16}",qip="[\\da-f]{2}",jip=new RegExp(`^\\s?(${Fip})-(${Uip})-(${$ip})-(${qip})(-.*)?\\s?$`);function Cba(e){let t=jip.exec(e);if(!t)return null;if(t[1]==="00"&&t[5])return null;return{traceId:t[2],spanId:t[3],traceFlags:parseInt(t[4],16)}}ZF.parseTraceParent=Cba;class vba{inject(e,t,n){let r=NMn.trace.getSpanContext(e);if(!r||(0,Mip.isTracingSuppressed)(e)||!(0,NMn.isSpanContextValid)(r))return;let o=`${Bip}-${r.traceId}-${r.spanId}-0${Number(r.traceFlags||NMn.TraceFlags.NONE).toString(16)}`;if(n.set(t,ZF.TRACE_PARENT_HEADER,o),r.traceState)n.set(t,ZF.TRACE_STATE_HEADER,r.traceState.serialize())}extract(e,t,n){let r=n.get(t,ZF.TRACE_PARENT_HEADER);if(!r)return e;let o=Array.isArray(r)?r[0]:r;if(typeof o!=="string")return e;let s=Cba(o);if(!s)return e;s.isRemote=!0;let i=n.get(t,ZF.TRACE_STATE_HEADER);if(i){let a=Array.isArray(i)?i.join(","):i;s.traceState=new Nip.TraceState(typeof a==="string"?a:void 0)}return NMn.trace.setSpanContext(e,s)}fields(){return[ZF.TRACE_PARENT_HEADER,ZF.TRACE_STATE_HEADER]}}ZF.W3CTraceContextPropagator=vba});
+export {wba};

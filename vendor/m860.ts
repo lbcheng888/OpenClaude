@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var Xpe=X((son)=>{var Hus=()=>(e,t)=>async(n)=>{try{let r=await e(n),{clientName:o,commandName:s,logger:i,dynamoDbDocumentClientOptions:a={}}=t,{overrideInputFilterSensitiveLog:l,overrideOutputFilterSensitiveLog:c}=a,u=l??t.inputFilterSensitiveLog,d=c??t.outputFilterSensitiveLog,{$metadata:p,...m}=r.output;return i?.info?.({clientName:o,commandName:s,input:u(n.input),output:d(m),metadata:p}),r}catch(r){let{clientName:o,commandName:s,logger:i,dynamoDbDocumentClientOptions:a={}}=t,{overrideInputFilterSensitiveLog:l}=a,c=l??t.inputFilterSensitiveLog;throw i?.error?.({clientName:o,commandName:s,input:c(n.input),error:r,metadata:r.$metadata}),r}},Ius={name:"loggerMiddleware",tags:["LOGGER"],step:"initialize",override:!0},nsu=(e)=>({applyToStack:(t)=>{t.add(Hus(),Ius)}});son.getLoggerPlugin=nsu;son.loggerMiddleware=Hus;son.loggerMiddlewareOptions=Ius});
+export {Xpe};

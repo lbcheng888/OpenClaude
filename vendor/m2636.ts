@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Uf} from "./m2602.ts";
+import {ZZ} from "./m2609.ts";
+var YPi=X((eqr)=>{var Kyd=Uf();ZZ();var uL=Kyd.asn1;eqr.privateKeyValidator={name:"PrivateKeyInfo",tagClass:uL.Class.UNIVERSAL,type:uL.Type.SEQUENCE,constructed:!0,value:[{name:"PrivateKeyInfo.version",tagClass:uL.Class.UNIVERSAL,type:uL.Type.INTEGER,constructed:!1,capture:"privateKeyVersion"},{name:"PrivateKeyInfo.privateKeyAlgorithm",tagClass:uL.Class.UNIVERSAL,type:uL.Type.SEQUENCE,constructed:!0,value:[{name:"AlgorithmIdentifier.algorithm",tagClass:uL.Class.UNIVERSAL,type:uL.Type.OID,constructed:!1,capture:"privateKeyOid"}]},{name:"PrivateKeyInfo",tagClass:uL.Class.UNIVERSAL,type:uL.Type.OCTETSTRING,constructed:!1,capture:"privateKey"}]};eqr.publicKeyValidator={name:"SubjectPublicKeyInfo",tagClass:uL.Class.UNIVERSAL,type:uL.Type.SEQUENCE,constructed:!0,captureAsn1:"subjectPublicKeyInfo",value:[{name:"SubjectPublicKeyInfo.AlgorithmIdentifier",tagClass:uL.Class.UNIVERSAL,type:uL.Type.SEQUENCE,constructed:!0,value:[{name:"AlgorithmIdentifier.algorithm",tagClass:uL.Class.UNIVERSAL,type:uL.Type.OID,constructed:!1,capture:"publicKeyOid"}]},{tagClass:uL.Class.UNIVERSAL,type:uL.Type.BITSTRING,constructed:!1,composed:!0,captureBitStringValue:"ed25519PublicKey"}]}});
+export {YPi};

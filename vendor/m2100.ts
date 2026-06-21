@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+var goi=X((Use)=>{Object.defineProperty(Use,"__esModule",{value:!0});Use.getStringListFromEnv=Use.getBooleanFromEnv=Use.getStringFromEnv=Use.getNumberFromEnv=void 0;var foi=Xi(),Aoi=require("util");function vKu(e){let t=process.env[e];if(t==null||t.trim()==="")return;let n=Number(t);if(isNaN(n)){foi.diag.warn(`Unknown value ${(0,Aoi.inspect)(t)} for ${e}, expected a number, using defaults`);return}return n}Use.getNumberFromEnv=vKu;function hoi(e){let t=process.env[e];if(t==null||t.trim()==="")return;return t}Use.getStringFromEnv=hoi;function wKu(e){let t=process.env[e]?.trim().toLowerCase();if(t==null||t==="")return!1;if(t==="true")return!0;else if(t==="false")return!1;else return foi.diag.warn(`Unknown value ${(0,Aoi.inspect)(t)} for ${e}, expected 'true' or 'false', falling back to 'false' (default)`),!1}Use.getBooleanFromEnv=wKu;function RKu(e){return hoi(e)?.split(",").map((t)=>t.trim()).filter((t)=>t!=="")}Use.getStringListFromEnv=RKu});
+export {goi};

@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var m4i=X((k2h,p4i)=>{function lId(e){return{name:"Cap\u2019n Proto",aliases:["capnp"],keywords:{keyword:"struct enum interface union group import using const annotation extends in of on as with from fixed",built_in:"Void Bool Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Float32 Float64 Text Data AnyPointer AnyStruct Capability List",literal:"true false"},contains:[e.QUOTE_STRING_MODE,e.NUMBER_MODE,e.HASH_COMMENT_MODE,{className:"meta",begin:/@0x[\w\d]{16};/,illegal:/\n/},{className:"symbol",begin:/@\d+\b/},{className:"class",beginKeywords:"struct enum",end:/\{/,illegal:/\n/,contains:[e.inherit(e.TITLE_MODE,{starts:{endsWithParent:!0,excludeEnd:!0}})]},{className:"class",beginKeywords:"interface",end:/\{/,illegal:/\n/,contains:[e.inherit(e.TITLE_MODE,{starts:{endsWithParent:!0,excludeEnd:!0}})]}]}}p4i.exports=lId});
+export {m4i};

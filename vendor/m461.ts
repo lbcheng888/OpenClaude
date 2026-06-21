@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {b} from "../runtime.ts";
+import {ZE,er} from "./m460.ts";
+var _B,Ji;
+var o8=b(()=>{ZE();_B=class _B extends Error{static from(e,t,n,r,o,s){let i=new _B(e.message,t||e.code,n,r,o);if(i.cause=e,i.name=e.name,e.status!=null&&i.status==null)i.status=e.status;return s&&Object.assign(i,s),i}constructor(e,t,n,r,o){super(e);if(Object.defineProperty(this,"message",{value:e,enumerable:!0,writable:!0,configurable:!0}),this.name="AxiosError",this.isAxiosError=!0,t&&(this.code=t),n&&(this.config=n),r&&(this.request=r),o)this.response=o,this.status=o.status}toJSON(){return{message:this.message,name:this.name,description:this.description,number:this.number,fileName:this.fileName,lineNumber:this.lineNumber,columnNumber:this.columnNumber,stack:this.stack,config:er.toJSONObject(this.config),code:this.code,status:this.status}}};_B.ERR_BAD_OPTION_VALUE="ERR_BAD_OPTION_VALUE";_B.ERR_BAD_OPTION="ERR_BAD_OPTION";_B.ECONNABORTED="ECONNABORTED";_B.ETIMEDOUT="ETIMEDOUT";_B.ERR_NETWORK="ERR_NETWORK";_B.ERR_FR_TOO_MANY_REDIRECTS="ERR_FR_TOO_MANY_REDIRECTS";_B.ERR_DEPRECATED="ERR_DEPRECATED";_B.ERR_BAD_RESPONSE="ERR_BAD_RESPONSE";_B.ERR_BAD_REQUEST="ERR_BAD_REQUEST";_B.ERR_CANCELED="ERR_CANCELED";_B.ERR_NOT_SUPPORT="ERR_NOT_SUPPORT";_B.ERR_INVALID_URL="ERR_INVALID_URL";_B.ERR_FORM_DATA_DEPTH_EXCEEDED="ERR_FORM_DATA_DEPTH_EXCEEDED";Ji=_B});
+export {_B,Ji,o8};

@@ -1,0 +1,20 @@
+// @ts-nocheck
+import {b,M} from "../runtime.ts";
+import {iv} from "./m454.ts";
+import {ze} from "./m2452.ts";
+import {Ts} from "./m2542.ts";
+import {ek} from "../src/core/0570_isCancel.ts";
+import {b_} from "./m2039.ts";
+import {qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {bt} from "./m195.ts";
+import {PYe} from "./m1481.ts";
+import {DLr} from "./m2028.ts";
+import {e_} from "./m3338.ts";
+import {_x} from "../src/tui/3835_mode.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+import {we} from "./m455.ts";
+import {hn} from "./m251.ts";
+var pAp,OBn,aOg,lOg;
+var SIa=b(()=>{iv();ze();Ts();ek();b_();qe();bt();PYe();DLr();e_();_x();pAp=M(rt(),1),OBn=M(Te(),1),aOg=we(()=>hn.object({device_authorization_endpoint:hn.string().optional(),token_endpoint:hn.string().optional()})),lOg=we(()=>hn.object({device_code:hn.string(),user_code:hn.string(),verification_uri:hn.string(),verification_uri_complete:hn.string().optional(),expires_in:hn.number(),interval:hn.number().optional()}))});
+export {pAp,OBn,aOg,lOg,SIa};

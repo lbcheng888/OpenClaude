@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {BAa} from "./m3506.ts";
+import {lZr} from "./m3502.ts";
+import {cZr} from "./m3503.ts";
+var gOn=X((initGrowthBookModule)=>{Object.defineProperty(initGrowthBookModule,"__esModule",{value:!0});initGrowthBookModule.OTLPMetricExporterBase=initGrowthBookModule.LowMemoryTemporalitySelector=initGrowthBookModule.DeltaTemporalitySelector=initGrowthBookModule.CumulativeTemporalitySelector=initGrowthBookModule.AggregationTemporalityPreference=initGrowthBookModule.OTLPMetricExporter=void 0;var jYd=BAa();Object.defineProperty(initGrowthBookModule,"OTLPMetricExporter",{enumerable:!0,get:function(){return jYd.OTLPMetricExporter}});var WYd=lZr();Object.defineProperty(initGrowthBookModule,"AggregationTemporalityPreference",{enumerable:!0,get:function(){return WYd.AggregationTemporalityPreference}});var hOn=cZr();Object.defineProperty(initGrowthBookModule,"CumulativeTemporalitySelector",{enumerable:!0,get:function(){return hOn.CumulativeTemporalitySelector}});Object.defineProperty(initGrowthBookModule,"DeltaTemporalitySelector",{enumerable:!0,get:function(){return hOn.DeltaTemporalitySelector}});Object.defineProperty(initGrowthBookModule,"LowMemoryTemporalitySelector",{enumerable:!0,get:function(){return hOn.LowMemoryTemporalitySelector}});Object.defineProperty(initGrowthBookModule,"OTLPMetricExporterBase",{enumerable:!0,get:function(){return hOn.OTLPMetricExporterBase}})});
+export {gOn};

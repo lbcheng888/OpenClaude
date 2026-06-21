@@ -1,0 +1,30 @@
+// @ts-nocheck
+import {useTheme} from "./m2274.ts";
+import {mt,configProtoStore} from "./m2458.ts";
+import {lmt,bDe,Sue} from "./m4650.ts";
+import {Se,bt} from "./m195.ts";
+import {Xx,Cn,dr} from "./m231.ts";
+import {qkn,l9,CL} from "../src/mcp/3149_scope.ts";
+import {Kn,Li} from "./m2572.ts";
+import {Text} from "./m2423.ts";
+import {Box} from "./m2422.ts";
+import {tp,_x} from "../src/tui/3835_mode.ts";
+import {Tn,zs} from "./m2554.ts";
+import {at,rs} from "./m2546.ts";
+import {lr,readRoster} from "./m2547.ts";
+import {cA,hje} from "./m4517.ts";
+import {No} from "./m2421.ts";
+import {et,Ai} from "./m2208.ts";
+import {Bs,rA} from "./m2550.ts";
+import {getMcpConfigByName,px} from "../src/telemetry/3148_unwrapCcrProxyUrl.ts";
+import {M5n,MSo} from "./m4655.ts";
+import {pr} from "./m2562.ts";
+import {B5n,J6t} from "../src/tui/4657_message.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {yb} from "./m4521.ts";
+import {Te} from "./m2253.ts";
+function X6t({server:e,serverToolsCount:t,onViewTools:n,onCancel:r,onComplete:o,borderless:s=!1}){let[i]=useTheme(),a=mt((h)=>h.mcp),l=lmt(),c=bDe(),[u,d]=Qu.useState(!1),p=Qu.useCallback(async()=>{let h=e.client.type!=="disabled";try{await c(e.name),r()}catch(g){o(`Failed to ${h?"disable":"enable"} MCP server '${e.name}': ${Se(g)}`)}},[e.client.type,e.name,c,r,o]),m=Xx(String(e.name)),f=qkn(a.commands,e.name).length,A=[];if(e.client.type!=="disabled"&&t>0)A.push({label:"View tools",value:"tools"});if(e.client.type!=="disabled")A.push({label:"Reconnect",value:"reconnectMcpServer"});if(A.push({label:e.client.type!=="disabled"?"Disable":"Enable",value:"toggle-enabled"}),A.length===0)A.push({label:"Back",value:"back"});if(u)return Qu.default.createElement(Kn,{title:`${m} MCP Server`,onCancel:()=>{},hideBorder:s,hideInputGuide:!0},Qu.default.createElement(Text,{color:"text"},"Reconnecting to ",Qu.default.createElement(Text,{bold:!0},e.name)),Qu.default.createElement(Box,null,Qu.default.createElement(tp,null),Qu.default.createElement(Text,null," Restarting MCP server process")),Qu.default.createElement(Text,{dimColor:!0},"This may take a few moments."));return Qu.default.createElement(Kn,{title:`${m} MCP Server`,onCancel:r,hideBorder:s,inputGuide:Qu.default.createElement(Tn,null,Qu.default.createElement(at,{chord:["up","down"],action:"navigate"}),Qu.default.createElement(at,{chord:"enter",action:"select"}),Qu.default.createElement(lr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"back"}))},Qu.default.createElement(Box,{flexDirection:"column",gap:0},Qu.default.createElement(cA,{box:"plain",columns:[{bold:!0},{}]},Qu.default.createElement(cA.Row,null,Qu.default.createElement(Qu.default.Fragment,null,"Status:"),e.client.type==="disabled"?Qu.default.createElement(Text,null,No("inactive",i)(et.radioOff)," disabled"):e.client.type==="connected"?e.client.toolsListError?Qu.default.createElement(Text,null,Qu.default.createElement(Bs,{status:"warning",withSpace:!0}),"connected \xB7 tools fetch failed"):e.client.capabilities?.tools&&t===0?Qu.default.createElement(Text,null,Qu.default.createElement(Bs,{status:"warning",withSpace:!0}),"connected \xB7 no tools"):Qu.default.createElement(Text,null,Qu.default.createElement(Bs,{status:"success",withSpace:!0}),"connected"):e.client.type==="pending"?Qu.default.createElement(Text,null,Qu.default.createElement(Bs,{status:"pending",withSpace:!0}),"connecting\u2026"):Qu.default.createElement(Text,null,Qu.default.createElement(Bs,{status:"error",withSpace:!0}),"failed")),Qu.default.createElement(cA.Row,null,Qu.default.createElement(Qu.default.Fragment,null,"Command:"),Qu.default.createElement(Text,{dimColor:!0},e.config.command)),e.config.args&&e.config.args.length>0&&Qu.default.createElement(cA.Row,null,Qu.default.createElement(Qu.default.Fragment,null,"Args:"),Qu.default.createElement(Text,{dimColor:!0},e.config.args.join(" "))),Qu.default.createElement(cA.Row,null,Qu.default.createElement(Qu.default.Fragment,null,"Config location:"),Qu.default.createElement(Text,{dimColor:!0},l9(getMcpConfigByName(e.name)?.scope??"dynamic")))),e.client.type==="connected"&&Qu.default.createElement(M5n,{serverToolsCount:t,serverPromptsCount:f,serverResourcesCount:a.resources[e.name]?.length||0}),e.client.type==="connected"&&t>0&&Qu.default.createElement(Box,null,Qu.default.createElement(Text,{bold:!0},"Tools: "),Qu.default.createElement(Text,{dimColor:!0},t," ",Cn(t,"tool"))),e.client.type==="connected"&&e.client.toolsListError&&Qu.default.createElement(Box,{flexDirection:"column"},Qu.default.createElement(Text,{bold:!0},"Issue: "),Qu.default.createElement(Text,{dimColor:!0},e.client.toolsListError))),A.length>0&&Qu.default.createElement(Box,null,Qu.default.createElement(pr,{options:A,onChange:async(h)=>{if(h==="tools")n();else if(h==="reconnectMcpServer"){d(!0);try{let g=await l(e.name),{message:_}=B5n(g,e.name);o?.(_)}catch(g){o?.(J6t(g,e.name))}finally{d(!1)}}else if(h==="toggle-enabled")await p();else if(h==="back")r()},onCancel:r})))}
+var Qu;
+var U5n=b(()=>{Ai();ze();px();Sue();CL();configProtoStore();bt();dr();readRoster();yb();zs();Li();rs();rA();hje();_x();MSo();Qu=M(Te(),1)});
+export {X6t,Qu,U5n};

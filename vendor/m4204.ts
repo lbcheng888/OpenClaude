@@ -1,0 +1,17 @@
+// @ts-nocheck
+import {execFileNoThrow,execFileNoThrowWithCwd,oa} from "./m684.ts";
+import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {Oe,Ie,isTmuxControlMode,ln} from "../src/telemetry/0594_feature_name.ts";
+import {getGlobalConfig,saveGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
+import {b} from "../runtime.ts";
+async function qja(){if((await execFileNoThrow("which",["uv"])).code===0)return logForDebugging("[it2Setup] Found uv (will use uv tool install)"),"uvx";if((await execFileNoThrow("which",["pipx"])).code===0)return logForDebugging("[it2Setup] Found pipx package manager"),"pipx";if((await execFileNoThrow("which",["pip"])).code===0)return logForDebugging("[it2Setup] Found pip package manager"),"pip";if((await execFileNoThrow("which",["pip3"])).code===0)return logForDebugging("[it2Setup] Found pip3 package manager"),"pip";return logForDebugging("[it2Setup] No Python package manager found"),null}
+async function _Dp(){return(await execFileNoThrow("which",["it2"])).code===0}
+async function jja(e){logForDebugging(`[it2Setup] Installing it2 using ${e}`);let t;switch(e){case"uvx":t=await execFileNoThrowWithCwd("uv",["tool","install","it2"],{cwd:X9t.homedir()});break;case"pipx":t=await execFileNoThrowWithCwd("pipx",["install","it2"],{cwd:X9t.homedir()});break;case"pip":if(t=await execFileNoThrowWithCwd("pip",["install","--user","it2"],{cwd:X9t.homedir()}),t.code!==0)t=await execFileNoThrowWithCwd("pip3",["install","--user","it2"],{cwd:X9t.homedir()});break}if(t.code!==0){let n=t.stderr||"Unknown installation error";return logForDebugging(`[it2Setup] Failed to install it2: ${n}`,{level:"error"}),Oe("swarm_iterm2_it2_install",`${e}_install_failed`),{success:!1,error:n,packageManager:e}}return logForDebugging("[it2Setup] it2 installed successfully"),Ie("swarm_iterm2_it2_install"),{success:!0,packageManager:e}}
+async function Wja(){if(logForDebugging("[it2Setup] Verifying it2 setup..."),!await _Dp())return Oe("swarm_iterm2_it2_verify","not_installed"),{success:!1,error:"it2 CLI is not installed or not in PATH"};let t=await execFileNoThrow("it2",["session","list"]);if(t.code!==0){let n=t.stderr.toLowerCase();if(n.includes("api")||n.includes("python")||n.includes("connection refused")||n.includes("not enabled"))return logForDebugging("[it2Setup] Python API not enabled in iTerm2"),isTmuxControlMode("swarm_iterm2_it2_verify","python_api_not_enabled"),{success:!1,error:"Python API not enabled in iTerm2 preferences",needsPythonApiEnabled:!0};return Oe("swarm_iterm2_it2_verify","communication_failed"),{success:!1,error:t.stderr||"Failed to communicate with iTerm2"}}return logForDebugging("[it2Setup] it2 setup verified successfully"),Ie("swarm_iterm2_it2_verify"),{success:!0}}
+function Gja(){return["Almost done! Enable the Python API in iTerm2:","","  iTerm2 \u2192 Settings \u2192 General \u2192 Magic \u2192 Enable Python API","","After enabling, you may need to restart iTerm2."]}
+function Vja(){if(getGlobalConfig().iterm2It2SetupComplete!==!0)saveGlobalConfig((t)=>({...t,iterm2It2SetupComplete:!0})),logForDebugging("[it2Setup] Marked it2 setup as complete")}
+function Kja(e){if(getGlobalConfig().preferTmuxOverIterm2!==e)saveGlobalConfig((n)=>({...n,preferTmuxOverIterm2:e})),logForDebugging(`[it2Setup] Set preferTmuxOverIterm2 = ${e}`)}
+function zja(){return getGlobalConfig().preferTmuxOverIterm2===!0}
+var X9t;
+var Ndo=b(()=>{ln();Qn();qe();oa();X9t=require("os")});
+export {qja,_Dp,jja,Wja,Gja,Vja,Kja,zja,X9t,Ndo};

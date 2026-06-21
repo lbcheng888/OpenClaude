@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {jdi} from "./m2115.ts";
+var E1r=X((tF)=>{Object.defineProperty(tF,"__esModule",{value:!0});tF.getStringListFromEnv=tF.getNumberFromEnv=tF.getStringFromEnv=tF.getBooleanFromEnv=tF.otperformance=tF._globalThis=tF.SDK_INFO=void 0;var iFe=jdi();Object.defineProperty(tF,"SDK_INFO",{enumerable:!0,get:function(){return iFe.SDK_INFO}});Object.defineProperty(tF,"_globalThis",{enumerable:!0,get:function(){return iFe._globalThis}});Object.defineProperty(tF,"otperformance",{enumerable:!0,get:function(){return iFe.otperformance}});Object.defineProperty(tF,"getBooleanFromEnv",{enumerable:!0,get:function(){return iFe.getBooleanFromEnv}});Object.defineProperty(tF,"getStringFromEnv",{enumerable:!0,get:function(){return iFe.getStringFromEnv}});Object.defineProperty(tF,"getNumberFromEnv",{enumerable:!0,get:function(){return iFe.getNumberFromEnv}});Object.defineProperty(tF,"getStringListFromEnv",{enumerable:!0,get:function(){return iFe.getStringListFromEnv}})});
+export {E1r};

@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+import {UNt} from "./m3389.ts";
+import {JDn} from "./m3386.ts";
+var Zda=X((Gst)=>{Object.defineProperty(Gst,"__esModule",{value:!0});Gst.BatchObservableResultImpl=Gst.ObservableResultImpl=void 0;var Wst=Xi(),Jda=UNt(),JVd=JDn();class Xda{_instrumentName;_valueType;_buffer=new Jda.AttributeHashMap;constructor(e,t){this._instrumentName=e,this._valueType=t}observe(e,t={}){if(typeof e!=="number"){Wst.diag.warn(`non-number value provided to metric ${this._instrumentName}: ${e}`);return}if(this._valueType===Wst.ValueType.INT&&!Number.isInteger(e)){if(Wst.diag.warn(`INT value type cannot accept a floating-point value for ${this._instrumentName}, ignoring the fractional digits.`),e=Math.trunc(e),!Number.isInteger(e))return}this._buffer.set(t,e)}}Gst.ObservableResultImpl=Xda;class Qda{_buffer=new Map;observe(e,t,n={}){if(!(0,JVd.isObservableInstrument)(e))return;let r=this._buffer.get(e);if(r==null)r=new Jda.AttributeHashMap,this._buffer.set(e,r);if(typeof t!=="number"){Wst.diag.warn(`non-number value provided to metric ${e._descriptor.name}: ${t}`);return}if(e._descriptor.valueType===Wst.ValueType.INT&&!Number.isInteger(t)){if(Wst.diag.warn(`INT value type cannot accept a floating-point value for ${e._descriptor.name}, ignoring the fractional digits.`),t=Math.trunc(t),!Number.isInteger(t))return}r.set(n,t)}}Gst.BatchObservableResultImpl=Qda});
+export {Zda};

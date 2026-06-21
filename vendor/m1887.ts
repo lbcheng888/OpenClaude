@@ -1,0 +1,19 @@
+// @ts-nocheck
+import {FJs,UJs} from "./m1885.ts";
+import {hv} from "./m1754.ts";
+import {A0,gv,qR,_v} from "./m1778.ts";
+import {iC,Ho} from "./m1717.ts";
+import {qDr,$Js} from "./m1886.ts";
+import {AuthError} from "./m1719.ts";
+import {ls} from "./m1721.ts";
+import {ClientAuthErrorCodes} from "./m1720.ts";
+import {hk} from "./m1768.ts";
+import {MH,HJe} from "./m1782.ts";
+import {LCe,fBe,mBe} from "./m1781.ts";
+import {b} from "../runtime.ts";
+import {AT} from "./m1775.ts";
+import {Dm} from "./m1738.ts";
+class y4{constructor(e,t,n,r,o){this.logger=e,this.nodeStorage=t,this.networkClient=n,this.cryptoProvider=r,this.disableInternalRetries=o}async getServerTokenResponseAsync(e,t,n,r){return this.getServerTokenResponse(e)}getServerTokenResponse(e){let t,n;if(e.body.expires_on){if(FJs(e.body.expires_on))e.body.expires_on=new Date(e.body.expires_on).getTime()/1000;if(n=e.body.expires_on-hv.nowSeconds(),n>7200)t=n/2}return{status:e.status,access_token:e.body.access_token,expires_in:n,scope:e.body.resource,token_type:e.body.token_type,refresh_in:t,correlation_id:e.body.correlation_id||e.body.correlationId,error:typeof e.body.error==="string"?e.body.error:e.body.error?.code,error_description:e.body.message||(typeof e.body.error==="string"?e.body.error_description:e.body.error?.message),error_codes:e.body.error_codes,timestamp:e.body.timestamp,trace_id:e.body.trace_id}}async acquireTokenWithManagedIdentity(e,t,n,r){let o=this.createRequest(e.resource,t);if(e.revokedTokenSha256Hash)this.logger.info(`[Managed Identity] The following claims are present in the request: ${e.claims}`),o.queryParameters[A0.SHA256_TOKEN_TO_REFRESH]=e.revokedTokenSha256Hash;if(e.clientCapabilities?.length){let p=e.clientCapabilities.toString();this.logger.info(`[Managed Identity] The following client capabilities are present in the request: ${p}`),o.queryParameters[A0.XMS_CC]=p}let s=o.headers;s[iC.CONTENT_TYPE]=Ho.URL_FORM_CONTENT_TYPE;let i={headers:s};if(Object.keys(o.bodyParameters).length)i.body=o.computeParametersBodyString();let a=this.disableInternalRetries?this.networkClient:new qDr(this.networkClient,o.retryPolicy,this.logger),l=hv.nowSeconds(),c;try{if(o.httpMethod===gv.POST)c=await a.sendPostRequestAsync(o.computeUri(),i);else c=await a.sendGetRequestAsync(o.computeUri(),i)}catch(p){if(p instanceof AuthError)throw p;else throw ls(ClientAuthErrorCodes.networkError)}let u=new hk(t.id,this.nodeStorage,this.cryptoProvider,this.logger,null,null),d=await this.getServerTokenResponseAsync(c,a,o,i);return u.validateTokenResponse(d,r),u.handleServerTokenResponse(d,n,l,e)}getManagedIdentityUserAssignedIdQueryParameterKey(e,t,n){switch(e){case qR.USER_ASSIGNED_CLIENT_ID:return this.logger.info(`[Managed Identity] [API version ${n?"2017+":"2019+"}] Adding user assigned client id to the request.`),n?SBe.MANAGED_IDENTITY_CLIENT_ID_2017:SBe.MANAGED_IDENTITY_CLIENT_ID;case qR.USER_ASSIGNED_RESOURCE_ID:return this.logger.info("[Managed Identity] Adding user assigned resource id to the request."),t?SBe.MANAGED_IDENTITY_RESOURCE_ID_IMDS:SBe.MANAGED_IDENTITY_RESOURCE_ID_NON_IMDS;case qR.USER_ASSIGNED_OBJECT_ID:return this.logger.info("[Managed Identity] Adding user assigned object id to the request."),SBe.MANAGED_IDENTITY_OBJECT_ID;default:throw MH(LCe)}}}
+var SBe;
+var bBe=b(()=>{AT();_v();HJe();UJs();$Js();fBe();/*! @azure/msal-node v3.8.1 2025-10-29 */SBe={MANAGED_IDENTITY_CLIENT_ID_2017:"clientid",MANAGED_IDENTITY_CLIENT_ID:"client_id",MANAGED_IDENTITY_OBJECT_ID:"object_id",MANAGED_IDENTITY_RESOURCE_ID_IMDS:"msi_res_id",MANAGED_IDENTITY_RESOURCE_ID_NON_IMDS:"mi_res_id"};y4.getValidatedEnvVariableUrlString=(e,t,n,r)=>{try{return new Dm(t).urlString}catch(o){throw r.info(`[Managed Identity] ${n} managed identity is unavailable because the '${e}' environment variable is malformed.`),MH(mBe[e])}}});
+export {y4,SBe,bBe};

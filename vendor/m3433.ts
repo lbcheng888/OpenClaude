@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var KNt=X((dle)=>{Object.defineProperty(dle,"__esModule",{value:!0});dle.getSharedConfigurationDefaults=dle.mergeOtlpSharedConfigurationWithDefaults=dle.wrapStaticHeadersInFunction=dle.validateTimeoutMillis=void 0;function mma(e){if(Number.isFinite(e)&&e>0)return e;throw Error(`Configuration: timeoutMillis is invalid, expected number greater than 0 (actual: '${e}')`)}dle.validateTimeoutMillis=mma;function Q7d(e){if(e==null)return;return async()=>e}dle.wrapStaticHeadersInFunction=Q7d;function Z7d(e,t,n){return{timeoutMillis:mma(e.timeoutMillis??t.timeoutMillis??n.timeoutMillis),concurrencyLimit:e.concurrencyLimit??t.concurrencyLimit??n.concurrencyLimit,compression:e.compression??t.compression??n.compression}}dle.mergeOtlpSharedConfigurationWithDefaults=Z7d;function eKd(){return{timeoutMillis:1e4,concurrencyLimit:30,compression:"none"}}dle.getSharedConfigurationDefaults=eKd});
+export {KNt};

@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Zdi} from "./m2121.ts";
+var k1r=X((Dgn)=>{Object.defineProperty(Dgn,"__esModule",{value:!0});Dgn.TraceState=void 0;var epi=Zdi(),tpi=32,izu=512,npi=",",rpi="=";class x1r{_internalState=new Map;constructor(e){if(e)this._parse(e)}set(e,t){let n=this._clone();if(n._internalState.has(e))n._internalState.delete(e);return n._internalState.set(e,t),n}unset(e){let t=this._clone();return t._internalState.delete(e),t}get(e){return this._internalState.get(e)}serialize(){return this._keys().reduce((e,t)=>(e.push(t+rpi+this.get(t)),e),[]).join(npi)}_parse(e){if(e.length>izu)return;if(this._internalState=e.split(npi).reverse().reduce((t,n)=>{let r=n.trim(),o=r.indexOf(rpi);if(o!==-1){let s=r.slice(0,o),i=r.slice(o+1,n.length);if((0,epi.validateKey)(s)&&(0,epi.validateValue)(i))t.set(s,i)}return t},new Map),this._internalState.size>tpi)this._internalState=new Map(Array.from(this._internalState.entries()).reverse().slice(0,tpi))}_keys(){return Array.from(this._internalState.keys()).reverse()}_clone(){let e=new x1r;return e._internalState=new Map(this._internalState),e}}Dgn.TraceState=x1r});
+export {k1r};

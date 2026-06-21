@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {kbo} from "./m4708.ts";
+import {Hbo} from "./m4709.ts";
+var ODe=X((fD)=>{var lXp=kbo(),Ibo=Hbo();fD.NUMERIC={id:"Numeric",bit:1,ccBits:[10,12,14]};fD.ALPHANUMERIC={id:"Alphanumeric",bit:2,ccBits:[9,11,13]};fD.BYTE={id:"Byte",bit:4,ccBits:[8,16,16]};fD.KANJI={id:"Kanji",bit:8,ccBits:[8,10,12]};fD.MIXED={bit:-1};fD.getCharCountIndicator=function(t,n){if(!t.ccBits)throw Error("Invalid mode: "+t);if(!lXp.isValid(n))throw Error("Invalid version: "+n);if(n>=1&&n<10)return t.ccBits[0];else if(n<27)return t.ccBits[1];return t.ccBits[2]};fD.getBestModeForData=function(t){if(Ibo.testNumeric(t))return fD.NUMERIC;else if(Ibo.testAlphanumeric(t))return fD.ALPHANUMERIC;else if(Ibo.testKanji(t))return fD.KANJI;else return fD.BYTE};fD.toString=function(t){if(t&&t.id)return t.id;throw Error("Invalid mode")};fD.isValid=function(t){return t&&t.bit&&t.ccBits};function cXp(e){if(typeof e!=="string")throw Error("Param is not a string");switch(e.toLowerCase()){case"numeric":return fD.NUMERIC;case"alphanumeric":return fD.ALPHANUMERIC;case"kanji":return fD.KANJI;case"byte":return fD.BYTE;default:throw Error("Unknown mode: "+e)}}fD.from=function(t,n){if(fD.isValid(t))return t;try{return cXp(t)}catch(r){return n}}});
+export {ODe};

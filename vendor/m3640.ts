@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {uba} from "./m3639.ts";
+var eno=X((QF)=>{Object.defineProperty(QF,"__esModule",{value:!0});QF.getStringListFromEnv=QF.getNumberFromEnv=QF.getStringFromEnv=QF.getBooleanFromEnv=QF.otperformance=QF._globalThis=QF.SDK_INFO=void 0;var S3e=uba();Object.defineProperty(QF,"SDK_INFO",{enumerable:!0,get:function(){return S3e.SDK_INFO}});Object.defineProperty(QF,"_globalThis",{enumerable:!0,get:function(){return S3e._globalThis}});Object.defineProperty(QF,"otperformance",{enumerable:!0,get:function(){return S3e.otperformance}});Object.defineProperty(QF,"getBooleanFromEnv",{enumerable:!0,get:function(){return S3e.getBooleanFromEnv}});Object.defineProperty(QF,"getStringFromEnv",{enumerable:!0,get:function(){return S3e.getStringFromEnv}});Object.defineProperty(QF,"getNumberFromEnv",{enumerable:!0,get:function(){return S3e.getNumberFromEnv}});Object.defineProperty(QF,"getStringListFromEnv",{enumerable:!0,get:function(){return S3e.getStringListFromEnv}})});
+export {eno};

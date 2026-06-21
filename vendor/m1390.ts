@@ -1,0 +1,21 @@
+// @ts-nocheck
+import {b,M} from "../runtime.ts";
+import {Ry} from "./m1376.ts";
+import {pwr,bFs,TFs} from "./m1377.ts";
+import {shouldUsePowerShellTool,EFs} from "./m1378.ts";
+import {lUs,aUs} from "./m1387.ts";
+import {yUs,_Us} from "./m1389.ts";
+import {Jpe} from "./m859.ts";
+import {Xpe} from "./m860.ts";
+import {Qpe} from "./m865.ts";
+import {Poe} from "./m881.ts";
+import {nk} from "./m607.ts";
+import {Sd} from "./m850.ts";
+import {US} from "./m818.ts";
+import {ome} from "./m884.ts";
+import {yo} from "./m887.ts";
+import {i1} from "./m894.ts";
+import {Gcn} from "./m1352.ts";
+var run,TUs,SUs,oun,bUs,cYe,EUs,CUs,vUs,sun,CognitoIdentityClient;
+var iun=b(()=>{Ry();pwr();shouldUsePowerShellTool();lUs();yUs();run=M(Jpe(),1),TUs=M(Xpe(),1),SUs=M(Qpe(),1),oun=M(Poe(),1),bUs=M(nk(),1),cYe=M(Sd(),1),EUs=M(US(),1),CUs=M(ome(),1),vUs=M(yo(),1),sun=M(i1(),1);CognitoIdentityClient=class CognitoIdentityClient extends Gcn{config;constructor(...[e]){let t=aUs(e||{});super(t);this.initConfig=t;let n=EFs(t),r=oun.resolveUserAgentConfig(n),o=sun.resolveRetryConfig(r),s=bUs.resolveRegionConfig(o),i=run.resolveHostHeaderConfig(s),a=vUs.resolveEndpointConfig(i),l=bFs(a),c=_Us(l,e?.extensions||[]);this.config=c,this.middlewareStack.use(EUs.getSchemaSerdePlugin(this.config)),this.middlewareStack.use(oun.getUserAgentPlugin(this.config)),this.middlewareStack.use(sun.getRetryPlugin(this.config)),this.middlewareStack.use(CUs.getContentLengthPlugin(this.config)),this.middlewareStack.use(run.getHostHeaderPlugin(this.config)),this.middlewareStack.use(TUs.getLoggerPlugin(this.config)),this.middlewareStack.use(SUs.getRecursionDetectionPlugin(this.config)),this.middlewareStack.use(cYe.getHttpAuthSchemeEndpointRuleSetPlugin(this.config,{httpAuthSchemeParametersProvider:TFs,identityProviderConfigProvider:async(u)=>new cYe.DefaultIdentityProviderConfig({"aws.auth#sigv4":u.credentials})})),this.middlewareStack.use(cYe.getHttpSigningPlugin(this.config))}destroy(){super.destroy()}}});
+export {run,TUs,SUs,oun,bUs,cYe,EUs,CUs,vUs,sun,CognitoIdentityClient,iun};

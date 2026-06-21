@@ -1,0 +1,26 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xk} from "./m4102.ts";
+import {B$n} from "./m4134.ts";
+import {d9t} from "./m4121.ts";
+import {Jco} from "./m4123.ts";
+import {b$n} from "./m4100.ts";
+import {T9t} from "./m4143.ts";
+import {Pco} from "./m4114.ts";
+import {W$n} from "./m4140.ts";
+import {Qco} from "./m4124.ts";
+import {V$n} from "./m4141.ts";
+import {Aut} from "./m4119.ts";
+import {Z$n} from "./m4142.ts";
+import {Fco} from "./m4118.ts";
+import {DN} from "./m4106.ts";
+import {Mqe} from "./m4109.ts";
+import {A9t} from "./m4126.ts";
+import {euo} from "./m4125.ts";
+import {zco} from "./m4122.ts";
+import {Ruo} from "./m4148.ts";
+import {cuo} from "./m4132.ts";
+import {$$n} from "./m4137.ts";
+import {Auo} from "./m4138.ts";
+var wuo=X((S9t,M4a)=>{var vuo=Xk();S9t=M4a.exports={CSSStyleDeclaration:B$n(),CharacterData:d9t(),Comment:Jco(),DOMException:b$n(),DOMImplementation:T9t(),DOMTokenList:Pco(),Document:W$n(),DocumentFragment:Qco(),DocumentType:V$n(),Element:Aut(),HTMLParser:Z$n(),NamedNodeMap:Fco(),Node:DN(),NodeList:Mqe(),NodeFilter:A9t(),ProcessingInstruction:euo(),Text:zco(),Window:Ruo()};vuo.merge(S9t,cuo());vuo.merge(S9t,$$n().elements);vuo.merge(S9t,Auo().elements)});
+export {wuo};

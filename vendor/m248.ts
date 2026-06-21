@@ -1,0 +1,9 @@
+// @ts-nocheck
+import {getErrorMap,IYt} from "./m247.ts";
+import {defaultErrorMap,wsr} from "./m246.ts";
+import {b} from "../runtime.ts";
+function Ka(e,t){let n=getErrorMap(),r=makeIssue({issueData:t,data:e.data,path:e.path,errorMaps:[e.common.contextualErrorMap,e.schemaErrorMap,n,n===defaultErrorMap?void 0:defaultErrorMap].filter((o)=>!!o)});e.common.issues.push(r)}
+class ParseStatus{constructor(){this.value="valid"}dirty(){if(this.value==="valid")this.value="dirty"}abort(){if(this.value!=="aborted")this.value="aborted"}static mergeArray(e,t){let n=[];for(let r of t){if(r.status==="aborted")return INVALID;if(r.status==="dirty")e.dirty();n.push(r.value)}return{status:e.value,value:n}}static async mergeObjectAsync(e,t){let n=[];for(let r of t){let o=await r.key,s=await r.value;n.push({key:o,value:s})}return ParseStatus.mergeObjectSync(e,n)}static mergeObjectSync(e,t){let n={};for(let r of t){let{key:o,value:s}=r;if(o.status==="aborted")return INVALID;if(s.status==="aborted")return INVALID;if(o.status==="dirty")e.dirty();if(s.status==="dirty")e.dirty();if(o.value!=="__proto__"&&(typeof s.value<"u"||r.alwaysSet))n[o.value]=s.value}return{status:e.value,value:n}}}
+var makeIssue=(e)=>{let{data:t,path:n,errorMaps:r,issueData:o}=e,s=[...n,...o.path||[]],i={...o,path:s};if(o.message!==void 0)return{...o,path:s,message:o.message};let a="",l=r.filter((c)=>!!c).slice().reverse();for(let c of l)a=c(i,{data:t,defaultError:a}).message;return{...o,path:s,message:a}},EMPTY_PATH,INVALID,DIRTY=(e)=>({status:"dirty",value:e}),pB=(e)=>({status:"valid",value:e}),isAborted=(e)=>e.status==="aborted",isDirty=(e)=>e.status==="dirty",isValid=(e)=>e.status==="valid",isAsync=(e)=>typeof Promise<"u"&&e instanceof Promise;
+var Rsr=b(()=>{IYt();wsr();EMPTY_PATH=[];INVALID=Object.freeze({status:"aborted"})});
+export {Ka,ParseStatus,makeIssue,EMPTY_PATH,INVALID,DIRTY,pB,isAborted,isDirty,isValid,isAsync,Rsr};

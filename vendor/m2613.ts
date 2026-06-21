@@ -1,0 +1,13 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Uf} from "./m2602.ts";
+import {w_} from "./m2604.ts";
+var e2e=X((Qbh,LDi)=>{var gCn=Uf();w_();var ODi=LDi.exports=gCn.pem=gCn.pem||{};ODi.encode=function(e,t){t=t||{};var n="-----BEGIN "+e.type+`-----\r
+`,r;if(e.procType)r={name:"Proc-Type",values:[String(e.procType.version),e.procType.type]},n+=hCn(r);if(e.contentDomain)r={name:"Content-Domain",values:[e.contentDomain]},n+=hCn(r);if(e.dekInfo){if(r={name:"DEK-Info",values:[e.dekInfo.algorithm]},e.dekInfo.parameters)r.values.push(e.dekInfo.parameters);n+=hCn(r)}if(e.headers)for(var o=0;o<e.headers.length;++o)n+=hCn(e.headers[o]);if(e.procType)n+=`\r
+`;return n+=gCn.util.encode64(e.body,t.maxline||64)+`\r
+`,n+="-----END "+e.type+`-----\r
+`,n};ODi.decode=function(e){var t=[],n=/\s*-----BEGIN ([A-Z0-9- ]+)-----\r?\n?([\x21-\x7e\s]+?(?:\r?\n\r?\n))?([:A-Za-z0-9+\/=\s]+?)-----END \1-----/g,r=/([\x21-\x7e]+):\s*([\x21-\x7e\s^:]+)/,o=/\r?\n/,s;while(!0){if(s=n.exec(e),!s)break;var i=s[1];if(i==="NEW CERTIFICATE REQUEST")i="CERTIFICATE REQUEST";var a={type:i,procType:null,contentDomain:null,dekInfo:null,headers:[],body:gCn.util.decode64(s[3])};if(t.push(a),!s[2])continue;var l=s[2].split(o),c=0;while(s&&c<l.length){var u=l[c].replace(/\s+$/,"");for(var d=c+1;d<l.length;++d){var p=l[d];if(!/\s/.test(p[0]))break;u+=p,c=d}if(s=u.match(r),s){var m={name:s[1],values:[]},f=s[2].split(",");for(var A=0;A<f.length;++A)m.values.push($hd(f[A]));if(!a.procType){if(m.name!=="Proc-Type")throw Error('Invalid PEM formatted message. The first encapsulated header must be "Proc-Type".');else if(m.values.length!==2)throw Error('Invalid PEM formatted message. The "Proc-Type" header must have two subfields.');a.procType={version:f[0],type:f[1]}}else if(!a.contentDomain&&m.name==="Content-Domain")a.contentDomain=f[0]||"";else if(!a.dekInfo&&m.name==="DEK-Info"){if(m.values.length===0)throw Error('Invalid PEM formatted message. The "DEK-Info" header must have at least one subfield.');a.dekInfo={algorithm:f[0],parameters:f[1]||null}}else a.headers.push(m)}++c}if(a.procType==="ENCRYPTED"&&!a.dekInfo)throw Error('Invalid PEM formatted message. The "DEK-Info" header must be present if "Proc-Type" is "ENCRYPTED".')}if(t.length===0)throw Error("Invalid PEM formatted message.");return t};function hCn(e){var t=e.name+": ",n=[],r=function(l,c){return" "+c};for(var o=0;o<e.values.length;++o)n.push(e.values[o].replace(/^(\S+\r\n)/,r));t+=n.join(",")+`\r
+`;var s=0,i=-1;for(var o=0;o<t.length;++o,++s)if(s>65&&i!==-1){var a=t[i];if(a===",")++i,t=t.substr(0,i)+`\r
+ `+t.substr(i);else t=t.substr(0,i)+`\r
+`+a+t.substr(i+1);s=o-i-1,i=-1,++o}else if(t[o]===" "||t[o]==="\t"||t[o]===",")i=o;return t}function $hd(e){return e.replace(/^\s+/,"")}});
+export {e2e};

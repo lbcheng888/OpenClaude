@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {BW} from "./m3799.ts";
+var dUt=X((Zxa,eka)=>{(function(){var e,t;t=BW(),eka.exports=e=function(){class n extends t{constructor(r){super(r);this.value=""}clone(){return Object.create(this)}substringData(r,o){throw Error("This DOM method is not implemented."+this.debugInfo())}appendData(r){throw Error("This DOM method is not implemented."+this.debugInfo())}insertData(r,o){throw Error("This DOM method is not implemented."+this.debugInfo())}deleteData(r,o){throw Error("This DOM method is not implemented."+this.debugInfo())}replaceData(r,o,s){throw Error("This DOM method is not implemented."+this.debugInfo())}isEqualNode(r){if(!super.isEqualNode(r))return!1;if(r.data!==this.data)return!1;return!0}}return Object.defineProperty(n.prototype,"data",{get:function(){return this.value},set:function(r){return this.value=r||""}}),Object.defineProperty(n.prototype,"length",{get:function(){return this.value.length}}),Object.defineProperty(n.prototype,"textContent",{get:function(){return this.value},set:function(r){return this.value=r||""}}),n}.call(this)}).call(Zxa)});
+export {dUt};

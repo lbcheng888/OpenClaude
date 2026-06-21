@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {cke} from "./m3230.ts";
+import {Tot} from "./m3226.ts";
+import {bot} from "./m3231.ts";
+var yIn=X((Eot)=>{Object.defineProperty(Eot,"__esModule",{value:!0});Eot.CancellationTokenSource=Eot.CancellationToken=void 0;var s6d=cke(),i6d=Tot(),Wzr=bot(),_In;(function(e){e.None=Object.freeze({isCancellationRequested:!1,onCancellationRequested:Wzr.Event.None}),e.Cancelled=Object.freeze({isCancellationRequested:!0,onCancellationRequested:Wzr.Event.None});function t(n){let r=n;return r&&(r===e.None||r===e.Cancelled||i6d.boolean(r.isCancellationRequested)&&!!r.onCancellationRequested)}e.is=t})(_In||(Eot.CancellationToken=_In={}));var a6d=Object.freeze(function(e,t){let n=(0,s6d.default)().timer.setTimeout(e.bind(t),0);return{dispose(){n.dispose()}}});class Gzr{constructor(){this._isCancelled=!1}cancel(){if(!this._isCancelled){if(this._isCancelled=!0,this._emitter)this._emitter.fire(void 0),this.dispose()}}get isCancellationRequested(){return this._isCancelled}get onCancellationRequested(){if(this._isCancelled)return a6d;if(!this._emitter)this._emitter=new Wzr.Emitter;return this._emitter.event}dispose(){if(this._emitter)this._emitter.dispose(),this._emitter=void 0}}class yoa{get token(){if(!this._token)this._token=new Gzr;return this._token}cancel(){if(!this._token)this._token=_In.Cancelled;else this._token.cancel()}dispose(){if(!this._token)this._token=_In.None;else if(this._token instanceof Gzr)this._token.dispose()}}Eot.CancellationTokenSource=yoa});
+export {yIn};

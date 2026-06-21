@@ -1,0 +1,17 @@
+// @ts-nocheck
+import {zt,qs} from "./m635.ts";
+import {Box} from "./m2422.ts";
+import {Text} from "./m2423.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+function Cwo(e){let t=Hxl.c(24),{depCheck:n}=e,r;if(t[0]===Symbol.for("react.memo_cache_sentinel"))r=zt(),t[0]=r;else r=t[0];let s=r==="macos",i;if(t[1]!==n.errors)i=n.errors.some(Blm),t[1]=n.errors,t[2]=i;else i=t[2];let a=i,l;if(t[3]!==n.errors)l=n.errors.some(Nlm),t[3]=n.errors,t[4]=l;else l=t[4];let c=l,u;if(t[5]!==n.errors)u=n.errors.some(Mlm),t[5]=n.errors,t[6]=u;else u=t[6];let d=u,p=n.warnings.length>0,m;if(t[7]!==c||t[8]!==n.errors||t[9]!==a||t[10]!==p||t[11]!==d){let f=n.errors.filter(Llm),A=s?"brew install ripgrep":"apt install ripgrep",h;if(t[13]===Symbol.for("react.memo_cache_sentinel"))h=s&&hy.default.createElement(Box,{flexDirection:"column"},hy.default.createElement(Text,null,"seatbelt: ",hy.default.createElement(Text,{color:"success"},"built-in (macOS)"))),t[13]=h;else h=t[13];let g,_;if(t[14]!==a)g=hy.default.createElement(Text,null,"ripgrep (rg):"," ",a?hy.default.createElement(Text,{color:"error"},"not found"):hy.default.createElement(Text,{color:"success"},"found")),_=a&&hy.default.createElement(Text,{dimColor:!0},"  ","\xB7 ",A),t[14]=a,t[15]=g,t[16]=_;else g=t[15],_=t[16];let y;if(t[17]!==g||t[18]!==_)y=hy.default.createElement(Box,{flexDirection:"column"},g,_),t[17]=g,t[18]=_,t[19]=y;else y=t[19];let T;if(t[20]!==c||t[21]!==p||t[22]!==d)T=!s&&hy.default.createElement(hy.default.Fragment,null,hy.default.createElement(Box,{flexDirection:"column"},hy.default.createElement(Text,null,"bubblewrap (bwrap):"," ",c?hy.default.createElement(Text,{color:"error"},"not installed"):hy.default.createElement(Text,{color:"success"},"installed")),c&&hy.default.createElement(Text,{dimColor:!0},"  ","\xB7 apt install bubblewrap")),hy.default.createElement(Box,{flexDirection:"column"},hy.default.createElement(Text,null,"socat:"," ",d?hy.default.createElement(Text,{color:"error"},"not installed"):hy.default.createElement(Text,{color:"success"},"installed")),d&&hy.default.createElement(Text,{dimColor:!0},"  ","\xB7 apt install socat")),hy.default.createElement(Box,{flexDirection:"column"},hy.default.createElement(Text,null,"seccomp filter:"," ",p?hy.default.createElement(Text,{color:"warning"},"not installed"):hy.default.createElement(Text,{color:"success"},"installed"),p&&hy.default.createElement(Text,{dimColor:!0}," (required to block unix domain sockets)")),p&&hy.default.createElement(Box,{flexDirection:"column"},hy.default.createElement(Text,{dimColor:!0},"  ","\xB7 npm install -g @anthropic-ai/sandbox-runtime"),hy.default.createElement(Text,{dimColor:!0},"  ","\xB7 or copy vendor/seccomp/* from sandbox-runtime and set"),hy.default.createElement(Text,{dimColor:!0},"    ","sandbox.seccomp.bpfPath and applyPath in settings.json")))),t[20]=c,t[21]=p,t[22]=d,t[23]=T;else T=t[23];m=hy.default.createElement(Box,{flexDirection:"column",gap:1},h,y,T,f.map(Olm)),t[7]=c,t[8]=n.errors,t[9]=a,t[10]=p,t[11]=d,t[12]=m}else m=t[12];return m}
+function Olm(e){return hy.default.createElement(Text,{key:e,color:"error"},e)}
+function Llm(e){return!e.includes("ripgrep")&&!e.includes("bwrap")&&!e.includes("socat")}
+function Mlm(e){return e.includes("socat")}
+function Nlm(e){return e.includes("bwrap")}
+function Blm(e){return e.includes("ripgrep")}
+var Hxl,hy;
+var Ixl=b(()=>{ze();qs();Hxl=M(rt(),1),hy=M(Te(),1)});
+export {Cwo,Olm,Llm,Mlm,Nlm,Blm,Hxl,hy,Ixl};

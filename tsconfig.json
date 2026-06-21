@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "jsx": "react",
+    "strict": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "types": [
+      "bun-types"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "runtime.ts",
+    "src",
+    "vendor"
+  ]
+}

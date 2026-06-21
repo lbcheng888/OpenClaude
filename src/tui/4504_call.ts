@@ -1,0 +1,27 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b,M} from "../../runtime.ts";
+import {mt,configProtoStore} from "../../vendor/m2458.ts";
+import {kE,jL} from "../../vendor/m3944.ts";
+import {J$} from "../config/2727_repl.ts";
+import {Yw} from "../session/2725_iFi.ts";
+import {formatTokens,ps} from "../../vendor/m238.ts";
+import {applyAutoCompactWindow,pyo} from "../session/4503_call.ts";
+import {Wo,Ts} from "../../vendor/m2542.ts";
+import {Text} from "../../vendor/m2423.ts";
+import {Tn,zs} from "../../vendor/m2554.ts";
+import {at,rs} from "../../vendor/m2546.ts";
+import {Box} from "../../vendor/m2422.ts";
+import {Kn,Li} from "../../vendor/m2572.ts";
+import {logEvent,Ct} from "../../vendor/m131.ts";
+import {Qe} from "../../vendor/m5.ts";
+import {ze} from "../../vendor/m2452.ts";
+import {nN} from "../../vendor/m4410.ts";
+import {rt} from "../../vendor/m2255.ts";
+import {Te} from "../../vendor/m2253.ts";
+var Ksl={};
+isFullscreenWithTTY(Ksl,{call:()=>m8p});
+function d8p(e){let t=Vsl.c(52),{onDone:n,context:r}=e,o=mt(p8p),s=kE(),i;if(t[0]!==o||t[1]!==s)i=J$(s,o),t[0]=o,t[1]=s,t[2]=i;else i=t[2];let{window:a,configured:l,source:c}=i,u;if(t[3]===Symbol.for("react.memo_cache_sentinel"))u=Yw(),t[3]=u;else u=t[3];let d=u,p=l>a,m=c==="env",f=c==="env"?"from CLAUDE_CODE_AUTO_COMPACT_WINDOW":c==="settings"?"from settings":"auto",A=c==="auto"||c==="experiment"||c==="clientdata"?pje:Math.min(Ayo,Math.max(fyo,Math.round(l/myo)*myo)),[h,g]=hyo.useState(A),[_,y]=hyo.useState(!1),T;if(t[4]!==m)T=function(ce){if(m)return;y(!0),g((ue)=>{if(ue===pje)return ce>0?fyo:Ayo;let ae=ue+ce*myo;if(ae<fyo)return pje;if(ae>Ayo)return pje;return ae})},t[4]=m,t[5]=T;else T=t[5];let S=T,v;if(t[6]!==p||t[7]!==a)v=p?` \xB7 capped to ${formatTokens(a)} by model`:"",t[6]=p,t[7]=a,t[8]=v;else v=t[8];let R=v,k;if(t[9]!==R||t[10]!==l||t[11]!==c||t[12]!==f)k=c==="auto"?"auto":c==="experiment"||c==="clientdata"?`auto (${formatTokens(l)} tokens)${R}`:`${formatTokens(l)} tokens (${f})${R}`,t[9]=R,t[10]=l,t[11]=c,t[12]=f,t[13]=k;else k=t[13];let x=k,H;if(t[14]!==_||t[15]!==r||t[16]!==x||t[17]!==n||t[18]!==h)H=function(){if(!_){n(`Auto-compact window unchanged: ${x}`);return}let ce=h===pje?"auto":String(h);n(applyAutoCompactWindow(ce,r))},t[14]=_,t[15]=r,t[16]=x,t[17]=n,t[18]=h,t[19]=H;else H=t[19];let I=H,P,L;if(t[20]!==S)P=()=>S(1),L=()=>S(-1),t[20]=S,t[21]=P,t[22]=L;else P=t[21],L=t[22];let D;if(t[23]!==I||t[24]!==P||t[25]!==L)D={"select:previous":P,"select:next":L,"select:accept":I},t[23]=I,t[24]=P,t[25]=L,t[26]=D;else D=t[26];let N;if(t[27]===Symbol.for("react.memo_cache_sentinel"))N={context:"Select"},t[27]=N;else N=t[27];Wo(D,N);let O;if(t[28]!==S)O={"tabs:next":()=>S(1),"tabs:previous":()=>S(-1)},t[28]=S,t[29]=O;else O=t[29];let $;if(t[30]===Symbol.for("react.memo_cache_sentinel"))$={context:"Tabs"},t[30]=$;else $=t[30];Wo(O,$);let U;if(t[31]!==h)U=h===pje?"auto":`${formatTokens(h)} tokens`,t[31]=h,t[32]=U;else U=t[32];let W=U,G=`Current setting: ${x}`,V;if(t[33]!==x||t[34]!==n)V=()=>n(`Auto-compact window unchanged: ${x}`),t[33]=x,t[34]=n,t[35]=V;else V=t[35];let Q;if(t[36]===Symbol.for("react.memo_cache_sentinel"))Q=path.createElement(Text,{dimColor:!0},path.createElement(Tn,null,path.createElement(at,{chord:["up","down"],action:"change"}),path.createElement(at,{chord:"enter",action:"apply"}),path.createElement(at,{chord:"escape",action:"cancel"}))),t[36]=Q;else Q=t[36];let K;if(t[37]===Symbol.for("react.memo_cache_sentinel"))K=path.createElement(Text,null,"This command configures when auto-compaction happens. The actual threshold is the minimum of this setting and your model's maximum context window."),t[37]=K;else K=t[37];let Y,J;if(t[38]===Symbol.for("react.memo_cache_sentinel"))Y=path.createElement(Text,null,"The auto setting picks a window tuned for your model and is"," ",path.createElement(Text,{bold:!0},"strongly recommended")," for the best cost and performance. You can override it below."),J=!d&&path.createElement(Text,{color:"warning"},"Auto-compact is currently disabled (see /config)"),t[38]=Y,t[39]=J;else Y=t[38],J=t[39];let ee;if(t[40]!==h)ee=h!==pje&&path.createElement(Text,{color:"warning"},"Overriding auto may result in high token usage, especially when resuming long sessions."),t[40]=h,t[41]=ee;else ee=t[41];let te;if(t[42]!==W||t[43]!==m)te=m?path.createElement(Text,{color:"warning"},"CLAUDE_CODE_AUTO_COMPACT_WINDOW is set and takes precedence. Unset it to change this setting here."):path.createElement(Box,null,path.createElement(Text,null,"Select auto-compact window: "),path.createElement(Text,{bold:!0,color:"suggestion"},W)),t[42]=W,t[43]=m,t[44]=te;else te=t[44];let ne;if(t[45]!==ee||t[46]!==te)ne=path.createElement(Box,{flexDirection:"column",gap:1},K,Y,J,ee,te),t[45]=ee,t[46]=te,t[47]=ne;else ne=t[47];let re;if(t[48]!==G||t[49]!==V||t[50]!==ne)re=path.createElement(Kn,{title:"Auto-compact window",subtitle:G,onCancel:V,inputGuide:Q},ne),t[48]=G,t[49]=V,t[50]=ne,t[51]=re;else re=t[51];return re}
+function p8p(e){return e.autoCompactWindow}
+var Vsl,path,hyo,myo=1e5,fyo=1e5,Ayo=1e6,pje=0,m8p=async(e,t,n)=>{let r=n?.trim()||"";if(r){let o=applyAutoCompactWindow(r,t);return e(o),null}return logEvent("tengu_autocompact_dialog_opened",{source:Qe("dialog")}),path.createElement(d8p,{onDone:e,context:t})};
+var zsl=b(()=>{zs();Li();rs();jL();ze();Ts();Ct();nN();configProtoStore();ps();pyo();Vsl=M(rt(),1),path=M(Te(),1),hyo=M(Te(),1)});
+export {Ksl,d8p,p8p,Vsl,path,hyo,myo,fyo,Ayo,pje,m8p,zsl};

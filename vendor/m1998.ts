@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {J8} from "./m1977.ts";
+var Sei=X((CAn)=>{Object.defineProperty(CAn,"__esModule",{value:!0});CAn.UrlSubjectTokenSupplier=void 0;var c5u=J8();class Tei{url;headers;formatType;subjectTokenFieldName;additionalGaxiosOptions;constructor(e){this.url=e.url,this.formatType=e.formatType,this.subjectTokenFieldName=e.subjectTokenFieldName,this.headers=e.headers,this.additionalGaxiosOptions=e.additionalGaxiosOptions}async getSubjectToken(e){let t={...this.additionalGaxiosOptions,url:this.url,method:"GET",headers:this.headers,responseType:this.formatType};c5u.AuthClient.setMethodName(t,"getSubjectToken");let n;if(this.formatType==="text")n=(await e.transporter.request(t)).data;else if(this.formatType==="json"&&this.subjectTokenFieldName)n=(await e.transporter.request(t)).data[this.subjectTokenFieldName];if(!n)throw Error("Unable to parse the subject_token from the credential_source URL");return n}}CAn.UrlSubjectTokenSupplier=Tei});
+export {Sei};

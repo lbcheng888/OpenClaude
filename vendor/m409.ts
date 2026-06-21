@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {initLf} from "./m354.ts";
+import {Ig} from "./m355.ts";
+var V5o=X((ndr)=>{Object.defineProperty(ndr,"__esModule",{value:!0});var eZt=initLf(),G5o=Ig(),Dkc={message:({params:e})=>eZt.str`must match "${e.ifClause}" schema`,params:({params:e})=>eZt._`{failingKeyword: ${e.ifClause}}`},Pkc={keyword:"if",schemaType:["object","boolean"],trackErrors:!0,error:Dkc,code(e){let{gen:t,parentSchema:n,it:r}=e;if(n.then===void 0&&n.else===void 0)(0,G5o.checkStrictMode)(r,'"if" without "then" and "else" is ignored');let o=W5o(r,"then"),s=W5o(r,"else");if(!o&&!s)return;let i=t.let("valid",!0),a=t.name("_valid");if(l(),e.reset(),o&&s){let u=t.let("ifClause");e.setParams({ifClause:u}),t.if(a,c("then",u),c("else",u))}else if(o)t.if(a,c("then"));else t.if((0,eZt.not)(a),c("else"));e.pass(i,()=>e.error(!0));function l(){let u=e.subschema({keyword:"if",compositeRule:!0,createErrors:!1,allErrors:!1},a);e.mergeEvaluated(u)}function c(u,d){return()=>{let p=e.subschema({keyword:u},a);if(t.assign(i,a),e.mergeValidEvaluated(p,i),d)t.assign(d,eZt._`${u}`);else e.setParams({ifClause:u})}}}};function W5o(e,t){let n=e.schema[t];return n!==void 0&&!(0,G5o.alwaysValidSchema)(e,n)}ndr.default=Pkc});
+export {V5o};

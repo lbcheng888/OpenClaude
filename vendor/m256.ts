@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {$ZodAsyncError,config,WGe} from "./m253.ts";
+import {finalizeIssue,captureStackTrace,pp} from "./m254.ts";
+import {$ZodError,Usr,$ZodRealError} from "./m255.ts";
+import {b} from "../runtime.ts";
+var _parse=(e)=>(t,n,r,o)=>{let s=r?Object.assign(r,{async:!1}):{async:!1},i=t._zod.run({value:n,issues:[]},s);if(i instanceof Promise)throw new $ZodAsyncError;if(i.issues.length){let a=new(o?.Err??e)(i.issues.map((l)=>finalizeIssue(l,s,config())));throw captureStackTrace(a,o?.callee),a}return i.value},parse,_parseAsync=(e)=>async(t,n,r,o)=>{let s=r?Object.assign(r,{async:!0}):{async:!0},i=t._zod.run({value:n,issues:[]},s);if(i instanceof Promise)i=await i;if(i.issues.length){let a=new(o?.Err??e)(i.issues.map((l)=>finalizeIssue(l,s,config())));throw captureStackTrace(a,o?.callee),a}return i.value},parseAsync,_safeParse=(e)=>(t,n,r)=>{let o=r?{...r,async:!1}:{async:!1},s=t._zod.run({value:n,issues:[]},o);if(s instanceof Promise)throw new $ZodAsyncError;return s.issues.length?{success:!1,error:new(e??$ZodError)(s.issues.map((i)=>finalizeIssue(i,o,config())))}:{success:!0,data:s.value}},safeParse,_safeParseAsync=(e)=>async(t,n,r)=>{let o=r?Object.assign(r,{async:!0}):{async:!0},s=t._zod.run({value:n,issues:[]},o);if(s instanceof Promise)s=await s;return s.issues.length?{success:!1,error:new e(s.issues.map((i)=>finalizeIssue(i,o,config())))}:{success:!0,data:s.value}},safeParseAsync;
+var GYt=b(()=>{WGe();Usr();pp();parse=_parse($ZodRealError),parseAsync=_parseAsync($ZodRealError),safeParse=_safeParse($ZodRealError),safeParseAsync=_safeParseAsync($ZodRealError)});
+export {_parse,parse,_parseAsync,parseAsync,_safeParse,safeParse,_safeParseAsync,safeParseAsync,GYt};

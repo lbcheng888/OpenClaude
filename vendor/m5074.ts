@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {b} from "../runtime.ts";
+function fpm(e){let t=[];if(e.length===0)return{isValid:!1,warnings:["Tool name cannot be empty"]};if(e.length>128)return{isValid:!1,warnings:[`Tool name exceeds maximum length of 128 characters (current: ${e.length})`]};if(e.includes(" "))t.push("Tool name contains spaces, which may cause parsing issues");if(e.includes(","))t.push("Tool name contains commas, which may cause parsing issues");if(e.startsWith("-")||e.endsWith("-"))t.push("Tool name starts or ends with a dash, which may cause parsing issues in some contexts");if(e.startsWith(".")||e.endsWith("."))t.push("Tool name starts or ends with a dot, which may cause parsing issues in some contexts");if(!mpm.test(e)){let n=e.split("").filter((r)=>!/[A-Za-z0-9._-]/.test(r)).filter((r,o,s)=>s.indexOf(r)===o);return t.push(`Tool name contains invalid characters: ${n.map((r)=>`"${r}"`).join(", ")}`,"Allowed characters are: A-Z, a-z, 0-9, underscore (_), dash (-), and dot (.)"),{isValid:!1,warnings:t}}return{isValid:!0,warnings:t}}
+function Apm(e,t){if(t.length>0){console.warn(`Tool name validation warning for "${e}":`);for(let n of t)console.warn(`  - ${n}`);console.warn("Tool registration will proceed, but this may cause compatibility issues."),console.warn("Consider updating the tool name to conform to the MCP tool naming standard."),console.warn("See SEP: Specify Format for Tool Names (https://github.com/modelcontextprotocol/modelcontextprotocol/issues/986) for more details.")}}
+function GRo(e){let t=fpm(e);return Apm(e,t.warnings),t.isValid}
+var mpm;
+var b0l=b(()=>{mpm=/^[A-Za-z0-9._-]{1,128}$/});
+export {fpm,Apm,GRo,mpm,b0l};

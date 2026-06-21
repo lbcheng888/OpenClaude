@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {er,ZE} from "./m460.ts";
+import {SR,soe} from "./m527.ts";
+import {b} from "../runtime.ts";
+function zX(e,t){t=t||{};let n=Object.create(null);Object.defineProperty(n,"hasOwnProperty",{value:Object.prototype.hasOwnProperty,enumerable:!1,writable:!0,configurable:!0});function r(c,u,d,p){if(er.isPlainObject(c)&&er.isPlainObject(u))return er.merge.call({caseless:p},c,u);else if(er.isPlainObject(u))return er.merge({},u);else if(er.isArray(u))return u.slice();return u}function o(c,u,d,p){if(!er.isUndefined(u))return r(c,u,d,p);else if(!er.isUndefined(c))return r(void 0,c,d,p)}function s(c,u){if(!er.isUndefined(u))return r(void 0,u)}function i(c,u){if(!er.isUndefined(u))return r(void 0,u);else if(!er.isUndefined(c))return r(void 0,c)}function a(c,u,d){if(er.hasOwnProp(t,d))return r(c,u);else if(er.hasOwnProp(e,d))return r(void 0,c)}let l={url:s,method:s,data:s,baseURL:i,transformRequest:i,transformResponse:i,paramsSerializer:i,timeout:i,timeoutMessage:i,withCredentials:i,withXSRFToken:i,adapter:i,responseType:i,xsrfCookieName:i,xsrfHeaderName:i,onUploadProgress:i,onDownloadProgress:i,decompress:i,maxContentLength:i,maxBodyLength:i,beforeRedirect:i,transport:i,httpAgent:i,httpsAgent:i,cancelToken:i,socketPath:i,allowedSocketPaths:i,responseEncoding:i,validateStatus:a,headers:(c,u,d)=>o(Czo(c),Czo(u),d,!0)};return er.forEach(Object.keys({...e,...t}),function(u){if(u==="__proto__"||u==="constructor"||u==="prototype")return;let d=er.hasOwnProp(l,u)?l[u]:o,p=er.hasOwnProp(e,u)?e[u]:void 0,m=er.hasOwnProp(t,u)?t[u]:void 0,f=d(p,m,u);er.isUndefined(f)&&d!==a||(n[u]=f)}),n}
+var Czo=(e)=>e instanceof SR?{...e}:e;
+var gen=b(()=>{ZE();soe()});
+export {zX,Czo,gen};

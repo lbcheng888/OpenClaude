@@ -1,0 +1,22 @@
+// @ts-nocheck
+import {mr,ki} from "./m2453.ts";
+import {AEl,hEl} from "../src/agent/4872_recursive.ts";
+import {Pt,Go} from "./m632.ts";
+import {Or,Ts} from "./m2542.ts";
+import {Wfe,fsModule} from "./m2246.ts";
+import {Text} from "./m2423.ts";
+import {at,rs} from "./m2546.ts";
+import {Tn,zs} from "./m2554.ts";
+import {Box} from "./m2422.ts";
+import {Pa,rh} from "./m2539.ts";
+import {nl,v_} from "./m2573.ts";
+import {Kn,Li} from "./m2572.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+function XGn(e){let t=gEl.c(49),{script:n,defaultName:r,onDone:o}=e,{columns:s}=mr(),[i,a]=n8e.useState(r),[l,c]=n8e.useState(r.length),[u,d]=n8e.useState("project"),[p,m]=n8e.useState(!1),[f,A]=n8e.useState(null),[h,g]=n8e.useState(null),_;if(t[0]===Symbol.for("react.memo_cache_sentinel"))_=()=>{A(null),g(null)},t[0]=_;else _=t[0];let y=_,T;if(t[1]===Symbol.for("react.memo_cache_sentinel"))T=(ae)=>{a(ae),y()},t[1]=T;else T=t[1];let S=T,v;if(t[2]!==f||t[3]!==i||t[4]!==o||t[5]!==p||t[6]!==u||t[7]!==n)v=()=>{if(p)return;let ae=i.trim();if(!ae)return;m(!0),g(null),AEl({name:ae,scope:u,script:n,overwrite:f!==null,cwd:Pt()}).then((he)=>{o(`Dynamic workflow saved to ${he.path}. Invoke as /${he.name} or Workflow({name: "${he.name}"}) in future sessions.`)}).catch((he)=>{let se=he instanceof Error?he.message:String(he);if(se.includes("already exists")){let le=se.match(/at (.+?)\. /);A(le?.[1]??"(unknown path)")}else g(se);m(!1)})},t[2]=f,t[3]=i,t[4]=o,t[5]=p,t[6]=u,t[7]=n,t[8]=v;else v=t[8];let R=v,k;if(t[9]!==o)k=()=>o(),t[9]=o,t[10]=k;else k=t[10];let x=k,H;if(t[11]===Symbol.for("react.memo_cache_sentinel"))H={context:"Settings",isActive:!0},t[11]=H;else H=t[11];Or("confirm:no",x,H);let I;if(t[12]===Symbol.for("react.memo_cache_sentinel"))I=(ae)=>{if(ae.key==="tab")ae.preventDefault(),d(Zom),y()},t[12]=I;else I=t[12];let P=I,L;if(t[13]!==i)L=Wfe(i.trim()||"workflow"),t[13]=i,t[14]=L;else L=t[14];let D=L,N=u==="project"?`.claude/workflows/${D}.js`:`~/.claude/workflows/${D}.js`,O=u==="project"?"Project":"User",$;if(t[15]!==O||t[16]!==N)$=yh.createElement(Text,{dimColor:!0},O," scope \xB7 ",N),t[15]=O,t[16]=N,t[17]=$;else $=t[17];let U=f?"overwrite":"save",W;if(t[18]!==U)W=yh.createElement(at,{chord:"enter",action:U}),t[18]=U,t[19]=W;else W=t[19];let G,V;if(t[20]===Symbol.for("react.memo_cache_sentinel"))G=yh.createElement(at,{chord:"tab",action:"toggle scope"}),V=yh.createElement(at,{chord:"escape",action:"cancel"}),t[20]=G,t[21]=V;else G=t[20],V=t[21];let Q;if(t[22]!==W)Q=yh.createElement(Tn,null,W,G,V),t[22]=W,t[23]=Q;else Q=t[23];let K;if(t[24]===Symbol.for("react.memo_cache_sentinel"))K=yh.createElement(Text,null,"Save as:"),t[24]=K;else K=t[24];let Y;if(t[25]===Symbol.for("react.memo_cache_sentinel"))Y=yh.createElement(Text,null,">"),t[25]=Y;else Y=t[25];let J=!p,ee=!p,te;if(t[26]!==s||t[27]!==l||t[28]!==R||t[29]!==i||t[30]!==J||t[31]!==ee)te=yh.createElement(Box,{flexDirection:"row",gap:1,marginTop:1},Y,yh.createElement(Pa,{value:i,onChange:S,onSubmit:R,focus:J,showCursor:ee,columns:s,cursorOffset:l,onChangeCursorOffset:c})),t[26]=s,t[27]=l,t[28]=R,t[29]=i,t[30]=J,t[31]=ee,t[32]=te;else te=t[32];let ne;if(t[33]!==f)ne=f&&yh.createElement(Box,{marginTop:1},yh.createElement(Text,{color:"warning"},f," already exists. Press Enter again to overwrite, or change the name.")),t[33]=f,t[34]=ne;else ne=t[34];let re;if(t[35]!==h)re=h&&yh.createElement(Box,{marginTop:1},yh.createElement(nl,{error:h})),t[35]=h,t[36]=re;else re=t[36];let oe;if(t[37]!==p)oe=p&&yh.createElement(Box,{marginTop:1},yh.createElement(Text,{dimColor:!0},"Saving\u2026")),t[37]=p,t[38]=oe;else oe=t[38];let ce;if(t[39]!==te||t[40]!==ne||t[41]!==re||t[42]!==oe)ce=yh.createElement(Box,{flexDirection:"column"},K,te,ne,re,oe),t[39]=te,t[40]=ne,t[41]=re,t[42]=oe,t[43]=ce;else ce=t[43];let ue;if(t[44]!==x||t[45]!==Q||t[46]!==ce||t[47]!==$)ue=yh.createElement(Box,{flexDirection:"column",tabIndex:0,autoFocus:!0,onKeyDown:P},yh.createElement(Kn,{title:"Save dynamic workflow",subtitle:$,onCancel:x,color:"permission",isCancelActive:!1,inputGuide:Q},ce)),t[44]=x,t[45]=Q,t[46]=ce,t[47]=$,t[48]=ue;else ue=t[48];return ue}
+function Zom(e){return e==="project"?"user":"project"}
+var gEl,yh,n8e;
+var fvo=b(()=>{ki();ze();Ts();hEl();fsModule();Go();zs();Li();v_();rs();rh();gEl=M(rt(),1),yh=M(Te(),1),n8e=M(Te(),1)});
+export {XGn,Zom,gEl,yh,n8e,fvo};

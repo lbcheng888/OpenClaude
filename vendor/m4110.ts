@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {DN} from "./m4106.ts";
+import {Mqe} from "./m4109.ts";
+var w$n=X((Pd_,A9a)=>{A9a.exports=f9a;var m9a=DN(),Axp=Mqe();function f9a(){m9a.call(this),this._firstChild=this._childNodes=null}f9a.prototype=Object.create(m9a.prototype,{hasChildNodes:{value:function(){if(this._childNodes)return this._childNodes.length>0;return this._firstChild!==null}},childNodes:{get:function(){return this._ensureChildNodes(),this._childNodes}},firstChild:{get:function(){if(this._childNodes)return this._childNodes.length===0?null:this._childNodes[0];return this._firstChild}},lastChild:{get:function(){var e=this._childNodes,t;if(e)return e.length===0?null:e[e.length-1];if(t=this._firstChild,t===null)return null;return t._previousSibling}},_ensureChildNodes:{value:function(){if(this._childNodes)return;var e=this._firstChild,t=e,n=this._childNodes=new Axp;if(e)do n.push(t),t=t._nextSibling;while(t!==e);this._firstChild=null}},removeChildren:{value:function(){var t=this.rooted?this.ownerDocument:null,n=this.firstChild,r;while(n!==null){if(r=n,n=r.nextSibling,t)t.mutateRemove(r);r.parentNode=null}if(this._childNodes)this._childNodes.length=0;else this._firstChild=null;this.modify()}}})});
+export {w$n};

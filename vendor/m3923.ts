@@ -1,0 +1,16 @@
+// @ts-nocheck
+import {Di,dr} from "./m231.ts";
+import {b} from "../runtime.ts";
+var aUn="artifact-design",K4e="code-review",B2t="verify",F2t="simplify",_io="commit",yio="commit-push-pr";
+function tct(e){if(typeof e==="object"&&e!==null&&"replacement"in e&&typeof e.replacement==="string"&&"partial"in e&&typeof e.partial==="boolean")return{replacement:e.replacement,partial:e.partial};return null}
+function HLa(e,t){let n=[],r=`${t}:`;for(let o of e){if(o.type!=="prompt"||!o.urlTemplate)continue;if(!o.name.startsWith(r))continue;n.push({uriTemplate:o.urlTemplate,name:o.name,description:o.description,server:t})}return n}
+function Tio(e){let t=e.indexOf("{");return t===-1?e:e.slice(0,t)}
+function lUn(e,t){let n=e.indexOf(":");if(n<=0)return null;let r=e.slice(0,n),o=e.slice(n+1);if(!o.includes("://"))return null;for(let s of t)if(s.type==="prompt"&&s.urlTemplate&&s.name.startsWith(`${r}:`)&&sSp(o,s.urlTemplate))return{commandName:s.name,args:o};return null}
+function sSp(e,t){let n=cUn(t),r=0;for(let o=0;o<n.length;o++){let s=n[o];if(s.type==="literal"){if(!e.startsWith(s.value,r))return!1;r+=s.value.length}else{let i=o+1;while(n[i]?.type==="variable")i++;let a=n[i];if(a?.type==="literal"){let c=i===n.length-1?e.lastIndexOf(a.value):e.indexOf(a.value,r);if(c<=r)return!1;r=c,o=i-1}else return e.length>r}}return r===e.length}
+function ILa(e){let t=cUn(e.template.uriTemplate),n=Object.keys(e.resolvedArgs).length,r=0;for(let o=0;o<t.length;o++){if(t[o].type!=="variable")continue;if(r===n)return t[o+1]?.type==="literal"&&t[o+2]?.type==="variable";r++}return!1}
+function cUn(e){let t=[],n=0,r=0;while(n<e.length)if(e[n]==="{"){if(n>r)t.push({type:"literal",value:e.slice(r,n)});let o=e.indexOf("}",n);if(o===-1)return t.push({type:"literal",value:e.slice(n)}),t;let s=e.slice(n+1,o);s=s.replace(/^[+#./;?&]/,"").replace(/\*$|:\d+$/,""),s=Di(s,","),t.push({type:"variable",name:s}),n=o+1,r=n}else n++;if(r<e.length)t.push({type:"literal",value:e.slice(r)});return t}
+function iSp(e,t){let n=cUn(e.uriTemplate),r={},o=0;for(let s=0;s<n.length;s++){let i=n[s];if(i.type==="literal"){let a=t.slice(o);if(a.length<i.value.length)return null;if(!a.startsWith(i.value))return null;o+=i.value.length}else{let a=n[s+1],l=a?.type==="literal"?a.value:null,c=t.slice(o);if(l){let u=c.indexOf(l);if(u===-1)return{template:e,argName:i.name,argValue:c,resolvedArgs:r,valueStartIndex:o};r[i.name]=c.slice(0,u),o+=u}else return{template:e,argName:i.name,argValue:c,resolvedArgs:r,valueStartIndex:o}}}return null}
+function DLa(e,t){let n=null,r=[-1,-1,-1];for(let o of t){let s=iSp(o,e);if(!s)continue;let i=[Object.keys(s.resolvedArgs).length,s.valueStartIndex,(o.uriTemplate.match(/\{/g)??[]).length];if(!n||i[0]>r[0]||i[0]===r[0]&&i[1]>r[1]||i[0]===r[0]&&i[1]===r[1]&&i[2]>r[2])n=s,r=i}return n}
+function PLa(e,t,n){let r=e.slice(0,t.valueStartIndex),o=cUn(t.template.uriTemplate),s=-1,i=0;for(let u=0;u<o.length;u++)if(o[u].type==="variable"){if(i===Object.keys(t.resolvedArgs).length){s=u;break}i++}let a=s+1;while(o[a]?.type==="variable")a++;let l=s>=0?o[a]:void 0,c=l?.type==="literal"?l.value:"";return r+n+c}
+var nct=b(()=>{dr()});
+export {aUn,K4e,B2t,F2t,_io,yio,tct,HLa,Tio,lUn,sSp,ILa,cUn,iSp,DLa,PLa,nct};

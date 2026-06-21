@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {ait} from "./m3518.ts";
+import {oto} from "./m3594.ts";
+var MZr=X((VLn)=>{Object.defineProperty(VLn,"__esModule",{value:!0});VLn.ChannelImplementation=void 0;var Wnp=ait(),Gnp=oto();class qya{constructor(e,t,n){if(typeof e!=="string")throw TypeError("Channel target must be a string");if(!(t instanceof Wnp.ChannelCredentials))throw TypeError("Channel credentials must be a ChannelCredentials object");if(n){if(typeof n!=="object")throw TypeError("Channel options must be an object")}this.internalChannel=new Gnp.InternalChannel(e,t,n)}close(){this.internalChannel.close()}getTarget(){return this.internalChannel.getTarget()}getConnectivityState(e){return this.internalChannel.getConnectivityState(e)}watchConnectivityState(e,t,n){this.internalChannel.watchConnectivityState(e,t,n)}getChannelzRef(){return this.internalChannel.getChannelzRef()}createCall(e,t,n,r,o){if(typeof e!=="string")throw TypeError("Channel#createCall: method must be a string");if(!(typeof t==="number"||t instanceof Date))throw TypeError("Channel#createCall: deadline must be a number or Date");return this.internalChannel.createCall(e,t,n,r,o)}}VLn.ChannelImplementation=qya});
+export {MZr};

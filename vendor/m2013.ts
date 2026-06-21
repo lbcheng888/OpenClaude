@@ -1,0 +1,28 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {zei} from "./m2009.ts";
+import {rkt} from "./m1968.ts";
+import {v1} from "./m1959.ts";
+import {J8} from "./m1977.ts";
+import {gOr} from "./m1980.ts";
+import {yOr} from "./m1982.ts";
+import {Jei} from "./m2010.ts";
+import {_Or} from "./m1981.ts";
+import {wOr} from "./m1990.ts";
+import {xOr} from "./m1991.ts";
+import {HOr} from "./m1993.ts";
+import {LBe} from "./m1979.ts";
+import {AOr} from "./m1978.ts";
+import {kOr} from "./m1992.ts";
+import {$Or} from "./m2003.ts";
+import {UOr} from "./m2001.ts";
+import {FOr} from "./m2000.ts";
+import {tLr} from "./m2007.ts";
+import {KCe} from "./m1996.ts";
+import {Qei} from "./m2011.ts";
+import {eLr} from "./m2006.ts";
+import {rLr} from "./m2008.ts";
+import {eti} from "./m2012.ts";
+import {COr} from "./m1989.ts";
+var UAn=X((pc)=>{var J5u=pc&&pc.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),X5u=pc&&pc.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))J5u(t,e,n)};Object.defineProperty(pc,"__esModule",{value:!0});pc.GoogleAuth=pc.auth=pc.PassThroughClient=pc.ExternalAccountAuthorizedUserClient=pc.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE=pc.ExecutableError=pc.PluggableAuthClient=pc.DownscopedClient=pc.BaseExternalAccountClient=pc.ExternalAccountClient=pc.IdentityPoolClient=pc.AwsRequestSigner=pc.AwsClient=pc.UserRefreshClient=pc.LoginTicket=pc.ClientAuthentication=pc.OAuth2Client=pc.CodeChallengeMethod=pc.Impersonated=pc.JWT=pc.JWTAccess=pc.IdTokenClient=pc.IAMAuth=pc.GCPEnv=pc.Compute=pc.DEFAULT_UNIVERSE=pc.AuthClient=pc.gaxios=pc.gcpMetadata=void 0;var tti=zei();Object.defineProperty(pc,"GoogleAuth",{enumerable:!0,get:function(){return tti.GoogleAuth}});pc.gcpMetadata=rkt();pc.gaxios=v1();var nti=J8();Object.defineProperty(pc,"AuthClient",{enumerable:!0,get:function(){return nti.AuthClient}});Object.defineProperty(pc,"DEFAULT_UNIVERSE",{enumerable:!0,get:function(){return nti.DEFAULT_UNIVERSE}});var Q5u=gOr();Object.defineProperty(pc,"Compute",{enumerable:!0,get:function(){return Q5u.Compute}});var Z5u=yOr();Object.defineProperty(pc,"GCPEnv",{enumerable:!0,get:function(){return Z5u.GCPEnv}});var eWu=Jei();Object.defineProperty(pc,"IAMAuth",{enumerable:!0,get:function(){return eWu.IAMAuth}});var tWu=_Or();Object.defineProperty(pc,"IdTokenClient",{enumerable:!0,get:function(){return tWu.IdTokenClient}});var nWu=wOr();Object.defineProperty(pc,"JWTAccess",{enumerable:!0,get:function(){return nWu.JWTAccess}});var rWu=xOr();Object.defineProperty(pc,"JWT",{enumerable:!0,get:function(){return rWu.JWT}});var oWu=HOr();Object.defineProperty(pc,"Impersonated",{enumerable:!0,get:function(){return oWu.Impersonated}});var aLr=LBe();Object.defineProperty(pc,"CodeChallengeMethod",{enumerable:!0,get:function(){return aLr.CodeChallengeMethod}});Object.defineProperty(pc,"OAuth2Client",{enumerable:!0,get:function(){return aLr.OAuth2Client}});Object.defineProperty(pc,"ClientAuthentication",{enumerable:!0,get:function(){return aLr.ClientAuthentication}});var sWu=AOr();Object.defineProperty(pc,"LoginTicket",{enumerable:!0,get:function(){return sWu.LoginTicket}});var iWu=kOr();Object.defineProperty(pc,"UserRefreshClient",{enumerable:!0,get:function(){return iWu.UserRefreshClient}});var aWu=$Or();Object.defineProperty(pc,"AwsClient",{enumerable:!0,get:function(){return aWu.AwsClient}});var lWu=UOr();Object.defineProperty(pc,"AwsRequestSigner",{enumerable:!0,get:function(){return lWu.AwsRequestSigner}});var cWu=FOr();Object.defineProperty(pc,"IdentityPoolClient",{enumerable:!0,get:function(){return cWu.IdentityPoolClient}});var uWu=tLr();Object.defineProperty(pc,"ExternalAccountClient",{enumerable:!0,get:function(){return uWu.ExternalAccountClient}});var dWu=KCe();Object.defineProperty(pc,"BaseExternalAccountClient",{enumerable:!0,get:function(){return dWu.BaseExternalAccountClient}});var pWu=Qei();Object.defineProperty(pc,"DownscopedClient",{enumerable:!0,get:function(){return pWu.DownscopedClient}});var rti=eLr();Object.defineProperty(pc,"PluggableAuthClient",{enumerable:!0,get:function(){return rti.PluggableAuthClient}});Object.defineProperty(pc,"ExecutableError",{enumerable:!0,get:function(){return rti.ExecutableError}});var oti=rLr();Object.defineProperty(pc,"EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE",{enumerable:!0,get:function(){return oti.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE}});Object.defineProperty(pc,"ExternalAccountAuthorizedUserClient",{enumerable:!0,get:function(){return oti.ExternalAccountAuthorizedUserClient}});var mWu=eti();Object.defineProperty(pc,"PassThroughClient",{enumerable:!0,get:function(){return mWu.PassThroughClient}});X5u(COr(),pc);var fWu=new tti.GoogleAuth;pc.auth=fWu});
+export {UAn};

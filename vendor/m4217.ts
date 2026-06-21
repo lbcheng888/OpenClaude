@@ -1,0 +1,18 @@
+// @ts-nocheck
+import {XT,ctn,c7,JT,utn,$b,sk,KM,BS,v7e,QT} from "./m642.ts";
+import {d8,WMe} from "./m641.ts";
+import {b} from "../runtime.ts";
+function Qut(e,t,n){let{head:r,tail:o,mtime:s,size:i}=t,a=r.indexOf(`
+`),l=a>=0?r.slice(0,a):r;if(l.includes('"isSidechain":true')||l.includes('"isSidechain": true'))return null;let c=XT(o,"customTitle")||XT(r,"customTitle")||XT(o,"aiTitle")||XT(r,"aiTitle")||void 0,u=ctn(r)||void 0,d=c7(r,"timestamp"),p;if(d){let _=Date.parse(d);if(!Number.isNaN(_))p=_}let m=c||XT(o,"lastPrompt")||XT(o,"summary")||u;if(!m)return null;let f=XT(o,"gitBranch")||c7(r,"gitBranch")||void 0,A=c7(r,"cwd")||n||void 0,h=o.split(`
+`).findLast((_)=>_.includes('"type":"tag"')&&_.includes('"tag":"')),g=h?XT(h,"tag")||void 0:void 0;return{sessionId:e,summary:m,lastModified:s,fileSize:i,customTitle:c,firstPrompt:u,gitBranch:f,cwd:A,tag:g,createdAt:p}}
+async function o6e(e,t,n){let r;try{r=await Jut.readdir(e)}catch{return[]}return(await Promise.all(r.map(async(s)=>{if(!s.endsWith(".jsonl"))return null;let i=JT(s.slice(0,-6));if(!i)return null;let a=Xut.join(e,s);if(!t)return{sessionId:i,filePath:a,mtime:0,projectPath:n};try{let l=await Jut.stat(a);return{sessionId:i,filePath:a,mtime:l.mtime.getTime(),projectPath:n}}catch{return null}}))).filter((s)=>s!==null)}
+async function O8a(e){let t=await utn(e.filePath);if(!t)return null;let n=Qut(e.sessionId,t,e.projectPath);if(!n)return null;if(e.mtime)n.lastModified=e.mtime;return n}
+function VDp(e,t){if(t.mtime!==e.mtime)return t.mtime-e.mtime;return t.sessionId<e.sessionId?-1:t.sessionId>e.sessionId?1:0}
+async function KDp(e,t,n){e.sort(VDp);let r=[],o=t&&t>0?t:1/0,s=0,i=new Set;for(let a=0;a<e.length&&r.length<o;){let l=Math.min(a+GDp,e.length),c=e.slice(a,l),u=await Promise.all(c.map(O8a));for(let d=0;d<u.length&&r.length<o;d++){a++;let p=u[d];if(!p)continue;if(i.has(p.sessionId))continue;if(i.add(p.sessionId),s<n){s++;continue}r.push(p)}}return r}
+async function zDp(e){let t=await Promise.all(e.map(O8a)),n=new Map;for(let o of t){if(!o)continue;let s=n.get(o.sessionId);if(!s||o.lastModified>s.lastModified)n.set(o.sessionId,o)}let r=[...n.values()];return r.sort((o,s)=>s.lastModified!==o.lastModified?s.lastModified-o.lastModified:s.sessionId<o.sessionId?-1:s.sessionId>o.sessionId?1:0),r}
+async function YDp(e,t,n){let r=await $b(e),o;if(t)try{o=await d8(r)}catch{o=[]}else o=[];if(o.length<=1){let d=[];for(let p of await sk(r))d.push(...await o6e(p,n,r));return d}let s=KM(),i=!1,a=o.map((d)=>{let p=BS(d);return{path:d,prefix:i?p.toLowerCase():p}});a.sort((d,p)=>p.prefix.length-d.prefix.length);let l;try{l=await Jut.readdir(s,{withFileTypes:!0})}catch{let d=[];for(let p of await sk(r))d.push(...await o6e(p,n,r));return d}let c=[],u=new Set;for(let d of await sk(r)){let p=Xut.basename(d);u.add(i?p.toLowerCase():p),c.push(...await o6e(d,n,r))}for(let d of l){if(!d.isDirectory())continue;let p=i?d.name.toLowerCase():d.name;if(u.has(p))continue;for(let{path:m,prefix:f}of a)if(p===f||f.length>=v7e&&p.startsWith(f+"-")){u.add(p),c.push(...await o6e(Xut.join(s,d.name),n,m));break}}return c}
+async function JDp(e){let t=KM(),n;try{n=await Jut.readdir(t,{withFileTypes:!0})}catch{return[]}return(await Promise.all(n.filter((o)=>o.isDirectory()).map((o)=>o6e(Xut.join(t,o.name),e)))).flat()}
+async function L8a(e){let{dir:t,limit:n,offset:r,includeWorktrees:o}=e??{},s=r??0,i=n!==void 0&&n>0||s>0,a=t?await YDp(t,o??!0,i):await JDp(i);if(!i)return zDp(a);return KDp(a,n,s)}
+var Jut,Xut,GDp=32;
+var S3n=b(()=>{WMe();QT();Jut=require("fs/promises"),Xut=require("path")});
+export {Qut,o6e,O8a,VDp,KDp,zDp,YDp,JDp,L8a,Jut,Xut,GDp,S3n};

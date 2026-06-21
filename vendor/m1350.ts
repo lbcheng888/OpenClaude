@@ -1,0 +1,25 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b} from "../runtime.ts";
+import {getDefaultRoleAssumerWithWebIdentity,getDefaultRoleAssumer,decorateDefaultCredentialProvider,CNs} from "./m1349.ts";
+import {Hvt} from "./m1293.ts";
+import {SessionDurationEscalationException,RegionDisabledException,PackedPolicyTooLargeException,OutboundWebIdentityFederationDisabledException,MalformedPolicyDocumentException,JWTPayloadSizeExceededException,InvalidIdentityTokenException,InvalidAuthorizationMessageException,IDPRejectedClaimException,IDPCommunicationErrorException,ExpiredTradeInTokenException,ExpiredTokenException,qvr} from "./m1333.ts";
+import {STSServiceException,Hcn} from "./m1332.ts";
+import {STSClient,Dvt} from "./m1331.ts";
+import {STS,pNs} from "./m1346.ts";
+import {GetWebIdentityTokenCommand} from "./m1345.ts";
+import {GetSessionTokenCommand} from "./m1344.ts";
+import {GetFederationTokenCommand} from "./m1343.ts";
+import {GetDelegatedAccessTokenCommand} from "./m1342.ts";
+import {GetCallerIdentityCommand} from "./m1341.ts";
+import {GetAccessKeyInfoCommand} from "./m1340.ts";
+import {DecodeAuthorizationMessageCommand} from "./m1339.ts";
+import {AssumeRootCommand} from "./m1338.ts";
+import {AssumeRoleWithWebIdentityCommand} from "./m1337.ts";
+import {AssumeRoleWithSAMLCommand} from "./m1336.ts";
+import {AssumeRoleCommand} from "./m1335.ts";
+import {oC} from "./m1309.ts";
+import {mNs} from "./m1347.ts";
+var twr={};
+isFullscreenWithTTY(twr,{getDefaultRoleAssumerWithWebIdentity:()=>getDefaultRoleAssumerWithWebIdentity,getDefaultRoleAssumer:()=>getDefaultRoleAssumer,decorateDefaultCredentialProvider:()=>decorateDefaultCredentialProvider,__Client:()=>Hvt,SessionDurationEscalationException:()=>SessionDurationEscalationException,STSServiceException:()=>STSServiceException,STSClient:()=>STSClient,STS:()=>STS,RegionDisabledException:()=>RegionDisabledException,PackedPolicyTooLargeException:()=>PackedPolicyTooLargeException,OutboundWebIdentityFederationDisabledException:()=>OutboundWebIdentityFederationDisabledException,MalformedPolicyDocumentException:()=>MalformedPolicyDocumentException,JWTPayloadSizeExceededException:()=>JWTPayloadSizeExceededException,InvalidIdentityTokenException:()=>InvalidIdentityTokenException,InvalidAuthorizationMessageException:()=>InvalidAuthorizationMessageException,IDPRejectedClaimException:()=>IDPRejectedClaimException,IDPCommunicationErrorException:()=>IDPCommunicationErrorException,GetWebIdentityTokenCommand:()=>GetWebIdentityTokenCommand,GetSessionTokenCommand:()=>GetSessionTokenCommand,GetFederationTokenCommand:()=>GetFederationTokenCommand,GetDelegatedAccessTokenCommand:()=>GetDelegatedAccessTokenCommand,GetCallerIdentityCommand:()=>GetCallerIdentityCommand,GetAccessKeyInfoCommand:()=>GetAccessKeyInfoCommand,ExpiredTradeInTokenException:()=>ExpiredTradeInTokenException,ExpiredTokenException:()=>ExpiredTokenException,DecodeAuthorizationMessageCommand:()=>DecodeAuthorizationMessageCommand,AssumeRootCommand:()=>AssumeRootCommand,AssumeRoleWithWebIdentityCommand:()=>AssumeRoleWithWebIdentityCommand,AssumeRoleWithSAMLCommand:()=>AssumeRoleWithSAMLCommand,AssumeRoleCommand:()=>AssumeRoleCommand,$Command:()=>oC});
+var nwr=b(()=>{Hcn();Dvt();pNs();mNs();qvr();CNs()});
+export {twr,nwr};

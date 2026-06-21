@@ -1,0 +1,13 @@
+// @ts-nocheck
+import {fqr,vOi,wOi} from "./m2644.ts";
+import {Jo,iCn,c4r} from "./m2601.ts";
+import {lRe,FDt} from "./m2645.ts";
+import {b} from "../runtime.ts";
+function HOi(e){return e.length>=3&&e[0]===22&&e[1]===3&&e[2]<=3}
+function OOi(e,t){if(t.length>=3)return Promise.resolve({isTLS:HOi(t),head:t});return new Promise((n)=>{let r=t,o=()=>{e.removeListener("data",s),e.removeListener("close",o),n({isTLS:HOi(r),head:r})},s=(i)=>{if(e.pause(),r=r.length?Buffer.concat([r,i]):i,r.length>=3)return o();e.resume()};e.on("data",s),e.once("close",o)})}
+function LOi(e,t,n,r,o){let s=fqr(e,o.hostname),i=GCn.createServer({ALPNProtocols:["http/1.1"],cert:s.certPem,key:s.keyPem,SNICallback:(c,u)=>{try{u(null,vOi(e,c||o.hostname))}catch(d){u(d)}}});i.on("request",(c,u)=>{wTd(t,c,u,o)}),i.on("tlsClientError",(c,u)=>{Jo(`[tls-terminate] client TLS error for ${o.hostname}: ${c.message}`,{level:"error"}),u.destroy()}),i.on("upgrade",(c,u)=>{Jo("[tls-terminate] upgrade request refused",{level:"warn"}),u.destroy()});let a=xTd(),l=()=>{i.close(),IOi.unlink(a,()=>{})};i.on("error",(c)=>{Jo(`[tls-terminate] inner server listen failed: ${c.message}`,{level:"error"}),n.destroy(),l()}),i.listen(a,()=>{let c=VCn.connect({path:a});c.on("error",(u)=>{Jo(`[tls-terminate] inner loopback failed: ${u.message}`,{level:"error"}),n.destroy(),l()}),c.once("connect",()=>{if(r.length)c.write(r);n.pipe(c),c.pipe(n)}),n.on("error",()=>c.destroy()),n.once("close",()=>{c.destroy(),l()}),c.once("close",()=>n.destroy())}),i.unref()}
+async function wTd(e,t,n,r){let o=t;if(e){let a=new AbortController;n.once("close",()=>a.abort());let l=t.headers.host??(r.port===443?r.hostname:`${r.hostname}:${r.port}`),c=await iCn(e,t,n,`https://${l}${t.url??"/"}`,a.signal);if(c===null)return;o=c}let s=lRe(t.headers);delete s.host;let i=GCn.request({host:r.hostname,port:r.port,path:t.url,method:t.method,headers:s,...VCn.isIP(r.hostname)?{}:{servername:r.hostname},...r.upstreamCA?{ca:r.upstreamCA}:{},agent:!1},(a)=>{n.writeHead(a.statusCode??502,lRe(a.headers)),a.pipe(n)});i.on("error",(a)=>{if(Jo(`[tls-terminate] upstream ${r.hostname}:${r.port} failed: ${a.message}`,{level:"error"}),!n.headersSent)n.writeHead(502,{"Content-Type":"text/plain"}),n.end("Bad Gateway");else n.destroy()}),n.on("close",()=>i.destroy()),o.pipe(i)}
+function xTd(){return POi.join(DOi.tmpdir(),`srt-tt-${process.pid}-${(RTd++).toString(36)}.sock`)}
+var GCn,VCn,IOi,DOi,POi,RTd=0;
+var MOi=b(()=>{c4r();wOi();FDt();GCn=require("https"),VCn=require("net"),IOi=require("fs"),DOi=require("os"),POi=require("path")});
+export {HOi,OOi,LOi,wTd,xTd,GCn,VCn,IOi,DOi,POi,RTd,MOi};

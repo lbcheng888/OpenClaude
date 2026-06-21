@@ -1,0 +1,19 @@
+// @ts-nocheck
+import {R3,bYt,xX,EYt} from "../../vendor/m239.ts";
+import {logForDebugging,qe} from "./0234_setHasFormattedOutput.ts";
+import {b} from "../../runtime.ts";
+import {Lr} from "../../vendor/m578.ts";
+import {je} from "../../vendor/m577.ts";
+async function*SQa(e,t){let n=Symbol.asyncIterator in e?e[Symbol.asyncIterator]():e[Symbol.iterator](),r,o=t(),s=0;try{while(!0){r??=Promise.resolve(n.next()).then((l)=>({kind:"stream",r:l}));let i=t();if(i!==o)o=i,s=0;let a=await Promise.race([r,i.waitForDrainable(s).then((l)=>({kind:"drain",gen:l}))]);if(a.kind==="drain"){s=a.gen,yield{type:"tool_drain_tick"};continue}if(r=void 0,a.r.done)return;yield a.r.value}}finally{Promise.resolve(n.return?.(void 0)).catch(()=>{})}}
+function C4t(){if(!E4t)return;R3().clearMarks(),eho.clear(),ZAo=null,bQa++,am("query_user_input_received")}
+function am(e){if(!E4t)return;let t=R3();if(t.mark(e),eho.set(e,process.memoryUsage()),e==="query_first_chunk_received"&&ZAo===null){let n=t.getEntriesByType("mark");if(n.length>0)ZAo=n.at(-1)?.startTime??0}}
+function EQa(){if(!E4t)return;am("query_profile_end")}
+function e$p(e,t){if(t==="query_user_input_received")return"";if(e>1000)return" \u26A0\uFE0F  VERY SLOW";if(e>100)return" \u26A0\uFE0F  SLOW";if(t.includes("git_status")&&e>50)return" \u26A0\uFE0F  git status";if(t.includes("tool_schema")&&e>50)return" \u26A0\uFE0F  tool schemas";if(t.includes("client_creation")&&e>50)return" \u26A0\uFE0F  client creation";return""}
+function t$p(){if(!E4t)return"Query profiling not enabled (set CLAUDE_CODE_PROFILE_QUERY=1)";let t=R3().getEntriesByType("mark");if(t.length===0)return"No query profiling checkpoints recorded";let n=[];n.push("=".repeat(80)),n.push(`QUERY PROFILING REPORT - Query #${bQa}`),n.push("=".repeat(80)),n.push("");let r=t[0]?.startTime??0,o=r,s=0,i=0;for(let c of t){let u=c.startTime-r,d=c.startTime-o;if(n.push(bYt(u,d,c.name,eho.get(c.name),10,9,e$p(d,c.name))),c.name==="query_api_request_sent")s=u;if(c.name==="query_first_chunk_received")i=u;o=c.startTime}let a=t.at(-1),l=a?a.startTime-r:0;if(n.push(""),n.push("-".repeat(80)),i>0){let c=s,u=i-s,d=(c/i*100).toFixed(1),p=(u/i*100).toFixed(1);n.push(`Total TTFT: ${xX(i)}ms`),n.push(`  - Pre-request overhead: ${xX(c)}ms (${d}%)`),n.push(`  - Network latency: ${xX(u)}ms (${p}%)`)}else n.push(`Total time: ${xX(l)}ms`);return n.push(n$p(t,r)),n.push("=".repeat(80)),n.join(`
+`)}
+function n$p(e,t){let n=[{name:"Context loading",start:"query_context_loading_start",end:"query_context_loading_end"},{name:"Autocompact",start:"query_autocompact_start",end:"query_autocompact_end"},{name:"Query setup",start:"query_setup_start",end:"query_setup_end"},{name:"Tool schemas",start:"query_tool_schema_build_start",end:"query_tool_schema_build_end"},{name:"Message normalization",start:"query_message_normalization_start",end:"query_message_normalization_end"},{name:"Client creation",start:"query_client_creation_start",end:"query_client_creation_end"},{name:"Network TTFB",start:"query_api_request_sent",end:"query_first_chunk_received"},{name:"Tool execution",start:"query_tool_execution_start",end:"query_tool_execution_end"}],r=new Map(e.map((i)=>[i.name,i.startTime-t])),o=[];o.push(""),o.push("PHASE BREAKDOWN:");for(let i of n){let a=r.get(i.start),l=r.get(i.end);if(a!==void 0&&l!==void 0){let c=l-a,u="\u2588".repeat(Math.min(Math.ceil(c/10),50));o.push(`  ${i.name.padEnd(22)} ${xX(c).padStart(10)}ms ${u}`)}}let s=r.get("query_api_request_sent");if(s!==void 0)o.push(""),o.push(`  ${"Total pre-API overhead".padEnd(22)} ${xX(s).padStart(10)}ms`);return o.join(`
+`)}
+function Wqn(){if(!E4t)return;logForDebugging(t$p())}
+var E4t,eho,bQa=0,ZAo=null;
+var B6e=b(()=>{qe();Lr();EYt();E4t=je.CLAUDE_CODE_PROFILE_QUERY,eho=new Map});
+export {SQa,C4t,am,EQa,e$p,t$p,n$p,Wqn,E4t,eho,bQa,ZAo,B6e};

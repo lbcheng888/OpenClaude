@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {initLf} from "./m354.ts";
+import {Ig} from "./m355.ts";
+var Uur=X((xSt)=>{Object.defineProperty(xSt,"__esModule",{value:!0});xSt.validateAdditionalItems=void 0;var aMe=initLf(),Fur=Ig(),Qxc={message:({params:{len:e}})=>aMe.str`must NOT have more than ${e} items`,params:({params:{len:e}})=>aMe._`{limit: ${e}}`},Zxc={keyword:"additionalItems",type:"array",schemaType:["boolean","object"],before:"uniqueItems",error:Qxc,code(e){let{parentSchema:t,it:n}=e,{items:r}=t;if(!Array.isArray(r)){(0,Fur.checkStrictMode)(n,'"additionalItems" is ignored when "items" is not an array of schemas');return}S5o(e,r)}};function S5o(e,t){let{gen:n,schema:r,data:o,keyword:s,it:i}=e;i.items=!0;let a=n.const("len",aMe._`${o}.length`);if(r===!1)e.setParams({len:t.length}),e.pass(aMe._`${a} <= ${t.length}`);else if(typeof r=="object"&&!(0,Fur.alwaysValidSchema)(i,r)){let c=n.var("valid",aMe._`${a} <= ${t.length}`);n.if((0,aMe.not)(c),()=>l(c)),e.ok(c)}function l(c){n.forRange("i",t.length,a,(u)=>{if(e.subschema({keyword:s,dataProp:u,dataPropType:Fur.Type.Num},c),!i.allErrors)n.if((0,aMe.not)(c),()=>n.break())})}}xSt.validateAdditionalItems=S5o;xSt.default=Zxc});
+export {Uur};

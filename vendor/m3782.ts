@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var oBn=X((Yxa,Jxa)=>{(function(){var e;Jxa.exports=e=function(){class t{constructor(n){this.nodes=n}clone(){return this.nodes=null}getNamedItem(n){return this.nodes[n]}setNamedItem(n){var r=this.nodes[n.nodeName];return this.nodes[n.nodeName]=n,r||null}removeNamedItem(n){var r=this.nodes[n];return delete this.nodes[n],r||null}item(n){return this.nodes[Object.keys(this.nodes)[n]]||null}getNamedItemNS(n,r){throw Error("This DOM method is not implemented.")}setNamedItemNS(n){throw Error("This DOM method is not implemented.")}removeNamedItemNS(n,r){throw Error("This DOM method is not implemented.")}}return Object.defineProperty(t.prototype,"length",{get:function(){return Object.keys(this.nodes).length||0}}),t}.call(this)}).call(Yxa)});
+export {oBn};

@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var v3i=X((u2h,C3i)=>{function IHd(e){let t={className:"number",begin:/[$%]\d+/},n={className:"number",begin:/\d+/},r={className:"number",begin:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?/},o={className:"number",begin:/:\d{1,5}/};return{name:"Apache config",aliases:["apacheconf"],case_insensitive:!0,contains:[e.HASH_COMMENT_MODE,{className:"section",begin:/<\/?/,end:/>/,contains:[r,o,e.inherit(e.QUOTE_STRING_MODE,{relevance:0})]},{className:"attribute",begin:/\w+/,relevance:0,keywords:{nomarkup:"order deny allow setenv rewriterule rewriteengine rewritecond documentroot sethandler errordocument loadmodule options header listen serverroot servername"},starts:{end:/$/,relevance:0,keywords:{literal:"on off all deny allow"},contains:[{className:"meta",begin:/\s\[/,end:/\]$/},{className:"variable",begin:/[\$%]\{/,end:/\}/,contains:["self",t]},r,n,e.QUOTE_STRING_MODE]}}],illegal:/\S/}}C3i.exports=IHd});
+export {v3i};

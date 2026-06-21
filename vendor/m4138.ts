@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Aut} from "./m4119.ts";
+import {duo} from "./m4136.ts";
+import {Xk} from "./m4102.ts";
+import {B$n} from "./m4134.ts";
+var Auo=X((q$n)=>{var $3a=Aut(),gkp=duo(),_kp=Xk(),ykp=B$n(),Tkp=q$n.elements={},q3a=Object.create(null);q$n.createElement=function(e,t,n){var r=q3a[t]||fuo;return new r(e,t,n)};function muo(e){return gkp(e,fuo,Tkp,q3a)}var fuo=muo({superclass:$3a,name:"SVGElement",ctor:function(t,n,r){$3a.call(this,t,n,_kp.NAMESPACE.SVG,r)},props:{style:{get:function(){if(!this._style)this._style=new ykp(this);return this._style}}}});muo({name:"SVGSVGElement",ctor:function(t,n,r){fuo.call(this,t,n,r)},tag:"svg",props:{createSVGRect:{value:function(){return q$n.createElement(this.ownerDocument,"rect",null)}}}});muo({tags:["a","altGlyph","altGlyphDef","altGlyphItem","animate","animateColor","animateMotion","animateTransform","circle","clipPath","color-profile","cursor","defs","desc","ellipse","feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotLight","feTile","feTurbulence","filter","font","font-face","font-face-format","font-face-name","font-face-src","font-face-uri","foreignObject","g","glyph","glyphRef","hkern","image","line","linearGradient","marker","mask","metadata","missing-glyph","mpath","path","pattern","polygon","polyline","radialGradient","rect","script","set","stop","style","switch","symbol","text","textPath","title","tref","tspan","use","view","vkern"]})});
+export {Auo};

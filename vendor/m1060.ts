@@ -1,0 +1,21 @@
+// @ts-nocheck
+import {b,M} from "../runtime.ts";
+import {ri} from "./m1046.ts";
+import {ZSr,QEs,JEs} from "./m1047.ts";
+import {wi,ZEs} from "./m1048.ts";
+import {BCs,NCs} from "./m1057.ts";
+import {YCs,zCs} from "./m1059.ts";
+import {Jpe} from "./m859.ts";
+import {Xpe} from "./m860.ts";
+import {Qpe} from "./m865.ts";
+import {Poe} from "./m881.ts";
+import {nk} from "./m607.ts";
+import {Sd} from "./m850.ts";
+import {US} from "./m818.ts";
+import {ome} from "./m884.ts";
+import {yo} from "./m887.ts";
+import {i1} from "./m894.ts";
+import {__Client} from "./m1022.ts";
+var lin,JCs,XCs,cin,QCs,Aze,ZCs,evs,tvs,uin,BedrockClient;
+var s0=b(()=>{ri();ZSr();wi();BCs();YCs();lin=M(Jpe(),1),JCs=M(Xpe(),1),XCs=M(Qpe(),1),cin=M(Poe(),1),QCs=M(nk(),1),Aze=M(Sd(),1),ZCs=M(US(),1),evs=M(ome(),1),tvs=M(yo(),1),uin=M(i1(),1);BedrockClient=class BedrockClient extends __Client{config;constructor(...[e]){let t=NCs(e||{});super(t);this.initConfig=t;let n=ZEs(t),r=cin.resolveUserAgentConfig(n),o=uin.resolveRetryConfig(r),s=QCs.resolveRegionConfig(o),i=lin.resolveHostHeaderConfig(s),a=tvs.resolveEndpointConfig(i),l=QEs(a),c=zCs(l,e?.extensions||[]);this.config=c,this.middlewareStack.use(ZCs.getSchemaSerdePlugin(this.config)),this.middlewareStack.use(cin.getUserAgentPlugin(this.config)),this.middlewareStack.use(uin.getRetryPlugin(this.config)),this.middlewareStack.use(evs.getContentLengthPlugin(this.config)),this.middlewareStack.use(lin.getHostHeaderPlugin(this.config)),this.middlewareStack.use(JCs.getLoggerPlugin(this.config)),this.middlewareStack.use(XCs.getRecursionDetectionPlugin(this.config)),this.middlewareStack.use(Aze.getHttpAuthSchemeEndpointRuleSetPlugin(this.config,{httpAuthSchemeParametersProvider:JEs,identityProviderConfigProvider:async(u)=>new Aze.DefaultIdentityProviderConfig({"aws.auth#sigv4":u.credentials,"smithy.api#httpBearerAuth":u.token})})),this.middlewareStack.use(Aze.getHttpSigningPlugin(this.config))}destroy(){super.destroy()}}});
+export {lin,JCs,XCs,cin,QCs,Aze,ZCs,evs,tvs,uin,BedrockClient,s0};

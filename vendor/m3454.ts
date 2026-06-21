@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {mle} from "./m3449.ts";
+var lfa=X((Y_g,afa)=>{afa.exports=QNt;var WQr=mle();(QNt.prototype=Object.create(WQr.EventEmitter.prototype)).constructor=QNt;function QNt(e,t,n){if(typeof e!=="function")throw TypeError("rpcImpl must be a function");WQr.EventEmitter.call(this),this.rpcImpl=e,this.requestDelimited=Boolean(t),this.responseDelimited=Boolean(n)}QNt.prototype.rpcCall=function e(t,n,r,o,s){if(!o)throw TypeError("request must be specified");var i=this;if(!s)return WQr.asPromise(e,i,t,n,r,o);if(!i.rpcImpl){setTimeout(function(){s(Error("already ended"))},0);return}try{return i.rpcImpl(t,n[i.requestDelimited?"encodeDelimited":"encode"](o).finish(),function(l,c){if(l)return i.emit("error",l,t),s(l);if(c===null){i.end(!0);return}if(!(c instanceof r))try{c=r[i.responseDelimited?"decodeDelimited":"decode"](c)}catch(u){return i.emit("error",u,t),s(u)}return i.emit("data",c,t),s(null,c)})}catch(a){i.emit("error",a,t),setTimeout(function(){s(a)},0);return}};QNt.prototype.end=function(t){if(this.rpcImpl){if(!t)this.rpcImpl(null,null,null);this.rpcImpl=null,this.emit("end").off()}return this}});
+export {lfa};

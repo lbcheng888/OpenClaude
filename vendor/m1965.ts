@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var yZs=X((tAn)=>{Object.defineProperty(tAn,"__esModule",{value:!0});tAn.Colours=void 0;class eA{static isEnabled(e){return e&&e.isTTY&&(typeof e.getColorDepth==="function"?e.getColorDepth()>2:!0)}static refresh(){if(eA.enabled=eA.isEnabled(process===null||process===void 0?void 0:process.stderr),!this.enabled)eA.reset="",eA.bright="",eA.dim="",eA.red="",eA.green="",eA.yellow="",eA.blue="",eA.magenta="",eA.cyan="",eA.white="",eA.grey="";else eA.reset="\x1B[0m",eA.bright="\x1B[1m",eA.dim="\x1B[2m",eA.red="\x1B[31m",eA.green="\x1B[32m",eA.yellow="\x1B[33m",eA.blue="\x1B[34m",eA.magenta="\x1B[35m",eA.cyan="\x1B[36m",eA.white="\x1B[37m",eA.grey="\x1B[90m"}}tAn.Colours=eA;eA.enabled=!1;eA.reset="";eA.bright="";eA.dim="";eA.red="";eA.green="";eA.yellow="";eA.blue="";eA.magenta="";eA.cyan="";eA.white="";eA.grey="";eA.refresh()});
+export {yZs};

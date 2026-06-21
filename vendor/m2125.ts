@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var ppi=X((Ogn)=>{Object.defineProperty(Ogn,"__esModule",{value:!0});Ogn.isPlainObject=void 0;var Tzu="[object Object]",Szu="[object Null]",bzu="[object Undefined]",Ezu=Function.prototype,lpi=Ezu.toString,Czu=lpi.call(Object),vzu=Object.getPrototypeOf,cpi=Object.prototype,upi=cpi.hasOwnProperty,aFe=Symbol?Symbol.toStringTag:void 0,dpi=cpi.toString;function wzu(e){if(!Rzu(e)||xzu(e)!==Tzu)return!1;let t=vzu(e);if(t===null)return!0;let n=upi.call(t,"constructor")&&t.constructor;return typeof n=="function"&&n instanceof n&&lpi.call(n)===Czu}Ogn.isPlainObject=wzu;function Rzu(e){return e!=null&&typeof e=="object"}function xzu(e){if(e==null)return e===void 0?bzu:Szu;return aFe&&aFe in Object(e)?kzu(e):Hzu(e)}function kzu(e){let t=upi.call(e,aFe),n=e[aFe],r=!1;try{e[aFe]=void 0,r=!0}catch{}let o=dpi.call(e);if(r)if(t)e[aFe]=n;else delete e[aFe];return o}function Hzu(e){return dpi.call(e)}});
+export {ppi};

@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+import {RFt} from "./m3710.ts";
+import {P1n} from "./m3707.ts";
+var zCa=X((dat)=>{Object.defineProperty(dat,"__esModule",{value:!0});dat.BatchObservableResultImpl=dat.ObservableResultImpl=void 0;var uat=Xi(),GCa=RFt(),Icp=P1n();class VCa{_buffer=new GCa.AttributeHashMap;_instrumentName;_valueType;constructor(e,t){this._instrumentName=e,this._valueType=t}observe(e,t={}){if(typeof e!=="number"){uat.diag.warn(`non-number value provided to metric ${this._instrumentName}: ${e}`);return}if(this._valueType===uat.ValueType.INT&&!Number.isInteger(e)){if(uat.diag.warn(`INT value type cannot accept a floating-point value for ${this._instrumentName}, ignoring the fractional digits.`),e=Math.trunc(e),!Number.isInteger(e))return}this._buffer.set(t,e)}}dat.ObservableResultImpl=VCa;class KCa{_buffer=new Map;observe(e,t,n={}){if(!(0,Icp.isObservableInstrument)(e))return;let r=this._buffer.get(e);if(r==null)r=new GCa.AttributeHashMap,this._buffer.set(e,r);if(typeof t!=="number"){uat.diag.warn(`non-number value provided to metric ${e._descriptor.name}: ${t}`);return}if(e._descriptor.valueType===uat.ValueType.INT&&!Number.isInteger(t)){if(uat.diag.warn(`INT value type cannot accept a floating-point value for ${e._descriptor.name}, ignoring the fractional digits.`),t=Math.trunc(t),!Number.isInteger(t))return}r.set(n,t)}}dat.BatchObservableResultImpl=KCa});
+export {zCa};

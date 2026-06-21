@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {pSt} from "./m361.ts";
+import {initLf} from "./m354.ts";
+import {Ig} from "./m355.ts";
+import {KQt} from "./m390.ts";
+var g5o=X((Our)=>{Object.defineProperty(Our,"__esModule",{value:!0});var Pur=pSt(),GM=initLf(),kxc=Ig(),Hxc=KQt(),Ixc={message:({params:{i:e,j:t}})=>GM.str`must NOT have duplicate items (items ## ${t} and ${e} are identical)`,params:({params:{i:e,j:t}})=>GM._`{i: ${e}, j: ${t}}`},Dxc={keyword:"uniqueItems",type:"array",schemaType:"boolean",$data:!0,error:Ixc,code(e){let{gen:t,data:n,$data:r,schema:o,parentSchema:s,schemaCode:i,it:a}=e;if(!r&&!o)return;let l=t.let("valid"),c=s.items?(0,Pur.getSchemaTypes)(s.items):[];e.block$data(l,u,GM._`${i} === false`),e.ok(l);function u(){let f=t.let("i",GM._`${n}.length`),A=t.let("j");e.setParams({i:f,j:A}),t.assign(l,!0),t.if(GM._`${f} > 1`,()=>(d()?p:m)(f,A))}function d(){return c.length>0&&!c.some((f)=>f==="object"||f==="array")}function p(f,A){let h=t.name("item"),g=(0,Pur.checkDataTypes)(c,h,a.opts.strictNumbers,Pur.DataType.Wrong),_=t.const("indices",GM._`{}`);t.for(GM._`;${f}--;`,()=>{if(t.let(h,GM._`${n}[${f}]`),t.if(g,GM._`continue`),c.length>1)t.if(GM._`typeof ${h} == "string"`,GM._`${h} += "_"`);t.if(GM._`typeof ${_}[${h}] == "number"`,()=>{t.assign(A,GM._`${_}[${h}]`),e.error(),t.assign(l,!1).break()}).code(GM._`${_}[${h}] = ${f}`)})}function m(f,A){let h=(0,kxc.useFunc)(t,Hxc.default),g=t.name("outer");t.label(g).for(GM._`;${f}--;`,()=>t.for(GM._`${A} = ${f}; ${A}--;`,()=>t.if(GM._`${h}(${n}[${f}], ${n}[${A}])`,()=>{e.error(),t.assign(l,!1).break(g)})))}}};Our.default=Dxc});
+export {g5o};

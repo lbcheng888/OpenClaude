@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {YPt} from "./m2709.ts";
+import {navigator} from "./m521.ts";
+var JPt=X((cq)=>{var{REGEX_BACKSLASH:Mvd,REGEX_REMOVE_BACKSLASH:Nvd,REGEX_SPECIAL_CHARS:Bvd,REGEX_SPECIAL_CHARS_GLOBAL:Fvd}=YPt();cq.isObject=(e)=>e!==null&&typeof e==="object"&&!Array.isArray(e);cq.hasRegexChars=(e)=>Bvd.test(e);cq.isRegexChar=(e)=>e.length===1&&cq.hasRegexChars(e);cq.escapeRegex=(e)=>e.replace(Fvd,"\\$1");cq.toPosixSlashes=(e)=>e.replace(Mvd,"/");cq.isWindows=()=>{if(typeof navigator<"u"&&navigator.platform){let e=navigator.platform.toLowerCase();return e==="win32"||e==="windows"}if(typeof process<"u")return!1;return!1};cq.removeBackslashes=(e)=>e.replace(Nvd,(t)=>t==="\\"?"":t);cq.escapeLast=(e,t,n)=>{let r=e.lastIndexOf(t,n);if(r===-1)return e;if(e[r-1]==="\\")return cq.escapeLast(e,t,r-1);return`${e.slice(0,r)}\\${e.slice(r)}`};cq.removePrefix=(e,t={})=>{let n=e;if(n.startsWith("./"))n=n.slice(2),t.prefix="./";return n};cq.wrapOutput=(e,t={},n={})=>{let r=n.contains?"":"^",o=n.contains?"":"$",s=`${r}(?:${e})${o}`;if(t.negated===!0)s=`(?:^(?!${s}).*$)`;return s};cq.basename=(e,{windows:t}={})=>{let n=e.split(t?/[\\/]/:"/"),r=n[n.length-1];if(r==="")return n[n.length-2];return r}});
+export {JPt};

@@ -1,0 +1,15 @@
+// @ts-nocheck
+import {IZe,svi,fUe} from "./m2408.ts";
+import {Box} from "./m2422.ts";
+import {Text} from "./m2423.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+function _Co(){let e=gCo.c(2),t=PTl.useSyncExternalStore(IZe,svi),n;if(e[0]!==t)n=t?rj.createElement(bnm,null):null,e[0]=t,e[1]=n;else n=e[1];return n}
+function bnm(){let e=gCo.c(2),t;if(e[0]===Symbol.for("react.memo_cache_sentinel"))t=Rnm(Snm),e[0]=t;else t=e[0];let n=t,r;if(e[1]===Symbol.for("react.memo_cache_sentinel"))r=rj.createElement(Box,{flexDirection:"column",marginTop:1},rj.createElement(Text,{dimColor:!0},"\u2500\u2500 scroll test \u2014 disappears when you close the dialog \u2500\u2500"),n.map(Enm)),e[1]=r;else r=e[1];return r}
+function Enm(e,t){return rj.createElement(Text,{key:t,dimColor:!0},"  ",e.num,e.text&&rj.createElement(rj.Fragment,null,"  ",e.indent,e.text))}
+function Rnm(e){let t=vnm??=Cnm.trim().split(/\s+/),n=String(e).length,r=[],o=0,s=0;while(r.length<e){let i=DTl[s%DTl.length];s++;let a=" ".repeat(i.indent);for(let l=0;l<i.lines&&r.length<e;l++){let u=l===i.lines-1?12+s*11%28:wnm,d=[],p=0;while(p<u){let m=t[o%t.length];d.push(m),p+=m.length+1,o++}r.push({num:String(r.length+1).padStart(n),text:d.join(" "),indent:a})}if(r.length<e)r.push({num:String(r.length+1).padStart(n),text:"",indent:""})}return r}
+var gCo,rj,PTl,Snm=200,Cnm="Vivere omnes beate volunt sed ad pervidendum quid sit quod beatam vitam efficiat caligant et adeo non est facile consequi beatam vitam ut eo quisque ab ea longius recedat quo ad illam concitatius fertur si via lapsus est quae ubi in contrarium ducit ipsa velocitas maioris intervalli causa fit proponendum est itaque primum quid sit quod adpetamus tunc circumspiciendum qua contendere illo celerrime possimus intellecturi in ipso itinere si modo rectum erit quantum cotidie profligetur quantoque propius ab eo simus ad quod nos cupiditas naturalis inpellit quam diu quidem passim vagamur non ducem secuti sed fremitum et clamorem dissonum in diversa vocantium conteretur vita inter errores brevis etiam si dies noctesque bonae menti laboremus decernatur itaque et quo tendamus et qua non sine perito aliquo cui explorata sint ea in quae procedimus quoniam quidem non eadem hic quae in ceteris peregrinationibus condicio est in illis comprensus aliquis limes et interrogati incolae non patiuntur errare at hic tritissima quaeque via et celeberrima maxime decipit nihil ergo magis praestandum est quam ne pecorum ritu sequamur antecedentium gregem pergentes non quo eundum est sed quo itur atqui nulla res nos maioribus malis implicat quam quod ad rumorem componimur optima rati ea quae magno adsensu recepta sunt quodque exempla nobis pro bonis multa sunt nec ad rationem sed ad similitudinem vivimus ",vnm,wnm=56,DTl;
+var OTl=b(()=>{fUe();ze();gCo=M(rt(),1),rj=M(Te(),1),PTl=M(Te(),1);DTl=[{lines:1,indent:0},{lines:5,indent:0},{lines:3,indent:2},{lines:2,indent:0},{lines:7,indent:0},{lines:4,indent:2},{lines:1,indent:0},{lines:6,indent:0},{lines:2,indent:2},{lines:3,indent:0}]});
+export {_Co,bnm,Enm,Rnm,gCo,rj,PTl,Snm,Cnm,vnm,wnm,DTl,OTl};

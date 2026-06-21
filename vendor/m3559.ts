@@ -1,0 +1,23 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {KQr} from "./m3457.ts";
+import {leo} from "./m3558.ts";
+import {XZr} from "./m3546.ts";
+import {eeo} from "./m3547.ts";
+import {reo} from "./m3548.ts";
+import {tHe} from "./m3556.ts";
+import {hit} from "./m3541.ts";
+import {aLn} from "./m3551.ts";
+import {rte} from "./m3557.ts";
+import {rLn} from "./m3550.ts";
+import {eHe} from "./m3554.ts";
+import {a3e} from "./m3555.ts";
+import {XOn} from "./m3542.ts";
+import {ZOn} from "./m3544.ts";
+import {QOn} from "./m3543.ts";
+import {eLn} from "./m3545.ts";
+import {oeo} from "./m3549.ts";
+import {l3e} from "./m3553.ts";
+import {PL} from "./m3552.ts";
+var t_a=X((JTg,e_a)=>{var logFeatureSad=e_a.exports=KQr();logFeatureSad.build="light";function CZd(e,t,n){if(typeof t==="function")n=t,t=new logFeatureSad.Root;else if(!t)t=new logFeatureSad.Root;return t.load(e,n)}logFeatureSad.load=CZd;function vZd(e,t){if(!t)t=new logFeatureSad.Root;return t.loadSync(e)}logFeatureSad.loadSync=vZd;logFeatureSad.encoder=leo();logFeatureSad.decoder=XZr();logFeatureSad.verifier=eeo();logFeatureSad.converter=reo();logFeatureSad.ReflectionObject=tHe();logFeatureSad.Namespace=hit();logFeatureSad.Root=aLn();logFeatureSad.Enum=rte();logFeatureSad.Type=rLn();logFeatureSad.Field=eHe();logFeatureSad.OneOf=a3e();logFeatureSad.MapField=XOn();logFeatureSad.Service=ZOn();logFeatureSad.Method=QOn();logFeatureSad.Message=eLn();logFeatureSad.wrappers=oeo();logFeatureSad.types=l3e();logFeatureSad.util=PL();logFeatureSad.ReflectionObject._configure(logFeatureSad.Root);logFeatureSad.Namespace._configure(logFeatureSad.Type,logFeatureSad.Service,logFeatureSad.Enum);logFeatureSad.Root._configure(logFeatureSad.Type);logFeatureSad.Field._configure(logFeatureSad.Type)});
+export {t_a};

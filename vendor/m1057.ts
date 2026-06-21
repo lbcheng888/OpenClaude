@@ -1,0 +1,25 @@
+// @ts-nocheck
+import {JSr,YSr} from "./m1041.ts";
+import {HCs,ICs} from "./m1056.ts";
+import {defaultProvider} from "./m1018.ts";
+import {tCs,eCs} from "./m1049.ts";
+import {ron} from "./m856.ts";
+import {Yon} from "./m923.ts";
+import {b,M} from "../runtime.ts";
+import {H1e} from "./m1019.ts";
+import {Jon} from "./m924.ts";
+import {ri} from "./m1046.ts";
+import {nC} from "./m880.ts";
+import {ime} from "./m899.ts";
+import {nk} from "./m607.ts";
+import {Sd} from "./m850.ts";
+import {ame} from "./m902.ts";
+import {i1} from "./m894.ts";
+import {yB} from "./m601.ts";
+import {e4} from "./m750.ts";
+import {lme} from "./m903.ts";
+import {Ooe} from "./m889.ts";
+import {pme} from "./m913.ts";
+var fze,oin,vEe,DCs,PCs,sin,CEe,iin,OCs,LCs,MCs,NCs=(e)=>{JSr(process.version);let t=MCs.resolveDefaultsModeConfig(e),n=()=>t().then(YSr),r=HCs(e);fze.emitWarningIfUnsupportedVersion(process.version);let o={profile:e?.profile,logger:r.logger,signingName:"bedrock"};return{...r,...e,runtime:"node",defaultsMode:t,authSchemePreference:e?.authSchemePreference??CEe.loadConfig(fze.NODE_AUTH_SCHEME_PREFERENCE_OPTIONS,o),bodyLengthChecker:e?.bodyLengthChecker??OCs.calculateBodyLength,credentialDefaultProvider:e?.credentialDefaultProvider??defaultProvider,defaultUserAgentProvider:e?.defaultUserAgentProvider??oin.createDefaultUserAgentProvider({serviceId:r.serviceId,clientVersion:tCs.version}),httpAuthSchemes:e?.httpAuthSchemes??[{schemeId:"aws.auth#sigv4",identityProvider:(s)=>s.getIdentityProvider("aws.auth#sigv4"),signer:new fze.AwsSdkSigV4Signer},{schemeId:"smithy.api#httpBearerAuth",identityProvider:(s)=>s.getIdentityProvider("smithy.api#httpBearerAuth")||(async(i)=>{try{return await ron({signingName:"bedrock"})()}catch(a){return await Yon(i)(i)}}),signer:new DCs.HttpBearerAuthSigner}],maxAttempts:e?.maxAttempts??CEe.loadConfig(sin.NODE_MAX_ATTEMPT_CONFIG_OPTIONS,e),region:e?.region??CEe.loadConfig(vEe.NODE_REGION_CONFIG_OPTIONS,{...vEe.NODE_REGION_CONFIG_FILE_OPTIONS,...o}),requestHandler:iin.NodeHttpHandler.create(e?.requestHandler??n),retryMode:e?.retryMode??CEe.loadConfig({...sin.NODE_RETRY_MODE_CONFIG_OPTIONS,default:async()=>(await n()).retryMode||LCs.DEFAULT_RETRY_MODE},e),sha256:e?.sha256??PCs.Hash.bind(null,"sha256"),streamCollector:e?.streamCollector??iin.streamCollector,useDualstackEndpoint:e?.useDualstackEndpoint??CEe.loadConfig(vEe.NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS,o),useFipsEndpoint:e?.useFipsEndpoint??CEe.loadConfig(vEe.NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS,o),userAgentAppId:e?.userAgentAppId??CEe.loadConfig(oin.NODE_APP_ID_CONFIG_OPTIONS,o)}};
+var BCs=b(()=>{eCs();H1e();Jon();ICs();ri();ri();fze=M(nC(),1),oin=M(ime(),1),vEe=M(nk(),1),DCs=M(Sd(),1),PCs=M(ame(),1),sin=M(i1(),1),CEe=M(yB(),1),iin=M(e4(),1),OCs=M(lme(),1),LCs=M(Ooe(),1),MCs=M(pme(),1)});
+export {fze,oin,vEe,DCs,PCs,sin,CEe,iin,OCs,LCs,MCs,NCs,BCs};

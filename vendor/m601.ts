@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {createDefaultGlobalConfig} from "./m594.ts";
+import {I2} from "./m600.ts";
+var yB=X((yJo)=>{var Tbt=createDefaultGlobalConfig(),gJo=I2();function _Jo(e){try{let t=new Set(Array.from(e.match(/([A-Z_]){3,}/g)??[]));return t.delete("CONFIG"),t.delete("CONFIG_PREFIX_SEPARATOR"),t.delete("ENV"),[...t].join(", ")}catch(t){return e}}var P7c=(e,t)=>async()=>{try{let n=e(process.env,t);if(n===void 0)throw Error();return n}catch(n){throw new Tbt.CredentialsProviderError(n.message||`Not found in ENV: ${_Jo(e.toString())}`,{logger:t?.logger})}},O7c=(e,{preferredFile:t="config",...n}={})=>async()=>{let r=gJo.getProfileName(n),{configFile:o,credentialsFile:s}=await gJo.loadSharedConfigFiles(n),i=s[r]||{},a=o[r]||{},l=t==="config"?{...i,...a}:{...a,...i};try{let u=e(l,t==="config"?o:s);if(u===void 0)throw Error();return u}catch(c){throw new Tbt.CredentialsProviderError(c.message||`Not found in config files w/ profile [${r}]: ${_Jo(e.toString())}`,{logger:n.logger})}},L7c=(e)=>typeof e==="function",M7c=(e)=>L7c(e)?async()=>await e():Tbt.fromStatic(e),N7c=({environmentVariableSelector:e,configFileSelector:t,default:n},r={})=>{let{signingName:o,logger:s}=r,i={signingName:o,logger:s};return Tbt.memoize(Tbt.chain(P7c(e,i),O7c(t,r),M7c(n)))};yJo.loadConfig=N7c});
+export {yB};

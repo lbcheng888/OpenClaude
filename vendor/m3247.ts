@@ -1,0 +1,13 @@
+// @ts-nocheck
+import {hc,Iy} from "../src/agent/2230_explicitlyRequested.ts";
+import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {msa,fsa} from "./m3245.ts";
+import {Ie,Oe,isTmuxControlMode,ln} from "../src/telemetry/0594_feature_name.ts";
+import {hsa,gsa} from "../src/telemetry/3247_level.ts";
+import {De,Rn} from "../src/session/0615_length.ts";
+import {Se,bt} from "./m195.ts";
+import {b} from "../runtime.ts";
+function F6d(){let e,t="not-started",n,r=0,o;function s(){if(t==="failed")return;return e}function i(){if(t==="failed")return{status:"failed",error:n||Error("Initialization failed")};if(t==="not-started")return{status:"not-started"};if(t==="pending")return{status:"pending"};return{status:"success"}}function a(){if(t==="failed")return!1;let p=s();if(!p)return!1;let m=p.getAllServers();if(m.size===0)return!1;for(let f of m.values())if(f.state!=="error")return!0;return!1}async function l(){if(t==="success"||t==="failed")return;if(t==="pending"&&o)await o}function c(){if(hc("lspServers"))return;if(logForDebugging("[LSP MANAGER] initializeLspServerManager() called"),e!==void 0&&t!=="failed"){logForDebugging("[LSP MANAGER] Already initialized or initializing, skipping");return}if(t==="failed")e=void 0,n=void 0;e=msa(),t="pending",logForDebugging("[LSP MANAGER] Created manager instance, state=pending");let p=++r;logForDebugging(`[LSP MANAGER] Starting async initialization (generation ${p})`),o=e.initialize().then(()=>{if(p===r){if(t="success",logForDebugging("LSP server manager initialized successfully"),Ie("lsp_init"),e)hsa(e)}}).catch((m)=>{if(p===r)t="failed",n=m,e=void 0,De(m),logForDebugging(`Failed to initialize LSP server manager: ${Se(m)}`),Oe("lsp_init","lsp_init_failed")})}function u(){if(t==="not-started")return;if(logForDebugging("[LSP MANAGER] reinitializeLspServerManager() called"),e)e.shutdown().catch((p)=>{logForDebugging(`[LSP MANAGER] old instance shutdown during reinit failed: ${Se(p)}`)});e=void 0,t="not-started",n=void 0,c()}async function d(){if(e===void 0)return;try{await e.shutdown(),logForDebugging("LSP server manager shut down successfully"),Ie("lsp_shutdown")}catch(p){isTmuxControlMode("lsp_shutdown","lsp_shutdown_failed"),logForDebugging(`Failed to shutdown LSP server manager: ${Se(p)}`,{level:"error"})}finally{e=void 0,t="not-started",n=void 0,o=void 0,r++}}return{get:s,getStatus:i,isConnected:a,waitForInitialization:l,initialize:c,reinitialize:u,shutdown:d}}
+var i9e,mke,Iot,_sa,ysa,Tsa,IIn,Ssa;
+var Kae=b(()=>{Iy();qe();bt();Rn();ln();fsa();gsa();i9e=F6d(),mke=i9e.get,Iot=i9e.getStatus,_sa=i9e.isConnected,ysa=i9e.waitForInitialization,Tsa=i9e.initialize,IIn=i9e.reinitialize,Ssa=i9e.shutdown});
+export {F6d,i9e,mke,Iot,_sa,ysa,Tsa,IIn,Ssa,Kae};

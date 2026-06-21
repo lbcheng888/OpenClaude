@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {ag} from "./m2133.ts";
+var Apa=X((uPn)=>{Object.defineProperty(uPn,"__esModule",{value:!0});uPn.MetricCollector=void 0;var y7d=ag();class fpa{_sharedState;_metricReader;constructor(e,t){this._sharedState=e,this._metricReader=t}async collect(e){let t=(0,y7d.millisToHrTime)(Date.now()),n=[],r=[],o=Array.from(this._sharedState.meterSharedStates.values()).map(async(s)=>{let i=await s.collect(this,t,e);if(i?.scopeMetrics!=null)n.push(i.scopeMetrics);if(i?.errors!=null)r.push(...i.errors)});return await Promise.all(o),{resourceMetrics:{resource:this._sharedState.resource,scopeMetrics:n},errors:r}}async forceFlush(e){await this._metricReader.forceFlush(e)}async shutdown(e){await this._metricReader.shutdown(e)}selectAggregationTemporality(e){return this._metricReader.selectAggregationTemporality(e)}selectAggregation(e){return this._metricReader.selectAggregation(e)}selectCardinalityLimit(e){return this._metricReader.selectCardinalityLimit?.(e)??2000}}uPn.MetricCollector=fpa});
+export {Apa};

@@ -1,0 +1,34 @@
+// @ts-nocheck
+import {sGe,jzt} from "../../vendor/m175.ts";
+import {b} from "../../runtime.ts";
+import {Wde,SH,Ia,Yr,mi} from "../../vendor/m135.ts";
+import {QC,Ss} from "../../vendor/m156.ts";
+import {P_t,zrr} from "../../vendor/m159.ts";
+var U$o=1e5,$$o=`You have been working on the task described above but have not yet completed it. Write a continuation summary that will allow you (or another instance of yourself) to resume work efficiently in a future context window where the conversation history will be replaced with this summary. Your summary should be structured, concise, and actionable. Include:
+1. Task Overview
+The user's core request and success criteria
+Any clarifications or constraints they specified
+2. Current State
+What has been completed so far
+Files created, modified, or analyzed (with paths if relevant)
+Key outputs or artifacts produced
+3. Important Discoveries
+Technical constraints or requirements uncovered
+Decisions made and their rationale
+Errors encountered and how they were resolved
+What approaches were tried that didn't work (and why)
+4. Next Steps
+Specific actions needed to complete the task
+Any blockers or open questions to resolve
+Priority order if multiple steps remain
+5. Context to Preserve
+User preferences or style requirements
+Domain-specific details that aren't obvious
+Any promises made to the user
+Be concise but complete\u2014err on the side of including information that would prevent duplicate work or repeated mistakes. Write in a way that enables immediate resumption of the task.
+Wrap your summary in <summary></summary> tags.`;
+function j$o(){let e,t;return{promise:new Promise((r,o)=>{e=r,t=o}),resolve:e,reject:t}}
+async function zhc(e,t=e.messages.at(-1),n){if(!t||t.role!=="assistant"||!t.content||typeof t.content==="string")return null;let r=t.content.filter((s)=>s.type==="tool_use");if(r.length===0)return null;return{role:"user",content:await Promise.all(r.map(async(s)=>{let i=e.tools.find((a)=>("name"in a?a.name:a.mcp_server_name)===s.name);if(!i||!("run"in i))return{type:"tool_result",tool_use_id:s.id,content:`Error: Tool '${s.name}' not found`,is_error:!0};try{let a=s.input;if("parse"in i&&i.parse)a=i.parse(a);let l=await i.run(a,{toolUseBlock:s,signal:n?.signal});return{type:"tool_result",tool_use_id:s.id,content:l}}catch(a){return{type:"tool_result",tool_use_id:s.id,content:a instanceof sGe?a.content:`Error: ${a instanceof Error?a.message:String(a)}`,is_error:!0}}}))}}
+var z_t,iGe,yLe,OD,v3,Jj,Jde,pSe,Y_t,q$o,Aor,J_t;
+var hor=b(()=>{Wde();jzt();SH();QC();P_t();J_t=class J_t{constructor(e,t,n){z_t.add(this),this.client=e,iGe.set(this,!1),yLe.set(this,!1),OD.set(this,void 0),v3.set(this,void 0),Jj.set(this,void 0),Jde.set(this,void 0),pSe.set(this,void 0),Y_t.set(this,0),Ia(this,OD,{params:{...t,messages:structuredClone(t.messages)}},"f");let o=["BetaToolRunner",...zrr(t.tools,t.messages)].join(", ");if(Ia(this,v3,{...n,headers:Ss([{"x-stainless-helper":o},n?.headers])},"f"),Ia(this,pSe,j$o(),"f"),t.compactionControl?.enabled)console.warn('Anthropic: The `compactionControl` parameter is deprecated and will be removed in a future version. Use server-side compaction instead by passing `edits: [{ type: "compact_20260112" }]` in the params passed to `toolRunner()`. See https://platform.claude.com/docs/en/build-with-claude/compaction')}async*[(iGe=new WeakMap,yLe=new WeakMap,OD=new WeakMap,v3=new WeakMap,Jj=new WeakMap,Jde=new WeakMap,pSe=new WeakMap,Y_t=new WeakMap,z_t=new WeakSet,q$o=async function(){let t=Yr(this,OD,"f").params.compactionControl;if(!t||!t.enabled)return!1;let n=0;if(Yr(this,Jj,"f")!==void 0)try{let l=await Yr(this,Jj,"f");n=l.usage.input_tokens+(l.usage.cache_creation_input_tokens??0)+(l.usage.cache_read_input_tokens??0)+l.usage.output_tokens}catch{return!1}let r=t.contextTokenThreshold??U$o;if(n<r)return!1;let o=t.model??Yr(this,OD,"f").params.model,s=t.summaryPrompt??$$o,i=Yr(this,OD,"f").params.messages;if(i[i.length-1].role==="assistant"){let l=i[i.length-1];if(Array.isArray(l.content)){let c=l.content.filter((u)=>u.type!=="tool_use");if(c.length===0)i.pop();else l.content=c}}let a=await this.client.beta.messages.create({model:o,messages:[...i,{role:"user",content:[{type:"text",text:s}]}],max_tokens:Yr(this,OD,"f").params.max_tokens},{signal:Yr(this,v3,"f").signal,headers:Ss([Yr(this,v3,"f").headers,{"x-stainless-helper":"compaction"}])});if(a.content[0]?.type!=="text")throw new mi("Expected text response for compaction");return Yr(this,OD,"f").params.messages=[{role:"user",content:a.content}],!0},Symbol.asyncIterator)](){var e;if(Yr(this,iGe,"f"))throw new mi("Cannot iterate over a consumed stream");Ia(this,iGe,!0,"f"),Ia(this,yLe,!0,"f"),Ia(this,Jde,void 0,"f");try{while(!0){let t;try{if(Yr(this,OD,"f").params.max_iterations&&Yr(this,Y_t,"f")>=Yr(this,OD,"f").params.max_iterations)break;Ia(this,yLe,!1,"f"),Ia(this,Jde,void 0,"f"),Ia(this,Y_t,(e=Yr(this,Y_t,"f"),e++,e),"f"),Ia(this,Jj,void 0,"f");let{max_iterations:n,compactionControl:r,...o}=Yr(this,OD,"f").params;if(o.stream)t=this.client.beta.messages.stream({...o},Yr(this,v3,"f")),Ia(this,Jj,t.finalMessage(),"f"),Yr(this,Jj,"f").catch(()=>{}),yield t;else Ia(this,Jj,this.client.beta.messages.create({...o,stream:!1},Yr(this,v3,"f")),"f"),yield Yr(this,Jj,"f");if(!await Yr(this,z_t,"m",q$o).call(this)){if(!Yr(this,yLe,"f")){let{role:a,content:l}=await Yr(this,Jj,"f");Yr(this,OD,"f").params.messages.push({role:a,content:l})}let i=await Yr(this,z_t,"m",Aor).call(this,Yr(this,OD,"f").params.messages.at(-1));if(i)Yr(this,OD,"f").params.messages.push(i);else if(!Yr(this,yLe,"f"))break}}finally{if(t)t.abort()}}if(!Yr(this,Jj,"f"))throw new mi("ToolRunner concluded without a message from the server");Yr(this,pSe,"f").resolve(await Yr(this,Jj,"f"))}catch(t){throw Ia(this,iGe,!1,"f"),Yr(this,pSe,"f").promise.catch(()=>{}),Yr(this,pSe,"f").reject(t),Ia(this,pSe,j$o(),"f"),t}}setMessagesParams(e){if(typeof e==="function")Yr(this,OD,"f").params=e(Yr(this,OD,"f").params);else Yr(this,OD,"f").params=e;Ia(this,yLe,!0,"f"),Ia(this,Jde,void 0,"f")}setRequestOptions(e){if(typeof e==="function")Ia(this,v3,e(Yr(this,v3,"f")),"f");else Ia(this,v3,{...Yr(this,v3,"f"),...e},"f")}async generateToolResponse(e=Yr(this,v3,"f").signal){let t=await Yr(this,Jj,"f")??this.params.messages.at(-1);if(!t)return null;return Yr(this,z_t,"m",Aor).call(this,t,e)}done(){return Yr(this,pSe,"f").promise}async runUntilDone(){if(!Yr(this,iGe,"f"))for await(let e of this);return this.done()}get params(){return Yr(this,OD,"f").params}pushMessages(...e){this.setMessagesParams((t)=>({...t,messages:[...t.messages,...e]}))}then(e,t){return this.runUntilDone().then(e,t)}};Aor=async function(t,n=Yr(this,v3,"f").signal){if(Yr(this,Jde,"f")!==void 0)return Yr(this,Jde,"f");return Ia(this,Jde,zhc(Yr(this,OD,"f").params,t,{...Yr(this,v3,"f"),signal:n}),"f"),Yr(this,Jde,"f")}});
+export {U$o,$$o,j$o,zhc,z_t,iGe,yLe,OD,v3,Jj,Jde,pSe,Y_t,q$o,Aor,J_t,hor};

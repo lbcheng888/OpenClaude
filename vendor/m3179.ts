@@ -1,0 +1,10 @@
+// @ts-nocheck
+import {kn,SA} from "../src/config/0689_timestamp.ts";
+import {qt,Le,Xt} from "../src/config/0228_encoding.ts";
+import {Yre,YT} from "../src/tools/0323_ttl.ts";
+import {_o,bt} from "./m195.ts";
+import {b} from "../runtime.ts";
+class THn{ws;started=!1;opened;constructor(e){this.ws=e;this.opened=new Promise((n,r)=>{if(this.ws.readyState===yHn)n();else{let o=this.ws,s=()=>{o.removeEventListener("open",s),o.removeEventListener("error",i),n()},i=(a)=>{o.removeEventListener("open",s),o.removeEventListener("error",i),kn("error","mcp_websocket_connect_fail"),r(a)};o.addEventListener("open",s),o.addEventListener("error",i)}});let t=this.ws;t.addEventListener("message",this.onBunMessage),t.addEventListener("error",this.onBunError),t.addEventListener("close",this.onBunClose)}onclose;onerror;onmessage;onBunMessage=(e)=>{try{let t=typeof e.data==="string"?e.data:String(e.data),n=qt(t),r=Yre.parse(n);this.onmessage?.(r)}catch(t){this.handleError(t)}};onBunError=()=>{this.handleError(Error("WebSocket error"))};onBunClose=()=>{this.handleCloseCleanup()};handleError(e){kn("error","mcp_websocket_message_fail"),this.onerror?.(_o(e))}handleCloseCleanup(){this.onclose?.();let e=this.ws;e.removeEventListener("message",this.onBunMessage),e.removeEventListener("error",this.onBunError),e.removeEventListener("close",this.onBunClose)}async start(){if(this.started)throw Error("Start can only be called once per transport.");if(await this.opened,this.ws.readyState!==yHn)throw kn("error","mcp_websocket_start_not_opened"),Error("WebSocket is not open. Cannot start transport.");this.started=!0}async close(){if(this.ws.readyState===yHn||this.ws.readyState===W9d)this.ws.close();this.handleCloseCleanup()}async send(e){if(this.ws.readyState!==yHn)throw kn("error","mcp_websocket_send_not_opened"),Error("WebSocket is not open. Cannot send message.");let t=Le(e);try{this.ws.send(t)}catch(n){throw this.handleError(n),n}}}
+var W9d=0,yHn=1;
+var mea=b(()=>{YT();SA();bt();Xt()});
+export {THn,W9d,yHn,mea};

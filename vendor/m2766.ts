@@ -1,0 +1,24 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b} from "../runtime.ts";
+import {Bl,sn} from "../src/config/0047_namespace.ts";
+import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {getRegisteredHooks,clearRegisteredPluginHooks,registerHookCallbacks,lt} from "../src/session/0131_sent.ts";
+import {loadAllPluginsCacheOnly,ax,gg} from "../src/agent/4445_resolvePluginRoot.ts";
+import {getSettings_DEPRECATED,getSettingsForSource,yr} from "../src/config/0740_updateSettingsForSource.ts";
+import {Le,Xt} from "../src/config/0228_encoding.ts";
+import {buildDefaultSystemPromptSections,eae} from "./m2666.ts";
+import {ta,wn} from "./m45.ts";
+import {ln,Ie} from "../src/telemetry/0594_feature_name.ts";
+import {m5,aZ} from "./m2230.ts";
+var M5r={};
+isFullscreenWithTTY(M5r,{setupPluginHookHotReload:()=>setupPluginHookHotReload,resetHotReloadState:()=>resetHotReloadState,pruneRemovedPluginHooks:()=>pruneRemovedPluginHooks,loadPluginHooks:()=>loadPluginHooks,getPluginAffectingSettingsSnapshot:()=>getPluginAffectingSettingsSnapshot,clearPluginHookCache:()=>clearPluginHookCache});
+function Kxd(e){let t={PreToolUse:[],PostToolUse:[],PostToolUseFailure:[],PostToolBatch:[],PermissionDenied:[],Notification:[],UserPromptSubmit:[],UserPromptExpansion:[],SessionStart:[],SessionEnd:[],Stop:[],StopFailure:[],SubagentStart:[],SubagentStop:[],PreCompact:[],PostCompact:[],PermissionRequest:[],Setup:[],TeammateIdle:[],TaskCreated:[],TaskCompleted:[],Elicitation:[],ElicitationResult:[],ConfigChange:[],WorktreeCreate:[],WorktreeRemove:[],InstructionsLoaded:[],CwdChanged:[],FileChanged:[],MessageDisplay:[]};if(!e.hooksConfig)return t;for(let[n,r]of Object.entries(e.hooksConfig)){let o=n;if(!t[o])continue;for(let s of r)if(s.hooks.length>0)t[o].push({matcher:s.matcher,hooks:s.hooks,pluginRoot:e.path,pluginName:e.name,pluginId:e.source})}return t}
+async function loadPluginHooks(){if(Bl()){logForDebugging("Safe mode: skipping plugin hook registration");return}await p$i()}
+function clearPluginHookCache(){p$i.cache?.clear?.()}
+async function pruneRemovedPluginHooks(){if(!getRegisteredHooks())return;let{enabled:e}=await loadAllPluginsCacheOnly(),t=new Set(e.map((o)=>o.path)),n=getRegisteredHooks();if(!n)return;let r={};for(let[o,s]of Object.entries(n)){let i=s.filter((a)=>("pluginRoot"in a)&&t.has(a.pluginRoot));if(i.length>0)r[o]=i}clearRegisteredPluginHooks(),registerHookCallbacks(r)}
+function resetHotReloadState(){P5r=!1,vRn=void 0}
+function getPluginAffectingSettingsSnapshot(){let e=getSettings_DEPRECATED(),t=getSettingsForSource("policySettings"),n=(r)=>r?Object.fromEntries(Object.entries(r).sort()):{};return Le({enabledPlugins:n(e.enabledPlugins),extraKnownMarketplaces:n(e.extraKnownMarketplaces),strictKnownMarketplaces:t?.strictKnownMarketplaces??[],blockedMarketplaces:t?.blockedMarketplaces??[]})}
+function setupPluginHookHotReload(){if(P5r)return;P5r=!0,vRn=getPluginAffectingSettingsSnapshot(),buildDefaultSystemPromptSections.subscribe((e)=>{if(e==="policySettings"){let t=getPluginAffectingSettingsSnapshot();if(t===vRn){logForDebugging("Plugin hooks: skipping reload, plugin-affecting settings unchanged");return}vRn=t,logForDebugging("Plugin hooks: reloading due to plugin-affecting settings change"),ax("loadPluginHooks: plugin-affecting settings changed"),clearPluginHookCache(),loadPluginHooks()}})}
+var P5r=!1,vRn,p$i;
+var z2e=b(()=>{ta();lt();ln();qe();sn();eae();yr();Xt();m5();gg();p$i=wn(async()=>{let{enabled:e}=await loadAllPluginsCacheOnly(),t={PreToolUse:[],PostToolUse:[],PostToolUseFailure:[],PostToolBatch:[],PermissionDenied:[],Notification:[],UserPromptSubmit:[],UserPromptExpansion:[],SessionStart:[],SessionEnd:[],Stop:[],StopFailure:[],SubagentStart:[],SubagentStop:[],PreCompact:[],PostCompact:[],PermissionRequest:[],Setup:[],TeammateIdle:[],TaskCreated:[],TaskCompleted:[],Elicitation:[],ElicitationResult:[],ConfigChange:[],WorktreeCreate:[],WorktreeRemove:[],InstructionsLoaded:[],CwdChanged:[],FileChanged:[],MessageDisplay:[]},n=aZ(),r=n===null?e:[...e.filter((i)=>n.has(i.source)),...e.filter((i)=>!n.has(i.source))],o=new Set;for(let i of r){if(!i.hooksConfig)continue;if(o.has(i.name)){logForDebugging(`Skipping duplicate hook registration for plugin "${i.name}" from ${i.source} - already registered from another source`);continue}o.add(i.name),logForDebugging(`Loading hooks from plugin: ${i.name}`);let a=Kxd(i);for(let l of Object.keys(a))t[l].push(...a[l])}clearRegisteredPluginHooks(),registerHookCallbacks(t);let s=Object.values(t).reduce((i,a)=>i+a.reduce((l,c)=>l+c.hooks.length,0),0);logForDebugging(`Registered ${s} hooks from ${e.length} plugins`),Ie("plugin_load_hooks")})});
+export {M5r,Kxd,loadPluginHooks,clearPluginHookCache,pruneRemovedPluginHooks,resetHotReloadState,getPluginAffectingSettingsSnapshot,setupPluginHookHotReload,P5r,vRn,p$i,z2e};

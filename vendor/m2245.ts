@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {b} from "../runtime.ts";
+var Ua="Edit",wyn="/.claude/**",Ryn="~/.claude/**",xyn="File has not been read yet. Read it first before writing to it.",kyn="File content has changed since it was last read. This commonly happens when a linter or formatter run via Bash rewrites the file. Call Read on this file to refresh, then retry the edit.",jfe;
+var ty=b(()=>{jfe=class jfe extends Error{constructor(e){super(e);this.name="FileStateError"}}});
+export {Ua,wyn,Ryn,xyn,kyn,jfe,ty};

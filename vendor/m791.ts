@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {XEt} from "./m790.ts";
+var _gr=X((crn)=>{Object.defineProperty(crn,"__esModule",{value:!0});crn.ChecksumStream=void 0;var veu=XEt(),weu=require("stream");class Ais extends weu.Duplex{expectedChecksum;checksumSourceLocation;checksum;source;base64Encoder;constructor({expectedChecksum:e,checksum:t,source:n,checksumSourceLocation:r,base64Encoder:o}){super();if(typeof n.pipe==="function")this.source=n;else throw Error(`@smithy/util-stream: unsupported source type ${n?.constructor?.name??n} in ChecksumStream.`);this.base64Encoder=o??veu.toBase64,this.expectedChecksum=e,this.checksum=t,this.checksumSourceLocation=r,this.source.pipe(this)}_read(e){}_write(e,t,n){try{this.checksum.update(e),this.push(e)}catch(r){return n(r)}return n()}async _final(e){try{let t=await this.checksum.digest(),n=this.base64Encoder(t);if(this.expectedChecksum!==n)return e(Error(`Checksum mismatch: expected "${this.expectedChecksum}" but received "${n}" in response header "${this.checksumSourceLocation}".`))}catch(t){return e(t)}return this.push(null),e()}}crn.ChecksumStream=Ais});
+export {_gr};

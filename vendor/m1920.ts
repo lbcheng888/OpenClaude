@@ -1,0 +1,17 @@
+// @ts-nocheck
+import {Spn,GS,hm} from "./m1631.ts";
+import {p0,XD} from "./m1634.ts";
+import {CredentialUnavailableError,JD} from "./m1632.ts";
+import {ClientAssertionCredential,Gfn} from "./m1919.ts";
+import {b} from "../runtime.ts";
+class WorkloadIdentityCredential{constructor(e){this.azureFederatedTokenFileContent=void 0,this.cacheDate=void 0;let t=Spn(u6u).assigned.join(", ");$xt.info(`Found the following environment variables: ${t}`);let n=e!==null&&e!==void 0?e:{},r=n.tenantId||process.env.AZURE_TENANT_ID,o=n.clientId||process.env.AZURE_CLIENT_ID;if(this.federatedTokenFilePath=n.tokenFilePath||process.env.AZURE_FEDERATED_TOKEN_FILE,r)p0($xt,r);if(!o)throw new CredentialUnavailableError(`${DBe}: is unavailable. clientId is a required parameter. In DefaultAzureCredential and ManagedIdentityCredential, this can be provided as an environment variable - "AZURE_CLIENT_ID".
+        See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/workloadidentitycredential/troubleshoot`);if(!r)throw new CredentialUnavailableError(`${DBe}: is unavailable. tenantId is a required parameter. In DefaultAzureCredential and ManagedIdentityCredential, this can be provided as an environment variable - "AZURE_TENANT_ID".
+        See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/workloadidentitycredential/troubleshoot`);if(!this.federatedTokenFilePath)throw new CredentialUnavailableError(`${DBe}: is unavailable. federatedTokenFilePath is a required parameter. In DefaultAzureCredential and ManagedIdentityCredential, this can be provided as an environment variable - "AZURE_FEDERATED_TOKEN_FILE".
+        See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/workloadidentitycredential/troubleshoot`);$xt.info(`Invoking ClientAssertionCredential with tenant ID: ${r}, clientId: ${n.clientId} and federated token path: [REDACTED]`),this.client=new ClientAssertionCredential(r,o,this.readFileContents.bind(this),e)}async getToken(e,t){if(!this.client){let n=`${DBe}: is unavailable. tenantId, clientId, and federatedTokenFilePath are required parameters. 
+      In DefaultAzureCredential and ManagedIdentityCredential, these can be provided as environment variables - 
+      "AZURE_TENANT_ID",
+      "AZURE_CLIENT_ID",
+      "AZURE_FEDERATED_TOKEN_FILE". See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/workloadidentitycredential/troubleshoot`;throw $xt.info(n),new CredentialUnavailableError(n)}return $xt.info("Invoking getToken() of Client Assertion Credential"),this.client.getToken(e,t)}async readFileContents(){if(this.cacheDate!==void 0&&Date.now()-this.cacheDate>=300000)this.azureFederatedTokenFileContent=void 0;if(!this.federatedTokenFilePath)throw new CredentialUnavailableError(`${DBe}: is unavailable. Invalid file path provided ${this.federatedTokenFilePath}.`);if(!this.azureFederatedTokenFileContent){let t=(await KXs.readFile(this.federatedTokenFilePath,"utf8")).trim();if(!t)throw new CredentialUnavailableError(`${DBe}: is unavailable. No content on the file ${this.federatedTokenFilePath}.`);else this.azureFederatedTokenFileContent=t,this.cacheDate=Date.now()}return this.azureFederatedTokenFileContent}}
+var KXs,DBe="WorkloadIdentityCredential",u6u,$xt;
+var Vfn=b(()=>{GS();Gfn();JD();XD();KXs=require("fs/promises"),u6u=["AZURE_TENANT_ID","AZURE_CLIENT_ID","AZURE_FEDERATED_TOKEN_FILE"],$xt=hm(DBe)});
+export {WorkloadIdentityCredential,KXs,DBe,u6u,$xt,Vfn};

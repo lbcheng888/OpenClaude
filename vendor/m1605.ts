@@ -1,0 +1,11 @@
+// @ts-nocheck
+import {VYe,KYe,v8s} from "./m1604.ts";
+import {WYe,h8s} from "./m1597.ts";
+import {U1e,ModelStreamErrorException,$1e,q1e} from "./m1261.ts";
+import {GYe} from "./m1599.ts";
+import {m8s} from "./m1595.ts";
+import {b} from "../runtime.ts";
+import {Jln} from "./m1278.ts";
+var PMu=async(e,t)=>{let n=VYe({}),r=e.body,o=KYe(r,{message:WYe});Object.assign(n,o);let s=new U1e({$metadata:spn(e),...n});return GYe(s,e.body)},OMu=async(e,t)=>{let n=VYe({}),r=e.body,o=KYe(r,{message:WYe,originalMessage:WYe,originalStatusCode:h8s});Object.assign(n,o);let s=new ModelStreamErrorException({$metadata:spn(e),...n});return GYe(s,e.body)},LMu=async(e,t)=>{let n=VYe({}),r=e.body,o=KYe(r,{message:WYe});Object.assign(n,o);let s=new $1e({$metadata:spn(e),...n});return GYe(s,e.body)},MMu=async(e,t)=>{let n=VYe({}),r=e.body,o=KYe(r,{message:WYe});Object.assign(n,o);let s=new q1e({$metadata:spn(e),...n});return GYe(s,e.body)},w8s=(e,t)=>t.eventStreamMarshaller.deserialize(e,async(n)=>{if(n.chunk!=null)return{chunk:await FMu(n.chunk,t)};if(n.internalServerException!=null)return{internalServerException:await NMu(n.internalServerException,t)};if(n.modelStreamErrorException!=null)return{modelStreamErrorException:await BMu(n.modelStreamErrorException,t)};if(n.validationException!=null)return{validationException:await $Mu(n.validationException,t)};if(n.throttlingException!=null)return{throttlingException:await UMu(n.throttlingException,t)};return{$unknown:e}}),NMu=async(e,t)=>{let n={...e,body:await Lwt(e.body,t)};return PMu(n,t)},BMu=async(e,t)=>{let n={...e,body:await Lwt(e.body,t)};return OMu(n,t)},FMu=async(e,t)=>{let n={},r=await Lwt(e.body,t);return Object.assign(n,qMu(r,t)),n},UMu=async(e,t)=>{let n={...e,body:await Lwt(e.body,t)};return LMu(n,t)},$Mu=async(e,t)=>{let n={...e,body:await Lwt(e.body,t)};return MMu(n,t)},qMu=(e,t)=>KYe(e,{bytes:t.base64Decoder}),spn=(e)=>({httpStatusCode:e.statusCode,requestId:e.headers["x-amzn-requestid"]??e.headers["x-amzn-request-id"]??e.headers["x-amz-request-id"]??"",extendedRequestId:e.headers["x-amz-id-2"]??"",cfId:e.headers["x-amz-cf-id"]??""}),jMu=(e,t)=>m8s(e,t).then((n)=>t.utf8Encoder(n)),Lwt=(e,t)=>jMu(e,t).then((n)=>{if(n.length)return JSON.parse(n);return{}});
+var R8s=b(()=>{v8s();Jln()});
+export {PMu,OMu,LMu,MMu,w8s,NMu,BMu,FMu,UMu,$Mu,qMu,spn,jMu,Lwt,R8s};

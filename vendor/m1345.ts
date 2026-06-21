@@ -1,0 +1,10 @@
+// @ts-nocheck
+import {b,M} from "../runtime.ts";
+import {GD} from "./m1317.ts";
+import {H8,uk} from "./m1319.ts";
+import {U7,eNs} from "./m1334.ts";
+import {yo} from "./m887.ts";
+import {oC} from "./m1309.ts";
+var dNs,GetWebIdentityTokenCommand;
+var Zvr=b(()=>{GD();H8();U7();dNs=M(yo(),1);GetWebIdentityTokenCommand=class GetWebIdentityTokenCommand extends oC.classBuilder().ep(uk).m(function(e,t,n,r){return[dNs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","GetWebIdentityToken",{}).n("STSClient","GetWebIdentityTokenCommand").sc(eNs).build(){}});
+export {dNs,GetWebIdentityTokenCommand,Zvr};

@@ -1,0 +1,21 @@
+// @ts-nocheck
+import {b,M} from "../runtime.ts";
+import {GD} from "./m1317.ts";
+import {Fvr,OMs,DMs} from "./m1318.ts";
+import {H8,LMs} from "./m1319.ts";
+import {v1s,C1s} from "./m1328.ts";
+import {M1s,L1s} from "./m1330.ts";
+import {Jpe} from "./m859.ts";
+import {Xpe} from "./m860.ts";
+import {Qpe} from "./m865.ts";
+import {Poe} from "./m881.ts";
+import {nk} from "./m607.ts";
+import {Sd} from "./m850.ts";
+import {US} from "./m818.ts";
+import {ome} from "./m884.ts";
+import {yo} from "./m887.ts";
+import {i1} from "./m894.ts";
+import {Hvt} from "./m1293.ts";
+var Rcn,N1s,B1s,xcn,F1s,oYe,U1s,$1s,q1s,kcn,STSClient;
+var Dvt=b(()=>{GD();Fvr();H8();v1s();M1s();Rcn=M(Jpe(),1),N1s=M(Xpe(),1),B1s=M(Qpe(),1),xcn=M(Poe(),1),F1s=M(nk(),1),oYe=M(Sd(),1),U1s=M(US(),1),$1s=M(ome(),1),q1s=M(yo(),1),kcn=M(i1(),1);STSClient=class STSClient extends Hvt{config;constructor(...[e]){let t=C1s(e||{});super(t);this.initConfig=t;let n=LMs(t),r=xcn.resolveUserAgentConfig(n),o=kcn.resolveRetryConfig(r),s=F1s.resolveRegionConfig(o),i=Rcn.resolveHostHeaderConfig(s),a=q1s.resolveEndpointConfig(i),l=OMs(a),c=L1s(l,e?.extensions||[]);this.config=c,this.middlewareStack.use(U1s.getSchemaSerdePlugin(this.config)),this.middlewareStack.use(xcn.getUserAgentPlugin(this.config)),this.middlewareStack.use(kcn.getRetryPlugin(this.config)),this.middlewareStack.use($1s.getContentLengthPlugin(this.config)),this.middlewareStack.use(Rcn.getHostHeaderPlugin(this.config)),this.middlewareStack.use(N1s.getLoggerPlugin(this.config)),this.middlewareStack.use(B1s.getRecursionDetectionPlugin(this.config)),this.middlewareStack.use(oYe.getHttpAuthSchemeEndpointRuleSetPlugin(this.config,{httpAuthSchemeParametersProvider:DMs,identityProviderConfigProvider:async(u)=>new oYe.DefaultIdentityProviderConfig({"aws.auth#sigv4":u.credentials})})),this.middlewareStack.use(oYe.getHttpSigningPlugin(this.config))}destroy(){super.destroy()}}});
+export {Rcn,N1s,B1s,xcn,F1s,oYe,U1s,$1s,q1s,kcn,STSClient,Dvt};

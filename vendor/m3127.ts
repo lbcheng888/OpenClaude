@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {xYi} from "./m3094.ts";
+import {QVr} from "./m3126.ts";
+var wXi=X((Tkn)=>{Object.defineProperty(Tkn,"__esModule",{value:!0});Tkn.DestroyerOfModules=void 0;var ykn=xYi(),Srt=require("path"),ZVr=QVr();class vXi{constructor({rootDirectory:e,walker:t,shouldKeepModuleTest:n}){if(e)this.walker=new ZVr.Walker(e);else if(t)this.walker=t;else throw Error("Must either provide rootDirectory or walker argument");if(n)this.shouldKeepFn=n}async destroyModule(e,t){if(t.get(e)){let r=Srt.resolve(e,"node_modules");if(!await ykn.pathExists(r))return;for(let o of await ykn.readdir(r))if(o.startsWith("@"))for(let s of await ykn.readdir(Srt.resolve(r,o)))await this.destroyModule(Srt.resolve(r,o,s),t);else await this.destroyModule(Srt.resolve(r,o),t)}else await ykn.remove(e)}async collectKeptModules({relativePaths:e=!1}){let t=await this.walker.walkTree(),n=new Map,r=Srt.resolve(this.walker.getRootModule());for(let o of t)if(this.shouldKeepModule(o)){let s=o.path;if(e)s=s.replace(`${r}${Srt.sep}`,"");n.set(s,o)}return n}async destroy(){await this.destroyModule(this.walker.getRootModule(),await this.collectKeptModules({relativePaths:!1}))}shouldKeepModule(e){let t=e.depType===ZVr.DepType.DEV||e.depType===ZVr.DepType.DEV_OPTIONAL;return this.shouldKeepFn?this.shouldKeepFn(e,t):!t}}Tkn.DestroyerOfModules=vXi});
+export {wXi};

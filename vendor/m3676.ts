@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {xEa} from "./m3675.ts";
+var yFt=X((x3e)=>{Object.defineProperty(x3e,"__esModule",{value:!0});x3e.toAggregation=x3e.AggregationType=void 0;var w3e=xEa(),R3e;(function(e){e[e.DEFAULT=0]="DEFAULT",e[e.DROP=1]="DROP",e[e.SUM=2]="SUM",e[e.LAST_VALUE=3]="LAST_VALUE",e[e.EXPLICIT_BUCKET_HISTOGRAM=4]="EXPLICIT_BUCKET_HISTOGRAM",e[e.EXPONENTIAL_HISTOGRAM=5]="EXPONENTIAL_HISTOGRAM"})(R3e=x3e.AggregationType||(x3e.AggregationType={}));function dlp(e){switch(e.type){case R3e.DEFAULT:return w3e.DEFAULT_AGGREGATION;case R3e.DROP:return w3e.DROP_AGGREGATION;case R3e.SUM:return w3e.SUM_AGGREGATION;case R3e.LAST_VALUE:return w3e.LAST_VALUE_AGGREGATION;case R3e.EXPONENTIAL_HISTOGRAM:{let t=e;return new w3e.ExponentialHistogramAggregation(t.options?.maxSize,t.options?.recordMinMax)}case R3e.EXPLICIT_BUCKET_HISTOGRAM:{let t=e;if(t.options==null)return w3e.HISTOGRAM_AGGREGATION;else return new w3e.ExplicitBucketHistogramAggregation(t.options?.boundaries,t.options?.recordMinMax)}default:throw Error("Unsupported Aggregation")}}x3e.toAggregation=dlp});
+export {yFt};

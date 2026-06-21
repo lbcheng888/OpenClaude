@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {Yd,JI} from "./m347.ts";
+import {b} from "../runtime.ts";
+function J6o(e){return e.target==="openApi3"?{enum:["null"],nullable:!0}:{type:"null"}}
+function Q6o(e,t){if(t.target==="openApi3")return X6o(e,t);let n=e.options instanceof Map?Array.from(e.options.values()):e.options;if(n.every((r)=>(r._def.typeName in iSt)&&(!r._def.checks||!r._def.checks.length))){let r=n.reduce((o,s)=>{let i=iSt[s._def.typeName];return i&&!o.includes(i)?[...o,i]:o},[]);return{type:r.length>1?r:r[0]}}else if(n.every((r)=>r._def.typeName==="ZodLiteral"&&!r.description)){let r=n.reduce((o,s)=>{let i=typeof s._def.value;switch(i){case"string":case"number":case"boolean":return[...o,i];case"bigint":return[...o,"integer"];case"object":if(s._def.value===null)return[...o,"null"];case"symbol":case"undefined":case"function":default:return o}},[]);if(r.length===n.length){let o=r.filter((s,i,a)=>a.indexOf(s)===i);return{type:o.length>1?o:o[0],enum:n.reduce((s,i)=>s.includes(i._def.value)?s:[...s,i._def.value],[])}}}else if(n.every((r)=>r._def.typeName==="ZodEnum"))return{type:"string",enum:n.reduce((r,o)=>[...r,...o._def.values.filter((s)=>!r.includes(s))],[])};return X6o(e,t)}
+var iSt,X6o=(e,t)=>{let n=(e.options instanceof Map?Array.from(e.options.values()):e.options).map((r,o)=>Yd(r._def,{...t,currentPath:[...t.currentPath,"anyOf",`${o}`]})).filter((r)=>!!r&&(!t.strictUnions||typeof r==="object"&&Object.keys(r).length>0));return n.length?{anyOf:n}:void 0};
+var TQt=b(()=>{JI();iSt={ZodString:"string",ZodNumber:"number",ZodBigInt:"integer",ZodBoolean:"boolean",ZodNull:"null"}});
+export {J6o,Q6o,iSt,X6o,TQt};

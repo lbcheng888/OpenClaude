@@ -1,0 +1,31 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b} from "../runtime.ts";
+import {useIdentityPlugin,kVs} from "./m1715.ts";
+import {serializeAuthenticationRecord,deserializeAuthenticationRecord,Ffn} from "./m1904.ts";
+import {logger,GS} from "./m1631.ts";
+import {getBearerTokenProvider,TQs} from "./m1940.ts";
+import {WorkloadIdentityCredential,Vfn} from "./m1920.ts";
+import {VisualStudioCodeCredential,sIr} from "./m1714.ts";
+import {UsernamePasswordCredential,RPr} from "./m1932.ts";
+import {OnBehalfOfCredential,_Qs} from "./m1939.ts";
+import {ManagedIdentityCredential,hPr} from "./m1922.ts";
+import {InteractiveBrowserCredential,pQs} from "./m1935.ts";
+import {EnvironmentCredential,xPr} from "./m1933.ts";
+import {DeviceCodeCredential,mQs} from "./m1936.ts";
+import {DefaultAzureCredential,HPr} from "./m1934.ts";
+import {CredentialUnavailableErrorName,CredentialUnavailableError,AuthenticationRequiredError,AuthenticationErrorName,AuthenticationError,AggregateAuthenticationErrorName,AggregateAuthenticationError,JD} from "./m1632.ts";
+import {ClientSecretCredential,wPr} from "./m1931.ts";
+import {ClientCertificateCredential,vPr} from "./m1930.ts";
+import {ClientAssertionCredential,Gfn} from "./m1919.ts";
+import {ChainedTokenCredential,CPr} from "./m1929.ts";
+import {AzurePowerShellCredential,bPr} from "./m1928.ts";
+import {AzurePipelinesCredential,fQs} from "./m1937.ts";
+import {AzureDeveloperCliCredential,yPr} from "./m1926.ts";
+import {AzureCliCredential,_Pr} from "./m1925.ts";
+import {AzureAuthorityHosts,ise} from "./m1624.ts";
+import {AuthorizationCodeCredential,hQs} from "./m1938.ts";
+var SQs={};
+isFullscreenWithTTY(SQs,{useIdentityPlugin:()=>useIdentityPlugin,serializeAuthenticationRecord:()=>serializeAuthenticationRecord,logger:()=>logger,getDefaultAzureCredential:()=>getDefaultAzureCredential,getBearerTokenProvider:()=>getBearerTokenProvider,deserializeAuthenticationRecord:()=>deserializeAuthenticationRecord,WorkloadIdentityCredential:()=>WorkloadIdentityCredential,VisualStudioCodeCredential:()=>VisualStudioCodeCredential,UsernamePasswordCredential:()=>UsernamePasswordCredential,OnBehalfOfCredential:()=>OnBehalfOfCredential,ManagedIdentityCredential:()=>ManagedIdentityCredential,InteractiveBrowserCredential:()=>InteractiveBrowserCredential,EnvironmentCredential:()=>EnvironmentCredential,DeviceCodeCredential:()=>DeviceCodeCredential,DefaultAzureCredential:()=>DefaultAzureCredential,CredentialUnavailableErrorName:()=>CredentialUnavailableErrorName,CredentialUnavailableError:()=>CredentialUnavailableError,ClientSecretCredential:()=>ClientSecretCredential,ClientCertificateCredential:()=>ClientCertificateCredential,ClientAssertionCredential:()=>ClientAssertionCredential,ChainedTokenCredential:()=>ChainedTokenCredential,AzurePowerShellCredential:()=>AzurePowerShellCredential,AzurePipelinesCredential:()=>AzurePipelinesCredential,AzureDeveloperCliCredential:()=>AzureDeveloperCliCredential,AzureCliCredential:()=>AzureCliCredential,AzureAuthorityHosts:()=>AzureAuthorityHosts,AuthorizationCodeCredential:()=>AuthorizationCodeCredential,AuthenticationRequiredError:()=>AuthenticationRequiredError,AuthenticationErrorName:()=>AuthenticationErrorName,AuthenticationError:()=>AuthenticationError,AggregateAuthenticationErrorName:()=>AggregateAuthenticationErrorName,AggregateAuthenticationError:()=>AggregateAuthenticationError});
+function getDefaultAzureCredential(){return new DefaultAzureCredential}
+var bQs=b(()=>{HPr();JD();Ffn();CPr();wPr();HPr();xPr();vPr();Gfn();_Pr();yPr();pQs();hPr();mQs();fQs();hQs();bPr();RPr();sIr();_Qs();Vfn();GS();ise();TQs();kVs()});
+export {SQs,getDefaultAzureCredential,bQs};

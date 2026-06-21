@@ -1,0 +1,14 @@
+// @ts-nocheck
+import {useTimeout} from "./m2450.ts";
+import {Text} from "./m2423.ts";
+import {Box} from "./m2422.ts";
+import {pr,Yl} from "./m2562.ts";
+import {Tm,Fk} from "./m3341.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+function Htc(e){let t=ktc.c(35),{pluginName:n,pluginDescription:r,marketplaceName:o,sourceCommand:s,onResponse:i}=e,a=BQn.useRef(i),l;if(t[0]!==i)l=()=>{a.current=i},t[0]=i,t[1]=l;else l=t[1];BQn.useEffect(l);let c;if(t[2]===Symbol.for("react.memo_cache_sentinel"))c=()=>a.current("no"),t[2]=c;else c=t[2];let u;if(t[3]===Symbol.for("react.memo_cache_sentinel"))u=[],t[3]=u;else u=t[3];useTimeout(c,_$m,u);let d;if(t[4]!==i)d=function(L){e:switch(L){case"yes":{i("yes");break e}case"disable":{i("disable");break e}default:i("no")}},t[4]=i,t[5]=d;else d=t[5];let p=d,m;if(t[6]!==n)m={label:AA.createElement(Text,null,"Yes, install ",AA.createElement(Text,{bold:!0},n)),value:"yes"},t[6]=n,t[7]=m;else m=t[7];let f,A;if(t[8]===Symbol.for("react.memo_cache_sentinel"))f={label:"No",value:"no"},A={label:"No, and don't show plugin installation hints again",value:"disable"},t[8]=f,t[9]=A;else f=t[8],A=t[9];let h;if(t[10]!==m)h=[m,f,A],t[10]=m,t[11]=h;else h=t[11];let g=h,_;if(t[12]!==s)_=AA.createElement(Box,{marginBottom:1},AA.createElement(Text,{dimColor:!0},"The ",AA.createElement(Text,{bold:!0},s)," command suggests installing a plugin.")),t[12]=s,t[13]=_;else _=t[13];let y;if(t[14]===Symbol.for("react.memo_cache_sentinel"))y=AA.createElement(Text,{dimColor:!0},"Plugin:"),t[14]=y;else y=t[14];let T;if(t[15]!==n)T=AA.createElement(Box,null,y,AA.createElement(Text,null," ",n)),t[15]=n,t[16]=T;else T=t[16];let S;if(t[17]===Symbol.for("react.memo_cache_sentinel"))S=AA.createElement(Text,{dimColor:!0},"Marketplace:"),t[17]=S;else S=t[17];let v;if(t[18]!==o)v=AA.createElement(Box,null,S,AA.createElement(Text,null," ",o)),t[18]=o,t[19]=v;else v=t[19];let R;if(t[20]!==r)R=r&&AA.createElement(Box,null,AA.createElement(Text,{dimColor:!0},r)),t[20]=r,t[21]=R;else R=t[21];let k;if(t[22]===Symbol.for("react.memo_cache_sentinel"))k=AA.createElement(Box,{marginTop:1},AA.createElement(Text,null,"Would you like to install it?")),t[22]=k;else k=t[22];let x;if(t[23]!==i)x=()=>i("no"),t[23]=i,t[24]=x;else x=t[24];let H;if(t[25]!==p||t[26]!==g||t[27]!==x)H=AA.createElement(Box,null,AA.createElement(pr,{options:g,onChange:p,onCancel:x})),t[25]=p,t[26]=g,t[27]=x,t[28]=H;else H=t[28];let I;if(t[29]!==T||t[30]!==v||t[31]!==R||t[32]!==H||t[33]!==_)I=AA.createElement(Tm,{title:"Plugin recommendation"},AA.createElement(Box,{flexDirection:"column",paddingX:2,paddingY:1},_,T,v,R,k,H)),t[29]=T,t[30]=v,t[31]=R,t[32]=H,t[33]=_,t[34]=I;else I=t[34];return I}
+var ktc,AA,BQn,_$m=30000;
+var Itc=b(()=>{ze();Yl();Fk();ktc=M(rt(),1),AA=M(Te(),1),BQn=M(Te(),1)});
+export {Htc,ktc,AA,BQn,_$m,Itc};

@@ -1,0 +1,4 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+var opr=X((gdf,r7o)=>{r7o.exports=function(){if(typeof Symbol!=="function"||typeof Object.getOwnPropertySymbols!=="function")return!1;if(typeof Symbol.iterator==="symbol")return!0;var t={},n=Symbol("test"),r=Object(n);if(typeof n==="string")return!1;if(Object.prototype.toString.call(n)!=="[object Symbol]")return!1;if(Object.prototype.toString.call(r)!=="[object Symbol]")return!1;var o=42;t[n]=o;for(var s in t)return!1;if(typeof Object.keys==="function"&&Object.keys(t).length!==0)return!1;if(typeof Object.getOwnPropertyNames==="function"&&Object.getOwnPropertyNames(t).length!==0)return!1;var i=Object.getOwnPropertySymbols(t);if(i.length!==1||i[0]!==n)return!1;if(!Object.prototype.propertyIsEnumerable.call(t,n))return!1;if(typeof Object.getOwnPropertyDescriptor==="function"){var a=Object.getOwnPropertyDescriptor(t,n);if(a.value!==o||a.enumerable!==!0)return!1}return!0}});
+export {opr};

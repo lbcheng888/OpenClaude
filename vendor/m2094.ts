@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+import {g1r} from "./m2093.ts";
+var _1r=X((Fse)=>{Object.defineProperty(Fse,"__esModule",{value:!0});Fse.parseKeyPairsIntoRecord=Fse.parsePairKeyValue=Fse.getKeyPairs=Fse.serializeKeyPairs=void 0;var dKu=Xi(),tFe=g1r();function pKu(e){return e.reduce((t,n)=>{let r=`${t}${t!==""?tFe.BAGGAGE_ITEMS_SEPARATOR:""}${n}`;return r.length>tFe.BAGGAGE_MAX_TOTAL_LENGTH?t:r},"")}Fse.serializeKeyPairs=pKu;function mKu(e){return e.getAllEntries().map(([t,n])=>{let r=`${encodeURIComponent(t)}=${encodeURIComponent(n.value)}`;if(n.metadata!==void 0)r+=tFe.BAGGAGE_PROPERTIES_SEPARATOR+n.metadata.toString();return r})}Fse.getKeyPairs=mKu;function noi(e){let t=e.split(tFe.BAGGAGE_PROPERTIES_SEPARATOR);if(t.length<=0)return;let n=t.shift();if(!n)return;let r=n.indexOf(tFe.BAGGAGE_KEY_PAIR_SEPARATOR);if(r<=0)return;let o=decodeURIComponent(n.substring(0,r).trim()),s=decodeURIComponent(n.substring(r+1).trim()),i;if(t.length>0)i=(0,dKu.baggageEntryMetadataFromString)(t.join(tFe.BAGGAGE_PROPERTIES_SEPARATOR));return{key:o,value:s,metadata:i}}Fse.parsePairKeyValue=noi;function fKu(e){let t={};if(typeof e==="string"&&e.length>0)e.split(tFe.BAGGAGE_ITEMS_SEPARATOR).forEach((n)=>{let r=noi(n);if(r!==void 0&&r.value.length>0)t[r.key]=r.value});return t}Fse.parseKeyPairsIntoRecord=fKu});
+export {_1r};

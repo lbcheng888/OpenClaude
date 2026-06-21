@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {b} from "../runtime.ts";
+var O2="command-name",bR="command-message",Ben="command-args",bbt="bash-input",Ebt="bash-stdout",loe="bash-stderr",Umr="bash-exit-code",rk="local-command-stdout",XX="local-command-stderr",HMe="local-command-caveat",VJo,coe="tick",fp="task-notification",J_="task-id",SO="tool-use-id",sbe="task-type",bO="output-file",__="status",Mf="summary",$mr="worktree",qmr="worktreePath",jmr="worktreeBranch",IMe="remote-review",d7e="remote-review-progress",SB="teammate-message",DMe="channel",PMe='<channel source="',Cbt="cross-session-message",Fen="agent-message",xpe="fork-boilerplate",vbt="Your directive: ",logMCPError,uoe;
+var initKp=b(()=>{VJo=["bash-input","bash-stdout","bash-stderr","bash-exit-code","local-command-stdout","local-command-stderr","local-command-caveat"],logMCPError=["help","-h","--help"],uoe=["list","show","display","current","view","get","check","describe","print","version","about","status","?"]});
+export {O2,bR,Ben,bbt,Ebt,loe,Umr,rk,XX,HMe,VJo,coe,fp,J_,SO,sbe,bO,__,Mf,$mr,qmr,jmr,IMe,d7e,SB,DMe,PMe,Cbt,Fen,xpe,vbt,logMCPError,uoe,initKp};

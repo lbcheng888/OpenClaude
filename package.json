@@ -1,0 +1,12 @@
+{
+  "name": "openclaude",
+  "version": "2.1.185",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "openclaude": "index.ts"
+  },
+  "scripts": {
+    "start": "bun index.ts"
+  }
+}

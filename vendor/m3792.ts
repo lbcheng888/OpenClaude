@@ -1,0 +1,12 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Yle} from "./m3775.ts";
+import {BW} from "./m3799.ts";
+import {aI} from "./m3780.ts";
+import {cBn} from "./m3788.ts";
+import {uBn} from "./m3789.ts";
+import {dBn} from "./m3790.ts";
+import {pBn} from "./m3791.ts";
+import {oBn} from "./m3782.ts";
+var mBn=X((Aka,hka)=>{(function(){var e,t,n,r,o,s,i,a,l;({isObject:l}=Yle()),a=BW(),e=aI(),t=cBn(),r=uBn(),n=dBn(),o=pBn(),i=oBn(),hka.exports=s=function(){class c extends a{constructor(u,d,p){var m,f,A,h;super(u);if(this.type=e.DocType,u.children){h=u.children;for(f=0,A=h.length;f<A;f++)if(m=h[f],m.type===e.Element){this.name=m.name;break}}if(this.documentObject=u,l(d))({pubID:d,sysID:p}=d);if(p==null)[p,d]=[d,p];if(d!=null)this.pubID=this.stringify.dtdPubID(d);if(p!=null)this.sysID=this.stringify.dtdSysID(p)}element(u,d){var p=new n(this,u,d);return this.children.push(p),this}attList(u,d,p,m,f){var A=new t(this,u,d,p,m,f);return this.children.push(A),this}entity(u,d){var p=new r(this,!1,u,d);return this.children.push(p),this}pEntity(u,d){var p=new r(this,!0,u,d);return this.children.push(p),this}notation(u,d){var p=new o(this,u,d);return this.children.push(p),this}toString(u){return this.options.writer.docType(this,this.options.writer.filterOptions(u))}ele(u,d){return this.element(u,d)}att(u,d,p,m,f){return this.attList(u,d,p,m,f)}ent(u,d){return this.entity(u,d)}pent(u,d){return this.pEntity(u,d)}not(u,d){return this.notation(u,d)}up(){return this.root()||this.documentObject}isEqualNode(u){if(!super.isEqualNode(u))return!1;if(u.name!==this.name)return!1;if(u.publicId!==this.publicId)return!1;if(u.systemId!==this.systemId)return!1;return!0}}return Object.defineProperty(c.prototype,"entities",{get:function(){var u,d,p,m,f;m={},f=this.children;for(d=0,p=f.length;d<p;d++)if(u=f[d],u.type===e.EntityDeclaration&&!u.pe)m[u.name]=u;return new i(m)}}),Object.defineProperty(c.prototype,"notations",{get:function(){var u,d,p,m,f;m={},f=this.children;for(d=0,p=f.length;d<p;d++)if(u=f[d],u.type===e.NotationDeclaration)m[u.name]=u;return new i(m)}}),Object.defineProperty(c.prototype,"publicId",{get:function(){return this.pubID}}),Object.defineProperty(c.prototype,"systemId",{get:function(){return this.sysID}}),Object.defineProperty(c.prototype,"internalSubset",{get:function(){throw Error("This DOM method is not implemented."+this.debugInfo())}}),c}.call(this)}).call(Aka)});
+export {mBn};

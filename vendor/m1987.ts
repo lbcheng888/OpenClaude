@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {QZs} from "./m1984.ts";
+import {bOr} from "./m1986.ts";
+var lei=X((fAn)=>{Object.defineProperty(fAn,"__esModule",{value:!0});fAn.TokenHandler=void 0;var k8u=QZs(),H8u=bOr();class aei{token;tokenExpiresAt;inFlightRequest;tokenOptions;constructor(e){this.tokenOptions=e}async processCredentials(){if(!this.tokenOptions.key&&!this.tokenOptions.keyFile)throw Error("No key or keyFile set.");if(!this.tokenOptions.key&&this.tokenOptions.keyFile){let e=await(0,H8u.getCredentials)(this.tokenOptions.keyFile);this.tokenOptions.key=e.privateKey,this.tokenOptions.email=e.clientEmail}}isTokenExpiring(){if(!this.token||!this.tokenExpiresAt)return!0;let e=new Date().getTime(),t=this.tokenOptions.eagerRefreshThresholdMillis??0;return this.tokenExpiresAt<=e+t}hasExpired(){let e=new Date().getTime();if(this.token&&this.tokenExpiresAt)return new Date().getTime()>=this.tokenExpiresAt;return!0}async getToken(e){if(await this.processCredentials(),this.inFlightRequest&&!e)return this.inFlightRequest;if(this.token&&!this.isTokenExpiring()&&!e)return this.token;try{this.inFlightRequest=(0,k8u.getToken)(this.tokenOptions);let t=await this.inFlightRequest;return this.token=t,this.tokenExpiresAt=new Date().getTime()+(t.expires_in??0)*1000,t}finally{this.inFlightRequest=void 0}}}fAn.TokenHandler=aei});
+export {lei};

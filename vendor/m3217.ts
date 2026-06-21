@@ -1,0 +1,25 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b} from "../runtime.ts";
+import {Qz} from "./m3198.ts";
+import {Nhe,Qna,Zna} from "../src/tui/3217_computerUseMcpState.ts";
+import {Ina,Pna,rzr} from "../src/computer-use/3209_flag.ts";
+import {getSessionId,lt} from "../src/session/0131_sent.ts";
+import {$na,QHn} from "./m3211.ts";
+import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {zHn} from "../src/computer-use/3206_apps.ts";
+import {nIn,fzr} from "./m3215.ts";
+import {cot,uot} from "../src/telemetry/3213_enabled.ts";
+import {YHn,QKr} from "./m3207.ts";
+import {aot} from "./m3206.ts";
+var nra={};
+isFullscreenWithTTY(nra,{getComputerUseMCPToolOverrides:()=>getComputerUseMCPToolOverrides,buildSessionContext:()=>buildSessionContext,_resetComputerUseWrapperForTesting:()=>_resetComputerUseWrapperForTesting});
+function Fq(){return Azr}
+function _resetComputerUseWrapperForTesting(){s1t=void 0,Azr=void 0,hzr=void 0,rIn=0}
+function era(e){return`Computer use is in use by another Claude session (${e.slice(0,8)}\u2026). Wait for that session to finish or run /exit there.`}
+function buildSessionContext(){return{getAllowedApps:()=>Fq().getAppState().computerUseMcpState?.allowedApps??[],getGrantFlags:()=>Fq().getAppState().computerUseMcpState?.grantFlags??Qz,getUserDeniedBundleIds:()=>[],getSelectedDisplayId:()=>Fq().getAppState().computerUseMcpState?.selectedDisplayId,getDisplayPinnedByModel:()=>Fq().getAppState().computerUseMcpState?.displayPinnedByModel??!1,getDisplayResolvedForApps:()=>Fq().getAppState().computerUseMcpState?.displayResolvedForApps,getLastScreenshotDims:()=>{let e=Fq().getAppState().computerUseMcpState?.lastScreenshotDims;return e?{...e,displayId:e.displayId??0,originX:e.originX??0,originY:e.originY??0}:void 0},onPermissionRequest:(e,t)=>cqd(e),onAllowedAppsChanged:(e,t)=>Nhe(Fq().setAppState,(n)=>{let r=n?.allowedApps,o=n?.grantFlags,s=r?.length===e.length&&e.every((a,l)=>r[l]?.bundleId===a.bundleId),i=o?.clipboardRead===t.clipboardRead&&o?.clipboardWrite===t.clipboardWrite&&o?.systemKeyCombos===t.systemKeyCombos;return s&&i?n:{...n,allowedApps:[...e],grantFlags:t}}),onAppsHidden:(e)=>{if(e.length===0)return;Nhe(Fq().setAppState,(t)=>{let n=t?.hiddenDuringTurn;if(n&&e.every((r)=>n.has(r)))return t;return{...t,hiddenDuringTurn:new Set([...n??[],...e])}})},onResolvedDisplayUpdated:(e)=>Nhe(Fq().setAppState,(t)=>{if(t?.selectedDisplayId===e&&!t.displayPinnedByModel&&t.displayResolvedForApps===void 0)return t;return{...t,selectedDisplayId:e,displayPinnedByModel:!1,displayResolvedForApps:void 0}}),onDisplayPinned:(e)=>Nhe(Fq().setAppState,(t)=>{let n=e!==void 0,r=n?t?.displayResolvedForApps:void 0;if(t?.selectedDisplayId===e&&t?.displayPinnedByModel===n&&t?.displayResolvedForApps===r)return t;return{...t,selectedDisplayId:e,displayPinnedByModel:n,displayResolvedForApps:r}}),onDisplayResolvedForApps:(e)=>Nhe(Fq().setAppState,(t)=>{if(t?.displayResolvedForApps===e)return t;return{...t,displayResolvedForApps:e}}),onScreenshotCaptured:(e)=>Nhe(Fq().setAppState,(t)=>{let n=t?.lastScreenshotDims;return n?.width===e.width&&n?.height===e.height&&n?.displayWidth===e.displayWidth&&n?.displayHeight===e.displayHeight&&n?.displayId===e.displayId&&n?.originX===e.originX&&n?.originY===e.originY?t:{...t,lastScreenshotDims:e}}),checkCuLock:async()=>{let e=await Ina();switch(e.kind){case"free":return{holder:void 0,isSelf:!1};case"held_by_self":return{holder:getSessionId(),isSelf:!0};case"blocked":return{holder:e.by,isSelf:!1}}},acquireCuLock:async()=>{let e=await Pna();if(e.kind==="blocked")throw Error(era(e.by));if(e.fresh){let t=$na(()=>{if(rIn===0){logForDebugging("[cu-esc] user escape with no CU call in flight; consumed only");return}logForDebugging("[cu-esc] user escape, aborting turn"),Fq().abortController.abort()});hzr?.({type:"os_notification",message:t?"Claude is using your computer \xB7 press Esc to stop":"Claude is using your computer \xB7 press Ctrl+C to stop",notificationType:"computer_use_enter"})}},formatLockHeldMessage:era}}
+function aqd(){if(s1t)return s1t;let e=buildSessionContext();return s1t={ctx:e,dispatch:zHn(nIn(),cot(),e)},s1t}
+function getComputerUseMCPToolOverrides(e){let t=async(n,r,o,s,i)=>{Azr=r,hzr=i,rIn++;let a;try{let{dispatch:d}=aqd();a=await d(e,n)}finally{rIn--}let{telemetry:l,...c}=a;if(l?.error_kind)logForDebugging(`[Computer Use MCP] ${e} error_kind=${l.error_kind}`);return{data:Array.isArray(c.content)?c.content.map((d)=>d.type==="image"?{type:"image",source:{type:"base64",media_type:d.mimeType??"image/jpeg",data:d.data}}:{type:"text",text:d.type==="text"?d.text:""}):c.content}};return{...Qna(e),call:t}}
+async function cqd(e){let t=Fq(),n=t.requestDialog;if(!n)return{granted:[],denied:[],flags:Qz};return n(YHn,e,{signal:t.abortController.signal})}
+var s1t,Azr,hzr,rIn=0;
+var rra=b(()=>{aot();lt();QKr();qe();rzr();QHn();uot();fzr();Zna()});
+export {nra,Fq,_resetComputerUseWrapperForTesting,era,buildSessionContext,aqd,getComputerUseMCPToolOverrides,cqd,s1t,Azr,hzr,rIn,rra};

@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {mt,bo,configProtoStore} from "./m2458.ts";
+import {b,M} from "../runtime.ts";
+import {Te} from "./m2253.ts";
+function AZl({setMessages:e,setIsLoading:t,resetLoadingState:n,setAbortController:r,onBackgroundQuery:o}){let s=mt((d)=>d.foregroundedTaskId),i=mt((d)=>d.foregroundedTaskId?d.tasks[d.foregroundedTaskId]:void 0),a=mt((d)=>d.foregroundedTaskId?d.transcripts[d.foregroundedTaskId]?.messages:void 0),l=bo(),c=mht.useRef(0),u=mht.useCallback(()=>{if(s){l((d)=>{let p=d.foregroundedTaskId;if(!p)return d;let m=d.tasks[p];if(!m)return{...d,foregroundedTaskId:void 0};return{...d,foregroundedTaskId:void 0,tasks:{...d.tasks,[p]:{...m,isBackgrounded:!0}}}}),e([]),n(),r(null);return}o()},[s,l,e,n,r,o]);return mht.useEffect(()=>{if(!s){c.current=0;return}if(!i||i.type!=="local_agent"){l((p)=>({...p,foregroundedTaskId:void 0})),n(),c.current=0;return}let d=a??[];if(d.length!==c.current)c.current=d.length,e([...d]);if(i.status==="running"){let p=i.abortController;if(p?.signal.aborted){l((m)=>{if(!m.foregroundedTaskId)return m;let f=m.tasks[m.foregroundedTaskId];if(!f)return{...m,foregroundedTaskId:void 0};return{...m,foregroundedTaskId:void 0,tasks:{...m.tasks,[m.foregroundedTaskId]:{...f,isBackgrounded:!0}}}}),n(),r(null),c.current=0;return}if(t(!0),p)r(p)}else l((p)=>{let m=p.foregroundedTaskId;if(!m)return p;let f=p.tasks[m];if(!f)return{...p,foregroundedTaskId:void 0};return{...p,foregroundedTaskId:void 0,tasks:{...p.tasks,[m]:{...f,isBackgrounded:!0}}}}),n(),r(null),c.current=0},[s,i,a,l,e,t,n,r]),{handleBackgroundSession:u}}
+var mht;
+var hZl=b(()=>{configProtoStore();mht=M(Te(),1)});
+export {AZl,mht,hZl};

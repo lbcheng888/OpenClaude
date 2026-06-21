@@ -1,0 +1,20 @@
+// @ts-nocheck
+import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {Le,Xt} from "../src/config/0228_encoding.ts";
+import {_o,bt} from "./m195.ts";
+import {De,Rn} from "../src/session/0615_length.ts";
+import {isTmuxControlMode,Ie,ln} from "../src/telemetry/0594_feature_name.ts";
+import {b} from "../runtime.ts";
+import {S7e,j3} from "./m636.ts";
+function Ora({serverName:e,files:t}){let n=Pra.randomUUID();logForDebugging(`LSP Diagnostics: Registering ${t.length} diagnostic file(s) from ${e} (ID: ${n})`),$ee.set(n,{serverName:e,files:t,timestamp:Date.now(),attachmentSent:!1})}
+function Dra(e){switch(e){case"Error":return 1;case"Warning":return 2;case"Info":return 3;case"Hint":return 4;default:return 4}}
+function Lra(e){return Le({message:e.message,severity:e.severity,range:e.range,source:e.source||null,code:e.code||null})}
+function zqd(e){let t=new Map,n=[];for(let r of e){if(!t.has(r.uri))t.set(r.uri,new Set),n.push({uri:r.uri,diagnostics:[]});let o=t.get(r.uri),s=n.find((a)=>a.uri===r.uri),i=ike.get(r.uri)||new Set;for(let a of r.diagnostics)try{let l=Lra(a);if(o.has(l)||i.has(l))continue;o.add(l),s.diagnostics.push(a)}catch(l){let c=_o(l),u=a.message?.substring(0,100)||"<no message>";De(Error(`Failed to deduplicate diagnostic in ${r.uri}: ${c.message}. Diagnostic message: ${u}`)),s.diagnostics.push(a)}}return n.filter((r)=>r.diagnostics.length>0)}
+function Mra(){logForDebugging(`LSP Diagnostics: Checking registry - ${$ee.size} pending`);let e=[],t=new Set,n=[];for(let u of $ee.values())if(!u.attachmentSent)e.push(...u.files),t.add(u.serverName),n.push(u);if(e.length===0)return[];let r,o=!1;try{r=zqd(e)}catch(u){let d=_o(u);De(Error(`Failed to deduplicate LSP diagnostics: ${d.message}`)),o=!0,r=e}for(let u of n)u.attachmentSent=!0;for(let[u,d]of $ee)if(d.attachmentSent)$ee.delete(u);let s=e.reduce((u,d)=>u+d.diagnostics.length,0),i=r.reduce((u,d)=>u+d.diagnostics.length,0);if(s>i)logForDebugging(`LSP Diagnostics: Deduplication removed ${s-i} duplicate diagnostic(s)`);let a=0,l=0;for(let u of r){if(u.diagnostics.sort((p,m)=>Dra(p.severity)-Dra(m.severity)),u.diagnostics.length>pIn)l+=u.diagnostics.length-pIn,u.diagnostics=u.diagnostics.slice(0,pIn);let d=Ira-a;if(u.diagnostics.length>d)l+=u.diagnostics.length-d,u.diagnostics=u.diagnostics.slice(0,d);a+=u.diagnostics.length}if(r=r.filter((u)=>u.diagnostics.length>0),l>0)logForDebugging(`LSP Diagnostics: Volume limiting removed ${l} diagnostic(s) (max ${pIn}/file, ${Ira} total)`);for(let u of r){if(!ike.has(u.uri))ike.set(u.uri,new Set);let d=ike.get(u.uri);for(let p of u.diagnostics)try{d.add(Lra(p))}catch(m){let f=_o(m),A=p.message?.substring(0,100)||"<no message>";De(Error(`Failed to track delivered diagnostic in ${u.uri}: ${f.message}. Diagnostic message: ${A}`))}}let c=r.reduce((u,d)=>u+d.diagnostics.length,0);if(c===0)return logForDebugging("LSP Diagnostics: No new diagnostics to deliver (all filtered by deduplication)"),[];if(logForDebugging(`LSP Diagnostics: Delivering ${r.length} file(s) with ${c} diagnostic(s) from ${t.size} server(s)`),o)isTmuxControlMode("lsp_diagnostics_deliver","lsp_diagnostics_dedup_failed");else Ie("lsp_diagnostics_deliver");return[{serverName:Array.from(t).join(", "),files:r}]}
+function Nra(){logForDebugging(`LSP Diagnostics: Clearing ${$ee.size} pending diagnostic(s)`),$ee.clear()}
+function Bra(){logForDebugging(`LSP Diagnostics: Resetting all state (${$ee.size} pending, ${ike.size} files tracked)`),$ee.clear(),ike.clear()}
+function mIn(e){if(ike.has(e))logForDebugging(`LSP Diagnostics: Clearing delivered diagnostics for ${e}`),ike.delete(e)}
+function fIn(e){let t=0;for(let[n,r]of $ee){let o=r.files.filter((s)=>s.uri!==e);if(o.length===r.files.length)continue;if(o.length===0)$ee.delete(n);else r.files=o;t++}if(t>0)logForDebugging(`LSP Diagnostics: Purged ${t} pending entry(ies) referencing ${e}`)}
+var Pra,pIn=10,Ira=30,Kqd=500,$ee,ike;
+var yot=b(()=>{S7e();qe();bt();Rn();Xt();ln();Pra=require("crypto"),$ee=new Map,ike=new j3({max:Kqd})});
+export {Ora,Dra,Lra,zqd,Mra,Nra,Bra,mIn,fIn,Pra,pIn,Ira,Kqd,$ee,ike,yot};

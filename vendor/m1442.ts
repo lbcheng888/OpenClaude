@@ -1,0 +1,22 @@
+// @ts-nocheck
+import {isFullscreenWithTTY,b} from "../runtime.ts";
+import {propertyProviderChain,createCredentialChain,RNs} from "./m1351.ts";
+import {NPu,n$s} from "./m1441.ts";
+import {MPu,t$s} from "./m1440.ts";
+import {fromTemporaryCredentials,e$s} from "./m1439.ts";
+import {PPu,G2s} from "./m1436.ts";
+import {DPu,W2s} from "./m1435.ts";
+import {fromNodeProviderChain,dRr} from "./m1434.ts";
+import {fromLoginCredentials,j2s} from "./m1433.ts";
+import {HPu,q2s} from "./m1432.ts";
+import {kPu,U2s} from "./m1431.ts";
+import {fromHttp} from "./m842.ts";
+import {xPu,F2s} from "./m1430.ts";
+import {RPu,B2s} from "./m1429.ts";
+import {fromCognitoIdentityPool,N2s} from "./m1428.ts";
+import {fromCognitoIdentity,M2s} from "./m1427.ts";
+import {Wrn} from "./m843.ts";
+var uYe={};
+isFullscreenWithTTY(uYe,{propertyProviderChain:()=>propertyProviderChain,fromWebToken:()=>NPu,fromTokenFile:()=>MPu,fromTemporaryCredentials:()=>fromTemporaryCredentials,fromSSO:()=>PPu,fromProcess:()=>DPu,fromNodeProviderChain:()=>fromNodeProviderChain,fromLoginCredentials:()=>fromLoginCredentials,fromInstanceMetadata:()=>HPu,fromIni:()=>kPu,fromHttp:()=>fromHttp,fromEnv:()=>xPu,fromContainerMetadata:()=>RPu,fromCognitoIdentityPool:()=>fromCognitoIdentityPool,fromCognitoIdentity:()=>fromCognitoIdentity,createCredentialChain:()=>createCredentialChain});
+var dYe=b(()=>{Wrn();RNs();M2s();N2s();B2s();F2s();U2s();q2s();j2s();dRr();W2s();G2s();e$s();t$s();n$s()});
+export {uYe,dYe};

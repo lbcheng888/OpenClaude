@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Xi} from "./m2091.ts";
+var ZSa=X((fHe)=>{Object.defineProperty(fHe,"__esModule",{value:!0});fHe.isAttributeValue=fHe.isAttributeKey=fHe.sanitizeAttributes=void 0;var YSa=Xi();function eip(e){let t={};if(typeof e!=="object"||e==null)return t;for(let n in e){if(!Object.prototype.hasOwnProperty.call(e,n))continue;if(!JSa(n)){YSa.diag.warn(`Invalid attribute key: ${n}`);continue}let r=e[n];if(!XSa(r)){YSa.diag.warn(`Invalid attribute value set for key: ${n}`);continue}if(Array.isArray(r))t[n]=r.slice();else t[n]=r}return t}fHe.sanitizeAttributes=eip;function JSa(e){return typeof e==="string"&&e!==""}fHe.isAttributeKey=JSa;function XSa(e){if(e==null)return!0;if(Array.isArray(e))return tip(e);return QSa(typeof e)}fHe.isAttributeValue=XSa;function tip(e){let t;for(let n of e){if(n==null)continue;let r=typeof n;if(r===t)continue;if(!t){if(QSa(r)){t=r;continue}return!1}return!1}return!0}function QSa(e){switch(e){case"number":case"boolean":case"string":return!0}return!1}});
+export {ZSa};

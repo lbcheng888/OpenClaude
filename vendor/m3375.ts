@@ -1,0 +1,6 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {Hst} from "./m3363.ts";
+import {Gke} from "./m3361.ts";
+var sda=X((Bst)=>{Object.defineProperty(Bst,"__esModule",{value:!0});Bst.SumAggregator=Bst.SumAccumulation=void 0;var yVd=Hst(),TVd=Gke();class F9e{startTime;monotonic;_current;reset;constructor(e,t,n=0,r=!1){this.startTime=e,this.monotonic=t,this._current=n,this.reset=r}record(e){if(this.monotonic&&e<0)return;this._current+=e}setStartTime(e){this.startTime=e}toPointValue(){return this._current}}Bst.SumAccumulation=F9e;class oda{monotonic;kind=yVd.AggregatorKind.SUM;constructor(e){this.monotonic=e}createAccumulation(e){return new F9e(e,this.monotonic)}merge(e,t){let n=e.toPointValue(),r=t.toPointValue();if(t.reset)return new F9e(t.startTime,this.monotonic,r,t.reset);return new F9e(e.startTime,this.monotonic,n+r)}diff(e,t){let n=e.toPointValue(),r=t.toPointValue();if(this.monotonic&&n>r)return new F9e(t.startTime,this.monotonic,r,!0);return new F9e(t.startTime,this.monotonic,r-n)}toMetricData(e,t,n,r){return{descriptor:e,aggregationTemporality:t,dataPointType:TVd.DataPointType.SUM,dataPoints:n.map(([o,s])=>({attributes:o,startTime:s.startTime,endTime:r,value:s.toPointValue()})),isMonotonic:this.monotonic}}}Bst.SumAggregator=oda});
+export {sda};

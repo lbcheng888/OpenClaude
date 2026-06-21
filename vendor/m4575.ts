@@ -1,0 +1,28 @@
+// @ts-nocheck
+import {l9,dMt,L$e,CL} from "../src/mcp/3149_scope.ts";
+import {Text} from "./m2423.ts";
+import {Box} from "./m2422.ts";
+import {Es,kte} from "./m3926.ts";
+import {getMcpConfigsByScope,getMcpScopeConflicts,doesEnterpriseMcpConfigExist,px} from "../src/telemetry/3148_unwrapCcrProxyUrl.ts";
+import {iS,RK} from "./m2231.ts";
+import {Hx,Ypt} from "./m4573.ts";
+import {Link} from "./m2427.ts";
+import {b,M} from "../runtime.ts";
+import {ze} from "./m2452.ts";
+import {rt} from "./m2255.ts";
+import {Te} from "./m2253.ts";
+function s7p(e){let t=wTo.c(38),{scope:n,parsingErrors:r,warnings:o}=e,s=r.length>0,i=o.length>0;if(!s&&!i)return null;let a;if(t[0]!==n)a=l9(n),t[0]=n,t[1]=a;else a=t[1];let l=a,c;if(t[2]!==r||t[3]!==o)c=new Set([...r,...o].map(i7p).filter(Boolean)),t[2]=r,t[3]=o,t[4]=c;else c=t[4];let u=c,d;if(t[5]!==l||t[6]!==u)d=u.size===1?[...u][0]:l,t[5]=l,t[6]=u,t[7]=d;else d=t[7];let p=d,m;if(t[8]!==s||t[9]!==i)m=(s||i)&&PT.default.createElement(Text,{color:s?"error":"warning"},"[",s?"Failed to parse":"Contains warnings","]"," "),t[8]=s,t[9]=i,t[10]=m;else m=t[10];let f;if(t[11]!==n)f=dMt(n),t[11]=n,t[12]=f;else f=t[12];let A;if(t[13]!==f)A=PT.default.createElement(Text,null,f),t[13]=f,t[14]=A;else A=t[14];let h;if(t[15]!==m||t[16]!==A)h=PT.default.createElement(Box,null,m,A),t[15]=m,t[16]=A,t[17]=h;else h=t[17];let g;if(t[18]===Symbol.for("react.memo_cache_sentinel"))g=PT.default.createElement(Text,{dimColor:!0},"Location: "),t[18]=g;else g=t[18];let _;if(t[19]!==p)_=PT.default.createElement(Box,null,g,PT.default.createElement(Text,{dimColor:!0},p)),t[19]=p,t[20]=_;else _=t[20];let y;if(t[21]!==p||t[22]!==r){let R;if(t[24]!==p)R=(k,x)=>{let H=k.mcpErrorMetadata?.serverName,I=k.file&&k.file!==p;return PT.default.createElement(Es.Node,{key:`error-${x}`},PT.default.createElement(Text,null,PT.default.createElement(Text,{color:"error"},"[Error]"),PT.default.createElement(Text,{dimColor:!0}," ",I&&`(${k.file}) `,H&&`[${H}] `,k.path&&k.path!==""?`${k.path}: `:"",k.message)))},t[24]=p,t[25]=R;else R=t[25];y=r.map(R),t[21]=p,t[22]=r,t[23]=y}else y=t[23];let T;if(t[26]!==p||t[27]!==o){let R;if(t[29]!==p)R=(k,x)=>{let H=k.mcpErrorMetadata?.serverName,I=k.file&&k.file!==p;return PT.default.createElement(Es.Node,{key:`warning-${x}`},PT.default.createElement(Text,null,PT.default.createElement(Text,{color:"warning"},"[Warning]"),PT.default.createElement(Text,{dimColor:!0}," ",I&&`(${k.file}) `,H&&`[${H}] `,k.path&&k.path!==""?`${k.path}: `:"",k.message)))},t[29]=p,t[30]=R;else R=t[30];T=o.map(R),t[26]=p,t[27]=o,t[28]=T}else T=t[28];let S;if(t[31]!==y||t[32]!==T)S=PT.default.createElement(Box,{marginLeft:1},PT.default.createElement(Es,{variant:"tree"},y,T)),t[31]=y,t[32]=T,t[33]=S;else S=t[33];let v;if(t[34]!==S||t[35]!==h||t[36]!==_)v=PT.default.createElement(Box,{flexDirection:"column",marginTop:1},h,_,S),t[34]=S,t[35]=h,t[36]=_,t[37]=v;else v=t[37];return v}
+function i7p(e){return e.file}
+function Jpt(){let e=wTo.c(3),t;if(e[0]===Symbol.for("react.memo_cache_sentinel")){let l=[{scope:"user",config:getMcpConfigsByScope("user")},{scope:"project",config:getMcpConfigsByScope("project")},{scope:"local",config:getMcpConfigsByScope("local")},{scope:"enterprise",config:getMcpConfigsByScope("enterprise")}],c=getMcpScopeConflicts(l.filter(m7p).map(p7p));t={scopes:f7p(l,{enterpriseActive:doesEnterpriseMcpConfigExist(),mcpLocked:iS("mcp"),isProjectServerApproved:d7p}),conflicts:c},e[0]=t}else t=e[0];let{scopes:n,conflicts:r}=t,o=n.some(u7p),s=r.length>0||n.some(c7p);if(!o&&!s)return null;let i;if(e[1]===Symbol.for("react.memo_cache_sentinel"))i=PT.default.createElement(Hx,{title:"MCP config diagnostics",status:o?"error":"warning"}),e[1]=i;else i=e[1];let a;if(e[2]===Symbol.for("react.memo_cache_sentinel"))a=PT.default.createElement(Box,{flexDirection:"column",marginTop:1,marginBottom:1},i,PT.default.createElement(Box,{marginTop:1},PT.default.createElement(Text,{dimColor:!0},"For help configuring MCP servers, see:"," ",PT.default.createElement(Link,{url:"https://code.claude.com/docs/en/mcp"},"https://code.claude.com/docs/en/mcp"))),n.map(l7p),r.length>0&&PT.default.createElement(Box,{flexDirection:"column",marginTop:1},PT.default.createElement(Text,{color:"warning"},"[Conflicting scopes]"),PT.default.createElement(Es,{variant:"tree"},r.map(a7p)))),e[2]=a;else a=e[2];return a}
+function a7p(e,t){return PT.default.createElement(Es.Group,{key:`conflict-${t}`},PT.default.createElement(Es.Node,{color:"warning"},e.message),e.suggestion&&PT.default.createElement(Es.Node,{dimColor:!0},e.suggestion))}
+function l7p(e){let{scope:t,config:n}=e;return PT.default.createElement(s7p,{key:t,scope:t,parsingErrors:e5n(n.errors,"fatal"),warnings:e5n(n.errors,"warning")})}
+function c7p(e){let{config:t}=e;return e5n(t.errors,"warning").length>0}
+function u7p(e){let{config:t}=e;return e5n(t.errors,"fatal").length>0}
+function d7p(e){return L$e(e)==="approved"}
+function p7p(e){return{scope:e.scope,servers:e.config.servers}}
+function m7p(e){return e.scope!=="enterprise"}
+function e5n(e,t){return e.filter((n)=>n.mcpErrorMetadata?.severity===t)}
+function f7p(e,t){let n=(r,o)=>{if(!(o in r.config.servers))return!1;if(r.scope==="project")return t.isProjectServerApproved(o);return!0};return e.map((r,o)=>{let s=r.scope!=="enterprise"&&(t.enterpriseActive||t.mcpLocked),i=e.slice(o+1),a=(l)=>i.some((c)=>n(c,l));return{...r,config:{...r.config,errors:r.config.errors.filter((l)=>{if(l.mcpErrorMetadata?.severity!=="warning")return!0;if(s)return!1;let c=l.mcpErrorMetadata.serverName;return!c||!a(c)})}}})}
+var wTo,PT;
+var t5n=b(()=>{px();CL();RK();ze();Ypt();kte();wTo=M(rt(),1),PT=M(Te(),1)});
+export {s7p,i7p,Jpt,a7p,l7p,c7p,u7p,d7p,p7p,m7p,e5n,f7p,wTo,PT,t5n};

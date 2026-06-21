@@ -1,0 +1,10 @@
+// @ts-nocheck
+import {IKe,bus,bTr,mAs,fAs,hAs} from "./m919.ts";
+import {aEe,_As} from "./m920.ts";
+import {SAs,bAs} from "./m921.ts";
+import {b,M} from "../runtime.ts";
+import {createDefaultGlobalConfig} from "./m594.ts";
+import {I2} from "./m600.ts";
+var VKe,lEe,EAs,zon=(e={})=>async({callerClientConfig:t}={})=>{let n={...e,parentClientConfig:{...t,...e.parentClientConfig}};n.logger?.debug("@aws-sdk/token-providers - fromSso");let r=await lEe.parseKnownFiles(n),o=lEe.getProfileName({profile:n.profile??t?.profile}),s=r[o];if(!s)throw new VKe.TokenProviderError(`Profile '${o}' could not be found in shared credentials file.`,!1);else if(!s.sso_session)throw new VKe.TokenProviderError(`Profile '${o}' is missing required property 'sso_session'.`);let i=s.sso_session,l=(await lEe.loadSsoSessionData(n))[i];if(!l)throw new VKe.TokenProviderError(`Sso session '${i}' could not be found in shared credentials file.`,!1);for(let A of["sso_start_url","sso_region"])if(!l[A])throw new VKe.TokenProviderError(`Sso session '${i}' is missing required property '${A}'.`,!1);let{sso_start_url:c,sso_region:u}=l,d;try{d=await lEe.getSSOTokenFromFile(i)}catch(A){throw new VKe.TokenProviderError(`The SSO session token associated with profile=${o} was not found or is invalid. ${IKe}`,!1)}aEe("accessToken",d.accessToken),aEe("expiresAt",d.expiresAt);let{accessToken:p,expiresAt:m}=d,f={token:p,expiration:new Date(m)};if(f.expiration.getTime()-Date.now()>bus)return f;if(Date.now()-EAs.getTime()<30000)return bTr(f),f;aEe("clientId",d.clientId,!0),aEe("clientSecret",d.clientSecret,!0),aEe("refreshToken",d.refreshToken,!0);try{EAs.setTime(Date.now());let A=await mAs(d,u,n);aEe("accessToken",A.accessToken),aEe("expiresIn",A.expiresIn);let h=new Date(Date.now()+A.expiresIn*1000);try{await SAs(i,{...d,accessToken:A.accessToken,expiresAt:h.toISOString(),refreshToken:A.refreshToken})}catch(g){}return{token:A.accessToken,expiration:h}}catch(A){return bTr(f),f}};
+var ETr=b(()=>{fAs();hAs();_As();bAs();VKe=M(createDefaultGlobalConfig(),1),lEe=M(I2(),1),EAs=new Date(0)});
+export {VKe,lEe,EAs,zon,ETr};

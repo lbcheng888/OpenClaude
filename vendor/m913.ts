@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {nk} from "./m607.ts";
+import {yB} from "./m601.ts";
+import {createDefaultGlobalConfig} from "./m594.ts";
+import {p1e,zEt} from "./m765.ts";
+var pme=X((Dfs)=>{var Cuu=nk(),kfs=yB(),vuu=createDefaultGlobalConfig(),wuu="AWS_EXECUTION_ENV",Hfs="AWS_REGION",Ifs="AWS_DEFAULT_REGION",Ruu="AWS_EC2_METADATA_DISABLED",xuu=["in-region","cross-region","mobile","standard","legacy"],kuu="/latest/meta-data/placement/region",Huu="AWS_DEFAULTS_MODE",Iuu="defaults_mode",Duu={environmentVariableSelector:(e)=>e[Huu],configFileSelector:(e)=>e[Iuu],default:"legacy"},Puu=({region:e=kfs.loadConfig(Cuu.NODE_REGION_CONFIG_OPTIONS),defaultsMode:t=kfs.loadConfig(Duu)}={})=>vuu.memoize(async()=>{let n=typeof t==="function"?await t():t;switch(n?.toLowerCase()){case"auto":return Ouu(e);case"in-region":case"cross-region":case"mobile":case"standard":case"legacy":return Promise.resolve(n?.toLocaleLowerCase());case void 0:return Promise.resolve("legacy");default:throw Error(`Invalid parameter for "defaultsMode", expect ${xuu.join(", ")}, got ${n}`)}}),Ouu=async(e)=>{if(e){let t=typeof e==="function"?await e():e,n=await Luu();if(!n)return"standard";if(t===n)return"in-region";else return"cross-region"}return"standard"},Luu=async()=>{if(process.env[wuu]&&(process.env[Hfs]||process.env[Ifs]))return process.env[Hfs]??process.env[Ifs];if(!process.env[Ruu])try{let{getInstanceMetadataEndpoint:e,httpRequest:t}=await Promise.resolve().then(() => (p1e(),zEt)),n=await e();return(await t({...n,path:kuu})).toString()}catch(e){}};Dfs.resolveDefaultsModeConfig=Puu});
+export {pme};

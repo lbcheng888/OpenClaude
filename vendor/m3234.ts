@@ -1,0 +1,5 @@
+// @ts-nocheck
+import {X} from "../runtime.ts";
+import {cke} from "./m3230.ts";
+var Vzr=X((TIn)=>{Object.defineProperty(TIn,"__esModule",{value:!0});TIn.Semaphore=void 0;var c6d=cke();class voa{constructor(e=1){if(e<=0)throw Error("Capacity must be greater than 0");this._capacity=e,this._active=0,this._waiting=[]}lock(e){return new Promise((t,n)=>{this._waiting.push({thunk:e,resolve:t,reject:n}),this.runNext()})}get active(){return this._active}runNext(){if(this._waiting.length===0||this._active===this._capacity)return;(0,c6d.default)().timer.setImmediate(()=>this.doRunNext())}doRunNext(){if(this._waiting.length===0||this._active===this._capacity)return;let e=this._waiting.shift();if(this._active++,this._active>this._capacity)throw Error("To many thunks active");try{let t=e.thunk();if(t instanceof Promise)t.then((n)=>{this._active--,e.resolve(n),this.runNext()},(n)=>{this._active--,e.reject(n),this.runNext()});else this._active--,e.resolve(t),this.runNext()}catch(t){this._active--,e.reject(t),this.runNext()}}}TIn.Semaphore=voa});
+export {Vzr};

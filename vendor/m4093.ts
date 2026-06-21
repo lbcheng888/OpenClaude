@@ -1,0 +1,15 @@
+// @ts-nocheck
+import {Fl,vu,bt} from "./m195.ts";
+import {Le,Xt} from "../src/config/0228_encoding.ts";
+import {Fr,Ql} from "./m4405.ts";
+import {b} from "../runtime.ts";
+function y$n(e,t){let n=e.get(t);if(n)return n;let r=v$a(t),o;for(let[s,i]of e){let a=v$a(s);if(!a.includes("*")){if(a===r)return i}else if(o===void 0&&bRp(a,r))o=i}return o}
+function v$a(e){if(!e.startsWith("domain:"))return e;return`domain:${e.slice(7).toLowerCase().replace(/(?<=[^*.])\.+(?=(:\d+)?$)/,"")}`}
+function bRp(e,t){if(!e.startsWith("domain:")||!t.startsWith("domain:"))return!1;if(e==="domain:*")return!0;let n;if(e.startsWith("domain:*."))n=`^domain:(?:[^.:]+\\.)+${w$a(e.slice(9))}$`;else n=`^domain:${w$a(e.slice(7))}$`;return new RegExp(n,"i").test(t)}
+function w$a(e){return e.split("*").map((t)=>t.replace(/[.+?^${}()|[\]\\]/g,"\\$&")).join("[^.:]*")}
+function t9t(e){return new Fl(Le({error_type:aco,source:"target",message:e??"URL not in provenance set. web_fetch can only retrieve URLs that appeared in a user message or a prior web_fetch result. Ask the user to include the URL in a message first."}),"web-fetch-ccr-proxy")}
+async function wRp(e){let{tool:t,denial:n,prompt:r,context:o,canUseTool:s,parentMessage:i}=e,a=Fr(o);if(a.mode==="bypassPermissions"||a.mode==="dontAsk"||a.shouldAvoidPermissionPrompts)return{outcome:"suppressed_mode"};if(Buffer.byteLength(n.url,"utf8")>ERp)return{outcome:"suppressed_url_too_long"};if((await t.checkPermissions?.({url:n.url,prompt:r},o))?.behavior==="deny")return{outcome:"suppressed_deny_rule"};let c=s(t,{url:n.url,prompt:r},o,i,R$a.randomUUID(),{behavior:"ask",message:`${t.name} was denied by this session's URL provenance check. Approve to allow fetching this URL.`,suggestions:e.suggestions}),u,d=new Promise((p)=>{u=setTimeout((m)=>m({type:"timed_out"}),e.promptTimeoutMs??CRp,p),u.unref?.()});try{let p=await Promise.race([c.then((m)=>({type:"decision",decision:m})),d]);if(o.abortController.signal.aborted)throw new vu;if(p.type==="timed_out")return c.catch(()=>{}),{outcome:"timed_out"};if(p.decision.behavior==="allow")return{outcome:"approved"};return{outcome:"denied",denialMessage:p.decision.message||void 0}}finally{clearTimeout(u)}}
+async function x$a(e){let t=await wRp(e);if(t.outcome!=="approved")throw e.onOutcome?.(t.outcome),t.outcome==="timed_out"?t9t(vRp):t9t(t.denialMessage??e.denial.errorMessage);let n;try{n=await e.refetch(e.denial.url)}catch(r){if(r instanceof vu||e.context.abortController.signal.aborted)throw r;throw e.onOutcome?.("retry_failed"),r}if(n!==null&&typeof n==="object"&&"type"in n&&n.type==="provenance_denied")throw e.onOutcome?.("retry_denied"),t9t(n.errorMessage);return e.onOutcome?.("approved"),n}
+var R$a,aco="PROVENANCE_REQUIRED",ERp=2048,CRp=300000,vRp="The permission request for this URL was not answered in time. Ask the user to approve the fetch or include the URL in a message, then try again.";
+var lco=b(()=>{Ql();bt();Xt();R$a=require("crypto")});
+export {y$n,v$a,bRp,w$a,t9t,wRp,x$a,R$a,aco,ERp,CRp,vRp,lco};
