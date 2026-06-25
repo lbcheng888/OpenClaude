@@ -1,18 +1,17 @@
 // @ts-nocheck
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {Es,kte} from "./m3926.ts";
-import {aD,bne} from "./m4590.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function f5n(e){let t=Vcl.c(8),{errors:n}=e;if(n.length===0)return null;let r,o,s;if(t[0]!==n){let a=n.reduce(q7p,{}),l=Object.keys(a).sort();r=Box,o="column",s=l.map((c)=>{let u=a[c]||[];u.sort($7p);let d=new Map;return u.forEach((p)=>{if(p.suggestion||p.docLink){let m=`${p.suggestion||""}|${p.docLink||""}`;if(!d.has(m))d.set(m,{suggestion:p.suggestion,docLink:p.docLink})}}),Qv.createElement(Box,{key:c,flexDirection:"column"},Qv.createElement(Text,null,c),Qv.createElement(Es,{variant:"tree"},u.map(U7p)),d.size>0&&Qv.createElement(Box,{flexDirection:"column",marginTop:1},Array.from(d.values()).map(F7p)))}),t[0]=n,t[1]=r,t[2]=o,t[3]=s}else r=t[1],o=t[2],s=t[3];let i;if(t[4]!==r||t[5]!==o||t[6]!==s)i=Qv.createElement(r,{flexDirection:o},s),t[4]=r,t[5]=o,t[6]=s,t[7]=i;else i=t[7];return i}
-function F7p(e,t){return Qv.createElement(Box,{key:`suggestion-pair-${t}`,flexDirection:"column",marginBottom:1},e.suggestion&&Qv.createElement(Text,{dimColor:!0,wrap:"wrap"},e.suggestion),e.docLink&&Qv.createElement(aD,{url:e.docLink}))}
-function U7p(e,t){let n=j7p(e);return Qv.createElement(Es.Node,{key:t},n?Qv.createElement(Text,null,n,": ",Qv.createElement(Text,{dimColor:!0},e.message)):Qv.createElement(Text,{dimColor:!0},e.message))}
-function $7p(e,t){if(!e.path&&t.path)return-1;if(e.path&&!t.path)return 1;return(e.path||"").localeCompare(t.path||"")}
-function q7p(e,t){let n=t.file||"(file not specified)";if(!e[n])e[n]=[];return e[n].push(t),e}
-function j7p(e){if(!e.path)return null;let t=e.path.split("."),n=t[t.length-1];if(e.invalidValue!==null&&e.invalidValue!==void 0&&n!==void 0&&!isNaN(parseInt(n,10))){let r=typeof e.invalidValue==="string"?`"${e.invalidValue}"`:String(e.invalidValue);return[...t.slice(0,-1),r].join(".")}return e.path}
-var Vcl,Qv;
-var YTo=b(()=>{ze();bne();kte();Vcl=M(rt(),1),Qv=M(Te(),1)});
-export {f5n,F7p,U7p,$7p,q7p,j7p,Vcl,Qv,YTo};
+import {BDt,$En,qEn,s3r,hg} from "./m2280.ts";
+import {bMe,p0} from "./m236.ts";
+import {getGlobalConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {He,mn} from "../src/telemetry/0600_feature_name.ts";
+import {useResolvedTheme,gZ} from "./m2285.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function ugl(e){if(e.wheelUp||e.wheelDown)return!1;if(e.pageUp||e.pageDown)return!1;if((e.home||e.end)&&e.ctrl)return!1;if((e.leftArrow||e.rightArrow||e.upArrow||e.downArrow||e.home||e.end)&&(e.shift||e.meta||e.super))return!1;return!0}
+function Rem(e){if(e.name==="pageup"||e.name==="pagedown")return!1;if((e.name==="home"||e.name==="end")&&e.ctrl)return!1;if((e.name==="left"||e.name==="right"||e.name==="up"||e.name==="down"||e.name==="home"||e.name==="end")&&(e.shift||e.meta||e.superKey))return!1;return!0}
+function dgl(e,t){return(n)=>{if(!e.hasSelection())return;if(n.name==="escape"){e.clearSelection(),n.consume();return}if(n.ctrl&&!n.shift&&!n.meta&&n.key==="c"){if(t)e.clearSelection();else e.copySelection();n.consume();return}if(Rem(n))e.clearSelection()}}
+function vKn(e){let t=BDt(),n=bMe(e),r=n===1?"char":"chars",o;switch(t){case"native":o=`copied ${n} ${r} to clipboard`;break;case"tmux-buffer":o=`copied ${n} ${r} to tmux buffer \xB7 paste with prefix + ]`;break;case"osc52":o=`sent ${n} ${r} via OSC 52 \xB7 if paste fails, hold ${$En()} while selecting for native copy`;break}let s=qEn(e);if(s)o=`\u26A0 ${s} \xB7 ${o}`;return{key:"selection-copied",kind:"feedback",text:o,color:"suggestion",priority:"immediate",timeoutMs:s?6000:t==="native"?2000:4000}}
+function wKn(e,t,n,r){let o=Qft.useRef(!1),s=Qft.useRef(n);s.current=n,Qft.useEffect(()=>{if(!t)return;return s3r(),e.subscribe(()=>{let a=e.getState(),l=e.hasSelection();if(a?.isDragging){if(o.current=!1,r)r.current=null;return}if(!l){if(o.current=!1,r)r.current=null;return}if(o.current){if(r)r.current=null;return}if(!(getGlobalConfig().copyOnSelect??!0))return;let u=e.copySelectionNoClear();if(!u||!u.trim()){o.current=!0;return}if(o.current=!0,r)r.current=u;He("clipboard_write"),s.current?.(u)})},[t,e,r])}
+function kKn(e){let t=useResolvedTheme();Qft.useEffect(()=>{e.setSelectionBgColor(t.selectionBg)},[e,t.selectionBg])}
+var Qft;
+var ORo=b(()=>{gZ();hg();mn();tr();p0();Qft=x(et(),1)});
+export {ugl,Rem,dgl,vKn,wKn,kKn,Qft,ORo};

@@ -1,0 +1,12 @@
+// @ts-nocheck
+import {getInitialSettings,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {b} from "../runtime.ts";
+function C$e(){return getInitialSettings().skillListingMaxDescChars??lPd}
+function SVr(){return getInitialSettings().skillListingBudgetFraction??iPd}
+function A$e(e,t=b9i){if(Number(process.env.SLASH_COMMAND_TOOL_CHAR_BUDGET))return Number(process.env.SLASH_COMMAND_TOOL_CHAR_BUDGET);let n=SVr(),r=(e??aPd)*t*n;return Math.max(1,Math.floor(r))}
+function tMt(e){return e.whenToUse?`${e.description} - ${e.whenToUse}`:e.description}
+function cPd(e){return e.type==="prompt"&&e.source==="bundled"}
+function E9i(e,t,n,r,o=b9i){let s=A$e(t,o),i=Number(process.env.SLASH_COMMAND_TOOL_CHAR_BUDGET)>0,a=C$e(),l=[],c=Math.max(0,e.length-1),u=e.map((S)=>{if(n?.has(S.name))return c+=S.name.length+2,{cmd:S,descLen:0,entryLen:S.name.length+2};let E=tMt(S),R=Math.min(E.length,a);if(E.length>a)l.push({name:S.name,rawLen:E.length});return c+=S.name.length+4+E.length,{cmd:S,descLen:R,entryLen:S.name.length+4+R}});l.sort((S,E)=>E.rawLen-S.rawLen);let d=l.map((S)=>S.name),p=u.reduce((S,E)=>S+E.entryLen,0)+Math.max(0,u.length-1);if(p<=s)return{cappedSkills:d,budgetMode:"fits",maxDescLen:a,budgetTruncatedSkills:[],totalChars:p,rawTotalChars:c,budget:s,budgetFromEnv:i,bytesPerToken:o};let m=(S)=>cPd(S.cmd)||n?.has(S.cmd.name),f=u.reduce((S,E)=>m(E)?S+E.entryLen+1:S,0),h=u.filter((S)=>!m(S));if(r){let S=u.reduce((H,k)=>H+(m(k)?k.entryLen:k.cmd.name.length+2),0)+Math.max(0,u.length-1),E=s-S,R=h.slice().sort((H,k)=>r(k.cmd)-r(H.cmd)),w=[];for(let H of R){let k=H.entryLen-(H.cmd.name.length+2);if(k<=E)E-=k;else w.push(H)}return w.sort((H,k)=>k.descLen-H.descLen),{cappedSkills:d,budgetMode:"priority",maxDescLen:0,budgetTruncatedSkills:w.map((H)=>H.cmd.name),totalChars:p,rawTotalChars:c,budget:s,budgetFromEnv:i,bytesPerToken:o}}let g=h.reduce((S,E)=>S+E.cmd.name.length+4,0)+Math.max(0,h.length-1),_=h.length>0?Math.floor((s-f-g)/h.length):a,T=_<bVr?"names-only":"truncate",y=T==="names-only"?h.filter((S)=>S.descLen>0):h.filter((S)=>S.descLen>_);return y.sort((S,E)=>E.descLen-S.descLen),{cappedSkills:d,budgetMode:T,maxDescLen:Math.max(0,_),budgetTruncatedSkills:y.map((S)=>S.cmd.name),totalChars:p,rawTotalChars:c,budget:s,budgetFromEnv:i,bytesPerToken:o}}
+var iPd=0.01,b9i=4,aPd=200000,lPd=1536,bVr=20;
+var Hrt=b(()=>{br()});
+export {C$e,SVr,A$e,tMt,cPd,E9i,iPd,b9i,aPd,lPd,bVr,Hrt};

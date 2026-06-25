@@ -1,13 +1,12 @@
 // @ts-nocheck
-import {CredentialUnavailableError,JD} from "./m1632.ts";
-import {kw,XD} from "./m1634.ts";
-import {XB,nfe} from "./m1918.ts";
-import {isKeybindingCustomizationEnabled,S1} from "./m1712.ts";
-import {Av} from "./m1633.ts";
-import {K8,bse} from "./m1923.ts";
-import {b} from "../runtime.ts";
-import {GS,hm} from "./m1631.ts";
-class ClientSecretCredential{constructor(e,t,n,r={}){if(!e)throw new CredentialUnavailableError("ClientSecretCredential: tenantId is a required parameter. To troubleshoot, visit https://aka.ms/azsdk/js/identity/serviceprincipalauthentication/troubleshoot.");if(!t)throw new CredentialUnavailableError("ClientSecretCredential: clientId is a required parameter. To troubleshoot, visit https://aka.ms/azsdk/js/identity/serviceprincipalauthentication/troubleshoot.");if(!n)throw new CredentialUnavailableError("ClientSecretCredential: clientSecret is a required parameter. To troubleshoot, visit https://aka.ms/azsdk/js/identity/serviceprincipalauthentication/troubleshoot.");this.clientSecret=n,this.tenantId=e,this.additionallyAllowedTenantIds=kw(r===null||r===void 0?void 0:r.additionallyAllowedTenants),this.msalClient=XB(t,e,Object.assign(Object.assign({},r),{logger:uQs,tokenCredentialOptions:r}))}async getToken(e,t={}){return isKeybindingCustomizationEnabled.withSpan(`${this.constructor.name}.getToken`,t,async(n)=>{n.tenantId=Av(this.tenantId,n,this.additionallyAllowedTenantIds,uQs);let r=K8(e);return this.msalClient.getTokenByClientSecret(r,this.clientSecret,n)})}}
-var uQs;
-var wPr=b(()=>{nfe();XD();JD();GS();bse();S1();uQs=hm("ClientSecretCredential")});
-export {ClientSecretCredential,uQs,wPr};
+import {I0,PR,uD} from "./m1639.ts";
+import {EA} from "./m1638.ts";
+import {jg,LM} from "./m1717.ts";
+import {UQe,bse} from "./m1928.ts";
+import {CredentialUnavailableError,cD} from "./m1637.ts";
+import {Oh,H0,VS,Lp} from "./m1636.ts";
+import {b,x} from "../runtime.ts";
+class AzureDeveloperCliCredential{constructor(e){if(e===null||e===void 0?void 0:e.tenantId)I0(vRe,e===null||e===void 0?void 0:e.tenantId),this.tenantId=e===null||e===void 0?void 0:e.tenantId;this.additionallyAllowedTenantIds=PR(e===null||e===void 0?void 0:e.additionallyAllowedTenants),this.timeout=e===null||e===void 0?void 0:e.processTimeoutInMs}async getToken(e,t={}){let n=EA(this.tenantId,t,this.additionallyAllowedTenantIds);if(n)I0(vRe,n);let r;if(typeof e==="string")r=[e];else r=e;return vRe.getToken.info(`Using the scopes ${e}`),jg.withSpan(`${this.constructor.name}.getToken`,t,async()=>{var o,s,i,a;try{r.forEach((d)=>{UQe(d,vRe)});let l=await Yri.getAzdAccessToken(r,n,this.timeout),c=((o=l.stderr)===null||o===void 0?void 0:o.match("not logged in, run `azd login` to login"))||((s=l.stderr)===null||s===void 0?void 0:s.match("not logged in, run `azd auth login` to login"));if(((i=l.stderr)===null||i===void 0?void 0:i.match("azd:(.*)not found"))||((a=l.stderr)===null||a===void 0?void 0:a.startsWith("'azd' is not recognized"))||l.error&&l.error.code==="ENOENT"){let d=new CredentialUnavailableError("Azure Developer CLI couldn't be found. To mitigate this issue, see the troubleshooting guidelines at https://aka.ms/azsdk/js/identity/azdevclicredential/troubleshoot.");throw vRe.getToken.info(Oh(e,d)),d}if(c){let d=new CredentialUnavailableError("Please run 'azd auth login' from a command prompt to authenticate before using this credential. For more information, see the troubleshooting guidelines at https://aka.ms/azsdk/js/identity/azdevclicredential/troubleshoot.");throw vRe.getToken.info(Oh(e,d)),d}try{let d=JSON.parse(l.stdout);return vRe.getToken.info(H0(e)),{token:d.token,expiresOnTimestamp:new Date(d.expiresOn).getTime(),tokenType:"Bearer"}}catch(d){if(l.stderr)throw new CredentialUnavailableError(l.stderr);throw d}}catch(l){let c=l.name==="CredentialUnavailableError"?l:new CredentialUnavailableError(l.message||"Unknown error while trying to retrieve the access token");throw vRe.getToken.info(Oh(e,c)),c}})}}
+var jri,vRe,Yri;
+var Y1r=b(()=>{VS();cD();uD();LM();bse();jri=x(require("child_process")),vRe=Lp("AzureDeveloperCliCredential"),Yri={getSafeWorkingDir(){return"/bin"},async getAzdAccessToken(e,t,n){let r=[];if(t)r=["--tenant-id",t];return new Promise((o,s)=>{try{jri.default.execFile("azd",["auth","token","--output","json",...e.reduce((i,a)=>i.concat("--scope",a),[]),...r],{cwd:Yri.getSafeWorkingDir(),timeout:n},(i,a,l)=>{o({stdout:a,stderr:l,error:i})})}catch(i){s(i)}})}}});
+export {AzureDeveloperCliCredential,jri,vRe,Yri,Y1r};

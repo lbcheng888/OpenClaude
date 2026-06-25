@@ -1,23 +1,19 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {mt,configProtoStore} from "./m2458.ts";
-import {bDe,Sue} from "./m4650.ts";
-import {Pje} from "../src/telemetry/4652_call.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {j5n} from "../src/config/4661_onComplete.ts";
-import {OSo,LSo} from "./m4654.ts";
-import {oml} from "./m4661.ts";
-import {njt} from "./m4663.ts";
-import {bbo} from "./m4693.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var Kfl={};
-isFullscreenWithTTY(Kfl,{call:()=>XJp});
-function KJp(e){let t=Vfl.c(7),{action:n,target:r,onComplete:o}=e,s=mt(JJp),i=bDe(),a=lye.useRef(!1),l,c;if(t[0]!==n||t[1]!==s||t[2]!==o||t[3]!==r||t[4]!==i)l=()=>{if(a.current)return;a.current=!0;let u=n==="enable",d=s.filter(YJp),p=r==="all"?d:d.filter((f)=>f.name===r),m=p.filter((f)=>Pje(f)!=="needs-approval"&&(u?f.type==="disabled":f.type!=="disabled"));if(m.length===0){o(r==="all"?`All MCP servers are already ${u?"enabled":"disabled"}`:p.length===0?`MCP server "${r}" not found`:p.some(zJp)?`MCP server "${r}" is pending approval \u2014 approve it via /mcp first`:`MCP server "${r}" is already ${u?"enabled":"disabled"}`);return}for(let f of m)i(f.name).catch(De);o(r==="all"?`${u?"Enabled":"Disabled"} ${m.length} MCP server(s)`:`MCP server "${r}" ${u?"enabled":"disabled"}`)},c=[n,r,s,i,o],t[0]=n,t[1]=s,t[2]=o,t[3]=r,t[4]=i,t[5]=l,t[6]=c;else l=t[5],c=t[6];return lye.useEffect(l,c),null}
-function zJp(e){return Pje(e)==="needs-approval"}
-function YJp(e){return e.name!=="ide"}
-function JJp(e){return e.mcp.clients}
-async function XJp(e,t,n){if(n){let r=/^(\S+)\s*(.*)$/.exec(n.trim()),o=r?.[1]??"",s=r?.[2]??"";if(o==="no-redirect")return lye.default.createElement(j5n,{onComplete:e});if(o==="reconnect"&&s)return lye.default.createElement(OSo,{serverName:s,onComplete:e});if(o==="enable"||o==="disable")return lye.default.createElement(KJp,{action:o,target:s||"all",onComplete:e})}return lye.default.createElement(j5n,{onComplete:e})}
-var Vfl,lye;
-var zfl=b(()=>{oml();LSo();Sue();configProtoStore();Rn();njt();bbo();Vfl=M(rt(),1),lye=M(Te(),1)});
-export {Kfl,KJp,zJp,YJp,JJp,XJp,Vfl,lye,zfl};
+import {tP,d6,Z0,dS} from "../src/config/4460_source.ts";
+import {J2e,Uie,BNi,Whe} from "./m2607.ts";
+import {AD,ts,oh} from "./m2600.ts";
+import {jA,II} from "./m3268.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {X5t,Qce} from "../src/config/4464_ref.ts";
+import {Ce,Ct} from "./m197.ts";
+import {loadAllPluginsCacheOnly,path} from "../src/agent/4467_resolvePluginRoot.ts";
+import {T8r,Q8} from "./m2594.ts";
+import {os} from "../src/api/0465_getOauthConfig.ts";
+import {b} from "../runtime.ts";
+async function ITe(e){let t=new Map;for(let a of e){if(a.type!=="dependency-unsatisfied"||a.reason!=="not-found")continue;let l=t.get(a.dependency);if(!l)l=new Set,t.set(a.dependency,l);l.add(a.source)}if(t.size===0)return{installed:[],stillUnresolved:[],marketplaceMissing:[]};let n=await tP(),r=uom.map((a)=>[a,J2e(AD(a))]),o=[],s=[],i=[];for(let[a,l]of t){let c=ts(a).marketplace;if(!c||!n[c]){s.push(a),i.push(a);continue}if(!jA(n[c].source)){logForDebugging(`resolveMissingDependencies: skipping "${a}" \u2014 marketplace "${c}" is blocked by enterprise policy`),s.push(a);continue}let u=!1;for(let d of l){let p=ts(d).marketplace;if(p===c){u=!0;break}if(!p)continue;if((await d6(p))?.allowCrossMarketplaceDependenciesOn?.includes(c)){u=!0;break}}if(!u){logForDebugging(`resolveMissingDependencies: skipping "${a}" \u2014 cross-marketplace dependency not in any declaring marketplace's allowlist`),s.push(a);continue}try{let d=await Z0(a);if(!d){s.push(a);continue}let p=dom(l,r),m=await X5t({pluginId:a,entry:d.entry,scope:p??"user",marketplaceInstallLocation:d.marketplaceInstallLocation,trigger:"dependency-resolution",auto:p!==void 0,requiredByEnabledDependent:!0});if(m.ok){for(let f of m.closure)if(!o.includes(f))o.push(f)}else logForDebugging(`resolveMissingDependencies: install of "${a}" did not complete (${m.reason})`,{level:"warn"}),s.push(a)}catch(d){logForDebugging(`resolveMissingDependencies: install of "${a}" threw: ${Ce(d)}`,{level:"warn"}),s.push(a)}}return{installed:o,stillUnresolved:s,marketplaceMissing:i}}
+async function ewo(e){let{errors:t}=await loadAllPluginsCacheOnly();return t.filter(T8r).filter((n)=>n.source===e)}
+async function Tht(e){let t=await ewo(e);if(t.length===0)return null;let{installed:n,marketplaceMissing:r}=await ITe(t),o=new Set(n),s=os(t.map((i)=>i.dependency)).filter((i)=>!o.has(i));return{suffix:`${Uie(n)}${BNi(s,r)}`,changed:n.length>0}}
+function dom(e,t){for(let[n,r]of t)for(let o of e)if(r.has(o))return n;return}
+var uom;
+var bPe=b(()=>{Q8();qe();Ct();Whe();dS();oh();Qce();path();II();uom=["user","project","local"]});
+export {ITe,ewo,Tht,dom,uom,bPe};

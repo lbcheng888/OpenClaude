@@ -1,24 +1,13 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {mt,configProtoStore} from "./m2458.ts";
-import {Text} from "./m2423.ts";
-import {fc,sl} from "./m715.ts";
-import {sy,e9} from "./m2808.ts";
-import {Dv,VZ} from "../src/telemetry/2527_VZ.ts";
-import {useAnimationFrame} from "../src/config/2442_isVisible.ts";
-import {Oy,XS} from "../src/config/2341_XS.ts";
-import {eL,nL,tL,GZ} from "./m2525.ts";
-import {Box} from "./m2422.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var K4l={};
-isFullscreenWithTTY(K4l,{VoiceWarmupHint:()=>VoiceWarmupHint,VoiceIndicator:()=>VoiceIndicator});
-function VoiceIndicator(e){let t=rGt.c(2),n;if(t[0]!==e)n=wI.createElement(ikm,{...e}),t[0]=e,t[1]=n;else n=t[1];return n}
-function ikm(e){let t=rGt.c(3),{voiceState:n}=e,r=mt(akm);switch(n){case"recording":{if(r==="tap"){let s;if(t[0]===Symbol.for("react.memo_cache_sentinel"))s=wI.createElement(Text,null,wI.createElement(Text,{color:"error"},fc," REC"),wI.createElement(Text,{dimColor:!0}," \xB7 tap to send")),t[0]=s;else s=t[0];return s}let o;if(t[1]===Symbol.for("react.memo_cache_sentinel"))o=wI.createElement(Text,{dimColor:!0},"listening\u2026"),t[1]=o;else o=t[1];return o}case"processing":{let o;if(t[2]===Symbol.for("react.memo_cache_sentinel"))o=wI.createElement(lkm,null),t[2]=o;else o=t[2];return o}case"idle":return null}}
-function akm(e){return e.settings.voice?.mode??"hold"}
-function VoiceWarmupHint(){let e=rGt.c(1),t;if(e[0]===Symbol.for("react.memo_cache_sentinel"))t=wI.createElement(Text,{dimColor:!0},"keep holding\u2026"),e[0]=t;else t=e[0];return t}
-function lkm(){let e=rGt.c(8),t=sy(),n=Dv(t.prefersReducedMotion),[r,o]=useAnimationFrame(n?null:50);if(n){let d;if(e[0]===Symbol.for("react.memo_cache_sentinel"))d=wI.createElement(Text,{color:"warning"},"Voice: processing\u2026"),e[0]=d;else d=e[0];return d}let s=o/1000,i=(Math.sin(s*Math.PI*2/skm)+1)/2,a;if(e[1]!==i){let d=Oy()?eL(i):i;a=nL(tL(rkm,okm,d)),e[1]=i,e[2]=a}else a=e[2];let l=a,c;if(e[3]!==l)c=wI.createElement(Text,{color:l},"Voice: processing\u2026"),e[3]=l,e[4]=c;else c=e[4];let u;if(e[5]!==r||e[6]!==c)u=wI.createElement(Box,{ref:r},c),e[5]=r,e[6]=c,e[7]=u;else u=e[7];return u}
-var rGt,wI,rkm,okm,skm=2;
-var XYn=b(()=>{sl();e9();XS();ze();configProtoStore();VZ();GZ();rGt=M(rt(),1),wI=M(Te(),1),rkm={r:153,g:153,b:153},okm={r:185,g:185,b:185}});
-export {K4l,VoiceIndicator,ikm,akm,VoiceWarmupHint,lkm,rGt,wI,rkm,okm,skm,XYn};
+import {yh,Nxe} from "../src/agent/4175_state.ts";
+import {kc,aA} from "./m234.ts";
+import {qEe} from "./m617.ts";
+import {b} from "../runtime.ts";
+function FOe(e){return yh(kc(e).replace(/\s+/g," ").trim(),zLm)}
+function SKl(e){let t=[];for(let n of Object.values(e)){let r=jLm.has(n.status);switch(n.type){case"local_agent":case"in_process_teammate":t.push({id:n.id,kind:"agent",label:FOe(n.description),startedAt:n.startTime,doneAt:n.endTime,failed:r||void 0});break;case"local_workflow":{let o=n.workflowProgress.filter(YLm);if(o.length===0){t.push({id:n.id,kind:"workflow",label:FOe(n.title??n.workflowName??n.description),startedAt:n.startTime,doneAt:n.endTime,failed:r||void 0});break}for(let s of o)t.push({id:s.agentId??`${n.id}:${s.index}`,kind:"workflow",label:FOe(s.label),group:s.phaseTitle,startedAt:s.startedAt??s.queuedAt??n.startTime,doneAt:s.state==="done"||s.state==="error"?s.lastProgressAt??(s.startedAt!==void 0&&s.durationMs!==void 0?s.startedAt+s.durationMs:void 0):void 0,failed:s.state==="error"||void 0});break}case"local_bash":t.push({id:n.id,kind:n.kind==="monitor"?"monitor":"shell",label:FOe(n.kind==="monitor"?n.description:n.command),startedAt:n.startTime,doneAt:n.endTime,failed:r||n.result!==void 0&&n.result.code!==0||void 0});break;case"monitor_mcp":t.push({id:n.id,kind:"monitor",label:FOe(n.description||`${n.server} \xB7 ${n.tool}`),startedAt:n.startTime,doneAt:n.endTime,failed:r||void 0});break;case"mcp_task":t.push({id:n.id,kind:"mcp",label:FOe(n.statusMessage??`${n.serverName} \xB7 ${n.toolName}`),startedAt:n.startTime,doneAt:n.endTime,failed:r||n.mcpStatus==="failed"||void 0});break;case"remote_agent":case"dream":break}}return t}
+function YLm(e){return e.type==="workflow_agent"}
+function bKl(e){if(!e||e.length===0)return[];return e.map((t)=>({id:`todo:${qEe(t.content).toString(36)}`,kind:"todo",label:FOe(t.status==="in_progress"?t.activeForm:t.content),startedAt:t.status==="pending"?void 0:0,doneAt:t.status==="completed"?0:void 0}))}
+function EKl(e){if(!e||e.length===0)return[];return e.map((t)=>({id:`todo:${t.id}`,kind:"todo",label:FOe(t.status==="in_progress"?t.activeForm??t.subject:t.subject),startedAt:t.status==="pending"?void 0:0,doneAt:t.status==="completed"?0:void 0}))}
+var zLm=200,jLm;
+var CKl=b(()=>{aA();Nxe();jLm=new Set(["failed","cancelled","killed","error"])});
+export {FOe,SKl,YLm,bKl,EKl,zLm,jLm,CKl};

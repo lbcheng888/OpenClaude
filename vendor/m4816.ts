@@ -1,13 +1,13 @@
 // @ts-nocheck
-import {pr,Yl} from "./m2562.ts";
-import {Box} from "./m2422.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function lSl(e){let t=aSl.c(48),{nodes:n,onSelect:r,onCancel:o,onFocus:s,focusNodeId:i,visibleOptionCount:a,layout:l,isDisabled:c,hideIndexes:u,isNodeExpanded:d,onExpand:p,onCollapse:m,getParentPrefix:f,getChildPrefix:A,onUpFromFirstItem:h}=e,g=l===void 0?"expanded":l,_=c===void 0?!1:c,y=u===void 0?!1:u,T;if(t[0]===Symbol.for("react.memo_cache_sentinel"))T=new Set,t[0]=T;else T=t[0];let[S,v]=jDe.useState(T),R=jDe.useRef(!1),k=jDe.useRef(null),x;if(t[1]!==S||t[2]!==d)x=(se)=>{if(d)return d(se);return S.has(se)},t[1]=S,t[2]=d,t[3]=x;else x=t[3];let H=x,I;if(t[4]!==H||t[5]!==n){let se=function(le,pe,de){let _e=!!le.children&&le.children.length>0,fe=H(le.id);if(I.push({node:le,depth:pe,isExpanded:fe,hasChildren:_e,parentId:de}),_e&&fe&&le.children)for(let ie of le.children)se(ie,pe+1,le.id)};I=[];for(let le of n)se(le,0);t[4]=H,t[5]=n,t[6]=I}else I=t[6];let P=I,L=nrm,D=trm,N=f??L,O=A??D,$;if(t[7]!==O||t[8]!==N)$=(se)=>{let le="";if(se.hasChildren)le=N(se.isExpanded);else if(se.depth>0)le=O(se.depth);return le+se.node.label},t[7]=O,t[8]=N,t[9]=$;else $=t[9];let U=$,W;if(t[10]!==U||t[11]!==P)W=P.map((se)=>({label:U(se),description:se.node.description,dimDescription:se.node.dimDescription??!0,value:se.node.id})),t[10]=U,t[11]=P,t[12]=W;else W=t[12];let G=W,V;if(t[13]!==P)V=new Map,P.forEach((se)=>V.set(se.node.id,se.node)),t[13]=P,t[14]=V;else V=t[14];let Q=V,K;if(t[15]!==P)K=(se)=>P.find((le)=>le.node.id===se),t[15]=P,t[16]=K;else K=t[16];let Y=K,J;if(t[17]!==Y||t[18]!==m||t[19]!==p)J=(se,le)=>{let pe=Y(se);if(!pe||!pe.hasChildren)return;if(le)if(p)p(se);else v((de)=>new Set(de).add(se));else if(m)m(se);else v((de)=>{let _e=new Set(de);return _e.delete(se),_e})},t[17]=Y,t[18]=m,t[19]=p,t[20]=J;else J=t[20];let ee=J,te;if(t[21]!==Y||t[22]!==i||t[23]!==_||t[24]!==Q||t[25]!==s||t[26]!==ee)te=(se)=>{if(!i||_)return;let le=Y(i);if(!le)return;if(se.key==="right"&&le.hasChildren)se.preventDefault(),ee(i,!0);else if(se.key==="left"){if(le.hasChildren&&le.isExpanded)se.preventDefault(),ee(i,!1);else if(le.parentId!==void 0){if(se.preventDefault(),R.current=!0,ee(le.parentId,!1),s){let pe=Q.get(le.parentId);if(pe)s(pe)}}}},t[21]=Y,t[22]=i,t[23]=_,t[24]=Q,t[25]=s,t[26]=ee,t[27]=te;else te=t[27];let ne=te,re;if(t[28]!==Q||t[29]!==r)re=(se)=>{let le=Q.get(se);if(!le)return;r(le)},t[28]=Q,t[29]=r,t[30]=re;else re=t[30];let oe=re,ce;if(t[31]!==Q||t[32]!==s)ce=(se)=>{if(R.current){R.current=!1;return}if(k.current===se)return;if(k.current=se,s){let le=Q.get(se);if(le)s(le)}},t[31]=Q,t[32]=s,t[33]=ce;else ce=t[33];let ue=ce,ae;if(t[34]!==i||t[35]!==oe||t[36]!==ue||t[37]!==y||t[38]!==_||t[39]!==g||t[40]!==o||t[41]!==h||t[42]!==G||t[43]!==a)ae=jDe.default.createElement(pr,{options:G,onChange:oe,onFocus:ue,onCancel:o,defaultFocusValue:i,visibleOptionCount:a,layout:g,isDisabled:_,hideIndexes:y,onUpFromFirstItem:h}),t[34]=i,t[35]=oe,t[36]=ue,t[37]=y,t[38]=_,t[39]=g,t[40]=o,t[41]=h,t[42]=G,t[43]=a,t[44]=ae;else ae=t[44];let he;if(t[45]!==ne||t[46]!==ae)he=jDe.default.createElement(Box,{tabIndex:0,autoFocus:!0,onKeyDown:ne},ae),t[45]=ne,t[46]=ae,t[47]=he;else he=t[47];return he}
-function trm(e){return"  \u25B8 "}
-function nrm(e){return e?"\u25BC ":"\u25B6 "}
-var aSl,jDe;
-var cSl=b(()=>{ze();Yl();aSl=M(rt(),1),jDe=M(Te(),1)});
-export {lSl,trm,nrm,aSl,jDe,cSl};
+import {Box} from "./m2432.ts";
+import {sn,mc} from "./m237.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function nwl(e){let t=twl.c(10),{message:n,isTranscriptMode:r,showMessageTimestamps:o}=e,s=o===void 0?!1:o;if(!(n.timestamp&&n.type==="assistant"&&(s||r&&n.message.content.some(num))))return null;let a,l,c;if(t[0]!==n.timestamp)l=new Date(n.timestamp).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:!0}),a=Box,c=sn(l),t[0]=n.timestamp,t[1]=a,t[2]=l,t[3]=c;else a=t[1],l=t[2],c=t[3];let u;if(t[4]!==l)u=pHo.jsx(Text,{dimColor:!0,children:l}),t[4]=l,t[5]=u;else u=t[5];let d;if(t[6]!==a||t[7]!==c||t[8]!==u)d=pHo.jsx(a,{minWidth:c,children:u}),t[6]=a,t[7]=c,t[8]=u,t[9]=d;else d=t[9];return d}
+function num(e){return e.type==="text"}
+var twl,pHo;
+var rwl=b(()=>{mc();je();twl=x(tt(),1),pHo=x(oe(),1)});
+export {nwl,num,twl,pHo,rwl};

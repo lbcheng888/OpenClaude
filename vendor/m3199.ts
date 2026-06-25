@@ -1,8 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function Gta(e,t){return Math.floor((e-1)/t)+1}
-function Vta(e,t,n){return Gta(e,n)*Gta(t,n)}
-function $Hn(e,t,n){let{pxPerToken:r,maxTargetPx:o,maxTargetTokens:s}=n;if(e<=o&&t<=o&&Vta(e,t,r)<=s)return[e,t];if(t>e){let[c,u]=$Hn(t,e,n);return[u,c]}let i=e/t,a=e,l=1;for(;;){if(l+1===a)return[l,Math.max(Math.round(l/i),1)];let c=Math.floor((l+a)/2),u=Math.max(Math.round(c/i),1);if(c<=o&&Vta(c,u,r)<=s)l=c;else a=c}}
-var $Kr;
-var Kta=b(()=>{$Kr={pxPerToken:28,maxTargetPx:1568,maxTargetTokens:1568}});
-export {Gta,Vta,$Hn,$Kr,Kta};
+import {XXr,JXr} from "./m3198.ts";
+function N7d(e){let t=0,n=0,r=!1;return new TransformStream({transform(o,s){let i=-1;for(let a=0;a<o.length;a++){let l=o[a];if(r&&l===10){r=!1;continue}if(r=!1,l===10||l===13){if(n===0)i=a;n=0,r=l===13}else n++}if(t=i>=0?o.length-1-i:t+o.length,t>e){s.error(new tla(e));return}s.enqueue(o)}})}
+function tit(e){return async(t,n)=>{let r=await e(t,n);if(!r.body||r.body.locked||r.status<200||r.status>599)return r;let o=r.body.pipeThrough(N7d(M7d)),s=new Response(o,{status:r.status,statusText:r.statusText,headers:r.headers});return Object.defineProperty(s,"url",{value:r.url}),Object.defineProperty(s,"redirected",{value:r.redirected}),Object.defineProperty(s,"type",{value:r.type}),s}}
+var M7d,QXr="without an SSE event boundary",tla;
+var nla=b(()=>{XXr();M7d=JXr;tla=class tla extends Error{constructor(e){super(`streamed >${Math.round(e/1024/1024)}MB ${QXr}. The server is likely returning non-protocol data. Disconnecting to prevent unbounded memory growth.`);this.name="HttpBodyOverflowError"}}});
+export {N7d,tit,M7d,QXr,tla,nla};

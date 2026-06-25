@@ -1,5 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Ext} from "./m1811.ts";
-var mDr=X((hNA,KKs)=>{var VKs=Ext(),ffn=function(e,t){VKs.call(this,e),this.name="TokenExpiredError",this.expiredAt=t};ffn.prototype=Object.create(VKs.prototype);ffn.prototype.constructor=ffn;KKs.exports=ffn});
-export {mDr};
+import {Q} from "../runtime.ts";
+import {HQe} from "./m1805.ts";
+import {xMr} from "./m1806.ts";
+import {FMr} from "./m1810.ts";
+import {BMr} from "./m1811.ts";
+var LZs=Q((P8h,OZs)=>{var wZs=HQe().Buffer,vZs=xMr(),EGu=FMr(),CGu=require("stream"),kZs=BMr(),AGu=require("util"),RGu=/^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;function vGu(e){return Object.prototype.toString.call(e)==="[object Object]"}function wGu(e){if(vGu(e))return e;try{return JSON.parse(e)}catch(t){return}}function HZs(e){var t=e.split(".",1)[0];return wGu(wZs.from(t,"base64").toString("binary"))}function kGu(e){return e.split(".",2).join(".")}function IZs(e){return e.split(".")[2]}function HGu(e,t){t=t||"utf8";var n=e.split(".")[1];return wZs.from(n,"base64").toString(t)}function xZs(e){return RGu.test(e)&&!!HZs(e)}function DZs(e,t,n){if(!t){var r=Error("Missing algorithm parameter for jws.verify");throw r.code="MISSING_ALGORITHM",r}e=kZs(e);var o=IZs(e),s=kGu(e),i=EGu(t);return i.verify(s,o,n)}function PZs(e,t){if(t=t||{},e=kZs(e),!xZs(e))return null;var n=HZs(e);if(!n)return null;var r=HGu(e);if(n.typ==="JWT"||t.json)r=JSON.parse(r,t.encoding);return{header:n,payload:r,signature:IZs(e)}}function DQe(e){e=e||{};var t=e.secret;if(t=t==null?e.publicKey:t,t=t==null?e.key:t,/^hs/i.test(e.algorithm)===!0&&t==null)throw TypeError("secret must be a string or buffer or a KeyObject");var n=new vZs(t);this.readable=!0,this.algorithm=e.algorithm,this.encoding=e.encoding,this.secret=this.publicKey=this.key=n,this.signature=new vZs(e.signature),this.secret.once("close",function(){if(!this.signature.writable&&this.readable)this.verify()}.bind(this)),this.signature.once("close",function(){if(!this.secret.writable&&this.readable)this.verify()}.bind(this))}AGu.inherits(DQe,CGu);DQe.prototype.verify=function(){try{var t=DZs(this.signature.buffer,this.algorithm,this.key.buffer),n=PZs(this.signature.buffer,this.encoding);return this.emit("done",t,n),this.emit("data",t),this.emit("end"),this.readable=!1,t}catch(r){this.readable=!1,this.emit("error",r),this.emit("close")}};DQe.decode=PZs;DQe.isValid=xZs;DQe.verify=DZs;OZs.exports=DQe});
+export {LZs};

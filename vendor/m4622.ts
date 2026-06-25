@@ -1,14 +1,12 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {D5,aAe,FZ} from "../src/telemetry/2465_bindings.ts";
-import {ci,pT} from "./m1289.ts";
-import {ddl,pdl} from "./m4621.ts";
-import {dn,bt} from "./m195.ts";
-import {RG,q9} from "./m4604.ts";
-import {Bl,KE,sn} from "../src/config/0047_namespace.ts";
-var Adl={};
-isFullscreenWithTTY(Adl,{call:()=>azp});
-async function azp(){if(!D5())return{type:"text",value:"Keybinding customization is disabled in this environment."};let e=aAe(),t=!1;await ci().mkdir(fdl.dirname(e));try{await mdl.writeFile(e,ddl(),{encoding:"utf-8",flag:"wx"})}catch(o){if(dn(o)==="EEXIST")t=!0;else throw o}let n=await RG(e);if(n.error)return{type:"text",value:`${t?"Opened":"Created"} ${e}. ${n.error}`};let r=Bl()?` (Safe mode: custom keybindings are disabled this session \u2014 changes take effect after you ${KE()}.)`:"";return{type:"text",value:t?`Opened ${e} in your editor.${r}`:`Created ${e} with template. Opened in your editor.${r}`}}
-var mdl,fdl;
-var hdl=b(()=>{FZ();pdl();pT();sn();bt();q9();mdl=require("fs/promises"),fdl=require("path")});
-export {Adl,azp,mdl,fdl,hdl};
+import {permissionRuleSourceDisplayString,getAllowRules,getAskRules,getDenyRules,ly} from "../src/tools/5218_toolAlwaysAllowedRule.ts";
+import {Mo} from "../src/mcp/2200_mcpServerName.ts";
+import {b} from "../runtime.ts";
+function Ytm(e){return e==="projectSettings"||e==="policySettings"||e==="command"}
+function ZKn(e){return permissionRuleSourceDisplayString(e)}
+function I_l(e,t,n){let r=ZKn(t.source),o=ZKn(n.source),s=t.ruleValue.toolName;if(e==="deny")return`Remove the "${s}" deny rule from ${r}, or remove the specific allow rule from ${o}`;return`Remove the "${s}" ask rule from ${r}, or remove the specific allow rule from ${o}`}
+function Jtm(e,t,n){let{toolName:r,ruleContent:o}=e.ruleValue;if(o===void 0)return{shadowed:!1};let s=t.find((i)=>i.ruleValue.toolName===r&&i.ruleValue.ruleContent===void 0);if(!s)return{shadowed:!1};if(r===Mo&&n.sandboxAutoAllowEnabled){if(!Ytm(s.source))return{shadowed:!1}}return{shadowed:!0,shadowedBy:s,shadowType:"ask"}}
+function Xtm(e,t){let{toolName:n,ruleContent:r}=e.ruleValue;if(r===void 0)return{shadowed:!1};let o=t.find((s)=>s.ruleValue.toolName===n&&s.ruleValue.ruleContent===void 0);if(!o)return{shadowed:!1};return{shadowed:!0,shadowedBy:o,shadowType:"deny"}}
+function e7n(e,t){let n=[],r=getAllowRules(e),o=getAskRules(e),s=getDenyRules(e);for(let i of r){let a=Xtm(i,s);if(a.shadowed){let c=ZKn(a.shadowedBy.source);n.push({rule:i,reason:`Blocked by "${a.shadowedBy.ruleValue.toolName}" deny rule (from ${c})`,shadowedBy:a.shadowedBy,shadowType:"deny",fix:I_l("deny",a.shadowedBy,i)});continue}let l=Jtm(i,o,t);if(l.shadowed){let c=ZKn(l.shadowedBy.source);n.push({rule:i,reason:`Shadowed by "${l.shadowedBy.ruleValue.toolName}" ask rule (from ${c})`,shadowedBy:l.shadowedBy,shadowType:"ask",fix:I_l("ask",l.shadowedBy,i)})}}return n}
+var dvo=b(()=>{ly()});
+export {Ytm,ZKn,I_l,Jtm,Xtm,e7n,dvo};

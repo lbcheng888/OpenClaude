@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {GD} from "./m1317.ts";
-import {H8,uk} from "./m1319.ts";
-import {U7,X1s} from "./m1334.ts";
-import {yo} from "./m887.ts";
-import {oC} from "./m1309.ts";
-var lNs,GetDelegatedAccessTokenCommand;
-var Jvr=b(()=>{GD();H8();U7();lNs=M(yo(),1);GetDelegatedAccessTokenCommand=class GetDelegatedAccessTokenCommand extends oC.classBuilder().ep(uk).m(function(e,t,n,r){return[lNs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","GetDelegatedAccessToken",{}).n("STSClient","GetDelegatedAccessTokenCommand").sc(X1s).build(){}});
-export {lNs,GetDelegatedAccessTokenCommand,Jvr};
+import {b,x} from "../runtime.ts";
+import {rD} from "./m1322.ts";
+import {V5,getTeamByName} from "./m1324.ts";
+import {p7,$$s} from "./m1339.ts";
+import {yo} from "./m892.ts";
+import {lC} from "./m1314.ts";
+var Q$s,AssumeRoleWithWebIdentityCommand;
+var ypn=b(()=>{rD();V5();p7();Q$s=x(yo(),1);AssumeRoleWithWebIdentityCommand=class AssumeRoleWithWebIdentityCommand extends lC.classBuilder().ep(getTeamByName).m(function(e,t,n,r){return[Q$s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","AssumeRoleWithWebIdentity",{}).n("STSClient","AssumeRoleWithWebIdentityCommand").sc($$s).build(){}});
+export {Q$s,AssumeRoleWithWebIdentityCommand,ypn};

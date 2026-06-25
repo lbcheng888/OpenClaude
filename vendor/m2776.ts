@@ -1,30 +1,17 @@
 // @ts-nocheck
-import {getSettingsForSource,getSettingsFilePathForSource,updateSettingsForSource,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {jp,jt,ws} from "./m228.ts";
-import {ER,bB} from "./m634.ts";
-import {Fa,Pd} from "./m701.ts";
-import {bA,Qm,Sw} from "../src/mcp/0728_serverName.ts";
-import {$D,mf,F2} from "./m702.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {or,dn} from "../src/config/0137_namespace.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {Wt,ps} from "./m230.ts";
+import {cn,Ce,Ct} from "./m197.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
 import {b} from "../runtime.ts";
-function x$i(e){return`prompt: ${e.trim()}`}
-function uxe(){return!1}
-function k$i(e){return[]}
-function H$i(e){return[]}
-function NRn(e){return[]}
-async function BRn(e,t,n,r,o,s){return{matches:!1,confidence:"high",reason:"This feature is disabled"}}
-async function I$i(e,t,n){return t||null}
-var MRn="prompt:";
-function WOt(){return getSettingsForSource("policySettings")?.allowManagedPermissionRulesOnly===!0}
-function Cnt(){return!WOt()}
-function bkd(e){let t=getSettingsFilePathForSource(e);if(!t)return null;try{let{resolvedPath:n}=jp(jt(),t),r=ER(n);if(r.trim()==="")return{};let o=Fa(r,!1);return o&&typeof o==="object"?o:null}catch{return null}}
-function Ekd(e,t){if(!e||!e.permissions)return[];let{permissions:n}=e,r=[];for(let o of Skd){let s=n[o];if(s)for(let i of s)r.push({source:t,ruleBehavior:o,ruleValue:bA(i)})}return r}
-function FRn(){if(WOt())return jOt("policySettings");let e=[];for(let t of $D())e.push(...jOt(t));return e}
-function jOt(e){let t=getSettingsForSource(e);return Ekd(t,e)}
-function D$i(e){if(!Ckd.includes(e.source))return!1;let t=Qm(e.ruleValue),n=getSettingsForSource(e.source);if(!n||!n.permissions)return!1;let r=n.permissions[e.ruleBehavior];if(!r)return!1;let o=(s)=>Qm(bA(s));if(!r.some((s)=>o(s)===t))return!1;try{let s={...n,permissions:{...n.permissions,[e.ruleBehavior]:r.filter((a)=>o(a)!==t)}},{error:i}=updateSettingsForSource(e.source,s);if(i)return!1;return!0}catch(s){return De(s),!1}}
-function vkd(){return{permissions:{}}}
-function P$i({ruleValues:e,ruleBehavior:t},n){if(WOt())return!1;if(e.length<1)return!0;let r=e.map(Qm),o=getSettingsForSource(n)||bkd(n)||vkd();try{let s=o.permissions||{},i=s[t]||[],a=new Set(i.map((d)=>Qm(bA(d)))),l=r.filter((d)=>!a.has(d));if(l.length===0)return!0;let c={...o,permissions:{...s,[t]:[...i,...l]}},u=updateSettingsForSource(n,c);if(u.error)throw u.error;return!0}catch(s){return logForDebugging(`Failed to add permission rules to ${n} settings: ${s instanceof Error?s.message:String(s)}`,{level:"error"}),!1}}
-var Skd,Ckd;
-var che=b(()=>{qe();bB();ws();Pd();Rn();mf();yr();Sw();Skd=["allow","deny","ask"];Ckd=F2});
-export {x$i,uxe,k$i,H$i,NRn,BRn,I$i,MRn,WOt,Cnt,bkd,Ekd,FRn,jOt,D$i,vkd,P$i,Skd,Ckd,che};
+async function uzr(){let e=p1t.join(or(),"session-env",getSessionId());return await Wt().mkdir(e),e}
+async function X5i(e,t){let n=e.toLowerCase();return p1t.join(await uzr(),`${n}-hook-${t}.sh`)}
+async function Q5i(){try{let e=await uzr(),t=await Kke.readdir(e);await Promise.all(t.filter((n)=>(n.startsWith("filechanged-hook-")||n.startsWith("cwdchanged-hook-"))&&aIn.test(n)).map((n)=>Kke.writeFile(p1t.join(e,n),"")))}catch(e){if(cn(e)!=="ENOENT")logForDebugging(`Failed to clear cwd env files: ${Ce(e)}`)}}
+function Rot(){logForDebugging("Invalidating session environment cache"),Vke=void 0,iIn=void 0}
+async function Z5i(){let e=getSessionId();if(Vke!==void 0&&iIn===e)return Vke;let t=[],n=process.env.CLAUDE_ENV_FILE;if(n)try{let o=(await Kke.readFile(n,"utf8")).trim();if(o)t.push(o),logForDebugging(`Session environment loaded from CLAUDE_ENV_FILE: ${n} (${o.length} chars)`)}catch(o){if(cn(o)!=="ENOENT")logForDebugging(`Failed to read CLAUDE_ENV_FILE: ${Ce(o)}`)}let r=await uzr();try{let s=(await Kke.readdir(r)).filter((i)=>aIn.test(i)).sort(xNd);for(let i of s){let a=p1t.join(r,i);try{let l=(await Kke.readFile(a,"utf8")).trim();if(l)t.push(l)}catch(l){if(cn(l)!=="ENOENT")logForDebugging(`Failed to read hook file ${a}: ${Ce(l)}`)}}if(s.length>0)logForDebugging(`Session environment loaded from ${s.length} hook file(s)`)}catch(o){if(cn(o)!=="ENOENT")logForDebugging(`Failed to load session environment from hooks: ${Ce(o)}`)}if(t.length===0)return logForDebugging("No session environment scripts found"),Vke=null,iIn=e,Vke;return Vke=t.join(`
+`),iIn=e,logForDebugging(`Session environment script ready (${Vke.length} chars total)`),Vke}
+function xNd(e,t){let n=e.match(aIn),r=t.match(aIn),o=n?.[1]||"",s=r?.[1]||"";if(o!==s)return(J5i[o]??99)-(J5i[s]??99);let i=parseInt(n?.[2]||"0",10),a=parseInt(r?.[2]||"0",10);return i-a}
+var Kke,p1t,Vke=void 0,iIn=void 0,J5i,aIn;
+var Z$e=b(()=>{lt();qe();dn();Ct();ps();Kke=require("fs/promises"),p1t=require("path");J5i={setup:0,sessionstart:1,cwdchanged:2,filechanged:3},aIn=/^(setup|sessionstart|cwdchanged|filechanged)-hook-(\d+)\.sh$/});
+export {uzr,X5i,Q5i,Rot,Z5i,xNd,Kke,p1t,Vke,iIn,J5i,aIn,Z$e};

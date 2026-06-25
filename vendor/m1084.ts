@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,mws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var exs,DeleteAutomatedReasoningPolicyCommand;
-var Ubr=b(()=>{ri();wi();xi();exs=M(yo(),1);DeleteAutomatedReasoningPolicyCommand=class DeleteAutomatedReasoningPolicyCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[exs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteAutomatedReasoningPolicy",{}).n("BedrockClient","DeleteAutomatedReasoningPolicyCommand").sc(mws).build(){}});
-export {exs,DeleteAutomatedReasoningPolicyCommand,Ubr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,rxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var WDs,CreateModelImportJobCommand;
+var uwr=b(()=>{$s();ai();ci();WDs=x(yo(),1);CreateModelImportJobCommand=class CreateModelImportJobCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[WDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateModelImportJob",{}).n("BedrockClient","CreateModelImportJobCommand").sc(rxs).build(){}});
+export {WDs,CreateModelImportJobCommand,uwr};

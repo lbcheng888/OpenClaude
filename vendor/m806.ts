@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {vgr} from "./m805.ts";
-var Bis=X((grn)=>{Object.defineProperty(grn,"__esModule",{value:!0});grn.fromBase64=void 0;var ctu=vgr(),utu=/^[A-Za-z0-9+/]*={0,2}$/,dtu=(e)=>{if(e.length*3%4!==0)throw TypeError("Incorrect padding on base64 string.");if(!utu.exec(e))throw TypeError("Invalid base64 string.");let t=(0,ctu.fromString)(e,"base64");return new Uint8Array(t.buffer,t.byteOffset,t.byteLength)};grn.fromBase64=dtu});
-export {Bis};
+import {Q} from "../runtime.ts";
+import {Eps} from "./m805.ts";
+import {bCe} from "./m797.ts";
+var Aps=Q((Qsn)=>{Object.defineProperty(Qsn,"__esModule",{value:!0});Qsn.headStream=void 0;var adu=require("stream"),ldu=Eps(),cdu=bCe(),udu=(e,t)=>{if((0,cdu.isReadableStream)(e))return(0,ldu.headStream)(e,t);return new Promise((n,r)=>{let o=new Cps;o.limit=t,e.pipe(o),e.on("error",(s)=>{o.end(),r(s)}),o.on("error",r),o.on("finish",function(){let s=new Uint8Array(Buffer.concat(this.buffers));n(s)})})};Qsn.headStream=udu;class Cps extends adu.Writable{buffers=[];limit=1/0;bytesBuffered=0;_write(e,t,n){if(this.buffers.push(e),this.bytesBuffered+=e.byteLength??0,this.bytesBuffered>=this.limit){let r=this.bytesBuffered-this.limit,o=this.buffers[this.buffers.length-1];this.buffers[this.buffers.length-1]=o.subarray(0,o.byteLength-r),this.emit("finish")}n()}}});
+export {Aps};

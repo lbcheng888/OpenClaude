@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {l9r} from "./m2492.ts";
-var Axi=X((ymh,fxi)=>{var $ud=l9r(),qud=(e,t,n)=>{try{t=new $ud(t,n)}catch(r){return!1}return t.test(e)};fxi.exports=qud});
-export {Axi};
+import {Q} from "../runtime.ts";
+import {C2e} from "./m2492.ts";
+var N6r=Q((GRg,lPi)=>{var RSd=C2e(),vSd=(e,t,n)=>RSd(e,t,n)>=0;lPi.exports=vSd});
+export {N6r};

@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {mTr} from "./m906.ts";
-import {FS} from "./m788.ts";
-var afs=X((Fon)=>{Object.defineProperty(Fon,"__esModule",{value:!0});Fon.toBase64=void 0;var luu=mTr(),cuu=FS(),uuu=(e)=>{let t;if(typeof e==="string")t=(0,cuu.fromUtf8)(e);else t=e;if(typeof t!=="object"||typeof t.byteOffset!=="number"||typeof t.byteLength!=="number")throw Error("@smithy/util-base64: toBase64 encoder function only accepts string | Uint8Array.");return(0,luu.fromArrayBuffer)(t.buffer,t.byteOffset,t.byteLength).toString("base64")};Fon.toBase64=uuu});
-export {afs};
+import {Q} from "../runtime.ts";
+var gme=Q((NTs)=>{var DAr=require("fs"),cSu=(e)=>{if(!e)return 0;if(typeof e==="string")return Buffer.byteLength(e);else if(typeof e.byteLength==="number")return e.byteLength;else if(typeof e.size==="number")return e.size;else if(typeof e.start==="number"&&typeof e.end==="number")return e.end+1-e.start;else if(e instanceof DAr.ReadStream){if(e.path!=null)return DAr.lstatSync(e.path).size;else if(typeof e.fd==="number")return DAr.fstatSync(e.fd).size}throw Error(`Body Length computation failed for ${e}`)};NTs.calculateBodyLength=cSu});
+export {gme};

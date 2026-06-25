@@ -1,14 +1,14 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M,ro} from "../runtime.ts";
-import {CUn,cct,vUn} from "../src/telemetry/3949_openInBrowser.ts";
-import {getSubscriptionType,getOauthAccountInfo,Ao} from "../src/config/2031_withOAuthRefreshLock.ts";
-import {Login,runPostLoginHooks,t$t} from "../src/tui/3947_runPostLoginHooks.ts";
-import {REMOTE_CONTROL_DISCONNECTED_MSG} from "../src/core/3944_REMOTE_CONTROL_DISCONNECTED_MSG.ts";
-import {Te} from "./m2253.ts";
-import {s1a,o1a} from "../src/tui/3953_ExtraUsageDialog.ts";
-var Gio={};
-isFullscreenWithTTY(Gio,{call:()=>s$t});
-async function s$t(e,t){if(i1a&&CUn())return Wio.default.createElement(i1a,{onDone:e});let n=await cct();if(n.type==="message")return e(n.value),null;let r=getSubscriptionType();if(r==="team"||r==="enterprise")return e(n.opened?`Opened ${n.url} in your browser to manage usage credits for your organization.`:`Visit ${n.url} to manage usage credits for your organization.`),null;let o=getOauthAccountInfo(),s=o&&{accountUuid:o.accountUuid,organizationUuid:o.organizationUuid};return Wio.default.createElement(Login,{startingMessage:"Starting new login following /usage-credits. Exit with Ctrl-C to use existing account.",onDone:async(i)=>{let{bridgeDisconnected:a}=await runPostLoginHooks(t,i,{previousAccount:s});e(i?a?`Login successful. ${REMOTE_CONTROL_DISCONNECTED_MSG}`:"Login successful":"Login interrupted")}})}
-var Wio,i1a;
-var i$t=b(()=>{Ao();t$t();vUn();Wio=M(Te(),1),i1a=(s1a(),ro(o1a)).ExtraUsageDialog});
-export {Gio,s$t,Wio,i1a,i$t};
+import {mS} from "./m3842.ts";
+import {setMemberMode,sL} from "./m3897.ts";
+import {zP,fM,FS} from "./m722.ts";
+import {isBypassPermissionsModeDisabled,vUe} from "../src/telemetry/2232_vUe.ts";
+import {isAutoModeGateEnabled,cy} from "../src/permissions/5219_verifyAutoModeGateAccess.ts";
+import {b} from "../runtime.ts";
+import {Pw} from "../src/permissions/3902_writeToMailbox.ts";
+function A2a(e,t){for(let n of Object.values(t.tasks))if(mS(n)&&n.identity.agentName===e)return n.id;return}
+function pdo(e,t,n){t.update(e,(r)=>({...r,awaitingPlanApproval:n}))}
+function R2a(e,t,n){let r=n.get(e);if(!r||!mS(r)||!r.awaitingPlanApproval)return!1;if(!t.approved)return pdo(e,n,!1),!0;let o=mdo(t.permissionMode);return n.update(e,(s)=>({...s,awaitingPlanApproval:!1,permissionMode:o})),setMemberMode(r.identity.teamName,r.identity.agentName,o),!0}
+function mdo(e){let t=zP(fM(e??"default"));if(t==="bypassPermissions"&&isBypassPermissionsModeDisabled())return"default";if(t==="auto"&&!isAutoModeGateEnabled())return"default";return t}
+var fdo=b(()=>{vUe();FS();cy();sL();Pw()});
+export {A2a,pdo,R2a,mdo,fdo};

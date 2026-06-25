@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Tpi=X((WXe)=>{Object.defineProperty(WXe,"__esModule",{value:!0});WXe.isUrlIgnored=WXe.urlMatches=void 0;function ypi(e,t){if(typeof t==="string")return e===t;else return!!e.match(t)}WXe.urlMatches=ypi;function Lzu(e,t){if(!t)return!1;for(let n of t)if(ypi(e,n))return!0;return!1}WXe.isUrlIgnored=Lzu});
-export {Tpi};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {Hxt} from "./m2097.ts";
+import {n2r} from "./m2127.ts";
+var tyi=Q((RF)=>{Object.defineProperty(RF,"__esModule",{value:!0});RF.W3CTraceContextPropagator=RF.parseTraceParent=RF.TRACE_STATE_HEADER=RF.TRACE_PARENT_HEADER=void 0;var pSn=xi(),wod=Hxt(),kod=n2r();RF.TRACE_PARENT_HEADER="traceparent";RF.TRACE_STATE_HEADER="tracestate";var Hod="00",Iod="(?!ff)[\\da-f]{2}",xod="(?![0]{32})[\\da-f]{32}",Dod="(?![0]{16})[\\da-f]{16}",Pod="[\\da-f]{2}",Ood=new RegExp(`^\\s?(${Iod})-(${xod})-(${Dod})-(${Pod})(-.*)?\\s?$`);function Z_i(e){let t=Ood.exec(e);if(!t)return null;if(t[1]==="00"&&t[5])return null;return{traceId:t[2],spanId:t[3],traceFlags:parseInt(t[4],16)}}RF.parseTraceParent=Z_i;class eyi{inject(e,t,n){let r=pSn.trace.getSpanContext(e);if(!r||(0,wod.isTracingSuppressed)(e)||!(0,pSn.isSpanContextValid)(r))return;let o=`${Hod}-${r.traceId}-${r.spanId}-0${Number(r.traceFlags||pSn.TraceFlags.NONE).toString(16)}`;if(n.set(t,RF.TRACE_PARENT_HEADER,o),r.traceState)n.set(t,RF.TRACE_STATE_HEADER,r.traceState.serialize())}extract(e,t,n){let r=n.get(t,RF.TRACE_PARENT_HEADER);if(!r)return e;let o=Array.isArray(r)?r[0]:r;if(typeof o!=="string")return e;let s=Z_i(o);if(!s)return e;s.isRemote=!0;let i=n.get(t,RF.TRACE_STATE_HEADER);if(i){let a=Array.isArray(i)?i.join(","):i;s.traceState=new kod.TraceState(typeof a==="string"?a:void 0)}return pSn.trace.setSpanContext(e,s)}fields(){return[RF.TRACE_PARENT_HEADER,RF.TRACE_STATE_HEADER]}}RF.W3CTraceContextPropagator=eyi});
+export {tyi};

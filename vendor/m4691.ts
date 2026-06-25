@@ -1,25 +1,15 @@
 // @ts-nocheck
-import {et,Ai} from "./m2208.ts";
-import {gWn,hjt,_Wn,ybo} from "./m4690.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Bfl(e){let t=Mfl.c(9),{onComplete:n,path:r,push:o,dryRun:s,force:i,unknownFlag:a}=e,l,c;if(t[0]!==s||t[1]!==i||t[2]!==n||t[3]!==r||t[4]!==o||t[5]!==a)l=()=>{d();async function d(){if(a!==void 0){n(a==="--help"||a==="-h"?Lfl:`${et.cross} Unexpected argument "${a}".
-
-${Lfl}`);return}let p=await gWn(r??".",{force:i}),m=p.warnings.map(bJp);if(!p.ok){m.push(`${et.cross} ${p.error}`),n(m.join(`
-`));return}let{plan:f}=p;if(m.push(`Plugin:  ${f.pluginName}`,`Version: ${f.version} (from ${f.versionFrom})`),f.marketplace)m.push(`Marketplace entry: plugins[${f.marketplace.entryIndex}] in ${f.marketplace.path}`+(f.marketplace.entryVersion?` (version: ${f.marketplace.entryVersion})`:""));m.push(`Tag:     ${f.tag}`,"");let A=`git -C ${f.gitRoot} push ${i?"--force ":""}origin refs/tags/${f.tag}`;if(s){m.push(`${et.tick} Dry run \u2014 would create tag ${f.tag} at HEAD in ${f.gitRoot}`,`  git -C ${f.gitRoot} tag ${i?"-f ":""}-a ${f.tag} -m "${hjt(f,void 0)}"`,`  ${A}`),n(m.join(`
-`));return}let h=await _Wn(f,{push:o,force:i,message:void 0,remote:"origin"});if(!h.ok){m.push(`${et.cross} ${h.error}`),n(m.join(`
-`));return}m.push(`${et.tick} Created tag ${f.tag}`),m.push(h.pushed?`${et.tick} Pushed to origin`:`  Push with: ${A}`),m.push("","For -m/--message and --remote, use: claude plugin tag --help"),n(m.join(`
-`))}},c=[n,r,o,s,i,a],t[0]=s,t[1]=i,t[2]=n,t[3]=r,t[4]=o,t[5]=a,t[6]=l,t[7]=c;else l=t[6],c=t[7];Nfl.useEffect(l,c);let u;if(t[8]===Symbol.for("react.memo_cache_sentinel"))u=gjt.createElement(Box,{flexDirection:"column"},gjt.createElement(Text,null,"Preparing tag\u2026")),t[8]=u;else u=t[8];return u}
-function bJp(e){return`${et.warning} ${e}`}
-var Mfl,gjt,Nfl,Lfl=`Usage: /plugin tag [path] [--push] [--dry-run] [-f|--force]
-
-Create a {name}--v{version} git tag for the plugin at <path> (default: .).
-Validates plugin.json and any enclosing marketplace entry agree on the version.
-
-For -m/--message and --remote, use the CLI: claude plugin tag --help`;
-var Ffl=b(()=>{Ai();ze();ybo();Mfl=M(rt(),1),gjt=M(Te(),1),Nfl=M(Te(),1)});
-export {Bfl,bJp,Mfl,gjt,Nfl,Lfl,Ffl};
+import {EWt,CWt,Xvo} from "../src/core/4691_input.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {findGitRoot,ia} from "./m698.ts";
+import {Ske,Gk} from "./m2727.ts";
+import {withTimeout} from "../src/telemetry/1488_withTimeout.ts";
+import {b,x} from "../runtime.ts";
+import {vKr} from "./m2726.ts";
+function JSl(e,t){return{readFileState:t,bashTools:EWt(e),bashHosts:CWt(e)}}
+function k7n(e,t){let n=t;if(!n?.signals||!n.signals.cli?.length&&!n.signals.filesRead?.length&&!n.signals.manifestDeps?.length&&!n.signals.hosts?.length&&!n.signals.cwd?.length)return null;let r;try{if(n.signals.manifestDeps?.length)r=n.signals.manifestDeps.map((s)=>({file:new RegExp(s.file,"i"),pattern:new RegExp(s.pattern)}))}catch(s){return logForDebugging(`Skipping relevance signals for "${e}": invalid RegExp in relevance.signals: ${s}`,{level:"warn"}),null}let o=n.signals.hosts?.map((s)=>s.toLowerCase());return{cli:n.signals.cli,hosts:o,filesRead:n.signals.filesRead,manifestDep:r,cwd:n.signals.cwd}}
+async function H7n(e,t){let{bashTools:n,bashHosts:r}=t??{};if(e.cli&&n?.size){let i=e.cli.find((a)=>n.has(a));if(i)return{signal:"cli",command:i}}if(e.hosts?.length&&r?.size){let i=e.hosts.find((a)=>r.has(a));if(i)return{signal:"hosts",host:i}}if(e.cwd?.length){let i=isTmuxControlMode().replaceAll("\\","/"),a=findGitRoot(isTmuxControlMode())?.replaceAll("\\","/"),l=[i];if(a&&i.startsWith(`${a}/`))l.push(i.slice(a.length+1));for(let c of e.cwd){let u=c.replace(/\/+$/,"").replace(/\/\*\*$/,"");if(!u)continue;if(l.some((d)=>Qvo.default.isMatch(d,[u,`${u}/**`],{nocase:!0,dot:!0})))return{signal:"cwd"}}}let o=t?.readFileState,s=o?Ske(o):[];if(e.filesRead?.length&&s.length){let i=s.find((a)=>Qvo.default.isMatch(a.replaceAll("\\","/"),e.filesRead,{nocase:!0,dot:!0}));if(i)return{signal:"filesRead",file:i}}if(e.manifestDep&&o&&s.length>0){let i=new Map(o.entries()),a=(async()=>{for(let{file:c,pattern:u}of e.manifestDep)for(let d of s){if(!c.test(d))continue;try{let p=i.get(d),m=p&&p.limit===void 0&&(p.offset??1)<=1&&!p.isPartialView?p.content:void 0;if(!m){if((await w7n.stat(d)).size>524288)continue;m=await w7n.readFile(d,"utf8")}if(u.test(m))return d}catch{}}return null})(),l=await withTimeout(a,50,"manifestDep scan").catch(()=>null);if(l)return{signal:"manifestDep",file:l}}return null}
+var w7n,Qvo;
+var _ht=b(()=>{Xvo();Po();qe();Gk();ia();w7n=require("fs/promises"),Qvo=x(vKr(),1)});
+export {JSl,k7n,H7n,w7n,Qvo,_ht};

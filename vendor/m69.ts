@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function wmc(e,t){var n=-1,r=Array(e);while(++n<e)r[n]=t(n);return r}
-var WFo;
-var GFo=b(()=>{WFo=wmc});
-export {wmc,WFo,GFo};
+function LCc(){return!1}
+var H4o;
+var I4o=b(()=>{H4o=LCc});
+export {LCc,H4o,I4o};

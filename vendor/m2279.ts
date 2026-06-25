@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {zTe,ygt} from "./m102.ts";
-import {tT,c2} from "./m13.ts";
-import {W_i,G_i} from "./m2278.ts";
 import {b} from "../runtime.ts";
-function jed(e){if(typeof e=="number")return e;if(zTe(e))return V_i;if(tT(e)){var t=typeof e.valueOf=="function"?e.valueOf():e;e=tT(t)?t+"":t}if(typeof e!="string")return e===0?e:+e;e=W_i(e);var n=Ued.test(e);return n||$ed.test(e)?qed(e.slice(2),n?2:8):Fed.test(e)?V_i:+e}
-var V_i=NaN,Fed,Ued,$ed,qed,NFr;
-var K_i=b(()=>{G_i();c2();ygt();Fed=/^[-+]0x[0-9a-f]+$/i,Ued=/^0b[01]+$/i,$ed=/^0o[0-7]+$/i,qed=parseInt;NFr=jed});
-export {jed,V_i,Fed,Ued,$ed,qed,NFr,K_i};
+class vAi{proc;constructor(e=process){this.proc=e}isJetBrainsIdeTerminal(){return this.proc.env.TERMINAL_EMULATOR==="JetBrains-JediTerm"}isMicrosoftWindowsTerminal(){return this.proc.platform==="win32"&&!!this.proc.env.WT_SESSION}isGhostty(){return this.proc.env.TERM==="xterm-ghostty"||this.proc.env.TERM_PROGRAM==="ghostty"}isMintty(){if(this.proc.env.TERM_PROGRAM==="mintty")return!0;if(this.proc.platform==="win32"&&this.proc.env.MSYSTEM)return!0;return!1}windowsConsoleSupportsVirtualTerminalSequences(){if(this.isMicrosoftWindowsTerminal())return!0;if(this.proc.platform==="win32"&&this.proc.env.TERM_PROGRAM==="vscode"&&this.proc.env.TERM_PROGRAM_VERSION)return!0;if(this.isMintty())return!0;return!1}hasGeometricShapesInkBleedBug(){return this.isGhostty()}hasOsc52ClipboardUtf8Bug(){if(this.proc.env.TERM_PROGRAM!=="vscode")return!1;let e=Fud(this.proc.env.TERM_PROGRAM_VERSION);return e!==null&&e>=1123000&&e<1125000}macCmdClickArrivesWithoutSgrModifierBit(){return this.proc.platform==="darwin"&&this.proc.env.TERM_PROGRAM==="ghostty"}}
+function Fud(e){if(!e)return null;let t=/^(\d+)\.(\d+)\.(\d+)/.exec(e);if(!t)return null;return+t[1]*1e6+ +t[2]*1000+ +t[3]}
+var YM;
+var Tve=b(()=>{YM=new vAi});
+export {vAi,Fud,YM,Tve};

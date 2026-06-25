@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function mfc(e){return function(t){return e(t)}}
-var wWe;
-var nKt=b(()=>{wWe=mfc});
-export {mfc,wWe,nKt};
+function CAc(e){var t=e&&e.constructor,n=typeof t=="function"&&t.prototype||EAc;return e===n}
+var EAc,bKe;
+var LYt=b(()=>{EAc=Object.prototype;bKe=CAc});
+export {CAc,EAc,bKe,LYt};

@@ -1,0 +1,9 @@
+// @ts-nocheck
+import {execFileNoThrowWithCwd,Ii} from "./m690.ts";
+import {gitExe,ia} from "./m698.ts";
+import {b} from "../runtime.ts";
+function Dfa(e){let t=c_e.posix.sep+e.split(c_e.sep).join(c_e.posix.sep).replace(/^\/+/,""),n=c_e.basename(e).toLowerCase(),r=c_e.extname(e).toLowerCase();if(EQd.has(n))return!0;if(Ifa.has(r))return!0;let o=n.split(".");if(o.length>2){let s="."+o.slice(-2).join(".");if(Ifa.has(s))return!0}for(let s of CQd)if(t.includes(s))return!0;for(let s of AQd)if(s.test(n))return!0;return!1}
+async function Pfa(e,t){if(Dfa(e))return!0;let n=`${t}\x00${e}`,r=xfa.get(n);if(r!==void 0)return r;let o=await execFileNoThrowWithCwd(gitExe(),["check-attr","linguist-generated","--",e],{cwd:t,timeout:5000}),s=!1;if(o.code===0){let i=o.stdout.trim().split(": ").pop()?.toLowerCase();s=i==="set"||i==="true"}return xfa.set(n,s),s}
+var c_e,EQd,Ifa,CQd,AQd,xfa;
+var zeo=b(()=>{Ii();ia();c_e=require("path"),EQd=new Set(["package-lock.json","yarn.lock","pnpm-lock.yaml","bun.lockb","bun.lock","composer.lock","gemfile.lock","cargo.lock","poetry.lock","pipfile.lock","shrinkwrap.json","npm-shrinkwrap.json"]),Ifa=new Set([".lock",".min.js",".min.css",".min.html",".bundle.js",".bundle.css",".generated.ts",".generated.js",".d.ts"]),CQd=["/dist/","/build/","/out/","/output/","/node_modules/","/vendor/","/vendored/","/third_party/","/third-party/","/external/","/.next/","/.nuxt/","/.svelte-kit/","/coverage/","/__pycache__/","/.tox/","/venv/","/.venv/","/target/release/","/target/debug/",".generated/","/__snapshots__/"],AQd=[/^.*\.min\.[a-z]+$/i,/^.*-min\.[a-z]+$/i,/^.*\.bundle\.[a-z]+$/i,/^.*\.generated\.[a-z]+$/i,/^.*\.gen\.[a-z]+$/i,/^.*\.auto\.[a-z]+$/i,/^.*_generated\.[a-z]+$/i,/^.*_gen\.[a-z]+$/i,/^.*\.pb\.(go|js|ts|py|rb)$/i,/^.*_pb2?\.py$/i,/^.*\.pb\.h$/i,/^.*\.grpc\.[a-z]+$/i,/^.*\.swagger\.[a-z]+$/i,/^.*\.openapi\.[a-z]+$/i,/\.snap$/i];xfa=new Map});
+export {Dfa,Pfa,c_e,EQd,Ifa,CQd,AQd,xfa,zeo};

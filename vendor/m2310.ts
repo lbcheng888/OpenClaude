@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {LK} from "./m2308.ts";
-var LTi=X((snh,OTi)=>{var End=LK(),Cnd=(e,t)=>End(e,t,!0);OTi.exports=Cnd});
-export {LTi};
+import {Q} from "../runtime.ts";
+import {t2e} from "./m2309.ts";
+var bvi=Q((Hfg,Svi)=>{var Ppd=t2e(),Opd=(e,t)=>{let n=Ppd(e,t);return n?n.version:null};Svi.exports=Opd});
+export {bvi};

@@ -1,10 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Tbn} from "./m2477.ts";
-import {b0t} from "./m2476.ts";
-import {nxi} from "./m2490.ts";
-import {S0t} from "./m2474.ts";
-import {QZe} from "./m2479.ts";
-import {l9r} from "./m2492.ts";
-var cxi=X((gmh,lxi)=>{var E0t=Symbol("SemVer ANY");class Rbn{static get ANY(){return E0t}constructor(e,t){if(t=rxi(t),e instanceof Rbn)if(e.loose===!!t.loose)return e;else e=e.value;if(e=e.trim().split(/\s+/).join(" "),a9r("comparator",e,t),this.options=t,this.loose=!!t.loose,this.parse(e),this.semver===E0t)this.value="";else this.value=this.operator+this.semver.version;a9r("comp",this)}parse(e){let t=this.options.loose?oxi[sxi.COMPARATORLOOSE]:oxi[sxi.COMPARATOR],n=e.match(t);if(!n)throw TypeError(`Invalid comparator: ${e}`);if(this.operator=n[1]!==void 0?n[1]:"",this.operator==="=")this.operator="";if(!n[2])this.semver=E0t;else this.semver=new ixi(n[2],this.options.loose)}toString(){return this.value}test(e){if(a9r("Comparator.test",e,this.options.loose),this.semver===E0t||e===E0t)return!0;if(typeof e==="string")try{e=new ixi(e,this.options)}catch(t){return!1}return i9r(e,this.operator,this.semver,this.options)}intersects(e,t){if(!(e instanceof Rbn))throw TypeError("a Comparator is required");if(this.operator===""){if(this.value==="")return!0;return new axi(e.value,t).test(this.value)}else if(e.operator===""){if(e.value==="")return!0;return new axi(this.value,t).test(e.semver)}if(t=rxi(t),t.includePrerelease&&(this.value==="<0.0.0-0"||e.value==="<0.0.0-0"))return!1;if(!t.includePrerelease&&(this.value.startsWith("<0.0.0")||e.value.startsWith("<0.0.0")))return!1;if(this.operator.startsWith(">")&&e.operator.startsWith(">"))return!0;if(this.operator.startsWith("<")&&e.operator.startsWith("<"))return!0;if(this.semver.version===e.semver.version&&this.operator.includes("=")&&e.operator.includes("="))return!0;if(i9r(this.semver,"<",e.semver,t)&&this.operator.startsWith(">")&&e.operator.startsWith("<"))return!0;if(i9r(this.semver,">",e.semver,t)&&this.operator.startsWith("<")&&e.operator.startsWith(">"))return!0;return!1}}lxi.exports=Rbn;var rxi=Tbn(),{safeRe:oxi,t:sxi}=b0t(),i9r=nxi(),a9r=S0t(),ixi=QZe(),axi=l9r()});
-export {cxi};
+import {Q} from "../runtime.ts";
+import {ent} from "./m2489.ts";
+import {rPi} from "./m2490.ts";
+import {XPt} from "./m2486.ts";
+var sPi=Q((qRg,oPi)=>{var bSd=ent(),ESd=rPi(),{safeRe:pRn,t:mRn}=XPt(),CSd=(e,t)=>{if(e instanceof bSd)return e;if(typeof e==="number")e=String(e);if(typeof e!=="string")return null;t=t||{};let n=null;if(!t.rtl)n=e.match(t.includePrerelease?pRn[mRn.COERCEFULL]:pRn[mRn.COERCE]);else{let l=t.includePrerelease?pRn[mRn.COERCERTLFULL]:pRn[mRn.COERCERTL],c;while((c=l.exec(e))&&(!n||n.index+n[0].length!==e.length)){if(!n||c.index+c[0].length!==n.index+n[0].length)n=c;l.lastIndex=c.index+c[1].length+c[2].length}l.lastIndex=-1}if(n===null)return null;let r=n[2],o=n[3]||"0",s=n[4]||"0",i=t.includePrerelease&&n[5]?`-${n[5]}`:"",a=t.includePrerelease&&n[6]?`+${n[6]}`:"";return ESd(`${r}.${o}.${s}${i}${a}`,t)};oPi.exports=CSd});
+export {sPi};

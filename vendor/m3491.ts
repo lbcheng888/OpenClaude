@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {KNt} from "./m3433.ts";
-var yAa=X((cOn)=>{Object.defineProperty(cOn,"__esModule",{value:!0});cOn.convertLegacyHeaders=void 0;var hYd=KNt();function gYd(e){if(typeof e.headers==="function")return e.headers;return(0,hYd.wrapStaticHeadersInFunction)(e.headers)}cOn.convertLegacyHeaders=gYd});
-export {yAa};
+import {Q} from "../runtime.ts";
+import {Mro} from "./m3483.ts";
+var lEa=Q((WMn)=>{Object.defineProperty(WMn,"__esModule",{value:!0});WMn.JsonMetricsSerializer=void 0;var Zop=Mro();WMn.JsonMetricsSerializer={serializeRequest:(e)=>{let t=(0,Zop.createExportMetricsServiceRequest)([e],{useLongBits:!1});return new TextEncoder().encode(JSON.stringify(t))},deserializeResponse:(e)=>{if(e.length===0)return{};return JSON.parse(new TextDecoder().decode(e))}}});
+export {lEa};

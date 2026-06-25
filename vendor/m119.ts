@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {JTe,Sgt} from "./m111.ts";
 import {b} from "../runtime.ts";
-function wAc(e){return function(t){return JTe(t,e)}}
-var zUo;
-var YUo=b(()=>{Sgt();zUo=wAc});
-export {wAc,zUo,YUo};
+function DRc(e,t){var n,r=-1,o=e.length;while(++r<o){var s=t(e[r]);if(s!==void 0)n=n===void 0?s:n+s}return n}
+var Pqo;
+var Oqo=b(()=>{Pqo=DRc});
+export {DRc,Pqo,Oqo};

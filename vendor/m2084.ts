@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Ori} from "./m2083.ts";
-var Lri=X((ugn)=>{Object.defineProperty(ugn,"__esModule",{value:!0});ugn.metrics=void 0;var B7u=Ori();ugn.metrics=B7u.MetricsAPI.getInstance()});
-export {Lri};
+import {Q} from "../runtime.ts";
+import {Cci} from "./m2083.ts";
+var Aci=Q((BTn)=>{Object.defineProperty(BTn,"__esModule",{value:!0});BTn.createTraceState=void 0;var Xnd=Cci();function Qnd(e){return new Xnd.TraceStateImpl(e)}BTn.createTraceState=Qnd});
+export {Aci};

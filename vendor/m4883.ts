@@ -1,5 +1,38 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var QEl;
-var ZEl=b(()=>{QEl={isEnabled:()=>!1,isHidden:!0,name:"stub"}});
-export {QEl,ZEl};
+import {getSettingsForSource,ao,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {d3,wm} from "./m707.ts";
+import {S6t,$q} from "../src/tools/4352_displayName.ts";
+import {getCommandName} from "../src/tools/4092_done.ts";
+import {useTerminalFocus} from "./m2390.ts";
+import {RH,lne} from "./m4558.ts";
+import {Df,TI} from "./m2577.ts";
+import {Dy,SE} from "./m2559.ts";
+import {_r,ui} from "./m2463.ts";
+import {oy,B8} from "./m2385.ts";
+import {clearCommandMemoizationCaches,Mm} from "../src/tools/5174_toSlashCommands.ts";
+import {Sn,lr} from "./m233.ts";
+import {wu,$k} from "../src/tui/2575_current.ts";
+import {Oo,ss} from "./m2553.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {dr,uc} from "./m2558.ts";
+import {wl,sy} from "./m2585.ts";
+import {dl,eC,dn} from "../src/config/0137_namespace.ts";
+import {Box} from "./m2432.ts";
+import {aP,aue} from "../src/config/4552_query.ts";
+import {Oht,Kbl,Swo} from "./m4711.ts";
+import {Text} from "./m2433.ts";
+import {formatTokenEstimate,Xo} from "./m240.ts";
+import {b,x} from "../runtime.ts";
+import {Zs,Xe} from "./m2216.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function qmm(e,t){let n=getSettingsForSource("policySettings")?.skillOverrides?.[t];if(n)return{value:n,source:"policy"};let r=getSettingsForSource("flagSettings")?.skillOverrides?.[t];if(r)return{value:r,source:"flag"};if(e.disableModelInvocation)return{value:"user-invocable-only",source:"author"};if(e.source==="plugin")return{value:"on",source:"plugin"};return}
+function Wmm(e){return getSettingsForSource("projectSettings")?.skillOverrides?.[e]??getSettingsForSource("userSettings")?.skillOverrides?.[e]}
+function HIl(e){switch(e){case"mcp":case"plugin":return e;case"bundled":case"builtin":return"built-in";default:return d3(e)}}
+function IIl({onExit:e,commands:t,bytesPerToken:n}){let[r,o]=nU.useState(!1),s=nU.useMemo(()=>{let N=t.filter((F)=>F.type==="prompt"&&(F.loadedFrom==="skills"||F.loadedFrom==="commands_DEPRECATED"||F.loadedFrom==="plugin"||F.loadedFrom==="mcp"));if(r){let F=new Map(N.map((V)=>[V,S6t(V)]));return N.sort((V,G)=>(F.get(G)??0)-(F.get(V)??0)||getCommandName(V).localeCompare(getCommandName(G)))}return N.sort((F,V)=>String(F.source).localeCompare(String(V.source))||getCommandName(F).localeCompare(getCommandName(V)))},[t,r]),i=nU.useMemo(()=>getSettingsForSource("localSettings")?.skillOverrides??{},[]),a=nU.useMemo(()=>{let N=new Map;for(let F of s){let V=Wmm(F.name);if(V)N.set(F.name,V)}return N},[s]),l=nU.useMemo(()=>{let N=new Map;for(let F of s){let V=qmm(F,F.name);if(V)N.set(F,V)}return N},[s]),[c,u]=nU.useState(()=>{let N={};for(let F of s){if(F.name in N)continue;N[F.name]=l.get(F)?.value??i[F.name]??a.get(F.name)??"on"}return N}),[d,p]=nU.useState(s[0]),m=useTerminalFocus(),[f,h]=nU.useState(!1),g=nU.useRef(f),{query:_,setQuery:T,cursorOffset:y,handleKeyDown:S,handlePaste:E}=RH({isActive:f,onExit:()=>{g.current=!1,h(!1)},passthroughCtrlKeys:["c","d"]});Df();let R=nU.useMemo(()=>{if(!_)return s;let N=_.toLowerCase();return s.filter((F)=>F.name.toLowerCase().includes(N)||(F.description??"").toLowerCase().includes(N)||HIl(F.source).toLowerCase().includes(N))},[s,_]),{rows:w}=Dy(_r()),H=oy(w-13,4,R.length),k=()=>{let N=d;if(!N||!R.includes(N))return;if(l.has(N))return;u((F)=>{let V=F[N.name]??"on",G=hIo[(hIo.indexOf(V)+1)%hIo.length];return{...F,[N.name]:G}})},I=()=>{let N=new Set(Array.from(l.keys(),(J)=>J.name)),F=new Set(N),V={},G=0,z=0;for(let J of s){if(F.has(J.name))continue;F.add(J.name);let K=c[J.name]??"on",j=a.get(J.name)??"on",X=i[J.name]??j,ee=K===j?void 0:K;if(ee!==i[J.name])V[J.name]=ee,G++;if(K!==X)z++}if(G>0){let{error:J}=ao("localSettings",{skillOverrides:V});if(J){e(`Failed to save skill overrides: ${J.message}`,{display:"system"});return}clearCommandMemoizationCaches()}e(z>0?`Updated ${z} skill ${Sn(z,"override")}`:"No changes",{display:"system"})},D=wu("confirm:no","Settings","esc"),O=wu("settings:sortByTokens","Settings","t");Oo({"select:accept":k,"settings:sortByTokens":()=>o((N)=>!N)},{context:"Settings",isActive:!f&&R.length>0}),Oo({"confirm:no":I},{context:"Settings",isActive:!f});let L=nU.useCallback((N)=>{if(g.current){S(N);return}if(N.ctrl||N.meta)return;if(N.name==="backspace"){if(_)N.preventDefault(),g.current=!0,h(!0),T(_.slice(0,-1));return}if(N.name.length>1&&N.name!=="number")return;if(N.key.length>=1&&N.key!==" "){N.preventDefault(),g.current=!0,h(!0);let F=N.key.startsWith("/")?N.key.slice(1):N.key;T(_+F)}},[S,T,_]),P=nU.useCallback((N)=>{if(g.current){E(N);return}let F=N.text.split(/\r\n|\r|\n/,2)[0]??"";if(F.length===0)return;N.preventDefault(),g.current=!0,h(!0);let V=F.startsWith("/")?F.slice(1):F;T(_+V)},[E,T,_]);if(s.length===0)return zw.jsx(preInitQueue,{title:"Skills",onCancel:()=>e("Skills dialog dismissed",{display:"system"}),inputGuide:zw.jsx(dr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"close"}),children:zw.jsx(wl,{hint:dl()?`Custom skills are disabled in safe mode \u2014 ${eC()} to load them`:"Create skills in .claude/skills/ or ~/.claude/skills/",children:"No skills found"})});let M=_?`${R.length}/${s.length} ${Sn(s.length,"skill")}`:`${s.length} ${Sn(s.length,"skill")}`,B=f?"type to filter \xB7 \u2193/enter to select \xB7 esc to clear":R.length===0?`/ to search, ${D} to close`:`enter/space to cycle, / to search, ${O} to sort, ${D} to close`;return zw.jsx(preInitQueue,{title:"Skills",subtitle:`${M}${r?" \xB7 sorted by tokens":""} \xB7 ${B}`,onCancel:()=>e("Skills dialog dismissed",{display:"system"}),isCancelActive:!1,hideInputGuide:!0,children:zw.jsxs(Box,{flexDirection:"column",tabIndex:0,autoFocus:!0,onKeyDown:L,onPaste:P,children:[zw.jsx(aP,{query:_,isFocused:f,isTerminalFocused:m,cursorOffset:y,placeholder:"Search skills\u2026"}),R.length===0?zw.jsx(Box,{marginTop:1,children:zw.jsx(wl,{children:`No skills match "${_}"`})}):zw.jsx(Oht,{visibleCount:H,isDisabled:f,wrap:!0,overflowHint:"count",onFocus:(N)=>p(R[N]),children:R.map((N)=>zw.jsx(Oht.Item,{children:zw.jsx(Gmm,{skill:N,lock:l.get(N),state:l.get(N)?.value??c[N.name]??"on",bytesPerToken:n})},`${N.name}-${N.source}`))},r?"tok":"name"),s.some((N)=>N.source==="plugin")&&zw.jsx(Box,{marginTop:1,children:zw.jsx(Text,{dimColor:!0,children:"Plugin skills are managed via /plugin"})}),dl()&&zw.jsx(Box,{marginTop:1,children:zw.jsxs(Text,{dimColor:!0,children:["Custom skills are disabled in safe mode \u2014"," ",`${eC()} to load them`]})})]})})}
+function Gmm(e){let t=kIl.c(22),{skill:n,lock:r,state:o,bytesPerToken:s}=e,i=Kbl(),a=$mm[o],l;if(t[0]!==s||t[1]!==n)l=formatTokenEstimate(S6t(n,s)),t[0]=s,t[1]=n,t[2]=l;else l=t[2];let c=`${l} tok`,u;if(t[3]!==a.color||t[4]!==a.glyph||t[5]!==a.label||t[6]!==r)u=r?zw.jsx(Text,{dimColor:!0,children:"\uD83D\uDD12 "+a.label.padEnd(9)}):zw.jsxs(Text,{color:a.color,children:[a.glyph," ",a.label.padEnd(9)]}),t[3]=a.color,t[4]=a.glyph,t[5]=a.label,t[6]=r,t[7]=u;else u=t[7];let d;if(t[8]===Symbol.for("react.memo_cache_sentinel"))d=zw.jsx(Text,{children:"  "}),t[8]=d;else d=t[8];let p=i?"suggestion":void 0,m;if(t[9]!==n.name||t[10]!==p)m=zw.jsx(Text,{color:p,children:n.name}),t[9]=n.name,t[10]=p,t[11]=m;else m=t[11];let f;if(t[12]!==n.source)f=HIl(n.source),t[12]=n.source,t[13]=f;else f=t[13];let h=r?` \xB7 locked by ${r.source}`:"",g;if(t[14]!==f||t[15]!==h||t[16]!==c)g=zw.jsxs(Text,{dimColor:!0,children:[" ","\xB7 ",f," \xB7 ",c,h]}),t[14]=f,t[15]=h,t[16]=c,t[17]=g;else g=t[17];let _;if(t[18]!==u||t[19]!==m||t[20]!==g)_=zw.jsxs(Box,{children:[u,d,m,g]}),t[18]=u,t[19]=m,t[20]=g,t[21]=_;else _=t[21];return _}
+var kIl,nU,zw,hIo,$mm;
+var xIl=b(()=>{Zs();Mm();SE();TI();lne();ui();B8();je();ss();$k();$q();dn();Xo();wm();br();lr();uc();di();sy();Swo();aue();kIl=x(tt(),1),nU=x(et(),1),zw=x(oe(),1),hIo=["on","name-only","user-invocable-only","off"],$mm={on:{glyph:Xe.tick,label:"on",color:"success"},"name-only":{glyph:Xe.bullet,label:"name-only"},"user-invocable-only":{glyph:Xe.circle,label:"user-only",color:"warning"},off:{glyph:Xe.cross,label:"off",color:"error"}}});
+export {qmm,Wmm,HIl,IIl,Gmm,kIl,nU,zw,hIo,$mm,xIl};

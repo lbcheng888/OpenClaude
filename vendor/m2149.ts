@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var B1r=X((VXe)=>{Object.defineProperty(VXe,"__esModule",{value:!0});VXe.normalizeType=VXe.normalizeArch=void 0;var HYu=(e)=>{switch(e){case"arm":return"arm32";case"ppc":return"ppc32";case"x64":return"amd64";default:return e}};VXe.normalizeArch=HYu;var IYu=(e)=>{switch(e){case"sunos":return"solaris";case"win32":return"windows";default:return e}};VXe.normalizeType=IYu});
-export {B1r};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+var Fyi=Q((DSn)=>{Object.defineProperty(DSn,"__esModule",{value:!0});DSn.getMachineId=void 0;var Nsd=require("fs"),Fsd=xi();async function Bsd(){let e=["/etc/machine-id","/var/lib/dbus/machine-id"];for(let t of e)try{return(await Nsd.promises.readFile(t,{encoding:"utf8"})).trim()}catch(n){Fsd.diag.debug(`error reading machine id: ${n}`)}return}DSn.getMachineId=Bsd});
+export {Fyi};

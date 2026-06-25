@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ag} from "./m2133.ts";
-function Emi(){return{forceFlushTimeoutMillis:30000,logRecordLimits:{attributeValueLengthLimit:dFe.getNumberFromEnv("OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT")??1/0,attributeCountLimit:dFe.getNumberFromEnv("OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT")??128},includeTraceContext:!0}}
-function Cmi(e){return{attributeCountLimit:e.attributeCountLimit??dFe.getNumberFromEnv("OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT")??dFe.getNumberFromEnv("OTEL_ATTRIBUTE_COUNT_LIMIT")??128,attributeValueLengthLimit:e.attributeValueLengthLimit??dFe.getNumberFromEnv("OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT")??dFe.getNumberFromEnv("OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT")??1/0}}
-var dFe;
-var vmi=b(()=>{dFe=M(ag(),1)});
-export {Emi,Cmi,dFe,vmi};
+import {b} from "../runtime.ts";
+import {dTi} from "./m2170.ts";
+import {KSn} from "./m2168.ts";
+function pTi(e,t,n){return(r)=>r===e?t:n}
+var $xt,jZe,_2r=1;
+var mTi=b(()=>{dTi();$xt=Symbol.for("io.opentelemetry.js.api.logs"),jZe=KSn});
+export {pTi,$xt,jZe,_2r,mTi};

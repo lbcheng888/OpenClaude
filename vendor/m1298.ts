@@ -1,11 +1,7 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var nLs=()=>{};
-var rLs=()=>{};
-var oLs=()=>{};
-var sLs=()=>{};
-var iLs=()=>{};
-var aLs=()=>{};
-var lLs=()=>{};
-var cLs=b(()=>{iLs();aLs();lLs()});
-export {nLs,rLs,oLs,sLs,iLs,aLs,lLs,cLs};
+import {b,x} from "../runtime.ts";
+import {XN} from "./m786.ts";
+class nkt{config;middlewareStack=NBs.constructStack();initConfig;handlers;constructor(e){this.config=e}send(e,t,n){let r=typeof t!=="function"?t:void 0,o=typeof t==="function"?t:n,s=r===void 0&&this.config.cacheMiddleware===!0,i;if(s){if(!this.handlers)this.handlers=new WeakMap;let a=this.handlers;if(a.has(e.constructor))i=a.get(e.constructor);else i=e.resolveMiddleware(this.middlewareStack,this.config,r),a.set(e.constructor,i)}else delete this.handlers,i=e.resolveMiddleware(this.middlewareStack,this.config,r);if(o)i(e).then((a)=>o(null,a.output),(a)=>o(a)).catch(()=>{});else return i(e).then((a)=>a.output)}destroy(){this.config?.requestHandler?.destroy?.(),delete this.handlers}}
+var NBs;
+var FBs=b(()=>{NBs=x(XN(),1)});
+export {nkt,NBs,FBs};

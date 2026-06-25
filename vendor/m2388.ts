@@ -1,9 +1,6 @@
 // @ts-nocheck
-import {CSn} from "./m2387.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function BaseText(e){let t=yCi.c(35),{color:n,backgroundColor:r,bold:o,dim:s,italic:i,underline:a,strikethrough:l,inverse:c,wrap:u,children:d,"aria-hidden":p,"aria-label":m,"aria-role":f,"aria-state":A}=e,h=i===void 0?!1:i,g=a===void 0?!1:a,_=l===void 0?!1:l,y=c===void 0?!1:c,T=u===void 0?"wrap":u;if(d===void 0||d===null)return null;let S;if(t[0]!==n)S=n&&{color:n},t[0]=n,t[1]=S;else S=t[1];let v;if(t[2]!==r)v=r&&{backgroundColor:r},t[2]=r,t[3]=v;else v=t[3];let R;if(t[4]!==s)R=s&&{dim:s},t[4]=s,t[5]=R;else R=t[5];let k;if(t[6]!==o)k=o&&{bold:o},t[6]=o,t[7]=k;else k=t[7];let x;if(t[8]!==h)x=h&&{italic:h},t[8]=h,t[9]=x;else x=t[9];let H;if(t[10]!==g)H=g&&{underline:g},t[10]=g,t[11]=H;else H=t[11];let I;if(t[12]!==_)I=_&&{strikethrough:_},t[12]=_,t[13]=I;else I=t[13];let P;if(t[14]!==y)P=y&&{inverse:y},t[14]=y,t[15]=P;else P=t[15];let L;if(t[16]!==x||t[17]!==H||t[18]!==I||t[19]!==P||t[20]!==S||t[21]!==v||t[22]!==R||t[23]!==k)L={...S,...v,...R,...k,...x,...H,...I,...P},t[16]=x,t[17]=H,t[18]=I,t[19]=P,t[20]=S,t[21]=v,t[22]=R,t[23]=k,t[24]=L;else L=t[24];let D=L,N=Wid[T],O;if(t[25]!==p||t[26]!==m||t[27]!==f||t[28]!==A)O=CSn(p,m,f,A),t[25]=p,t[26]=m,t[27]=f,t[28]=A,t[29]=O;else O=t[29];let $;if(t[30]!==d||t[31]!==N||t[32]!==O||t[33]!==D)$=TCi.default.createElement("ink-text",{style:N,textStyles:D,accessibility:O},d),t[30]=d,t[31]=N,t[32]=O,t[33]=D,t[34]=$;else $=t[34];return $}
-var yCi,TCi,Wid;
-var mUe=b(()=>{yCi=M(rt(),1),TCi=M(Te(),1),Wid={wrap:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap"},"wrap-trim":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap-trim"},"wrap-stream":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap-stream"},end:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"end"},middle:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"middle"},"truncate-end":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-end"},truncate:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate"},"truncate-middle":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-middle"},"truncate-start":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-start"}}});
-export {BaseText,yCi,TCi,Wid,mUe};
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+var dIi,pIi,Tz;
+var c2e=b(()=>{dIi=x(et(),1),pIi=dIi.createContext({exit(){},focusManager:null,rootNode:null,dispatchPasteEvent(){}});pIi.displayName="InternalAppContext";Tz=pIi});
+export {dIi,pIi,Tz,c2e};

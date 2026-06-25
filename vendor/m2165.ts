@@ -1,5 +1,7 @@
 // @ts-nocheck
+import {Bxt,WSn} from "./m2164.ts";
 import {b} from "../runtime.ts";
-import {Ami} from "./m2164.ts";
-var hmi=b(()=>{Ami()});
-export {hmi};
+class iTi{getLogger(e,t,n){return new Bxt}}
+var GSn;
+var h2r=b(()=>{WSn();GSn=new iTi});
+export {iTi,GSn,h2r};

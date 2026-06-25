@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {$V,ELe} from "./m200.ts";
-import {tYt,jor} from "./m210.ts";
 import {b} from "../runtime.ts";
-function xgc(e,t){return $V(e,tYt(e),t)}
-var b9o;
-var E9o=b(()=>{ELe();jor();b9o=xgc});
-export {xgc,b9o,E9o};
+import {gsr,MYt} from "./m79.ts";
+var Hwc,d7e;
+var PXt=b(()=>{gsr();Hwc=MYt(Object.getPrototypeOf,Object),d7e=Hwc});
+export {Hwc,d7e,PXt};

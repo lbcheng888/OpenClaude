@@ -1,28 +1,21 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {tr,Bl,KE,sn} from "../src/config/0047_namespace.ts";
-import {ci,pT} from "./m1289.ts";
-import {dn,bt} from "./m195.ts";
-import {RG,q9} from "./m4604.ts";
-import {Tul,Sul} from "./m4602.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Kn,Li} from "./m2572.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {et,Ai} from "./m2208.ts";
-import {Jc,vE} from "./m3837.ts";
-import {hul,gul} from "../src/tui/4602_onSelect.ts";
-import {aD,bne} from "./m4590.ts";
-import {clearMemoryFileCaches,getMemoryFiles,zw} from "../src/config/2717_stripHtmlComments.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-var Rul={};
-isFullscreenWithTTY(Rul,{call:()=>IKp});
-function HKp({onDone:e}){let t=async(r)=>{try{if(r.includes(tr()))await ci().mkdir(tr());try{await wul.writeFile(r,"",{encoding:"utf8",flag:"wx"})}catch(c){if(dn(c)!=="EEXIST")throw c}await RG(r);let o="default",s="";if(process.env.VISUAL)o="$VISUAL",s=process.env.VISUAL;else if(process.env.EDITOR)o="$EDITOR",s=process.env.EDITOR;let i=o!=="default"?`Using ${o}="${s}".`:"",a=i?`> ${i} To change editor, set $EDITOR or $VISUAL environment variable.`:"> To use a different editor, set the $EDITOR or $VISUAL environment variable.",l=Bl()?`
-
-> Safe mode: this session doesn't load memory files, so changes take effect after you ${KE()}.`:"";e(`Opened memory file at ${Tul(r)}${l}
-
-${a}`,{display:"system"})}catch(o){logForDebugging(`Failed to open memory file ${r}: ${o}`,{level:"error"}),e(`Error opening memory file: ${o}`)}},n=()=>{e("Cancelled memory editing",{display:"system"})};return Ix.createElement(Kn,{title:"Memory",onCancel:n,color:"remember"},Ix.createElement(Box,{flexDirection:"column",gap:1},Bl()&&Ix.createElement(Box,{flexDirection:"column"},Ix.createElement(Text,{color:"suggestion"},et.info," Safe mode"),Ix.createElement(Text,{dimColor:!0},"Memory files aren't loaded into this session. You can still edit them \u2014 changes take effect after you ",KE(),".")),Ix.createElement(Ix.Suspense,{fallback:Ix.createElement(Jc,{message:"Loading memory files\u2026",dimColor:!0})},Ix.createElement(hul,{onSelect:t,onCancel:n})),Ix.createElement(aD,{url:"https://code.claude.com/docs/en/memory"})))}
-var wul,Ix,IKp=async(e)=>(clearMemoryFileCaches(),await getMemoryFiles(),Ix.createElement(HKp,{onDone:e}));
-var xul=b(()=>{Ai();Li();bne();vE();gul();Sul();ze();pT();zw();qe();sn();bt();q9();wul=require("fs/promises"),Ix=M(Te(),1)});
-export {Rul,HKp,wul,Ix,IKp,xul};
+import {or,dn} from "../src/config/0137_namespace.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {cn,In,Ct} from "./m197.ts";
+import {ba,pd} from "./m706.ts";
+import {isSameProcessAsync,lE} from "./m1461.ts";
+import {rht,URo} from "./m4604.ts";
+import {b} from "../runtime.ts";
+function due(){return $Ro.join(or(),jgl)}
+function Ttm(e){return $Ro.join(or(),`${jgl}.tmp.${e.pid}.${e.startedAt}`)}
+async function Ygl(e){try{return await EL.writeFile(due(),TeamDeleteToolName(e,null,2),{flag:"wx"}),!0}catch(t){if(cn(t)==="EEXIST")return!1;throw t}}
+async function mPe(){let e;try{let n=await EL.lstat(due());if(!n.isFile()||n.size>65536)return await EL.rm(due(),{recursive:!0,force:!0}).catch(()=>{}),null;e=await EL.readFile(due(),"utf8")}catch(n){if(In(n))return null;throw n}let t=ba(e,!1);if(t&&typeof t==="object"){let n=t;if(typeof n.pid==="number"&&typeof n.version==="string")return t}return null}
+async function qRo(e){let t=Ttm(e);await EL.writeFile(t,TeamDeleteToolName(e,null,2),{flag:"wx"});try{await EL.rename(t,due())}catch(r){let o=cn(r);if(o==="EEXIST"||o==="EPERM"){await EL.unlink(due()).catch(()=>{});try{await EL.rename(t,due())}catch(s){await EL.unlink(t).catch(()=>{});let i=cn(s);if(i==="EEXIST"||i==="EPERM")return!1;throw s}}else throw await EL.unlink(t).catch(()=>{}),r}let n=await mPe();return n?.pid===e.pid&&n?.startedAt===e.startedAt}
+async function Jgl(){try{await EL.unlink(due())}catch(e){if(!In(e))throw e}}
+async function WRo(e){let t;try{t=await EL.readFile(`/proc/${e}/cmdline`,"utf8")}catch{return!0}let n=t.split("\x00");return n[0]==="claude daemon"||n.slice(1,4).includes("daemon")}
+async function VI(){let e=await mPe();if(!e)return null;try{process.kill(e.pid,0)}catch{return null}if(!await WRo(e.pid))return null;if(!await isSameProcessAsync(e.pid,e.procStart))return null;return e}
+async function eWt(){let e=await VI().catch(()=>null);if(!e)return null;return await rht(e.pid),e.pid}
+async function Xgl(e){let t=await VI().catch(()=>null);return!!t&&t.version!==e}
+var EL,$Ro,jgl="daemon.lock";
+var dne=b(()=>{dn();Ct();lE();pd();URo();tn();EL=require("fs/promises"),$Ro=require("path")});
+export {due,Ttm,Ygl,mPe,qRo,Jgl,WRo,VI,eWt,Xgl,EL,$Ro,jgl,dne};

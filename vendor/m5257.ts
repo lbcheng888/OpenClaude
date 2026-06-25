@@ -1,19 +1,24 @@
 // @ts-nocheck
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {getSessionId,lt} from "../src/session/0131_sent.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {jt,ws} from "./m228.ts";
-import {b} from "../runtime.ts";
-function a9l(){return vWt.join(tr(),i9l,getSessionId())}
-async function Xwm(){let e=a9l();await bYn.mkdir(e,{recursive:!0})}
-function l9l(e,t){let n=t.split("/")[1]||"png";return vWt.join(a9l(),`${e}.${n}`)}
-function vAt(e,t){if(e.type!=="image")return null;let n=l9l(e.id,e.mediaType||"image/png");return d9l(t,e.id,n),n}
-async function wAt(e,t){let n=await u9l(e);if(n)d9l(t,e.id,n);return n}
-async function c9l(e,t){let n=new Map;for(let[r,o]of Object.entries(e))if(o.type==="image"){let s=await u9l(o);if(s)n.set(Number(r),s)}if(n.size>0)t((r)=>{let o=r.storedImagePaths;for(let[s,i]of n)o=p9l(o,s,i);return o===r.storedImagePaths?r:{...r,storedImagePaths:o}});return n}
-async function u9l(e){if(e.type!=="image")return null;try{await Xwm();let t=l9l(e.id,e.mediaType||"image/png"),n=await bYn.open(t,"w",384);try{await n.writeFile(e.content,{encoding:"base64"}),await n.datasync()}finally{await n.close()}return logForDebugging(`Stored image ${e.id} to ${t}`),t}catch(t){return logForDebugging(`Failed to store image: ${t}`),null}}
-function d9l(e,t,n){e((r)=>{let o=p9l(r.storedImagePaths,t,n);return o===r.storedImagePaths?r:{...r,storedImagePaths:o}})}
-function p9l(e,t,n){if(e.get(t)===n)return e;let r=new Map(e);if(!r.has(t))while(r.size>=Jwm){let o=r.keys().next().value;if(o===void 0)break;r.delete(o)}return r.set(t,n),r}
-async function m9l(){let e=jt(),t=vWt.join(tr(),i9l),n=getSessionId();try{let r;try{r=await e.readdir(t)}catch{return}for(let o of r){if(o.name===n)continue;let s=vWt.join(t,o.name);try{await e.rm(s,{recursive:!0,force:!0}),logForDebugging(`Cleaned up old image cache: ${s}`)}catch{}}try{if((await e.readdir(t)).length===0)await e.rmdir(t)}catch{}}catch{}}
-var bYn,vWt,i9l="image-cache",Jwm=200;
-var RAt=b(()=>{lt();qe();sn();ws();bYn=require("fs/promises"),vWt=require("path")});
-export {a9l,Xwm,l9l,vAt,wAt,c9l,u9l,d9l,p9l,m9l,bYn,vWt,i9l,Jwm,RAt};
+import {B9e,qO} from "../src/mcp/3159_scope.ts";
+import {getMcpConfigsByScope,KA} from "../src/telemetry/3158_unwrapCcrProxyUrl.ts";
+import {loadAllPluginsCacheOnly,path} from "../src/agent/4467_resolvePluginRoot.ts";
+import {qnt,oh} from "./m2600.ts";
+import {Txn,IHe} from "../src/config/3152_i.ts";
+import {iCe,T0} from "../src/mcp/0733_serverName.ts";
+import {AppStateProvider,pq} from "./m3370.ts";
+import {KeybindingSetup,WW} from "./m3362.ts";
+import {Q8l,Z8l} from "../src/telemetry/5256_serverName.ts";
+import {tWl,nWl} from "../src/telemetry/5257_serverNames.ts";
+import {Ws,vd} from "../src/session/1465_promise.ts";
+import {Oi,Id,Pm,Pf} from "../src/agent/2591_level.ts";
+import {Sn,lr} from "./m233.ts";
+import {b,x} from "../runtime.ts";
+import {oe} from "./m2275.ts";
+async function E1o(){let{serverNames:e,pluginServerNames:t}=await C1o();return{pendingServers:e.filter((r)=>B9e(r)==="pending"),pluginServerNames:t}}
+async function C1o(){let{servers:e}=getMcpConfigsByScope("project"),t=Object.keys(e),n=new Set(t),r=new Set,{enabled:o}=await loadAllPluginsCacheOnly(),s=o.filter(qnt);for(let i of s){let a=await Txn(i);if(!a)continue;for(let l of Object.keys(a)){if(n.has(l)||r.has(l))continue;t.push(l),r.add(l)}}return{serverNames:t,pluginServerNames:r,rootServers:e}}
+async function rWl(e,t){let{pendingServers:n,pluginServerNames:r}=t??await E1o();if(n.length===0)return{persistFailed:!1};let o;o=await jDm(n.map((s)=>iCe(s,r.has(s))));try{return await new Promise((s)=>{let i=(a)=>void s(a);if(n.length===1&&n[0]!==void 0){let a=n[0];e.render(kGe.jsx(AppStateProvider,{children:kGe.jsx(KeybindingSetup,{children:kGe.jsx(Q8l,{serverName:a,isPluginServer:r.has(a),onDone:i})})}))}else e.render(kGe.jsx(AppStateProvider,{children:kGe.jsx(KeybindingSetup,{children:kGe.jsx(tWl,{serverNames:n,pluginServerNames:r,onDone:i})})}))})}finally{await YDm(o)}}
+async function jDm(e){{if(!Ws())return;let t=process.env.CLAUDE_JOB_DIR;if(!t)return;let n=await Oi(t);if(!n)return;let r=e.length,o=Sn(r,"server"),s=Sn(r,"needs","need");try{return await Id(t,{...n,state:"blocked",detail:`${r} new MCP ${o} ${s} approval`,tempo:"blocked",needs:`approve ${r} new project MCP ${o} (${e.join(", ")}) \u2014 attach to respond`,updatedAt:new Date().toISOString()}),{state:n.state,tempo:n.tempo,needs:n.needs,detail:n.detail}}catch(i){Pm(i)}}return}
+async function YDm(e){{if(!e||!Ws())return;let t=process.env.CLAUDE_JOB_DIR;if(!t)return;let n=await Oi(t);if(!n||n.state!=="blocked")return;try{await Id(t,{...n,...e,block:void 0,updatedAt:new Date().toISOString()})}catch(r){Pm(r)}}}
+var kGe;
+var A1o=b(()=>{Z8l();nWl();Pf();WW();pq();vd();IHe();oh();path();lr();KA();T0();qO();kGe=x(oe(),1)});
+export {E1o,C1o,rWl,jDm,YDm,kGe,A1o};

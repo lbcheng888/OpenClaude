@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-async function kXs(e,{humanReadableOutput:t=!0,signal:n}={}){if(RXs.default.platform!=="darwin")throw Error("macOS only");let r=t?[]:["-ss"],o={};if(n)o.signal=n;let{stdout:s}=await Zqu("osascript",["-e",e,r],o);return s.trim()}
-var RXs,xXs,iPr,Zqu;
-var HXs=b(()=>{RXs=M(require("process")),xXs=require("util"),iPr=require("child_process"),Zqu=xXs.promisify(iPr.execFile)});
-export {kXs,RXs,xXs,iPr,Zqu,HXs};
+import {b,x} from "../runtime.ts";
+function pYu(){try{return w1r.default.statSync("/.dockerenv"),!0}catch{return!1}}
+function mYu(){try{return w1r.default.readFileSync("/proc/self/cgroup","utf8").includes("docker")}catch{return!1}}
+function k1r(){if(v1r===void 0)v1r=pYu()||mYu();return v1r}
+var w1r,v1r;
+var pri=b(()=>{w1r=x(require("fs"))});
+export {pYu,mYu,k1r,w1r,v1r,pri};

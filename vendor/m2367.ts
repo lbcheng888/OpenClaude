@@ -1,19 +1,8 @@
 // @ts-nocheck
-import {apiKeyHelperCache,Dbi,tAe} from "./m2352.ts";
-import {Hyi,STn} from "./m2284.ts";
-import {Obi,zUr} from "./m2353.ts";
-import {Lbi,Mbi} from "./m2354.ts";
-import {iUe,GUr} from "./m2351.ts";
-import {$1,FIt} from "./m2366.ts";
+import {FF,w4r} from "./m2365.ts";
+import {WCn,fPt} from "./m2366.ts";
 import {b} from "../runtime.ts";
-import {sUe} from "./m2349.ts";
-function o2r(e){let t=e;while(t&&!t.hasAbsoluteDescendant)t.hasAbsoluteDescendant=!0,t=t.parentNode}
-function Zbi(e,t,n=!1){if(t.nodeName==="#text")return;let r=t,o=n||r.style.position==="absolute",s=apiKeyHelperCache.get(r);if(s)Dbi(e,s,o),apiKeyHelperCache.delete(r);for(let i of r.childNodes)Zbi(e,i,o)}
-function Lsd(e,t){return tEi(e,t)}
-function tEi(e,t){if(e===t)return!0;if(e===void 0||t===void 0)return!1;let n=Object.keys(e),r=Object.keys(t);if(n.length!==r.length)return!1;for(let o of n)if(!Object.hasOwn(t,o)||e[o]!==t[o])return!1;return!0}
-function Bsd(e){return e.nodeName!=="#text"}
-function oEi(e,t){let n=[];return r(e,0),n;function r(o,s){let i=o.yogaNode;if(!i||i.getDisplay()===1)return;let a=s+i.getComputedTop(),l=i.getComputedHeight();if(t<a||t>=a+l)return;if(o.debugOwnerChain)n=o.debugOwnerChain;for(let c of o.childNodes)if(Bsd(c))r(c,a)}}
-var UIt=(e)=>{let n={nodeName:e,style:{},attributes:{},childNodes:[],parentNode:void 0,yogaNode:e!=="ink-virtual-text"&&e!=="ink-link"&&e!=="ink-progress"?Hyi.Node.create():void 0,dirty:!1};if(e==="ink-text")n.yogaNode?.setMeasureFunc(Msd.bind(null,n));else if(e==="ink-raw-ansi")n.yogaNode?.setMeasureFunc(Nsd.bind(null,n));return n},cSn=(e,t)=>{if(t.parentNode)$It(t.parentNode,t);if(t.parentNode=e,e.childNodes.push(t),t.yogaNode)e.yogaNode?.insertChild(t.yogaNode,e.yogaNode.getChildCount());if(t.style.position==="absolute"||t.hasAbsoluteDescendant)o2r(e);YO(e)},s2r=(e,t,n)=>{if(t.parentNode)$It(t.parentNode,t);if(t.parentNode=e,t.style.position==="absolute"||t.nodeName!=="#text"&&t.hasAbsoluteDescendant)o2r(e);let r=e.childNodes.indexOf(n);if(r>=0){let o=0;if(t.yogaNode&&e.yogaNode){for(let s=0;s<r;s++)if(e.childNodes[s]?.yogaNode)o++}if(e.childNodes.splice(r,0,t),t.yogaNode&&e.yogaNode)e.yogaNode.insertChild(t.yogaNode,o);YO(e);return}if(e.childNodes.push(t),t.yogaNode)e.yogaNode?.insertChild(t.yogaNode,e.yogaNode.getChildCount());YO(e)},$It=(e,t)=>{if(t.yogaNode)t.parentNode?.yogaNode?.removeChild(t.yogaNode);Zbi(e,t),t.parentNode=void 0;let n=e.childNodes.indexOf(t);if(n>=0)e.childNodes.splice(n,1);YO(e)},i2r=(e,t,n)=>{if(t==="children")return;if(e.attributes[t]===n)return;e.attributes[t]=n,YO(e)},a2r=(e,t)=>{e.accessibility=t},l2r=(e,t)=>{if(Lsd(e.style,t))return;let n=t.position==="absolute"&&e.style.position!=="absolute";if(e.style=t,n&&e.parentNode)o2r(e.parentNode);YO(e)},eEi=(e,t)=>{if(tEi(e.textStyles,t))return;e.textStyles=t,YO(e)},nEi=(e)=>{let t={nodeName:"#text",nodeValue:e,yogaNode:void 0,parentNode:void 0,style:{}};return qIt(t,e),t},Msd=function(e,t,n){let r=e.nodeName==="#text"?e.nodeValue:Obi(e),o=Lbi(r),s=e.style?.textWrap??"wrap";if(s==="wrap-stream"){let l=iUe($1(o,t,"wrap"),t);return{width:l.width,height:Math.max(0,l.height-1)}}let i=iUe(o,t);if(i.width<=t)return i;if(i.width>=1&&t>0&&t<1)return i;if(o.includes(`
-`)&&n===0){let l=Math.max(t,i.width);return iUe(o,l)}let a=$1(o,t,s);return iUe(a,t)},Nsd=function(e){return{width:e.attributes.rawWidth,height:e.attributes.rawHeight}},YO=(e)=>{let t=e,n=!1;while(t){if(t.nodeName!=="#text"){if(t.dirty=!0,!n&&(t.nodeName==="ink-text"||t.nodeName==="ink-raw-ansi")&&t.yogaNode)t.yogaNode.markDirty(),n=!0}t=t.parentNode}},rEi=(e)=>{let t=e;while(t?.parentNode)t=t.parentNode;if(t&&t.nodeName!=="#text")t.onRender?.()},qIt=(e,t)=>{if(typeof t!=="string")t=String(t);if(e.nodeValue===t)return;e.nodeValue=t,YO(e)},c2r=(e)=>{if("childNodes"in e)for(let t of e.childNodes)c2r(t);e.yogaNode=void 0};
-var mZe=b(()=>{STn();sUe();GUr();tAe();zUr();Mbi();FIt()});
-export {o2r,Zbi,Lsd,tEi,Bsd,oEi,UIt,cSn,s2r,$It,i2r,a2r,l2r,eEi,nEi,Msd,Nsd,YO,rEi,qIt,c2r,mZe};
+function hz(e){return VCn([],e)}
+function VCn(e,t){let n=[...e];for(let r of t)if(r.code===FF.reset.open)n=[];else if(WCn.has(r.code))n=n.filter((o)=>o.endCode!==r.code);else if(r.code===FF.bold.open||r.code===FF.dim.open){if(!n.find((s)=>s.code===r.code&&s.endCode===r.endCode))n.push(r)}else n=n.filter((s)=>s.endCode!==r.endCode),n.push(r);return n}
+var KCn=b(()=>{w4r();fPt()});
+export {hz,VCn,KCn};

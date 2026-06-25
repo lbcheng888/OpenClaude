@@ -1,5 +1,7 @@
 // @ts-nocheck
+import {cTr,uTr} from "./m678.ts";
 import {b} from "../runtime.ts";
-var ZZo,ees,tes=(e,t=[])=>{if(!Array.isArray(t))return[e];return[e,...t]},lJc,cJc=(e)=>{if(typeof e!=="string"||lJc.test(e))return e;return`"${e.replaceAll('"',"\\\"")}"`},Ufr=(e,t)=>tes(e,t).join(" "),$fr=(e,t)=>tes(e,t).map((n)=>cJc(n)).join(" "),uJc,XZo=(e)=>{let t=typeof e;if(t==="string")return e;if(t==="number")return String(e);if(t==="object"&&e!==null&&!(e instanceof ees.ChildProcess)&&"stdout"in e){let n=typeof e.stdout;if(n==="string")return e.stdout;if(ZZo.Buffer.isBuffer(e.stdout))return e.stdout.toString();throw TypeError(`Unexpected "${n}" stdout in template expression`)}throw TypeError(`Unexpected "${t}" in template expression`)},QZo=(e,t,n)=>n||e.length===0||t.length===0?[...e,...t]:[...e.slice(0,-1),`${e.at(-1)}${t[0]}`,...t.slice(1)],dJc=({templates:e,expressions:t,tokens:n,index:r,template:o})=>{let s=o??e.raw[r],i=s.split(uJc).filter(Boolean),a=QZo(n,i,s.startsWith(" "));if(r===t.length)return a;let l=t[r],c=Array.isArray(l)?l.map((u)=>XZo(u)):[XZo(l)];return QZo(a,c,s.endsWith(" "))},qfr=(e,t)=>{let n=[];for(let[r,o]of e.entries())n=dJc({templates:e,expressions:t,tokens:n,index:r,template:o});return n};
-var nes=b(()=>{ZZo=require("buffer"),ees=require("child_process"),lJc=/^[\w.-]+$/,uJc=/ +/g});
-export {ZZo,ees,tes,lJc,cJc,Ufr,$fr,uJc,XZo,QZo,dJc,qfr,nes};
+async function ion(e,t){if(!("Buffer"in globalThis))throw Error("getStreamAsBuffer() is only supported in Node.js");try{return Dss(await cTr(e,t))}catch(n){if(n.bufferedData!==void 0)n.bufferedData=Dss(n.bufferedData);throw n}}
+var Dss=(e)=>globalThis.Buffer.from(e);
+var Pss=b(()=>{uTr()});
+export {ion,Dss,Pss};

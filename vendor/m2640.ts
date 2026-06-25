@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Wie} from "./m2610.ts";
-import {ACn} from "./m2612.ts";
-import {Yet} from "./m2621.ts";
-import {E4r} from "./m2616.ts";
-import {Z4r} from "./m2635.ts";
-var AOi=X((vEh,fOi)=>{fOi.exports=Wie();ACn();Yet();E4r();Z4r()});
-export {AOi};
+import {Q} from "../runtime.ts";
+import {Qm} from "./m2613.ts";
+import {Pz} from "./m2629.ts";
+import {x_} from "./m2615.ts";
+var gwn=Q((eLg,rBi)=>{var i$e=Qm();Pz();x_();var IHd=rBi.exports=i$e.pss=i$e.pss||{};IHd.create=function(e){if(arguments.length===3)e={md:arguments[0],mgf:arguments[1],saltLength:arguments[2]};var{md:t,mgf:n}=e,r=t.digestLength,o=e.salt||null;if(typeof o==="string")o=i$e.util.createBuffer(o);var s;if("saltLength"in e)s=e.saltLength;else if(o!==null)s=o.length();else throw Error("Salt length not specified or specific salt not given.");if(o!==null&&o.length()!==s)throw Error("Given salt length does not match length of given salt.");var i=e.prng||i$e.random,a={};return a.encode=function(l,c){var u,d=c-1,p=Math.ceil(d/8),m=l.digest().getBytes();if(p<r+s+2)throw Error("Message is too long to encrypt.");var f;if(o===null)f=i.getBytesSync(s);else f=o.bytes();var h=new i$e.util.ByteBuffer;h.fillWithByte(0,8),h.putBytes(m),h.putBytes(f),t.start(),t.update(h.getBytes());var g=t.digest().getBytes(),_=new i$e.util.ByteBuffer;_.fillWithByte(0,p-s-r-2),_.putByte(1),_.putBytes(f);var T=_.getBytes(),y=p-r-1,S=n.generate(g,y),E="";for(u=0;u<y;u++)E+=String.fromCharCode(T.charCodeAt(u)^S.charCodeAt(u));var R=65280>>8*p-d&255;return E=String.fromCharCode(E.charCodeAt(0)&~R)+E.substr(1),E+g+String.fromCharCode(188)},a.verify=function(l,c,u){var d,p=u-1,m=Math.ceil(p/8);if(c=c.substr(-m),m<r+s+2)throw Error("Inconsistent parameters to PSS signature verification.");if(c.charCodeAt(m-1)!==188)throw Error("Encoded message does not end in 0xBC.");var f=m-r-1,h=c.substr(0,f),g=c.substr(f,r),_=65280>>8*m-p&255;if((h.charCodeAt(0)&_)!==0)throw Error("Bits beyond keysize not zero as expected.");var T=n.generate(g,f),y="";for(d=0;d<f;d++)y+=String.fromCharCode(h.charCodeAt(d)^T.charCodeAt(d));y=String.fromCharCode(y.charCodeAt(0)&~_)+y.substr(1);var S=m-r-s-2;for(d=0;d<S;d++)if(y.charCodeAt(d)!==0)throw Error("Leftmost octets not zero as expected");if(y.charCodeAt(S)!==1)throw Error("Inconsistent PSS signature, 0x01 marker not found");var E=y.substr(-s),R=new i$e.util.ByteBuffer;R.fillWithByte(0,8),R.putBytes(l),R.putBytes(E),t.start(),t.update(R.getBytes());var w=t.digest().getBytes();return g===w},a}});
+export {gwn};

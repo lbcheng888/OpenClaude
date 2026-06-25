@@ -1,21 +1,15 @@
 // @ts-nocheck
-import {npn} from "./m1568.ts";
-import {rpn} from "./m1571.ts";
-import {opn} from "./m1576.ts";
-import {b,M} from "../runtime.ts";
-import {Fjs} from "./m1570.ts";
-import {vkr} from "./m1577.ts";
-import {Lzt} from "./m173.ts";
-import {zde} from "./m168.ts";
-import {LD} from "./m194.ts";
-import {R8s,w8s} from "./m1605.ts";
-import {Mwt,k8s} from "./m1607.ts";
-import {Bkr,cpn} from "./m1608.ts";
-import {SKe} from "./m809.ts";
-import {g2} from "../src/core/0150_event.ts";
-import {mi,es} from "./m135.ts";
-import {x8s} from "./m1606.ts";
-function KMu(e){return typeof e==="object"&&e!==null&&(("name"in e)&&e.name==="AbortError"||("message"in e)&&String(e.message).includes("FetchRequestCanceledException"))}
-var P8s,Fkr=(e)=>new TextDecoder("utf-8").decode(e),D8s=(e)=>new TextEncoder().encode(e),VMu=()=>{let e=new npn({utf8Encoder:Fkr,utf8Decoder:D8s});return{base64Decoder:rpn,base64Encoder:opn,utf8Decoder:D8s,utf8Encoder:Fkr,eventStreamMarshaller:e,streamCollector:P8s.streamCollector}},upn;
-var O8s=b(()=>{Fjs();vkr();Lzt();zde();LD();R8s();Mwt();Bkr();P8s=M(SKe(),1);upn=class upn extends g2{static fromSSEResponse(e,t,n){let r=!1,o=n?cpn(n):console;async function*s(){if(!e.body)throw t.abort(),new mi("Attempted to iterate over a response with no body");let a=x8s(e.body),l=w8s(a,VMu());for await(let c of l)if(c.chunk&&c.chunk.bytes)yield{event:"chunk",data:Fkr(c.chunk.bytes),raw:[]};else if(c.internalServerException)yield{event:"error",data:"InternalServerException",raw:[]};else if(c.modelStreamErrorException)yield{event:"error",data:"ModelStreamErrorException",raw:[]};else if(c.validationException)yield{event:"error",data:"ValidationException",raw:[]};else if(c.throttlingException)yield{event:"error",data:"ThrottlingException",raw:[]}}async function*i(){if(r)throw Error("Cannot iterate over a consumed stream, use `.tee()` to split the stream.");r=!0;let a=!1;try{for await(let l of s()){if(l.event==="chunk"){let c;try{c=JSON.parse(l.data)}catch(u){throw o.error("Could not parse message into JSON:",l.data),o.error("From chunk:",l.raw),u}if(c&&typeof c==="object"&&c.type==="error")throw new es(void 0,c,void 0,e.headers,c.error?.type);yield c}if(l.event==="error"){let c=l.data,u=k8s(c),d=u?void 0:c;throw es.generate(void 0,u,d,e.headers)}}a=!0}catch(l){if(KMu(l))return;throw l}finally{if(!a)t.abort()}}return new upn(i,t)}}});
-export {KMu,P8s,Fkr,D8s,VMu,upn,O8s};
+import {b} from "../runtime.ts";
+import {$7s} from "./m1584.ts";
+import {czs} from "./m1600.ts";
+import {uzs} from "./m1601.ts";
+import {pzs} from "./m1603.ts";
+import {mzs,uPr} from "./m1604.ts";
+import {gzs} from "./m1607.ts";
+import {_zs} from "./m1608.ts";
+import {cPr} from "./m1602.ts";
+function GXe(e,t,n){let r,o,s;if(typeof t>"u"&&typeof n>"u")r={},s=e;else if(r=e,typeof t==="function")return o=t,s=n,Y4u(r,o,s);else s=t;for(let i of Object.keys(s)){if(!Array.isArray(s[i])){r[i]=s[i];continue}yzs(r,null,s,i)}return r}
+var VXe=(e,t)=>{let n={};for(let r in t)yzs(n,e,t,r);return n},Y4u=(e,t,n)=>GXe(e,Object.entries(n).reduce((r,[o,s])=>{if(Array.isArray(s))r[o]=s;else if(typeof s==="function")r[o]=[t,s()];else r[o]=[t,s];return r},{})),yzs=(e,t,n,r)=>{if(t!==null){let i=n[r];if(typeof i==="function")i=[,i];let[a=J4u,l=X4u,c=r]=i;if(typeof a==="function"&&a(t[c])||typeof a!=="function"&&!!a)e[r]=l(t[c]);return}let[o,s]=n[r];if(typeof s==="function"){let i,a=o===void 0&&(i=s())!=null,l=typeof o==="function"&&!!o(void 0)||typeof o!=="function"&&!!o;if(a)e[r]=i;else if(l)e[r]=s()}else{let i=o===void 0&&s!=null,a=typeof o==="function"&&!!o(s)||typeof o!=="function"&&!!o;if(i||a)e[r]=s}},J4u=(e)=>e!=null,X4u=(e)=>e;
+var Tzs=()=>{};
+var Szs=b(()=>{$7s();czs();uzs();pzs();mzs();gzs();uPr();_zs();cPr();Tzs()});
+export {GXe,VXe,Y4u,yzs,J4u,X4u,Tzs,Szs};

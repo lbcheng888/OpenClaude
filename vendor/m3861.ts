@@ -1,0 +1,21 @@
+// @ts-nocheck
+import {b,x} from "../runtime.ts";
+import {MS} from "./m460.ts";
+import {je} from "./m2462.ts";
+import {ss} from "./m2553.ts";
+import {_k} from "../src/core/0576_isCancel.ts";
+import {Jg} from "./m2044.ts";
+import {qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ct} from "./m197.ts";
+import {xXe} from "./m1486.ts";
+import {lBr} from "./m2033.ts";
+import {d_} from "./m3354.ts";
+import {xw} from "../src/tui/3853_mode.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+import {ve} from "./m461.ts";
+import {jt} from "./m253.ts";
+var tvp,nco,V1a,t6_,n6_;
+var K1a=b(()=>{MS();je();ss();_k();Jg();qe();Ct();xXe();lBr();d_();xw();tvp=x(tt(),1),nco=x(et(),1),V1a=x(oe(),1),t6_=ve(()=>jt.object({device_authorization_endpoint:jt.string().optional(),token_endpoint:jt.string().optional()})),n6_=ve(()=>jt.object({device_code:jt.string(),user_code:jt.string(),verification_uri:jt.string(),verification_uri_complete:jt.string().optional(),expires_in:jt.number(),interval:jt.number().optional()}))});
+export {tvp,nco,V1a,t6_,n6_,K1a};

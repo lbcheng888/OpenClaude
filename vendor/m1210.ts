@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {mCr,tIs} from "./m1209.ts";
 import {b} from "../runtime.ts";
-var nIs=(e)=>{let{signer:t}=e;return Object.assign(e,{signer:async(n)=>{let r=await t(n);if(hRu(r))return new mCr({signer:r});throw Error("Expected WebsocketSignatureV4 signer, please check the client constructor.")}})},hRu=(e)=>!!e;
-var rIs=b(()=>{tIs()});
-export {nIs,hRu,rIs};
+var LLs=()=>{};
+var MLs=()=>(e)=>async(t)=>{let n={...t.input},r=await e(t),o=r.output;if(n.SessionId&&o.SessionId==null)o.SessionId=n.SessionId;return r},NLs;
+var FLs=b(()=>{NLs={step:"initialize",name:"injectSessionIdMiddleware",tags:["WEBSOCKET","EVENT_STREAM"],override:!0}});
+export {LLs,MLs,NLs,FLs};

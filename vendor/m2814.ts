@@ -1,4 +1,26 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var y3i=X((a2h,_3i)=>{function wHd(e){if(!e)return null;if(typeof e==="string")return e;return e.source}function RHd(...e){return e.map((n)=>wHd(n)).join("")}function xHd(e){let t=/[a-zA-Z_$][a-zA-Z0-9_$]*/,n=/([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)/,r={className:"rest_arg",begin:/[.]{3}/,end:t,relevance:10};return{name:"ActionScript",aliases:["as"],keywords:{keyword:"as break case catch class const continue default delete do dynamic each else extends final finally for function get if implements import in include instanceof interface internal is namespace native new override package private protected public return set static super switch this throw try typeof use var void while with",literal:"true false null undefined"},contains:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE,e.C_LINE_COMMENT_MODE,e.C_BLOCK_COMMENT_MODE,e.C_NUMBER_MODE,{className:"class",beginKeywords:"package",end:/\{/,contains:[e.TITLE_MODE]},{className:"class",beginKeywords:"class interface",end:/\{/,excludeEnd:!0,contains:[{beginKeywords:"extends implements"},e.TITLE_MODE]},{className:"meta",beginKeywords:"import include",end:/;/,keywords:{"meta-keyword":"import include"}},{className:"function",beginKeywords:"function",end:/[{;]/,excludeEnd:!0,illegal:/\S/,contains:[e.TITLE_MODE,{className:"params",begin:/\(/,end:/\)/,contains:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE,e.C_LINE_COMMENT_MODE,e.C_BLOCK_COMMENT_MODE,r]},{begin:RHd(/:\s*/,n)}]},e.METHOD_GUARD],illegal:/#/}}_3i.exports=xHd});
-export {y3i};
+import {lw,a4} from "./m2436.ts";
+import {cc} from "./m2459.ts";
+import {JCi,hve} from "./m2271.ts";
+import {bt,Gc} from "./m588.ts";
+import {b} from "../runtime.ts";
+var Rae="ListMcpResourcesTool",DWi=`
+Lists available resources from configured MCP servers.
+Each resource object includes a 'server' field indicating which server it's from.
+
+Usage examples:
+- List all resources from all servers: \`listMcpResources\`
+- List resources from a specific server: \`listMcpResources({ server: "myserver" })\`
+`,PWi=`
+List available resources from configured MCP servers.
+Each returned resource will include all standard MCP resource fields plus a 'server' field 
+indicating which server the resource belongs to.
+
+Parameters:
+- server (optional): The name of a specific MCP server to get resources from. If not provided,
+  resources from all servers will be returned.
+`;
+function LD(e,t,n){if(!(n?.supportsHyperlinks??lw())){if(t!==void 0){let c=cc(t);if(c!==e&&e!==`http://${c}`&&e!==`https://${c}`)return`${t} (${e})`}return e}let l=(((n?.themeName)?JCi(n.themeName):!1)?bt.blue:bt.blueBright)(t??e);return`${OWi}${e}${LWi}${l}${OWi}${LWi}`}
+var OWi="\x1B]8;;",LWi="\x07";
+var oHe=b(()=>{Gc();a4();hve()});
+export {Rae,DWi,PWi,LD,OWi,LWi,oHe};

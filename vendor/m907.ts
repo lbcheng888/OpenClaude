@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {mTr} from "./m906.ts";
-var ifs=X((Bon)=>{Object.defineProperty(Bon,"__esModule",{value:!0});Bon.fromBase64=void 0;var suu=mTr(),iuu=/^[A-Za-z0-9+/]*={0,2}$/,auu=(e)=>{if(e.length*3%4!==0)throw TypeError("Incorrect padding on base64 string.");if(!iuu.exec(e))throw TypeError("Invalid base64 string.");let t=(0,suu.fromString)(e,"base64");return new Uint8Array(t.buffer,t.byteOffset,t.byteLength)};Bon.fromBase64=auu});
-export {ifs};
+import {Q} from "../runtime.ts";
+import {DTs} from "./m906.ts";
+import {BS} from "./m793.ts";
+var hme=Q((MTs)=>{var xAr=DTs(),aSu=BS(),lSu=require("buffer"),PTs=require("crypto");class LTs{algorithmIdentifier;secret;hash;constructor(e,t){this.algorithmIdentifier=e,this.secret=t,this.reset()}update(e,t){this.hash.update(aSu.toUint8Array(OTs(e,t)))}digest(){return Promise.resolve(this.hash.digest())}reset(){this.hash=this.secret?PTs.createHmac(this.algorithmIdentifier,OTs(this.secret)):PTs.createHash(this.algorithmIdentifier)}}function OTs(e,t){if(lSu.Buffer.isBuffer(e))return e;if(typeof e==="string")return xAr.fromString(e,t);if(ArrayBuffer.isView(e))return xAr.fromArrayBuffer(e.buffer,e.byteOffset,e.byteLength);return xAr.fromArrayBuffer(e)}MTs.Hash=LTs});
+export {hme};

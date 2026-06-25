@@ -1,18 +1,18 @@
 // @ts-nocheck
-import {k2,xH} from "../src/config/0580_xH.ts";
-import {si,gT} from "./m2190.ts";
-import {kn,SA} from "../src/config/0689_timestamp.ts";
-import {Lb,bt} from "./m195.ts";
-import {qt,Xt} from "../src/config/0228_encoding.ts";
-import {b} from "../runtime.ts";
-import {iv} from "./m454.ts";
-import {we} from "./m455.ts";
-import {hn} from "./m251.ts";
-function Wic(e){return{skillId:e.id,name:e.name,description:e.description??"",source:e.source??"custom",updatedAt:e.updated_at??null}}
-function Gic(e){return e.enabled!==!1}
-async function zic(){let e=k2(),t=e?`${Vic}&entrypoint=${encodeURIComponent(e)}`:Vic;try{let n=await si.get(t,{auth:"teleport-org",timeout:s4m});if(!n.ok)return{success:!1,error:n.reason==="no-auth"?n.detail:n.reason};if(!Array.isArray(n.data?.skills))return kn("warn","skills_sync_list_malformed"),{success:!1,error:"malformed list-skills response"};return{success:!0,skills:n.data.skills.filter(Gic).map(Wic)}}catch(n){let{message:r}=Lb(n);return{success:!1,error:r}}}
-async function Yic(e,t){let n=k2(),r=n?`?entrypoint=${encodeURIComponent(n)}`:"";try{let o=await si.get(`/api/oauth/organizations/:orgUUID/skills/${encodeURIComponent(e)}/download${r}`,{auth:"teleport-org",timeout:i4m,responseType:"arraybuffer"});if(!o.ok||!o.data)return kn("warn","skills_sync_download_not_ok",{reason:o.ok?"empty_body":o.reason}),!1;let s=Buffer.from(o.data);if(s.length<2||s[0]!==80||s[1]!==75)return kn("warn","skills_sync_download_not_zip",{serverError:l4m(s),bodyLen:s.length}),!1;return await Kic.writeFile(t,s),!0}catch(o){let{kind:s}=Lb(o);return kn("warn","skills_sync_download_exception",{kind:s}),!1}}
-function l4m(e){try{let t=a4m().safeParse(qt(e.toString("utf8",0,2048)));if(t.success)return t.data.error.type??"error_envelope_no_type"}catch{}return"non_json_body"}
-var Kic,s4m=30000,i4m=300000,a4m,Vic="/api/oauth/organizations/:orgUUID/skills/list-skills?include_wiggle_skills=true";
-var Jic=b(()=>{iv();SA();xH();bt();Xt();gT();Kic=require("fs/promises"),a4m=we(()=>hn.object({error:hn.object({type:hn.string().optional()})}))});
-export {Wic,Gic,zic,Yic,l4m,Kic,s4m,i4m,a4m,Vic,Jic};
+import {ft,b,x} from "../runtime.ts";
+import {gracefulShutdownSync,isAmberSentinelEnabled} from "../src/config/3348_flushAnalyticsSinks.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {Bl,d_} from "./m3354.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+var Dmc={};
+ft(Dmc,{DevChannelsDialog:()=>DevChannelsDialog});
+function DevChannelsDialog(e){let t=xmc.c(13),{channels:n,onAccept:r}=e,o;if(t[0]!==r)o=function(f){e:switch(f){case"accept":{r();break e}case"exit":gracefulShutdownSync(1)}},t[0]=r,t[1]=o;else o=t[1];let s=o,i=MKm,a,l;if(t[2]===Symbol.for("react.memo_cache_sentinel"))a=lLe.jsx(Text,{children:"--dangerously-load-development-channels is for local channel development only. Do not use this option to run channels you have downloaded off the internet."}),l=lLe.jsx(Text,{children:"Please use --channels to run a list of approved channels."}),t[2]=a,t[3]=l;else a=t[2],l=t[3];let c;if(t[4]!==n)c=n.map(LKm).join(", "),t[4]=n,t[5]=c;else c=t[5];let u;if(t[6]!==c)u=lLe.jsxs(Box,{flexDirection:"column",gap:1,children:[a,l,lLe.jsxs(Text,{dimColor:!0,children:["Channels:"," ",c]})]}),t[6]=c,t[7]=u;else u=t[7];let d;if(t[8]!==s)d=lLe.jsx(Bl,{confirmLabel:"I am using this for local development",cancelLabel:"Exit",onConfirm:()=>s("accept"),onCancel:()=>s("exit")}),t[8]=s,t[9]=d;else d=t[9];let p;if(t[10]!==u||t[11]!==d)p=lLe.jsxs(preInitQueue,{title:"WARNING: Loading development channels",color:"error",onCancel:i,children:[u,d]}),t[10]=u,t[11]=d,t[12]=p;else p=t[12];return p}
+function LKm(e){return e.kind==="plugin"?`plugin:${e.name}@${e.marketplace}`:`server:${e.name}`}
+function MKm(){gracefulShutdownSync(0)}
+var xmc,lLe;
+var Pmc=b(()=>{je();isAmberSentinelEnabled();d_();di();xmc=x(tt(),1),lLe=x(oe(),1)});
+export {Dmc,DevChannelsDialog,LKm,MKm,xmc,lLe,Pmc};

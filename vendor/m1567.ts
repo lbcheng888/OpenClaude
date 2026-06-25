@@ -1,6 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Skr} from "./m1565.ts";
-import {Ojs} from "./m1566.ts";
-var Ljs=b(()=>{Skr();Ojs()});
-export {Ljs};
+var YDr;
+var A7s=b(()=>{YDr=class YDr{constructor(e){this.options=e}[Symbol.asyncIterator](){return this.asyncIterator()}async*asyncIterator(){for await(let e of this.options.messageStream){let t=await this.options.deserializer(e);if(t===void 0)continue;yield t}}}});
+export {YDr,A7s};

@@ -1,0 +1,9 @@
+// @ts-nocheck
+import {extractSignatureBlock,MJr} from "./m3140.ts";
+import {unzipSync,k9e} from "./m3072.ts";
+import {b} from "../runtime.ts";
+function uxn({silent:e=!1}={}){return{log:(...t)=>{if(!e)console.log(...t)},error:(...t)=>{if(!e)console.error(...t)},warn:(...t)=>{if(!e)console.warn(...t)},info:(...t)=>{if(!e)console.info(...t)},debug:(...t)=>{if(!e)console.debug(...t)}}}
+async function unpackExtension({mcpbPath:e,outputDir:t,silent:n}){let r=uxn({silent:n}),o=Dae.resolve(e);if(!AW.existsSync(o))return r.error(`ERROR: MCPB file not found: ${e}`),!1;let s=t?Dae.resolve(t):process.cwd();if(!AW.existsSync(s))AW.mkdirSync(s,{recursive:!0});try{let i=AW.readFileSync(o),{originalContent:a}=extractSignatureBlock(i),l=new Map,c=!0;{let d=a,p=-1;for(let m=d.length-22;m>=0;m--)if(d.readUInt32LE(m)===101010256){p=m;break}if(p!==-1){let m=d.readUInt32LE(p+16),f=d.readUInt16LE(p+8),h=m;for(let g=0;g<f;g++)if(d.readUInt32LE(h)===33639248){let _=d.readUInt32LE(h+38),T=d.readUInt16LE(h+28),y=d.toString("utf8",h+46,h+46+T),S=_>>16&511;if(S>0)l.set(y,S);let E=d.readUInt16LE(h+30),R=d.readUInt16LE(h+32);h+=46+T+E+R}else break}}let u=unzipSync(a);for(let d in u)if(Object.prototype.hasOwnProperty.call(u,d)){let p=u[d],m=Dae.join(s,d),f=Dae.resolve(m),h=Dae.resolve(s);if(!f.startsWith(h+Dae.sep)&&f!==h)throw Error(`Path traversal attempt detected: ${d}`);let g=Dae.join(m,"..");if(!AW.existsSync(g))AW.mkdirSync(g,{recursive:!0});if(AW.writeFileSync(m,p),l.has(d))try{let _=l.get(d);if(_!==void 0)AW.chmodSync(m,_)}catch(_){}}return r.log(`Extension unpacked successfully to ${s}`),!0}catch(i){if(i instanceof Error)r.error(`ERROR: Failed to unpack extension: ${i.message}`);else r.error("ERROR: An unknown error occurred during unpacking.");return!1}}
+var AW,Dae;
+var FJr=b(()=>{k9e();MJr();AW=require("fs"),Dae=require("path")});
+export {uxn,unpackExtension,AW,Dae,FJr};

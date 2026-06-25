@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var f9=X((oit)=>{Object.defineProperty(oit,"__esModule",{value:!0});oit.parseUri=_Jd;oit.splitHostPort=yJd;oit.combineHostPort=TJd;oit.uriToString=SJd;var gJd=/^(?:([A-Za-z0-9+.-]+):)?(?:\/\/([^/]*)\/)?(.+)$/;function _Jd(e){let t=gJd.exec(e);if(t===null)return null;return{scheme:t[1],authority:t[2],path:t[3]}}var zAa=/^\d+$/;function yJd(e){if(e.startsWith("[")){let t=e.indexOf("]");if(t===-1)return null;let n=e.substring(1,t);if(n.indexOf(":")===-1)return null;if(e.length>t+1)if(e[t+1]===":"){let r=e.substring(t+2);if(zAa.test(r))return{host:n,port:+r};else return null}else return null;else return{host:n}}else{let t=e.split(":");if(t.length===2)if(zAa.test(t[1]))return{host:t[0],port:+t[1]};else return null;else return{host:e}}}function TJd(e){if(e.port===void 0)return e.host;else if(e.host.includes(":"))return`[${e.host}]:${e.port}`;else return`${e.host}:${e.port}`}function SJd(e){let t="";if(e.scheme!==void 0)t+=e.scheme+":";if(e.authority!==void 0)t+="//"+e.authority+"/";return t+=e.path,t}});
-export {f9};
+import {b} from "../runtime.ts";
+import {VEa} from "./m3515.ts";
+var KEa=b(()=>{VEa()});
+export {KEa};

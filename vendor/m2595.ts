@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {getAdditionalDirectoriesForClaudeMd,lt} from "../src/session/0131_sent.ts";
-import {parseSettingsFile} from "../src/config/0735_settings.ts";
 import {b} from "../runtime.ts";
-import {yr} from "../src/config/0740_updateSettingsForSource.ts";
-function YUe(){let e={};for(let t of getAdditionalDirectoriesForClaudeMd())for(let n of Q0i){let{settings:r}=parseSettingsFile(n4r.join(t,".claude",n));if(!r?.enabledPlugins)continue;Object.assign(e,r.enabledPlugins)}return e}
-function r4r(){let e={};for(let t of getAdditionalDirectoriesForClaudeMd())for(let n of Q0i){let{settings:r}=parseSettingsFile(n4r.join(t,".claude",n));if(!r?.extraKnownMarketplaces)continue;Object.assign(e,r.extraKnownMarketplaces)}return e}
-var n4r,Q0i;
-var eCn=b(()=>{lt();yr();n4r=require("path"),Q0i=["settings.json","settings.local.json"]});
-export {YUe,r4r,n4r,Q0i,eCn};
+async function Z8(e,t,{concurrency:n=Number.POSITIVE_INFINITY,stopOnError:r=!0,signal:o}={}){return new Promise((s,i)=>{if(e[Symbol.iterator]===void 0&&e[Symbol.asyncIterator]===void 0)throw TypeError(`Expected \`input\` to be either an \`Iterable\` or \`AsyncIterable\`, got (${typeof e})`);if(typeof t!=="function")throw TypeError("Mapper function is required");if(!(Number.isSafeInteger(n)&&n>=1||n===Number.POSITIVE_INFINITY))throw TypeError(`Expected \`concurrency\` to be an integer from 1 and up or \`Infinity\`, got \`${n}\` (${typeof n})`);let a=[],l=[],c=new Map,u=!1,d=!1,p=!1,m=0,f=0,h=e[Symbol.iterator]===void 0?e[Symbol.asyncIterator]():e[Symbol.iterator](),g=()=>{y(o.reason)},_=()=>{o?.removeEventListener("abort",g)},T=(E)=>{s(E),_()},y=(E)=>{u=!0,d=!0,i(E),_()};if(o){if(o.aborted)y(o.reason);o.addEventListener("abort",g,{once:!0})}let S=async()=>{if(d)return;let E=await h.next(),R=f;if(f++,E.done){if(p=!0,m===0&&!d){if(!r&&l.length>0){y(AggregateError(l));return}if(d=!0,c.size===0){T(a);return}let w=[];for(let[H,k]of a.entries()){if(c.get(H)===iNi)continue;w.push(k)}T(w)}return}m++,(async()=>{try{let w=await E.value;if(d)return;let H=await t(w,R);if(H===iNi)c.set(R,H);a[R]=H,m--,await S()}catch(w){if(r)y(w);else{l.push(w),m--;try{await S()}catch(H){y(H)}}}})()};(async()=>{for(let E=0;E<n;E++){try{await S()}catch(R){y(R);break}if(p||u)break}})()})}
+var iNi;
+var BOt=b(()=>{iNi=Symbol("skip")});
+export {Z8,iNi,BOt};

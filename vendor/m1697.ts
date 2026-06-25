@@ -1,15 +1,8 @@
 // @ts-nocheck
-import {eRt,$pn} from "./m1689.ts";
-import {Pme,xpn} from "./m1648.ts";
-import {CGs,vGs} from "./m1696.ts";
+import {VPr} from "./m1650.ts";
+import {Ahn} from "./m1696.ts";
 import {b} from "../runtime.ts";
-async function jpn(e,t){try{return[await t(e),void 0]}catch(n){if(eRt(n)&&n.response)return[n.response,n];else throw n}}
-async function ONu(e){let{scopes:t,getAccessToken:n,request:r}=e,o={abortSignal:r.abortSignal,tracingOptions:r.tracingOptions,enableCae:!0},s=await n(t,o);if(s)e.request.headers.set("Authorization",`Bearer ${s.token}`)}
-function wGs(e){return e.status===401&&e.headers.has("WWW-Authenticate")}
-async function RGs(e,t){var n;let{scopes:r}=e,o=await e.getAccessToken(r,{enableCae:!0,claims:t});if(!o)return!1;return e.request.headers.set("Authorization",`${(n=o.tokenType)!==null&&n!==void 0?n:"Bearer"} ${o.token}`),!0}
-function tRt(e){var t,n,r;let{credential:o,scopes:s,challengeCallbacks:i}=e,a=e.logger||Pme,l={authorizeRequest:(n=(t=i===null||i===void 0?void 0:i.authorizeRequest)===null||t===void 0?void 0:t.bind(i))!==null&&n!==void 0?n:ONu,authorizeRequestOnChallenge:(r=i===null||i===void 0?void 0:i.authorizeRequestOnChallenge)===null||r===void 0?void 0:r.bind(i)},c=o?CGs(o):()=>Promise.resolve(null);return{name:kGs,async sendRequest(u,d){if(!u.url.toLowerCase().startsWith("https://"))throw Error("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.");await l.authorizeRequest({scopes:Array.isArray(s)?s:[s],request:u,getAccessToken:c,logger:a});let p,m,f;if([p,m]=await jpn(u,d),wGs(p)){let A=xGs(p.headers.get("WWW-Authenticate"));if(A){let h;try{h=atob(A)}catch(g){return a.warning(`The WWW-Authenticate header contains "claims" that cannot be parsed. Unable to perform the Continuous Access Evaluation authentication flow. Unparsable claims: ${A}`),p}if(f=await RGs({scopes:Array.isArray(s)?s:[s],response:p,request:u,getAccessToken:c,logger:a},h),f)[p,m]=await jpn(u,d)}else if(l.authorizeRequestOnChallenge){if(f=await l.authorizeRequestOnChallenge({scopes:Array.isArray(s)?s:[s],request:u,response:p,getAccessToken:c,logger:a}),f)[p,m]=await jpn(u,d);if(wGs(p)){if(A=xGs(p.headers.get("WWW-Authenticate")),A){let h;try{h=atob(A)}catch(g){return a.warning(`The WWW-Authenticate header contains "claims" that cannot be parsed. Unable to perform the Continuous Access Evaluation authentication flow. Unparsable claims: ${A}`),p}if(f=await RGs({scopes:Array.isArray(s)?s:[s],response:p,request:u,getAccessToken:c,logger:a},h),f)[p,m]=await jpn(u,d)}}}}if(m)throw m;else return p}}}
-function LNu(e){let t=/(\w+)\s+((?:\w+=(?:"[^"]*"|[^,]*),?\s*)+)/g,n=/(\w+)="([^"]*)"/g,r=[],o;while((o=t.exec(e))!==null){let s=o[1],i=o[2],a={},l;while((l=n.exec(i))!==null)a[l[1]]=l[2];r.push({scheme:s,params:a})}return r}
-function xGs(e){var t;if(!e)return;return(t=LNu(e).find((r)=>r.scheme==="Bearer"&&r.params.claims&&r.params.error==="insufficient_claims"))===null||t===void 0?void 0:t.params.claims}
-var kGs="bearerTokenAuthenticationPolicy";
-var HGs=b(()=>{vGs();xpn();$pn()});
-export {jpn,ONu,wGs,RGs,tRt,LNu,xGs,kGs,HGs};
+import {ZXe} from "./m1651.ts";
+function vOr(){let e=VPr();return{async sendRequest(t){let{abortSignal:n,cleanup:r}=t.abortSignal?Ahn(t.abortSignal):{};try{return t.abortSignal=n,await e.sendRequest(t)}finally{r===null||r===void 0||r()}}}}
+var hJs=b(()=>{ZXe()});
+export {vOr,hJs};

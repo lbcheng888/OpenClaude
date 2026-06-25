@@ -1,8 +1,13 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Lr} from "./m578.ts";
-import {je} from "./m577.ts";
-import {Cwe,rHi} from "./m2517.ts";
-var eCl,Dsm,Evo;
-var tCl=b(()=>{Lr();eCl={ghostty:"Ghostty",kitty:"Kitty",WarpTerminal:"Warp",WezTerm:"WezTerm","windows-terminal":"Windows Terminal"},Dsm={type:"local-jsx",name:"terminal-setup",get description(){if(je.terminal==="Apple_Terminal")return"Enable Option+Enter key binding for newlines and visual bell";if(je.terminal!==null&&Object.hasOwn(eCl,je.terminal))return`Check terminal setup (Shift+Enter is natively supported in ${eCl[je.terminal]})`;if(process.env.__CFBundleIdentifier==="com.googlecode.iterm2"&&(je.terminal==="iTerm.app"||je.terminal==="tmux"||je.terminal==="screen"||je.terminal===null))return"Enable iTerm2 clipboard access for /copy";return"Install Shift+Enter key binding for newlines"},requires:{ink:!0},load:()=>Promise.resolve().then(() => (Cwe(),rHi))},Evo=Dsm});
-export {eCl,Dsm,Evo,tCl};
+import {ft,b,x} from "../runtime.ts";
+import {IIl,xIl} from "./m4883.ts";
+import {bytesPerTokenForModel,Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {_ht} from "./m4691.ts";
+import {szn} from "./m4725.ts";
+import {oe} from "./m2275.ts";
+var DIl={};
+ft(DIl,{call:()=>Vmm});
+async function Vmm(e,t){return PIl.jsx(IIl,{onExit:e,commands:t.options.commands,bytesPerToken:bytesPerTokenForModel(t.options.mainLoopModel)})}
+var PIl;
+var OIl=b(()=>{xIl();Ro();_ht();szn();PIl=x(oe(),1)});
+export {DIl,Vmm,PIl,OIl};

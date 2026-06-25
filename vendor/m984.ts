@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var JTr=X((nze)=>{Object.defineProperty(nze,"__esModule",{value:!0});nze.commonParams=nze.resolveClientEndpointParameters=void 0;var amu=(e)=>Object.assign(e,{useDualstackEndpoint:e.useDualstackEndpoint??!1,useFipsEndpoint:e.useFipsEndpoint??!1,useGlobalEndpoint:e.useGlobalEndpoint??!1,defaultSigningName:"sts"});nze.resolveClientEndpointParameters=amu;nze.commonParams={UseGlobalEndpoint:{type:"builtInParams",name:"useGlobalEndpoint"},UseFIPS:{type:"builtInParams",name:"useFipsEndpoint"},Endpoint:{type:"builtInParams",name:"endpoint"},Region:{type:"builtInParams",name:"region"},UseDualStack:{type:"builtInParams",name:"useDualstackEndpoint"}}});
-export {JTr};
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+var NAs,validateSsoProfile=(e,t)=>{let{sso_start_url:n,sso_account_id:r,sso_region:o,sso_role_name:s}=e;if(!n||!r||!o||!s)throw new NAs.CredentialsProviderError(`Profile is configured with invalid SSO credentials. Required parameters "sso_account_id", "sso_region", "sso_role_name", "sso_start_url". Got ${Object.keys(e).join(", ")}
+Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html`,{tryNextLink:!1,logger:t});return e};
+var yRr=b(()=>{NAs=x(Vg(),1)});
+export {NAs,validateSsoProfile,yRr};

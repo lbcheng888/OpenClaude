@@ -1,16 +1,8 @@
 // @ts-nocheck
+import {getSettings_DEPRECATED,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {I1,Lj,lq} from "./m5221.ts";
 import {b} from "../runtime.ts";
-import {lt} from "../src/session/0131_sent.ts";
-import {hp} from "../src/session/1460_promise.ts";
-import {Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {bt} from "./m195.ts";
-import {X2} from "./m1450.ts";
-import {Mo} from "../src/permissions/1453_swapShrinksContextWindow.ts";
-import {qs} from "./m635.ts";
-import {zn} from "../src/api/2198_stopPeriodicGrowthBookRefresh.ts";
-import {fca} from "./m3327.ts";
-import {rXr} from "./m3328.ts";
-import {Y2e} from "./m2769.ts";
-var Aca=()=>{};
-var oXr=b(()=>{lt();hp();Qn();bt();X2();Mo();qs();zn();fca();rXr();Y2e();Aca()});
-export {Aca,oXr};
+function TIe(e,t){if(t)return e?`agent:builtin:${e}`:"agent:default";return e?`agent:custom:${e}`:"agent:custom"}
+function IBt(){let t=getSettings_DEPRECATED()?.outputStyle??I1;if(t===I1)return"repl_main_thread";return t in Lj?`repl_main_thread:outputStyle:${t}`:"repl_main_thread:outputStyle:custom"}
+var aat=b(()=>{lq();br()});
+export {TIe,IBt,aat};

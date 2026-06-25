@@ -1,21 +1,10 @@
 // @ts-nocheck
-import {zt,qs} from "./m635.ts";
-import {SandboxManager,Ag} from "./m2671.ts";
-import {MD,jt,jp,ws} from "./m228.ts";
-import {pathInWorkingPath,matchingRuleForInput,checkEditableInternalPath,untypeDenyReasonForAskPropagation,checkPathSafetyForAutoEdit,pathInAllowedWorkingPath,checkReadableInternalPath,matchingAllowRuleForAllPaths,normalizeCaseForComparison,nA} from "../src/permissions/5145_untypeDenyReasonForAskPropagation.ts";
-import {VH,lae} from "./m2675.ts";
 import {b} from "../runtime.ts";
-import {ta,wn} from "./m45.ts";
-function yPt(e){for(let t=0;t<e.length;t++){let n=e[t];if(n==="*"||n==="?")return t;if(n==="["&&e.indexOf("]",t+1)!==-1)return t}return-1}
-function U6r(e){let t=e.length;if(t<=F6r)return e.map((r)=>`'${r}'`).join(", ");return`${e.slice(0,F6r).map((r)=>`'${r}'`).join(", ")}, and ${t-F6r} more`}
-function SEd(e){let t=yPt(e);if(t===-1)return e;let n=e.substring(0,t),r=zt()==="windows"?Math.max(n.lastIndexOf("/"),n.lastIndexOf("\\")):n.lastIndexOf("/");if(r===-1)return".";return n.substring(0,r)||"/"}
-function oq(e){if(e==="~"||e.startsWith("~/"))return jvn.homedir()+e.slice(1);return e}
-function $6r(e){if(!SandboxManager.isSandboxingEnabled())return!1;let{allowOnly:t,denyWithinAllow:n}=SandboxManager.getFsWriteConfig(),r=MD(e),o=t.flatMap(P1i),s=n.flatMap(P1i);return r.every((i)=>{for(let a of s)if(pathInWorkingPath(i,a))return!1;return o.some((a)=>pathInWorkingPath(i,a))})}
-function Wvn(e,t,n,r){let o=n==="read"?"read":"edit",s=r??MD(e);for(let l of s){let c=matchingRuleForInput(l,t,o,"deny");if(c!==null)return{allowed:!1,decisionReason:{type:"rule",rule:c}}}if(n!=="read"){let l=checkEditableInternalPath(e,{},s);if(l.behavior==="deny")return{allowed:!1,decisionReason:untypeDenyReasonForAskPropagation(l.decisionReason)};if(l.behavior==="allow")return{allowed:!0,decisionReason:l.decisionReason}}if(n!=="read"){let l=checkPathSafetyForAutoEdit(e,s,void 0,t.isRemoteMode,t.trustedNetworkDirectories);if(!l.safe)return{allowed:!1,decisionReason:{type:"safetyCheck",reason:l.message,classifierApprovable:l.classifierApprovable}}}let i=pathInAllowedWorkingPath(e,t,s);if(i){if(n==="read"||t.mode==="acceptEdits")return{allowed:!0}}if(n==="read"){let l=checkReadableInternalPath(e,{},s);if(l.behavior==="deny")return{allowed:!1,decisionReason:untypeDenyReasonForAskPropagation(l.decisionReason)};if(l.behavior==="allow")return{allowed:!0,decisionReason:l.decisionReason}}if(n!=="read"&&!i&&$6r(e))return{allowed:!0,decisionReason:{type:"other",reason:"Path is in sandbox write allowlist"}};let a=matchingAllowRuleForAllPaths(s,t,o);if(a!==null)return{allowed:!0,decisionReason:{type:"rule",rule:a}};return{allowed:!1,isInWorkingDir:i}}
-function bEd(e,t,n,r){let o=jt(),s=SEd(e),i=iee.isAbsolute(s)?s:iee.resolve(t,s),a=iee.isAbsolute(e)?e:iee.resolve(t,e);for(;;){let{resolvedPath:l,isCanonical:c}=jp(o,a),u=iee.dirname(a);if(c||a===i||u===a)return{...Wvn(l,n,r,c?[l]:void 0),resolvedPath:l};a=u}}
-function Stt(e){let t=e.replace(/[\\/]+/g,"/");if(t==="*"||t.endsWith("/*"))return!0;let n=zt()==="macos",r=(c)=>n?c.replace(/^\/private\/(etc|var|tmp|home)(\/|$)/i,"/$1$2"):c,o=r(t),s=o==="/"?o:o.replace(/\/$/,"");if(s==="/")return!0;if(EEd.test(s))return!0;let i=r(jvn.homedir().replace(/[\\/]+/g,"/")).replace(/\/$/,"");if(normalizeCaseForComparison(s)===normalizeCaseForComparison(i))return!0;let a=vEd(jvn.homedir());if(a!==i&&normalizeCaseForComparison(s)===normalizeCaseForComparison(a))return!0;if(iee.dirname(s)==="/")return!0;if(CEd.test(s))return!0;return!1}
-function q6r(e){let t=e.split(zt()==="windows"?/[\\/]/:"/"),n=!1;for(let r of t){if(r===""||r===".")continue;if(r===".."){if(n)return!0}else n=!0}return!1}
-function TPt(e,t,n,r){let o=oq(e);if(VH(o,!0))return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"UNC network paths require manual approval"}};if(o.startsWith("~"))return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"Tilde expansion variants (~user, ~+, ~-) in paths require manual approval"}};if(o.includes("$")||zt()==="windows"&&o.includes("%")||o.includes("`")||o.startsWith("="))return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"Shell expansion syntax in paths requires manual approval"}};if(q6r(o))return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"Path contains '..' traversal after a directory segment, which may follow a symlink outside the working directory"}};if((r==="write"||r==="create")&&TEd.test(o))return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"Brace characters in write target require manual approval \u2014 bash may brace-expand to paths outside the working directory"}};if(yPt(o)!==-1){if(r==="write"||r==="create")return{allowed:!1,resolvedPath:o,decisionReason:{type:"other",reason:"Glob patterns are not allowed in write operations. Please specify an exact file path."}};return bEd(o,t,n,r)}let s=iee.isAbsolute(o)?o:iee.resolve(t,o),{resolvedPath:i,isCanonical:a}=jp(jt(),s);return{...Wvn(i,n,r,a?[i]:void 0),resolvedPath:i}}
-var jvn,iee,F6r=5,TEd,P1i,EEd,CEd,vEd;
-var qAe=b(()=>{ta();qs();ws();Ag();lae();nA();jvn=require("os"),iee=require("path");TEd=/[{}]/;P1i=wn(MD);EEd=/^[A-Za-z]:\/?$/,CEd=/^[A-Za-z]:\/[^/]+$/;vEd=wn((e)=>jp(jt(),e).resolvedPath.replace(/[\\/]+/g,"/").replace(/\/$/,""))});
-export {yPt,U6r,SEd,oq,$6r,Wvn,bEd,Stt,q6r,TPt,jvn,iee,F6r,TEd,P1i,EEd,CEd,vEd,qAe};
+import {z2i} from "./m2674.ts";
+import {fGr} from "./m2673.ts";
+import {CGr} from "./m2675.ts";
+import {mGr} from "./m2672.ts";
+import {m$e} from "../src/config/2669_recursive.ts";
+import {Bwn} from "./m2663.ts";
+var r$i=b(()=>{z2i();fGr();CGr();mGr();CGr();m$e();Bwn()});
+export {r$i};

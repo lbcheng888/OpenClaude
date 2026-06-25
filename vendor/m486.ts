@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var jVo=X((cdf,qVo)=>{qVo.exports=Math.min});
-export {jVo};
+import {Q} from "../runtime.ts";
+var HXo=Q((ACf,kXo)=>{kXo.exports=SyntaxError});
+export {HXo};

@@ -1,4 +1,17 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Pxr=X((X7)=>{Object.defineProperty(X7,"__esModule",{value:!0});X7.MAX_HASHABLE_LENGTH=X7.INIT=X7.KEY=X7.DIGEST_LENGTH=X7.BLOCK_SIZE=void 0;X7.BLOCK_SIZE=64;X7.DIGEST_LENGTH=32;X7.KEY=new Uint32Array([1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298]);X7.INIT=[1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225];X7.MAX_HASHABLE_LENGTH=Math.pow(2,53)-1});
-export {Pxr};
+import {z_,getGatewayRefreshInFlight,setGatewayRefreshInFlight,setGatewayAuth,lt} from "../src/session/0132_sent.ts";
+import {externalHttp,_k} from "../src/core/0576_isCancel.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
+import {ql,e8} from "./m1485.ts";
+import {b} from "../runtime.ts";
+import {MS} from "./m460.ts";
+import {ve} from "./m461.ts";
+import {jt} from "./m253.ts";
+function $Ae(){let e=z_();if(!e?.idpRefreshToken||e.expiresAt-Date.now()>=A3u)return Promise.resolve();let t=getGatewayRefreshInFlight();if(t)return t;let n=R3u(e,e.idpRefreshToken).finally(()=>setGatewayRefreshInFlight(null));return setGatewayRefreshInFlight(n),n}
+async function R3u(e,t){try{let{data:n}=await externalHttp.post(e.tokenEndpoint??`${e.url}/oauth/token`,new URLSearchParams({grant_type:"refresh_token",refresh_token:t}).toString(),{headers:{"Content-Type":"application/x-www-form-urlencoded"},timeout:1e4}),r=G8s().safeParse(n);if(!r.success){logForDebugging("[gateway-refresh] malformed response; will retry later");return}if(z_()!==e){logForDebugging("[gateway-refresh] auth changed mid-refresh; discarding");return}await W8s(e,t,()=>({url:e.url,jwt:r.data.access_token,expiresAt:Date.now()+r.data.expires_in*1000,idpRefreshToken:r.data.refresh_token??e.idpRefreshToken,...e.tokenEndpoint&&{tokenEndpoint:e.tokenEndpoint}})),logForDebugging("[gateway-refresh] refreshed gateway JWT")}catch(n){if(V8s(n)==="invalid_grant"){if(z_()!==e){logForDebugging("[gateway-refresh] auth changed mid-refresh; discarding invalid_grant");return}logForDebugging("[gateway-refresh] IdP rejected refresh token; clearing it",{level:"warn"});try{await W8s(e,t,(r)=>({...r,idpRefreshToken:void 0}))}catch(r){logForDebugging(`[gateway-refresh] secureStorage write failed: ${Ce(r)}`,{level:"warn"})}}else logForDebugging(`[gateway-refresh] transient failure: ${Ce(n)}`)}}
+async function W8s(e,t,n){let r=n(e);try{await ql().mutate((o)=>{let s=o?.enterpriseGateway;if(s&&s.idpRefreshToken!==t)return r=s,o;return r=n(s??e),{...o,enterpriseGateway:r}})}catch(o){logForDebugging(`[gateway-refresh] secureStorage write failed; applying refreshed credential in-memory only: ${Ce(o)}`,{level:"warn"})}if(z_()!==e){logForDebugging("[gateway-refresh] auth changed during persist; discarding outcome");return}setGatewayAuth(r)}
+function V8s(e){if(!e||typeof e!=="object"||!("isAxiosError"in e)||!e.isAxiosError)return;let t=e.response?.data;if(typeof t==="object"&&t!==null&&"error"in t){let n=t.error;return typeof n==="string"?n:void 0}return}
+var A3u=300000,G8s;
+var xXe=b(()=>{MS();lt();_k();qe();Ct();e8();G8s=ve(()=>jt.object({access_token:jt.string(),expires_in:jt.number(),refresh_token:jt.string().nullish()}))});
+export {$Ae,R3u,W8s,V8s,A3u,G8s,xXe};

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {WTe,cgt} from "./m39.ts";
+import {t4o,n4o} from "./m40.ts";
 import {b} from "../runtime.ts";
-function Mpc(e){return WTe(this,e).get(e)}
-var uFo;
-var dFo=b(()=>{cgt();uFo=Mpc});
-export {Mpc,uFo,dFo};
+function qEc(e,t){var n=e.__data__;return t4o(t)?n[typeof t=="string"?"string":"hash"]:n.map}
+var Abe;
+var NTt=b(()=>{n4o();Abe=qEc});
+export {qEc,Abe,NTt};

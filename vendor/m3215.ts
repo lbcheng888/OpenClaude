@@ -1,12 +1,8 @@
 // @ts-nocheck
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {_K,wfe} from "../src/computer-use/2193_iTerm_app.ts";
-import {createCliExecutor,mzr} from "../src/computer-use/3215_unhideComputerUseApps.ts";
-import {eIn,ZHn,uot} from "../src/telemetry/3213_enabled.ts";
-import {u9} from "../src/computer-use/3211_level.ts";
 import {b} from "../runtime.ts";
-class Xna{silly(e,...t){logForDebugging(pot.format(e,...t),{level:"debug"})}debug(e,...t){logForDebugging(pot.format(e,...t),{level:"debug"})}info(e,...t){logForDebugging(pot.format(e,...t),{level:"info"})}warn(e,...t){logForDebugging(pot.format(e,...t),{level:"warn"})}error(e,...t){logForDebugging(pot.format(e,...t),{level:"error"})}}
-function nIn(){if(tIn)return tIn;return tIn={serverName:_K,logger:new Xna,executor:createCliExecutor({getMouseAnimationEnabled:()=>eIn().mouseAnimation,getHideBeforeActionEnabled:()=>eIn().hideBeforeAction}),ensureOsPermissions:async()=>{let e=u9(),t=e.tcc.checkAccessibility(),n=e.tcc.checkScreenRecording();return t&&n?{granted:!0}:{granted:!1,accessibility:t,screenRecording:n}},isDisabled:()=>!ZHn(),getSubGates:eIn,getAutoUnhideEnabled:()=>!0,cropRawPatch:()=>null},tIn}
-var pot,tIn;
-var fzr=b(()=>{qe();wfe();mzr();uot();pot=require("util")});
-export {Xna,nIn,pot,tIn,fzr};
+function Jla(e,t){return Math.floor((e-1)/t)+1}
+function Xla(e,t,n){return Jla(e,n)*Jla(t,n)}
+function DDn(e,t,n){let{pxPerToken:r,maxTargetPx:o,maxTargetTokens:s}=n;if(e<=o&&t<=o&&Xla(e,t,r)<=s)return[e,t];if(t>e){let[c,u]=DDn(t,e,n);return[u,c]}let i=e/t,a=e,l=1;for(;;){if(l+1===a)return[l,Math.max(Math.round(l/i),1)];let c=Math.floor((l+a)/2),u=Math.max(Math.round(c/i),1);if(c<=o&&Xla(c,u,r)<=s)l=c;else a=c}}
+var CQr;
+var Qla=b(()=>{CQr={pxPerToken:28,maxTargetPx:1568,maxTargetTokens:1568}});
+export {Jla,Xla,DDn,CQr,Qla};

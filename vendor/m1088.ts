@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,_ws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var oxs,DeleteFoundationModelAgreementCommand;
-var Wbr=b(()=>{ri();wi();xi();oxs=M(yo(),1);DeleteFoundationModelAgreementCommand=class DeleteFoundationModelAgreementCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[oxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteFoundationModelAgreement",{}).n("BedrockClient","DeleteFoundationModelAgreementCommand").sc(_ws).build(){}});
-export {oxs,DeleteFoundationModelAgreementCommand,Wbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,lxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var zDs,DeleteAutomatedReasoningPolicyBuildWorkflowCommand;
+var fwr=b(()=>{$s();ai();ci();zDs=x(yo(),1);DeleteAutomatedReasoningPolicyBuildWorkflowCommand=class DeleteAutomatedReasoningPolicyBuildWorkflowCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[zDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteAutomatedReasoningPolicyBuildWorkflow",{}).n("BedrockClient","DeleteAutomatedReasoningPolicyBuildWorkflowCommand").sc(lxs).build(){}});
+export {zDs,DeleteAutomatedReasoningPolicyBuildWorkflowCommand,fwr};

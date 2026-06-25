@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Fpa,_Qr} from "./m3417.ts";
-var Y9e;
-var Upa=b(()=>{Fpa();Y9e=class Y9e extends _Qr{onShutdown(){}}});
-export {Y9e,Upa};
+import {Q} from "../runtime.ts";
+import {pg} from "./m2138.ts";
+var ITa=Q((rMn)=>{Object.defineProperty(rMn,"__esModule",{value:!0});rMn.MetricCollector=void 0;var irp=pg();class HTa{_sharedState;_metricReader;constructor(e,t){this._sharedState=e,this._metricReader=t}async collect(e){let t=(0,irp.millisToHrTime)(Date.now()),n=[],r=[],o=Array.from(this._sharedState.meterSharedStates.values()).map(async(s)=>{let i=await s.collect(this,t,e);if(i?.scopeMetrics!=null)n.push(i.scopeMetrics);if(i?.errors!=null)r.push(...i.errors)});return await Promise.all(o),{resourceMetrics:{resource:this._sharedState.resource,scopeMetrics:n},errors:r}}async forceFlush(e){await this._metricReader.forceFlush(e)}async shutdown(e){await this._metricReader.shutdown(e)}selectAggregationTemporality(e){return this._metricReader.selectAggregationTemporality(e)}selectAggregation(e){return this._metricReader.selectAggregation(e)}selectCardinalityLimit(e){return this._metricReader.selectCardinalityLimit?.(e)??2000}}rMn.MetricCollector=HTa});
+export {ITa};

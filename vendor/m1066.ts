@@ -1,10 +1,7 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Jvs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var MRs,CreateAutomatedReasoningPolicyCommand;
-var bbr=b(()=>{ri();wi();xi();MRs=M(yo(),1);CreateAutomatedReasoningPolicyCommand=class CreateAutomatedReasoningPolicyCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[MRs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateAutomatedReasoningPolicy",{}).n("BedrockClient","CreateAutomatedReasoningPolicyCommand").sc(Jvs).build(){}});
-export {MRs,CreateAutomatedReasoningPolicyCommand,bbr};
+import {b} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {sAe} from "./m1044.ts";
+var BedrockServiceException;
+var jln=b(()=>{$s();BedrockServiceException=class BedrockServiceException extends sAe{constructor(e){super(e);Object.setPrototypeOf(this,BedrockServiceException.prototype)}}});
+export {BedrockServiceException,jln};

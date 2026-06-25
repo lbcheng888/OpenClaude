@@ -1,20 +1,29 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {iv} from "./m454.ts";
-import {ze} from "./m2452.ts";
-import {Ts} from "./m2542.ts";
-import {ek} from "../src/core/0570_isCancel.ts";
-import {b_} from "./m2039.ts";
-import {qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {bt} from "./m195.ts";
-import {PYe} from "./m1481.ts";
-import {DLr} from "./m2028.ts";
-import {e_} from "./m3338.ts";
-import {_x} from "../src/tui/3835_mode.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-import {we} from "./m455.ts";
-import {hn} from "./m251.ts";
-var pAp,OBn,aOg,lOg;
-var SIa=b(()=>{iv();ze();Ts();ek();b_();qe();bt();PYe();DLr();e_();_x();pAp=M(rt(),1),OBn=M(Te(),1),aOg=we(()=>hn.object({device_authorization_endpoint:hn.string().optional(),token_endpoint:hn.string().optional()})),lOg=we(()=>hn.object({device_code:hn.string(),user_code:hn.string(),verification_uri:hn.string(),verification_uri_complete:hn.string().optional(),expires_in:hn.number(),interval:hn.number().optional()}))});
-export {pAp,OBn,aOg,lOg,SIa};
+import {_t,uo} from "./m2468.ts";
+import {_r,ui} from "./m2463.ts";
+import {useClock} from "./m2442.ts";
+import {HE,oH} from "../src/agent/3332_id.ts";
+import {isAgentSwarmsEnabled,lb} from "../src/config/3314_isAgentSwarmsEnabled.ts";
+import {tL,mS,ix} from "./m3842.ts";
+import {b2n,C0e} from "../src/hooks/4360_isCollapsible.ts";
+import {zn} from "../src/api/0465_getOauthConfig.ts";
+import {Text,zve} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {sn,mc} from "./m237.ts";
+import {truncateToWidth} from "./m239.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {Xo} from "./m240.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function z$t(e,t){let n=parseInt(e.id,10),r=parseInt(t.id,10);if(!isNaN(n)&&!isNaN(r))return n-r;return e.id.localeCompare(t.id)}
+function S2n({tasks:e,isStandalone:t=!1}){let n=_t((k)=>k.teamContext),r=_t((k)=>k.tasks),[,o]=_qe.useState(0),{rows:s,columns:i}=_r(),a=useClock(),l=_qe.useRef(new Map),c=_qe.useRef(null);if(c.current===null)c.current=new Set(e.filter((k)=>k.status==="completed").map((k)=>k.id));let u=s<=10?0:Math.min(5,Math.max(3,s-14)),d=new Set(e.filter((k)=>k.status==="completed").map((k)=>k.id)),p=Date.now();for(let k of d)if(!c.current.has(k))l.current.set(k,p);for(let k of l.current.keys())if(!d.has(k))l.current.delete(k);if(c.current=d,_qe.useEffect(()=>{if(l.current.size===0)return;let k=Date.now(),I=1/0;for(let D of l.current.values()){let O=D+ZMa;if(O>k&&O<I)I=O}if(I===1/0)return;return a.setTimeout(()=>o((D)=>D+1),I-k)},[e,a]),!HE())return null;if(e.length===0)return null;let m={};if(isAgentSwarmsEnabled()&&n?.teammates){for(let k of Object.values(n.teammates))if(k.color){let I=tL[k.color];if(I)m[k.name]=I}}let f={},h=new Set;if(isAgentSwarmsEnabled()){for(let k of Object.values(r))if(mS(k)&&k.status==="running"){h.add(k.identity.agentName),h.add(k.identity.agentId);let I=k.progress?.recentActivities,D=(I&&b2n(I))??k.progress?.lastActivity?.activityDescription;if(D)f[k.identity.agentName]=D,f[k.identity.agentId]=D}}let g=zn(e,(k)=>k.status==="completed"),_=zn(e,(k)=>k.status==="pending"),T=e.length-g-_,y=new Set(e.filter((k)=>k.status!=="completed").map((k)=>k.id)),S=e.length>u,E,R;if(S){let k=[],I=[];for(let P of e.filter((M)=>M.status==="completed")){let M=l.current.get(P.id);if(M&&p-M<ZMa)k.push(P);else I.push(P)}k.sort(z$t),I.sort(z$t);let D=e.filter((P)=>P.status==="in_progress").sort(z$t),O=e.filter((P)=>P.status==="pending").sort((P,M)=>{let B=P.blockedBy.some((F)=>y.has(F)),N=M.blockedBy.some((F)=>y.has(F));if(B!==N)return B?1:-1;return z$t(P,M)}),L=[...k,...D,...O,...I];E=L.slice(0,u),R=L.slice(u)}else E=[...e].sort(z$t),R=[];let w="";if(R.length>0){let k=[],I=zn(R,(L)=>L.status==="pending"),D=zn(R,(L)=>L.status==="in_progress"),O=zn(R,(L)=>L.status==="completed");if(D>0)k.push(`${D} in progress`);if(I>0)k.push(`${I} pending`);if(O>0)k.push(`${O} completed`);w=` \u2026 +${k.join(", ")}`}let H=OC.jsxs(OC.Fragment,{children:[E.map((k)=>OC.jsx(jAp,{task:k,ownerColor:k.owner?m[k.owner]:void 0,openBlockers:k.blockedBy.filter((I)=>y.has(I)),activity:k.owner?f[k.owner]:void 0,ownerActive:k.owner?h.has(k.owner):!1,columns:i},k.id)),u>0&&w&&OC.jsx(Text,{dimColor:!0,children:w})]});if(t)return OC.jsxs(Box,{flexDirection:"column",marginTop:1,marginLeft:2,children:[OC.jsx(Box,{children:OC.jsxs(Text,{dimColor:!0,children:[OC.jsx(Text,{bold:!0,children:e.length})," tasks (",OC.jsx(Text,{bold:!0,children:g})," done, ",T>0&&OC.jsxs(OC.Fragment,{children:[OC.jsx(Text,{bold:!0,children:T})," in progress, "]}),OC.jsx(Text,{bold:!0,children:_})," open)"]})}),H]});return OC.jsx(Box,{flexDirection:"column",children:H})}
+function zAp(e){switch(e){case"completed":return{icon:Xe.tick,color:"success"};case"in_progress":return{icon:Xe.squareSmallFilled,color:"claude"};case"pending":return{icon:Xe.squareSmall,color:void 0}}}
+function jAp(e){let t=e1a.c(37),{task:n,ownerColor:r,openBlockers:o,activity:s,ownerActive:i,columns:a}=e,l=n.status==="completed",c=n.status==="in_progress",u=o.length>0,d;if(t[0]!==n.status)d=zAp(n.status),t[0]=n.status,t[1]=d;else d=t[1];let{icon:p,color:m}=d,f=c&&!u&&s,h=a>=60&&n.owner&&i,g;if(t[2]!==h||t[3]!==n.owner)g=h?sn(` (@${n.owner})`):0,t[2]=h,t[3]=n.owner,t[4]=g;else g=t[4];let _=g,T=Math.max(15,a-15-_),y;if(t[5]!==T||t[6]!==n.subject)y=truncateToWidth(n.subject,T),t[5]=T,t[6]=n.subject,t[7]=y;else y=t[7];let S=y,E=Math.max(15,a-15),R;if(t[8]!==s||t[9]!==E)R=s?truncateToWidth(s,E):void 0,t[8]=s,t[9]=E,t[10]=R;else R=t[10];let w=R,H;if(t[11]!==m||t[12]!==p)H=OC.jsxs(Text,{color:m,children:[p," "]}),t[11]=m,t[12]=p,t[13]=H;else H=t[13];let k=l||u,I;if(t[14]!==S||t[15]!==l||t[16]!==c||t[17]!==k)I=OC.jsx(Text,{bold:c,strikethrough:l,dimColor:k,children:S}),t[14]=S,t[15]=l,t[16]=c,t[17]=k,t[18]=I;else I=t[18];let D;if(t[19]!==r||t[20]!==h||t[21]!==n.owner)D=h&&OC.jsxs(Text,{dimColor:!0,children:[" (",r?OC.jsxs(Text,{color:r,children:["@",n.owner]}):`@${n.owner}`,")"]}),t[19]=r,t[20]=h,t[21]=n.owner,t[22]=D;else D=t[22];let O;if(t[23]!==u||t[24]!==o)O=u&&OC.jsxs(Text,{dimColor:!0,children:[" ",Xe.pointerSmall," blocked by"," ",[...o].sort(JAp).map(YAp).join(", ")]}),t[23]=u,t[24]=o,t[25]=O;else O=t[25];let L;if(t[26]!==H||t[27]!==I||t[28]!==D||t[29]!==O)L=OC.jsxs(Box,{children:[H,I,D,O]}),t[26]=H,t[27]=I,t[28]=D,t[29]=O,t[30]=L;else L=t[30];let P;if(t[31]!==w||t[32]!==f)P=f&&w&&OC.jsx(Box,{children:OC.jsxs(Text,{dimColor:!0,children:["  ",w,Xe.ellipsis]})}),t[31]=w,t[32]=f,t[33]=P;else P=t[33];let M;if(t[34]!==L||t[35]!==P)M=OC.jsxs(Box,{flexDirection:"column",children:[L,P]}),t[34]=L,t[35]=P,t[36]=M;else M=t[36];return M}
+function YAp(e){return`#${e}`}
+function JAp(e,t){return parseInt(e,10)-parseInt(t,10)}
+var e1a,_qe,OC,ZMa=30000;
+var Wlo=b(()=>{Zs();ui();mc();je();uo();ix();lb();C0e();Xo();oH();zve();e1a=x(tt(),1),_qe=x(et(),1),OC=x(oe(),1)});
+export {z$t,S2n,zAp,jAp,YAp,JAp,e1a,_qe,OC,ZMa,Wlo};

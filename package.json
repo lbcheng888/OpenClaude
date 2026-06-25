@@ -1,6 +1,6 @@
 {
   "name": "openclaude",
-  "version": "2.1.185",
+  "version": "2.1.190",
   "private": true,
   "type": "module",
   "bin": {

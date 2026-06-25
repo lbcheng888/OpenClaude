@@ -1,18 +1,15 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {useTheme} from "./m2274.ts";
-import {applyConfigShorthand,listConfigKeys,parseConfigShorthand,h8n} from "../src/agent/4515_parseConfigShorthand.ts";
-import {dDe,y6t} from "./m4548.ts";
-import {logMCPError,uoe,initKp} from "./m609.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var oll={};
-isFullscreenWithTTY(oll,{call:()=>vGp});
-function wGp(e){let t=rll.c(6),{pairs:n,context:r,onDone:o}=e,[,s]=useTheme(),i=$8n.useRef(!1),a,l;if(t[0]!==r||t[1]!==o||t[2]!==n||t[3]!==s)a=()=>{if(i.current)return;i.current=!0;let c=applyConfigShorthand(n,r,{setTheme:s});o(c.map(RGp).join(`
-`),{display:"system"})},l=[n,r,o,s],t[0]=r,t[1]=o,t[2]=n,t[3]=s,t[4]=a,t[5]=l;else a=t[4],l=t[5];return $8n.useEffect(a,l),null}
-function RGp(e){return e.message}
-var rll,T6t,$8n,vGp=async(e,t,n)=>{let r=n?.trim()||"";if(!r)return T6t.createElement(dDe,{onClose:e,context:t,defaultTab:"Config"});let o=r.toLowerCase();if(logMCPError.includes(o)||uoe.includes(o)){e(`Run /config to open settings, or /config key=value to set one directly.
-${listConfigKeys(t)}`,{display:"system"});return}let s=parseConfigShorthand(r);if(!s){e(`Expected key=value, got "${r}". Run /config to open settings.`,{display:"system"});return}return T6t.createElement(wGp,{pairs:s,context:t,onDone:e})};
-var sll=b(()=>{y6t();initKp();ze();h8n();rll=M(rt(),1),T6t=M(Te(),1),$8n=M(Te(),1)});
-export {oll,wGp,RGp,rll,T6t,$8n,vGp,sll};
+import {Or,ss} from "./m2553.ts";
+import {Text} from "./m2433.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {Box} from "./m2432.ts";
+import {ga,rh} from "./m2550.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function Pml(e){let t=Dml.c(13),{initialLanguage:n,onComplete:r,onCancel:o}=e,[s,i]=FAo.useState(n),[a,l]=FAo.useState((n??"").length),c;if(t[0]===Symbol.for("react.memo_cache_sentinel"))c={context:"Settings"},t[0]=c;else c=t[0];Or("confirm:no",o,c);let u;if(t[1]!==s||t[2]!==r)u=function(){let y=s?.trim();r(y||void 0)},t[1]=s,t[2]=r,t[3]=u;else u=t[3];let d=u,p;if(t[4]===Symbol.for("react.memo_cache_sentinel"))p=oPe.jsx(Text,{children:"Enter your preferred response and voice language:"}),t[4]=p;else p=t[4];let m;if(t[5]===Symbol.for("react.memo_cache_sentinel"))m=oPe.jsx(Text,{children:Xe.pointer}),t[5]=m;else m=t[5];let f=s??"",h;if(t[6]!==a||t[7]!==d||t[8]!==f)h=oPe.jsxs(Box,{flexDirection:"row",gap:1,children:[m,oPe.jsx(ga,{value:f,onChange:i,onSubmit:d,focus:!0,showCursor:!0,placeholder:`e.g., Japanese, \u65E5\u672C\u8A9E, Espa\xF1ol${Xe.ellipsis}`,columns:60,cursorOffset:a,onChangeCursorOffset:l})]}),t[6]=a,t[7]=d,t[8]=f,t[9]=h;else h=t[9];let g;if(t[10]===Symbol.for("react.memo_cache_sentinel"))g=oPe.jsx(Text,{dimColor:!0,children:"Leave empty for default (English)"}),t[10]=g;else g=t[10];let _;if(t[11]!==h)_=oPe.jsxs(Box,{flexDirection:"column",gap:1,children:[p,h,g]}),t[11]=h,t[12]=_;else _=t[12];return _}
+var Dml,FAo,oPe;
+var Oml=b(()=>{Zs();je();ss();rh();Dml=x(tt(),1),FAo=x(et(),1),oPe=x(oe(),1)});
+export {Pml,Dml,FAo,oPe,Oml};

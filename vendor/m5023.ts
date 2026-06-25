@@ -1,18 +1,16 @@
 // @ts-nocheck
-import {bo,configProtoStore} from "./m2458.ts";
-import {UP,z_e} from "./m4507.ts";
-import {Jse,Om} from "../src/config/2215_level.ts";
-import {Text} from "./m2423.ts";
-import {ac,e_} from "./m3338.ts";
-import {Box} from "./m2422.ts";
-import {Kn,Li} from "./m2572.ts";
-import {getTotalOutputTokens,lt} from "../src/session/0131_sent.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Cft(e){let t=Kkl.c(23),{kind:n,model:r,effort:o,onConfirm:s,onCancel:i}=e,a=bo(),l=n==="model",c=l?"Switch model?":"Change effort level?",u=l?"model":"effort level",d;if(t[0]!==o||t[1]!==l||t[2]!==r)d=l?UP(r):o!==void 0?Jse(o):"auto",t[0]=o,t[1]=l,t[2]=r,t[3]=d;else d=t[3];let p=d,m;if(t[4]!==s||t[5]!==a)m=function(){a(Jcm),s()},t[4]=s,t[5]=a,t[6]=m;else m=t[6];let f=m,A;if(t[7]!==p)A=Fne.createElement(Text,{bold:!0},p),t[7]=p,t[8]=A;else A=t[8];let h;if(t[9]!==u||t[10]!==A)h=Fne.createElement(Text,null,"This conversation is cached for the current ",u,". Switching to"," ",A," means the full history gets re-read on your next message."),t[9]=u,t[10]=A,t[11]=h;else h=t[11];let g=`Yes, switch to ${p}`,_;if(t[12]!==f||t[13]!==i||t[14]!==g)_=Fne.createElement(ac,{confirmLabel:g,cancelLabel:"No, go back",onConfirm:f,onCancel:i}),t[12]=f,t[13]=i,t[14]=g,t[15]=_;else _=t[15];let y;if(t[16]!==h||t[17]!==_)y=Fne.createElement(Box,{flexDirection:"column",gap:1,marginBottom:1},h,_),t[16]=h,t[17]=_,t[18]=y;else y=t[18];let T;if(t[19]!==i||t[20]!==y||t[21]!==c)T=Fne.createElement(Kn,{title:c,subtitle:"Your next response will be slower and use more tokens",color:"warning",onCancel:i,hideInputGuide:!0},y),t[19]=i,t[20]=y,t[21]=c,t[22]=T;else T=t[22];return T}
-function Jcm(e){return{...e,cacheMissAckedAtOutputTokens:getTotalOutputTokens()}}
-var Kkl,Fne;
-var Kwo=b(()=>{lt();z_e();ze();configProtoStore();Om();e_();Li();Kkl=M(rt(),1),Fne=M(Te(),1)});
-export {Cft,Jcm,Kkl,Fne,Kwo};
+import {ft,b,x} from "../runtime.ts";
+import {getSettings_DEPRECATED,getSettingsFilePathForSource,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {Yt,Es} from "./m641.ts";
+import {SandboxManager,addToExcludedCommands,Uh} from "./m2682.ts";
+import {color} from "./m2431.ts";
+import {eMl,tMl} from "./m5022.ts";
+import {getCwdState,lt} from "../src/session/0132_sent.ts";
+import {je} from "./m2462.ts";
+import {oe} from "./m2275.ts";
+var rMl={};
+ft(rMl,{call:()=>Z_m});
+async function Z_m(e,t,n){let o=getSettings_DEPRECATED().theme||"light",s=Yt();if(!SandboxManager.isSupportedPlatform()){let l=s==="wsl"?"Error: Sandboxing requires WSL2. WSL1 is not supported.":"Error: Sandboxing is currently only supported on macOS, Linux, and WSL2.",c=color("error",o)(l);return e(c),null}let i=SandboxManager.checkDependencies();if(!SandboxManager.isPlatformInEnabledList()){let l=color("error",o)(`Error: Sandboxing is disabled for this platform (${s}) via the enabledPlatforms setting.`);return e(l),null}if(SandboxManager.areSandboxSettingsLockedByPolicy()){let l=color("error",o)("Error: Sandbox settings are overridden by a higher-priority configuration and cannot be changed locally.");return e(l),null}let a=n?.trim()||"";if(!a)return oMl.jsx(eMl,{onComplete:e,depCheck:i});if(a){let c=a.split(" ")[0];if(c==="exclude"){let u=a.slice(8).trim();if(!u){let h=color("error",o)('Error: Please provide a command pattern to exclude (e.g., /sandbox exclude "npm run test:*")');return e(h),null}let d=u.replace(/^["']|["']$/g,"");addToExcludedCommands(d);let p=getSettingsFilePathForSource("localSettings"),m=p?nMl.relative(getCwdState(),p):".claude/settings.local.json",f=color("success",o)(`Added "${d}" to excluded commands in ${m}`);return e(f),null}else{let u=color("error",o)(`Error: Unknown subcommand "${c}". Available subcommand: exclude`);return e(u),null}}return null}
+var nMl,oMl;
+var sMl=b(()=>{lt();tMl();je();Es();Uh();br();nMl=require("path"),oMl=x(oe(),1)});
+export {rMl,Z_m,nMl,oMl,sMl};

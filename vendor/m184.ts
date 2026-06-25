@@ -1,9 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Eor,eyt} from "./m183.ts";
-import {Yx,VT} from "./m152.ts";
-import {QC,Rp,Ss} from "./m156.ts";
-import {GI,Ta} from "./m157.ts";
-var lGe;
-var Cor=b(()=>{Eor();Eor();Yx();QC();GI();lGe=class lGe extends Rp{constructor(){super(...arguments);this.credentials=new eyt(this._client)}create(e,t){let{betas:n,...r}=e;return this._client.post("/v1/vaults?beta=true",{body:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(Ta`/v1/vaults/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}update(e,t,n){let{betas:r,...o}=t;return this._client.post(Ta`/v1/vaults/${e}?beta=true`,{body:o,...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/vaults?beta=true",VT,{query:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(Ta`/v1/vaults/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}archive(e,t={},n){let{betas:r}=t??{};return this._client.post(Ta`/v1/vaults/${e}/archive?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}};lGe.Credentials=eyt});
-export {lGe,Cor};
+import {Ylr,wbt} from "./m183.ts";
+import {dk,UT} from "./m154.ts";
+import {oA,Jd,is} from "./m158.ts";
+import {JKe,YKe} from "./m155.ts";
+import {u0,oa} from "./m159.ts";
+var r7e;
+var Jlr=b(()=>{Ylr();Ylr();dk();oA();JKe();u0();r7e=class r7e extends Jd{constructor(){super(...arguments);this.versions=new wbt(this._client)}create(e={},t){let{betas:n,...r}=e??{};return this._client.post("/v1/skills?beta=true",YKe({body:r,...t,headers:is([{"anthropic-beta":[...n??[],"skills-2025-10-02"].toString()},t?.headers])},this._client,!1))}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(oa`/v1/skills/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"skills-2025-10-02"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/skills?beta=true",UT,{query:r,...t,headers:is([{"anthropic-beta":[...n??[],"skills-2025-10-02"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(oa`/v1/skills/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"skills-2025-10-02"].toString()},n?.headers])})}};r7e.Versions=wbt});
+export {r7e,Jlr};

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {zkt} from "./m2058.ts";
-var ari=X((Yhn)=>{Object.defineProperty(Yhn,"__esModule",{value:!0});Yhn.NoopContextManager=void 0;var zVu=zkt();class iri{active(){return zVu.ROOT_CONTEXT}with(e,t,n,...r){return t.call(n,...r)}bind(e,t){return t}enable(){return this}disable(){return this}}Yhn.NoopContextManager=iri});
-export {ari};
+import {Q} from "../runtime.ts";
+var bxt=Q((OZe)=>{Object.defineProperty(OZe,"__esModule",{value:!0});OZe.ROOT_CONTEXT=OZe.createContextKey=void 0;function und(e){return Symbol.for(e)}OZe.createContextKey=und;class vTn{constructor(e){let t=this;t._currentContext=e?new Map(e):new Map,t.getValue=(n)=>t._currentContext.get(n),t.setValue=(n,r)=>{let o=new vTn(t._currentContext);return o._currentContext.set(n,r),o},t.deleteValue=(n)=>{let r=new vTn(t._currentContext);return r._currentContext.delete(n),r}}}OZe.ROOT_CONTEXT=new vTn});
+export {bxt};

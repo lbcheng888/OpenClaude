@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var ZVo=X((fdf,QVo)=>{QVo.exports=Object.getOwnPropertyDescriptor});
-export {ZVo};
+import {Q} from "../runtime.ts";
+var FXo=Q((HCf,NXo)=>{NXo.exports=Math.max});
+export {FXo};

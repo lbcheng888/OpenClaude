@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var G5i=X((d3h,W5i)=>{function COd(e){return{name:"SubUnit",case_insensitive:!0,contains:[{className:"string",begin:`\\[
-(multipart)?`,end:`\\]
-`},{className:"string",begin:"\\d{4}-\\d{2}-\\d{2}(\\s+)\\d{2}:\\d{2}:\\d{2}.\\d+Z"},{className:"string",begin:"(\\+|-)\\d+"},{className:"keyword",relevance:10,variants:[{begin:"^(test|testing|success|successful|failure|error|skip|xfail|uxsuccess)(:?)\\s+(test)?"},{begin:"^progress(:?)(\\s+)?(pop|push)?"},{begin:"^tags:"},{begin:"^time:"}]}]}}W5i.exports=COd});
-export {G5i};
+import {Q} from "../runtime.ts";
+var pYi=Q((jjg,dYi)=>{function F9d(e){let t=[e.C_NUMBER_MODE,{className:"string",begin:`'|"`,end:`'|"`,contains:[e.BACKSLASH_ESCAPE,{begin:"''"}]}];return{name:"Scilab",aliases:["sci"],keywords:{$pattern:/%?\w+/,keyword:"abort break case clear catch continue do elseif else endfunction end for function global if pause return resume select try then while",literal:"%f %F %t %T %pi %eps %inf %nan %e %i %z %s",built_in:"abs and acos asin atan ceil cd chdir clearglobal cosh cos cumprod deff disp error exec execstr exists exp eye gettext floor fprintf fread fsolve imag isdef isempty isinfisnan isvector lasterror length load linspace list listfiles log10 log2 log max min msprintf mclose mopen ones or pathconvert poly printf prod pwd rand real round sinh sin size gsort sprintf sqrt strcat strcmps tring sum system tanh tan type typename warning zeros matrix"},illegal:'("|#|/\\*|\\s+/\\w+)',contains:[{className:"function",beginKeywords:"function",end:"$",contains:[e.UNDERSCORE_TITLE_MODE,{className:"params",begin:"\\(",end:"\\)"}]},{begin:"[a-zA-Z_][a-zA-Z_0-9]*[\\.']+",relevance:0},{begin:"\\[",end:"\\][\\.']*",relevance:0,contains:t},e.COMMENT("//","$")].concat(t)}}dYi.exports=F9d});
+export {pYi};

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {tpr} from "./m472.ts";
-var yVo=X((Juf,_Vo)=>{var TFc=tpr();_Vo.exports=SFc;function SFc(e,t,n){return TFc(e,t,null,n)}});
-export {yVo};
+import {Q} from "../runtime.ts";
+var vgr=Q((dCf,iXo)=>{iXo.exports=u8c;function u8c(e){Object.keys(e.jobs).forEach(d8c.bind(e)),e.jobs={}}function d8c(e){if(typeof this.jobs[e]=="function")this.jobs[e]()}});
+export {vgr};

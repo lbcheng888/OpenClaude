@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {mCa} from "./m3700.ts";
-var fCa=X((Ule)=>{Object.defineProperty(Ule,"__esModule",{value:!0});Ule.serviceInstanceIdDetector=Ule.processDetector=Ule.osDetector=Ule.hostDetector=void 0;var H1n=mCa();Object.defineProperty(Ule,"hostDetector",{enumerable:!0,get:function(){return H1n.hostDetector}});Object.defineProperty(Ule,"osDetector",{enumerable:!0,get:function(){return H1n.osDetector}});Object.defineProperty(Ule,"processDetector",{enumerable:!0,get:function(){return H1n.processDetector}});Object.defineProperty(Ule,"serviceInstanceIdDetector",{enumerable:!0,get:function(){return H1n.serviceInstanceIdDetector}})});
-export {fCa};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {oao} from "./m3700.ts";
+var s0a=Q((cBn)=>{Object.defineProperty(cBn,"__esModule",{value:!0});cBn.detectResources=void 0;var o0a=xi(),sao=oao(),fTp=(e={})=>(e.detectors||[]).map((n)=>{try{let r=(0,sao.resourceFromDetectedResource)(n.detect(e));return o0a.diag.debug(`${n.constructor.name} found resource.`,r),r}catch(r){return o0a.diag.debug(`${n.constructor.name} failed: ${r.message}`),(0,sao.emptyResource)()}}).reduce((n,r)=>n.merge(r),(0,sao.emptyResource)());cBn.detectResources=fTp});
+export {s0a};

@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Pus} from "./m861.ts";
-import {Bus} from "./m863.ts";
-var Fus=X((lon)=>{Object.defineProperty(lon,"__esModule",{value:!0});lon.recursionDetectionMiddleware=void 0;var msu=Pus(),fsu=Bus(),B_r="X-Amzn-Trace-Id",Asu="AWS_LAMBDA_FUNCTION_NAME",hsu="_X_AMZN_TRACE_ID",gsu=()=>(e)=>async(t)=>{let{request:n}=t;if(!fsu.HttpRequest.isInstance(n))return e(t);let r=Object.keys(n.headers??{}).find((u)=>u.toLowerCase()===B_r.toLowerCase())??B_r;if(n.headers.hasOwnProperty(r))return e(t);let o=process.env[Asu],s=process.env[hsu],l=(await msu.InvokeStore.getInstanceAsync())?.getXRayTraceId()??s,c=(u)=>typeof u==="string"&&u.length>0;if(c(o)&&c(l))n.headers[B_r]=l;return e({...t,request:n})};lon.recursionDetectionMiddleware=gsu});
-export {Fus};
+import {Q} from "../runtime.ts";
+import {bgs} from "./m863.ts";
+var ome=Q((Uvt)=>{var hhu=bgs();function ghu(e){return e}var Egs=(e)=>(t)=>async(n)=>{if(!hhu.HttpRequest.isInstance(n.request))return t(n);let{request:r}=n,{handlerProtocol:o=""}=e.requestHandler.metadata||{};if(o.indexOf("h2")>=0&&!r.headers[":authority"])delete r.headers.host,r.headers[":authority"]=r.hostname+(r.port?":"+r.port:"");else if(!r.headers.host){let s=r.hostname;if(r.port!=null)s+=`:${r.port}`;r.headers.host=s}return t(n)},Cgs={name:"hostHeaderMiddleware",step:"build",priority:"low",tags:["HOST"],override:!0},_hu=(e)=>({applyToStack:(t)=>{t.add(Egs(e),Cgs)}});Uvt.getHostHeaderPlugin=_hu;Uvt.hostHeaderMiddleware=Egs;Uvt.hostHeaderMiddlewareOptions=Cgs;Uvt.resolveHostHeaderConfig=ghu});
+export {ome};

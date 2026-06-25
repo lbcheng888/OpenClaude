@@ -1,9 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {rZt} from "./m419.ts";
-import {_Wo} from "./m422.ts";
-function BHc(){let e=new yWo.default({strict:!1,validateFormats:!0,validateSchema:!1,allErrors:!0});return TWo.default(e),e}
-class PSt{constructor(e){this._ajv=e??BHc()}getValidator(e){let t="$id"in e&&typeof e.$id==="string"?this._ajv.getSchema(e.$id)??this._ajv.compile(e):this._ajv.compile(e);return(n)=>{if(t(n))return{valid:!0,data:n,errorMessage:void 0};else return{valid:!1,data:void 0,errorMessage:this._ajv.errorsText(t.errors)}}}}
-var yWo,TWo;
-var _dr=b(()=>{yWo=M(rZt(),1),TWo=M(_Wo(),1)});
-export {BHc,PSt,yWo,TWo,_dr};
+import {Q} from "../runtime.ts";
+import {Mtn} from "./m421.ts";
+import {Km} from "./m356.ts";
+var cYo=Q((wze)=>{Object.defineProperty(wze,"__esModule",{value:!0});wze.formatLimitDefinition=void 0;var NFc=Mtn(),UX=Km(),vEe=UX.operators,Ntn={formatMaximum:{okStr:"<=",ok:vEe.LTE,fail:vEe.GT},formatMinimum:{okStr:">=",ok:vEe.GTE,fail:vEe.LT},formatExclusiveMaximum:{okStr:"<",ok:vEe.LT,fail:vEe.GTE},formatExclusiveMinimum:{okStr:">",ok:vEe.GT,fail:vEe.LTE}},FFc={message:({keyword:e,schemaCode:t})=>UX.str`should be ${Ntn[e].okStr} ${t}`,params:({keyword:e,schemaCode:t})=>UX._`{comparison: ${Ntn[e].okStr}, limit: ${t}}`};wze.formatLimitDefinition={keyword:Object.keys(Ntn),type:"string",schemaType:"string",$data:!0,error:FFc,code(e){let{gen:t,data:n,schemaCode:r,keyword:o,it:s}=e,{opts:i,self:a}=s;if(!i.validateFormats)return;let l=new NFc.KeywordCxt(s,a.RULES.all.format.definition,"format");if(l.$data)c();else u();function c(){let p=t.scopeValue("formats",{ref:a.formats,code:i.code.formats}),m=t.const("fmt",UX._`${p}[${l.schemaCode}]`);e.fail$data((0,UX.or)(UX._`typeof ${m} != "object"`,UX._`${m} instanceof RegExp`,UX._`typeof ${m}.compare != "function"`,d(m)))}function u(){let p=l.schema,m=a.formats[p];if(!m||m===!0)return;if(typeof m!="object"||m instanceof RegExp||typeof m.compare!="function")throw Error(`"${o}": format "${p}" does not define "compare" function`);let f=t.scopeValue("formats",{key:p,ref:m,code:i.code.formats?UX._`${i.code.formats}${(0,UX.getProperty)(p)}`:void 0});e.fail$data(d(f))}function d(p){return UX._`${p}.compare(${n}, ${r}) ${Ntn[o].fail} 0`}},dependencies:["format"]};var BFc=(e)=>(e.addKeyword(wze.formatLimitDefinition),e);wze.default=BFc});
+export {cYo};

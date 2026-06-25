@@ -1,13 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {nC} from "./m880.ts";
-import {ume} from "./m904.ts";
-import {Sd} from "./m850.ts";
-import {V2} from "./m896.ts";
-import {b7} from "./m758.ts";
-import {Uon} from "./m909.ts";
-import {FS} from "./m788.ts";
-import {zTr} from "./m983.ts";
-import {gys} from "./m986.ts";
-var Tys=X((Esn)=>{Object.defineProperty(Esn,"__esModule",{value:!0});Esn.getRuntimeConfig=void 0;var mmu=nC(),fmu=ume(),Amu=Sd(),hmu=V2(),gmu=b7(),_ys=Uon(),yys=FS(),_mu=zTr(),ymu=gys(),Tmu=(e)=>({apiVersion:"2011-06-15",base64Decoder:e?.base64Decoder??_ys.fromBase64,base64Encoder:e?.base64Encoder??_ys.toBase64,disableHostPrefix:e?.disableHostPrefix??!1,endpointProvider:e?.endpointProvider??ymu.defaultEndpointResolver,extensions:e?.extensions??[],httpAuthSchemeProvider:e?.httpAuthSchemeProvider??_mu.defaultSTSHttpAuthSchemeProvider,httpAuthSchemes:e?.httpAuthSchemes??[{schemeId:"aws.auth#sigv4",identityProvider:(t)=>t.getIdentityProvider("aws.auth#sigv4"),signer:new mmu.AwsSdkSigV4Signer},{schemeId:"smithy.api#noAuth",identityProvider:(t)=>t.getIdentityProvider("smithy.api#noAuth")||(async()=>({})),signer:new Amu.NoAuthSigner}],logger:e?.logger??new hmu.NoOpLogger,protocol:e?.protocol??new fmu.AwsQueryProtocol({defaultNamespace:"com.amazonaws.sts",xmlNamespace:"https://sts.amazonaws.com/doc/2011-06-15/",version:"2011-06-15"}),serviceId:e?.serviceId??"STS",urlParser:e?.urlParser??gmu.parseUrl,utf8Decoder:e?.utf8Decoder??yys.fromUtf8,utf8Encoder:e?.utf8Encoder??yys.toUtf8});Esn.getRuntimeConfig=Tmu});
-export {Tys};
+import {win,UEr} from "./m848.ts";
+import {sNe,bvt} from "./m770.ts";
+import {Psn,Qcs} from "./m758.ts";
+import {b,x} from "../runtime.ts";
+import {b0} from "./m756.ts";
+import {Vg} from "./m600.ts";
+var UAs,rln,$As=(e,t,n)=>{let r={EcsContainer:async(o)=>{let{fromHttp:s}=await Promise.resolve().then(() => (win(),UEr)),{fromContainerMetadata:i}=await Promise.resolve().then(() => (sNe(),bvt));return n?.debug("@aws-sdk/credential-provider-ini - credential_source is EcsContainer"),async()=>rln.chain(s(o??{}),i(o))().then(bRr)},Ec2InstanceMetadata:async(o)=>{n?.debug("@aws-sdk/credential-provider-ini - credential_source is Ec2InstanceMetadata");let{fromInstanceMetadata:s}=await Promise.resolve().then(() => (sNe(),bvt));return async()=>s(o)().then(bRr)},Environment:async(o)=>{n?.debug("@aws-sdk/credential-provider-ini - credential_source is Environment");let{fromEnv:s}=await Promise.resolve().then(() => (Psn(),Qcs));return async()=>s(o)().then(bRr)}};if(e in r)return r[e];else throw new rln.CredentialsProviderError(`Unsupported credential source in profile ${t}. Got ${e}, expected EcsContainer or Ec2InstanceMetadata or Environment.`,{logger:n})},bRr=(e)=>UAs.setCredentialFeature(e,"CREDENTIALS_PROFILE_NAMED_PROVIDER","p");
+var qAs=b(()=>{UAs=x(b0(),1),rln=x(Vg(),1)});
+export {UAs,rln,$As,bRr,qAs};

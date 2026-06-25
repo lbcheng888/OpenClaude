@@ -1,10 +1,7 @@
 // @ts-nocheck
+import {fromTokenFile} from "./m1017.ts";
 import {b} from "../runtime.ts";
-import {Dc,OAUTH_BETA_HEADER} from "../src/api/0459_getOauthConfig.ts";
-function qS(e,t){return Object.freeze({name:e,header:t})}
-function c$s(e){return l$s.get(e)}
-function SRr(e){return l$s.get(e)??Object.freeze({name:e,header:e})}
-function BR(e){return e.map((t)=>t.header)}
-var J1e,VEe,pYe,$7,X1e,bQ,Xvt,fRr,Qvt,mYe,wun,fYe,Q1e,AYe,Zvt,Run,ewt,PH,ARr,Tme,hRr,gRr,_Rr,yRr,TRr,q7,A1,h1,FPu,l$s,bRr,ERr;
-var g1=b(()=>{Dc();J1e=qS("claude_code","claude-code-20250219"),VEe=qS("oauth_auth",OAUTH_BETA_HEADER),pYe=qS("interleaved_thinking","interleaved-thinking-2025-05-14"),$7=qS("long_context","context-1m-2025-08-07"),X1e=qS("context_management","context-management-2025-06-27"),bQ=qS("structured_outputs","structured-outputs-2025-12-15"),Xvt=qS("web_search","web-search-2025-03-05"),fRr=qS("tool_search","advanced-tool-use-2025-11-20"),Qvt=qS("tool_search","tool-search-tool-2025-10-19"),mYe=qS("effort","effort-2025-11-24"),wun=qS("task_budgets","task-budgets-2026-03-13"),fYe=qS("prompt_caching_scope","prompt-caching-scope-2026-01-05"),Q1e=qS("extended_cache_ttl","extended-cache-ttl-2025-04-11"),AYe=qS("speed","fast-mode-2026-02-01"),Zvt=qS("redact_thinking","redact-thinking-2026-02-12"),Run=qS("thinking_token_count","thinking-token-count-2026-05-13"),ewt=qS("narration_summaries","summarize-connector-text-2026-03-13"),PH=qS("afk_mode","afk-mode-2026-01-31"),ARr=qS("advisor_tool","advisor-tool-2026-03-01"),Tme=qS("cache_diagnosis","cache-diagnosis-2026-04-07"),hRr=qS("context_hint","context-hint-2026-04-09"),gRr=qS("mcp_servers","mcp-servers-2025-12-04"),_Rr=qS("files_api","files-api-2025-04-14"),yRr=qS("environments","environments-2025-11-01"),TRr=qS("ccr_byoc","ccr-byoc-2025-07-29"),q7=qS("mid_conversation_system","mid-conversation-system-2026-04-07"),A1=qS("server_side_fallback","server-side-fallback-2026-06-01"),h1=qS("fallback_credit","fallback-credit-2026-06-01"),FPu=Object.freeze([J1e,VEe,pYe,$7,X1e,bQ,Xvt,fRr,Qvt,mYe,wun,fYe,Q1e,AYe,Zvt,Run,ewt,PH,ARr,Tme,hRr,gRr,_Rr,yRr,TRr,q7,A1,h1].filter((e)=>e!==null)),l$s=new Map(FPu.map((e)=>[e.header,e]));bRr=new Set([pYe,$7,Qvt]),ERr=new Set([J1e,pYe,X1e,VEe])});
-export {qS,c$s,SRr,BR,J1e,VEe,pYe,$7,X1e,bQ,Xvt,fRr,Qvt,mYe,wun,fYe,Q1e,AYe,Zvt,Run,ewt,PH,ARr,Tme,hRr,gRr,_Rr,yRr,TRr,q7,A1,h1,FPu,l$s,bRr,ERr,g1};
+import {mwt} from "./m1018.ts";
+var Z$u=(e={})=>fromTokenFile({...e});
+var J6s=b(()=>{mwt()});
+export {Z$u,J6s};

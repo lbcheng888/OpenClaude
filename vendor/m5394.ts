@@ -1,16 +1,33 @@
 // @ts-nocheck
-import {useIsScreenReaderEnabled,dwe} from "./m2434.ts";
-import {getIsRemoteMode,lt} from "../src/session/0131_sent.ts";
-import {getCurrentProjectConfig,saveCurrentProjectConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {bHt,$u} from "../src/mcp/2194_mcpServerName.ts";
-import {ncn,LB} from "./m1284.ts";
-import {EIe,D$t,H9} from "../src/telemetry/4045_contextWindow.ts";
-import {Bk,ym} from "../src/config/3332_flushAnalyticsSinks.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function C5l(e){let t=useIsScreenReaderEnabled();E5l.useEffect(()=>{if(getIsRemoteMode())return;let n=getCurrentProjectConfig(),r=bHt();if(n.lastGracefulShutdown!==!1||n.lastVersionBase!==r)saveCurrentProjectConfig((s)=>({...s,lastGracefulShutdown:!1,lastVersionBase:r}));let o=()=>{if(ncn()){let s=t?"Cost: ":"";process.stdout.write(`
-`+s+EIe()+`
-`)}D$t(e?.())};return process.on("exit",o),()=>{if(Bk())D$t(e?.());process.off("exit",o)}},[t])}
-var E5l;
-var v5l=b(()=>{lt();H9();dwe();$u();LB();Qn();ym();E5l=M(Te(),1)});
-export {C5l,E5l,v5l};
+import {ay,E$} from "./m2821.ts";
+import {_r,ui} from "./m2463.ts";
+import {Cs,tp} from "../src/config/2284_loggedTmuxCcDisable.ts";
+import {useIsScreenReaderEnabled,Jve} from "./m2444.ts";
+import {_t,uo} from "./m2468.ts";
+import {getMemoryToggledOff,lt} from "../src/session/0132_sent.ts";
+import {Ier,djl,cyt} from "./m5372.ts";
+import {FVl,BVl,_No} from "../src/tui/5304_scheduleTimeout.ts";
+import {Ckl,hGt} from "./m4836.ts";
+import {Box} from "./m2432.ts";
+import {M2e,COt} from "./m2586.ts";
+import {l7n,bvo} from "./m4638.ts";
+import {P8e,c8t} from "./m4501.ts";
+import {lYl,cYl} from "../src/tui/5391_exitMessage.ts";
+import {fer,her} from "../src/tui/5356_apiKeyStatus.ts";
+import {gYl,WFo} from "../src/tui/5394_ideSelection.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {nB} from "../src/api/2752_status.ts";
+import {QMt} from "../src/core/2751_message.ts";
+import {gDe} from "./m4377.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function IBm(e){let t=GFo.c(88),{apiKeyStatus:n,debug:r,exitMessage:o,leftArrowPending:s,leftArrowDetachAvailable:i,vimMode:a,mode:l,isAutoUpdating:c,verbose:u,onChangeIsUpdating:d,suggestions:p,selectedSuggestion:m,suggestionsEmptyMessage:f,maxColumnWidth:h,hoveredSuggestionId:g,onSelectSuggestion:_,onHoverSuggestion:T,toolPermissionContext:y,helpOpen:S,suppressHint:E,isLoading:R,isExternalLoading:w,betweenCalls:H,tasksSelected:k,bridgeSelected:I,tmuxSelected:D,ideSelection:O,mcpClients:L,isPasting:P,showExpandPasteHint:M,hasStash:B,isInputWrapped:N,messagesRef:F,lastAssistantMessageId:V,tokenUsage:G,isSearching:z,historyQuery:J,setHistoryQuery:K,historyFailedMatch:j,onOpenTasksDialog:X}=e,ee=w===void 0?!1:w,te=H===void 0?!0:H,ne=P===void 0?!1:P,se=M===void 0?!1:M,re=B===void 0?!1:B,ue=ay(),{columns:le,rows:ce}=_r(),Se;if(t[0]===Symbol.for("react.memo_cache_sentinel"))Se=Cs(),t[0]=Se;else Se=t[0];let ie=Se,ae=useIsScreenReaderEnabled(),pe=_t(PBm),me=ie&&ce<HBm,_e;if(t[1]===Symbol.for("react.memo_cache_sentinel"))_e=!1,t[1]=_e;else _e=t[1];let de=ie&&pe&&"focus",ge;if(t[2]===Symbol.for("react.memo_cache_sentinel"))ge=getMemoryToggledOff()&&"memory paused",t[2]=ge;else ge=t[2];let Te;if(t[3]!==de)Te=[_e,de,ge].filter(DBm),t[3]=de,t[4]=Te;else Te=t[4];let he=Te,ye=Ier(),we=_t(xBm),Oe=k&&(ye===0||we<0),We;if(t[5]!==ue)We=FVl(ue),t[5]=ue,t[6]=We;else We=t[6];let Fe=We,ke=E||z,Ue=ke||Fe,Ge=p.length>0||!!f,ht;if(t[7]!==Ge||t[8]!==g||t[9]!==h||t[10]!==T||t[11]!==_||t[12]!==m||t[13]!==p||t[14]!==f)ht=ie&&Ge?{suggestions:p,selectedSuggestion:m,maxColumnWidth:h,emptyMessage:f,hoveredId:g,onSelect:_,onHoverChange:T}:null,t[7]=Ge,t[8]=g,t[9]=h,t[10]=T,t[11]=_,t[12]=m,t[13]=p,t[14]=f,t[15]=ht;else ht=t[15];if(Ckl(ht),Ge&&!ie){let Qn;if(t[16]!==h||t[17]!==m||t[18]!==p||t[19]!==f)Qn=bN.jsx(Box,{paddingX:2,paddingY:0,children:bN.jsx(M2e,{suggestions:p,selectedSuggestion:m,maxColumnWidth:h,emptyMessage:f})}),t[16]=h,t[17]=m,t[18]=p,t[19]=f,t[20]=Qn;else Qn=t[20];return Qn}if(S){let Qn;if(t[21]===Symbol.for("react.memo_cache_sentinel"))Qn=bN.jsx(l7n,{dimColor:!0,fixedWidth:!0,paddingX:2}),t[21]=Qn;else Qn=t[21];return Qn}let Be=ae?"column":"row",dt;if(t[22]!==o||t[23]!==ne||t[24]!==me||t[25]!==V||t[26]!==F||t[27]!==l||t[28]!==Fe||t[29]!==G||t[30]!==a)dt=l==="prompt"&&!me&&!o.show&&!ne&&Fe&&bN.jsx(BVl,{messagesRef:F,lastAssistantMessageId:V,tokenUsage:G,vimMode:a}),t[22]=o,t[23]=ne,t[24]=me,t[25]=V,t[26]=F,t[27]=l,t[28]=Fe,t[29]=G,t[30]=a,t[31]=dt;else dt=t[31];let Dt;if(t[32]!==me||t[33]!==ue?.statusLine||t[34]!==Fe)Dt=!me&&Fe&&(P8e(ue?.statusLine)?.hideVimModeIndicator??!1),t[32]=me,t[33]=ue?.statusLine,t[34]=Fe,t[35]=Dt;else Dt=t[35];let rt=!E,ot;if(t[36]!==te||t[37]!==o||t[38]!==j||t[39]!==J||t[40]!==ee||t[41]!==R||t[42]!==ne||t[43]!==z||t[44]!==i||t[45]!==s||t[46]!==l||t[47]!==X||t[48]!==Oe||t[49]!==K||t[50]!==se||t[51]!==Ue||t[52]!==ke||t[53]!==Dt||t[54]!==rt||t[55]!==D||t[56]!==y||t[57]!==a)ot=bN.jsx(lYl,{exitMessage:o,leftArrowPending:s,leftArrowDetachAvailable:i,vimMode:a,hideVimModeIndicator:Dt,mode:l,toolPermissionContext:y,suppressHint:Ue,suppressHintExceptStatusline:ke,isInputEmpty:rt,isLoading:R,isExternalLoading:ee,betweenCalls:te,tasksSelected:Oe,tmuxSelected:D,isPasting:ne,showExpandPasteHint:se,isSearching:z,historyQuery:J,setHistoryQuery:K,historyFailedMatch:j,onOpenTasksDialog:X}),t[36]=te,t[37]=o,t[38]=j,t[39]=J,t[40]=ee,t[41]=R,t[42]=ne,t[43]=z,t[44]=i,t[45]=s,t[46]=l,t[47]=X,t[48]=Oe,t[49]=K,t[50]=se,t[51]=Ue,t[52]=ke,t[53]=Dt,t[54]=rt,t[55]=D,t[56]=y,t[57]=a,t[58]=ot;else ot=t[58];let Ht;if(t[59]===Symbol.for("react.memo_cache_sentinel"))Ht=!1,t[59]=Ht;else Ht=t[59];let zt;if(t[60]!==dt||t[61]!==ot)zt=bN.jsxs(Box,{flexDirection:"column",flexShrink:1,children:[dt,ot,Ht]}),t[60]=dt,t[61]=ot,t[62]=zt;else zt=t[62];let Nt;if(t[63]!==n||t[64]!==re||t[65]!==c||t[66]!==N||t[67]!==d||t[68]!==G||t[69]!==u)Nt=ie?null:bN.jsx(fer,{apiKeyStatus:n,isAutoUpdating:c,verbose:u,tokenUsage:G,onChangeIsUpdating:d,isInputWrapped:N,hasStash:re}),t[63]=n,t[64]=re,t[65]=c,t[66]=N,t[67]=d,t[68]=G,t[69]=u,t[70]=Nt;else Nt=t[70];let nn;if(t[71]!==I||t[72]!==r||t[73]!==O||t[74]!==L||t[75]!==he||t[76]!==Nt)nn=bN.jsx(OBm,{bridgeSelected:I,modeLabels:he,ideSelection:O,mcpClients:L,debug:r,notifications:Nt}),t[71]=I,t[72]=r,t[73]=O,t[74]=L,t[75]=he,t[76]=Nt,t[77]=nn;else nn=t[77];let _n;if(t[78]!==le||t[79]!==Be||t[80]!==zt||t[81]!==nn)_n=bN.jsxs(Box,{width:le,flexDirection:Be,flexWrap:"wrap",alignItems:"flex-start",paddingLeft:2,paddingRight:ie?1:2,columnGap:1,children:[zt,nn]}),t[78]=le,t[79]=Be,t[80]=zt,t[81]=nn,t[82]=_n;else _n=t[82];let Rn=l==="prompt"&&!o.show&&!ne,on;if(t[83]!==Rn)on=bN.jsx(djl,{showWorkflows:Rn}),t[83]=Rn,t[84]=on;else on=t[84];let En;if(t[85]!==_n||t[86]!==on)En=bN.jsxs(bN.Fragment,{children:[_n,on]}),t[85]=_n,t[86]=on,t[87]=En;else En=t[87];return En}
+function xBm(e){return e.coordinatorTaskIndex}
+function DBm(e){return Boolean(e)}
+function PBm(e){return e.briefTranscript}
+function OBm(e){let t=GFo.c(9),{notifications:n,bridgeSelected:r,modeLabels:o,ideSelection:s,mcpClients:i,debug:a}=e,l;if(t[0]!==r||t[1]!==a||t[2]!==s||t[3]!==i||t[4]!==o)l=bN.jsx(gYl,{ideSelection:s,mcpClients:i,debug:a,bridgeSelected:r,modeLabels:o}),t[0]=r,t[1]=a,t[2]=s,t[3]=i,t[4]=o,t[5]=l;else l=t[5];let c;if(t[6]!==n||t[7]!==l)c=bN.jsxs(Box,{flexShrink:0,marginLeft:"auto",flexDirection:"column",alignItems:"flex-end",children:[n,l]}),t[6]=n,t[7]=l,t[8]=c;else c=t[8];return c}
+var GFo,_Yl,bN,HBm=15,yYl;
+var TYl=b(()=>{lt();hGt();E$();ui();Jve();je();nB();QMt();uo();tp();c8t();gDe();cyt();_No();her();cYl();COt();bvo();WFo();GFo=x(tt(),1),_Yl=x(et(),1),bN=x(oe(),1);yYl=_Yl.memo(IBm)});
+export {IBm,xBm,DBm,PBm,OBm,GFo,_Yl,bN,HBm,yYl,TYl};

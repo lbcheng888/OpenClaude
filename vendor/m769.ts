@@ -1,10 +1,15 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Oos} from "./m767.ts";
-import {Mos} from "./m768.ts";
-var Nos=()=>{};
-var Bos=()=>{};
-var Fos=()=>{};
-var Uos=()=>{};
-var $os=b(()=>{Oos();Mos();Nos();Bos();Fos();Uos()});
-export {Nos,Bos,Fos,Uos,$os};
+import {providerConfigFromInit,Tvt,Msn,Nsn} from "./m760.ts";
+import {Usn,ous} from "./m761.ts";
+import {getInstanceMetadataEndpoint,Mbr} from "./m768.ts";
+import {httpRequest,Lsn} from "./m759.ts";
+import {b,x} from "../runtime.ts";
+import {$N} from "./m607.ts";
+import {Vg} from "./m600.ts";
+var Nbr=(e,t)=>{let n=300+Math.floor(Math.random()*300),r=new Date(Date.now()+n*1000);t.warn(`Attempting credential expiration extension due to a credential service availability issue. A refresh of these credentials will be attempted after ${new Date(r)}.
+For more information, please visit: https://docs.aws.amazon.com/sdkref/latest/guide/feature-static-credentials.html`);let o=e.originalExpiration??e.expiration;return{...e,...o?{originalExpiration:o}:{},expiration:r}};
+var fus=(e,t={})=>{let n=t?.logger||console,r;return async()=>{let o;try{if(o=await e(),o.expiration&&o.expiration.getTime()<Date.now())o=Nbr(o,n)}catch(s){if(r)n.warn("Credential renew failed: ",s),o=Nbr(r,n);else throw s}return r=o,o}};
+var hus=()=>{};
+var yus,Bbr,Tus="/latest/meta-data/iam/security-credentials/",guu="/latest/api/token",Fbr="AWS_EC2_METADATA_V1_DISABLED",gus="ec2_metadata_v1_disabled",_us="x-aws-ec2-metadata-token",fromInstanceMetadata=(e={})=>fus(_uu(e),{logger:e.logger}),_uu=(e={})=>{let t=!1,{logger:n,profile:r}=e,{timeout:o,maxRetries:s}=providerConfigFromInit(e),i=async(a,l)=>{if(t||l.headers?.[_us]==null){let d=!1,p=!1,m=await yus.loadConfig({environmentVariableSelector:(f)=>{let h=f[Fbr];if(p=!!h&&h!=="false",h===void 0)throw new Bbr.CredentialsProviderError(`${Fbr} not set in env, checking config file next.`,{logger:e.logger});return p},configFileSelector:(f)=>{let h=f[gus];return d=!!h&&h!=="false",d},default:!1},{profile:r})();if(e.ec2MetadataV1Disabled||m){let f=[];if(e.ec2MetadataV1Disabled)f.push("credential provider initialization (runtime option ec2MetadataV1Disabled)");if(d)f.push(`config file profile (${gus})`);if(p)f.push(`process environment variable (${Fbr})`);throw new Usn(`AWS EC2 Metadata v1 fallback has been blocked by AWS SDK configuration in the following: [${f.join(", ")}].`)}}let u=(await Tvt(async()=>{let d;try{d=await Tuu(l)}catch(p){if(p.statusCode===401)t=!1;throw p}return d},a)).trim();return Tvt(async()=>{let d;try{d=await Suu(u,l,e)}catch(p){if(p.statusCode===401)t=!1;throw p}return d},a)};return async()=>{let a=await getInstanceMetadataEndpoint();if(t)return n?.debug("AWS SDK Instance Metadata","using v1 fallback (no token fetch)"),i(s,{...a,timeout:o});else{let l;try{l=(await yuu({...a,timeout:o})).toString()}catch(c){if(c?.statusCode===400)throw Object.assign(c,{message:"EC2 Metadata token request returned error"});else if(c.message==="TimeoutError"||[403,404,405].includes(c.statusCode))t=!0;return n?.debug("AWS SDK Instance Metadata","using v1 fallback (initial)"),i(s,{...a,timeout:o})}return i(s,{...a,headers:{[_us]:l},timeout:o})}}},yuu=async(e)=>httpRequest({...e,path:guu,method:"PUT",headers:{"x-aws-ec2-metadata-token-ttl-seconds":"21600"}}),Tuu=async(e)=>(await httpRequest({...e,path:Tus})).toString(),Suu=async(e,t,n)=>{let r=JSON.parse((await httpRequest({...t,path:Tus+e})).toString());if(!Msn(r))throw new Bbr.CredentialsProviderError("Invalid response received from instance metadata service.",{logger:n.logger});return Nsn(r)};
+var Sus=b(()=>{ous();Lsn();Mbr();hus();yus=x($N(),1),Bbr=x(Vg(),1)});
+export {Nbr,fus,hus,yus,Bbr,Tus,guu,Fbr,gus,_us,fromInstanceMetadata,_uu,yuu,Tuu,Suu,Sus};

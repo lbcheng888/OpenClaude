@@ -1,0 +1,23 @@
+// @ts-nocheck
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {Vte,QD,e6,z5e} from "./m4334.ts";
+import {oq,Yae} from "../src/config/3274_errors.ts";
+import {Wt,Ore,Nd,ps} from "./m230.ts";
+import {lu,zf} from "./m133.ts";
+import {getOriginalCwd,lt} from "../src/session/0132_sent.ts";
+import {b} from "../runtime.ts";
+function Pel(e){if(!e.startsWith("../"))return e;let t=Kte(ZD.basename(isTmuxControlMode()));if(!t)return e;let n="../"+t+"/",r=e;while(r.startsWith(n))r=r.slice(n.length);if(r==="../"+t)return".";return r}
+function z5n(e){let t=e;if(t=Vte(t),t.length>0&&(oq.has(t[0])||t[0]==="/")){let r=t.indexOf(":",1);if(r>0)t=Vte(t.slice(r+1))}if(t=QD(t),t=e6(t),t=t.replace(/^(?:[A-Za-z0-9_.]+\\){0,3}FileSystem::/i,""),t=t.replace(/^[A-Za-z]:(?![/\\])/,"./"),t=t.replaceAll("\\","/"),t==="~"||t.startsWith("~/"))t=(Del.homedir()+t.slice(1)).replaceAll("\\","/");let n="";if(/^[A-Za-z]:\//.test(t))n=t.slice(0,2),t=t.slice(2);if(t=t.split("/").map((r)=>{if(r==="")return r;let o;do{if(o=r,r=r.replace(/ +$/,""),r==="."||r==="..")return r;r=r.replace(/\.+$/,"")}while(r!==o);return r||"."}).join("/"),t=ZD.posix.normalize(t),n)t=n+t;if(t.startsWith("./"))t=t.slice(2);return t}
+function Kte(e){return e.toLowerCase().replace(/\u0131/g,"i").replace(/\u017f/g,"s").normalize("NFC").replaceAll("\u03C2","\u03C3")}
+function Oel(e){let t=Wt(),n=isTmuxControlMode(),r=ZD.resolve(n,e),o=Ore(t,r)??r,s=Nd(t,n).resolvedPath,i=s.endsWith(ZD.sep)?s:s+ZD.sep,a=Kte(o),l=Kte(s),c=Kte(i);if(a===l)return".";if(!a.startsWith(c))return null;return a.slice(c.length).replaceAll("\\","/")}
+function Hel(e){if(e==="head"||e===".git")return!0;if(e.startsWith(".git/")||/^git~\d+($|\/)/.test(e))return!0;for(let t of a4p){if(t==="head")continue;if(e===t||e.startsWith(t+"/"))return!0}return!1}
+function kmt(e){let t=z5n(e),n=Pel(Kte(t));if(Hel(n))return!0;let r=Oel(t);if(r!==null&&Hel(r))return!0;return!1}
+function j5n(e){let t=z5n(e),n=Pel(Kte(t));if(Iel(n))return!0;let r=Oel(t);if(r!==null&&Iel(r))return!0;return!1}
+function Iel(e){if(e===".git"||e.startsWith(".git/"))return!0;return/^git~\d+($|\/)/.test(e)}
+function Y5n(e){if(!e.includes(","))return[e];return[e,...e.split(",")]}
+function xel(e){return/[*?[\]$]/.test(e)}
+function f4p(e){let t=Wt(),n=isTmuxControlMode(),r=ZD.resolve(n,e),o=lu(r)?r:Ore(t,r)??r,s=Nd(t,n).resolvedPath,i=Kte(o);if(Kte(s)===i)return!0;let a=Nd(t,getOriginalCwd()).resolvedPath,l=ZD.relative(a,s);if(l===".."||l.startsWith(".."+ZD.sep)||ZD.isAbsolute(l))return!1;let c=Kte(a),u=s;for(;;){if(Kte(u)===i)return!0;if(Kte(u)===c||u===ZD.dirname(u))return!1;u=ZD.dirname(u)}}
+function Lel(e,t=!1){let n=[],r=[],o,s=!1,i=!1,a=[];for(let p=0;p<e.length;p++){let m=Vte(e[p]);if(m.length===0||!oq.has(m[0])){r.push(e[p]);continue}let f=m.indexOf(":",1),h=(f>0?m.slice(1,f):m.slice(1)).toLowerCase(),g=f>0?m.slice(f+1):void 0;if(h==="")return!0;let _="destination".startsWith(h),T=c4p.has(h)||"literalpath".startsWith(h),y=T||l4p.some((H)=>H.startsWith(h)),S=u4p.has(h)||p4p.some((H)=>H.startsWith(h)),E=d4p.has(h)||m4p.some((H)=>H.startsWith(h));if(Number(_)+Number(y)+Number(S)+Number(E)!==1)return!0;if(S){if("container".startsWith(h)&&g!==void 0){let H=QD(Vte(g));if(!/^\$true$/i.test(H.trim()))i=!0}continue}let w=g??e[++p];if(w===void 0)continue;if(_)o=w;else if(y)if(s=!0,T)a.push(...w.split(","));else n.push(...w.split(","))}let l=(s?0:1)+(o===void 0?1:0);if(r.length>l)return!0;let c,u=0;if(!s&&u<r.length)n.push(...r[u].split(",")),u++;if(o===void 0&&u<r.length)c=r[u];if(n.length===0&&a.length===0&&!t)return!1;let d=o??c;if(d!==void 0){let p=z5n(d);if(p==="")p=".";if(xel(p))return!0;if(!f4p(p))return!1}if(i||t)return!0;for(let[p,m]of[[!1,n],[!0,a]])for(let f of m){let h=z5n(f);if(h==="")h=".";if(p?/\$/.test(h):xel(h))return!0;let g=ZD.posix.basename(h);if(g==="."||g==="..")return!0;if(kmt(g))return!0}return!1}
+var Del,ZD,a4p,l4p,c4p,u4p,d4p,p4p,m4p;
+var Mel=b(()=>{lt();zf();Po();ps();Yae();z5e();Del=require("os"),ZD=require("path");a4p=["head","objects","refs","hooks"];l4p=["path","literalpath"],c4p=new Set(["pspath","lp"]),u4p=new Set(["cf","wi","vb","db","usetx"]),d4p=new Set(["ea","ev","wa","wv","infa","iv","proga","ov","ob","pv"]),p4p=["container","force","passthru","recurse","whatif","confirm","usetransaction","verbose","debug"],m4p=["filter","include","exclude","credential","fromsession","tosession","erroraction","errorvariable","warningaction","warningvariable","informationaction","informationvariable","progressaction","outvariable","outbuffer","pipelinevariable"]});
+export {Pel,z5n,Kte,Oel,Hel,kmt,j5n,Iel,Y5n,xel,f4p,Lel,Del,ZD,a4p,l4p,c4p,u4p,d4p,p4p,m4p,Mel};

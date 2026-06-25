@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-import {bno} from "./m3684.ts";
-var WEa=X((h1n)=>{Object.defineProperty(h1n,"__esModule",{value:!0});h1n.detectResources=void 0;var jEa=Xi(),Eno=bno(),Rlp=(e={})=>(e.detectors||[]).map((n)=>{try{let r=(0,Eno.resourceFromDetectedResource)(n.detect(e));return jEa.diag.debug(`${n.constructor.name} found resource.`,r),r}catch(r){return jEa.diag.debug(`${n.constructor.name} failed: ${r.message}`),(0,Eno.emptyResource)()}}).reduce((n,r)=>n.merge(r),(0,Eno.emptyResource)());h1n.detectResources=Rlp});
-export {WEa};
+import {Q} from "../runtime.ts";
+import {zio} from "./m3681.ts";
+import {KFn} from "./m3682.ts";
+import {jFn} from "./m3683.ts";
+var vIa=Q((JFn)=>{Object.defineProperty(JFn,"__esModule",{value:!0});JFn.LogarithmMapping=void 0;var jlt=zio(),CIa=KFn(),AIa=jFn();class RIa{_scale;_scaleFactor;_inverseFactor;constructor(e){this._scale=e,this._scaleFactor=CIa.ldexp(Math.LOG2E,e),this._inverseFactor=CIa.ldexp(Math.LN2,-e)}mapToIndex(e){if(e<=jlt.MIN_VALUE)return this._minNormalLowerBoundaryIndex()-1;if(jlt.getSignificand(e)===0)return(jlt.getNormalBase2(e)<<this._scale)-1;let t=Math.floor(Math.log(e)*this._scaleFactor),n=this._maxNormalLowerBoundaryIndex();if(t>=n)return n;return t}lowerBoundary(e){let t=this._maxNormalLowerBoundaryIndex();if(e>=t){if(e===t)return 2*Math.exp((e-(1<<this._scale))/this._scaleFactor);throw new AIa.MappingError(`overflow: ${e} is > maximum lower boundary: ${t}`)}let n=this._minNormalLowerBoundaryIndex();if(e<=n){if(e===n)return jlt.MIN_VALUE;else if(e===n-1)return Math.exp((e+(1<<this._scale))/this._scaleFactor)/2;throw new AIa.MappingError(`overflow: ${e} is < minimum lower boundary: ${n}`)}return Math.exp(e*this._inverseFactor)}get scale(){return this._scale}_minNormalLowerBoundaryIndex(){return jlt.MIN_NORMAL_EXPONENT<<this._scale}_maxNormalLowerBoundaryIndex(){return(jlt.MAX_NORMAL_EXPONENT+1<<this._scale)-1}}JFn.LogarithmMapping=RIa});
+export {vIa};

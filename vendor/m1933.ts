@@ -1,15 +1,44 @@
 // @ts-nocheck
-import {Spn,d0,Hh,GS,hm} from "./m1631.ts";
-import {p0,XD} from "./m1634.ts";
-import {ClientSecretCredential,wPr} from "./m1931.ts";
-import {ClientCertificateCredential,vPr} from "./m1930.ts";
-import {UsernamePasswordCredential,RPr} from "./m1932.ts";
-import {isKeybindingCustomizationEnabled,S1} from "./m1712.ts";
-import {AuthenticationError,CredentialUnavailableError,JD} from "./m1632.ts";
+import {Xri,Qri} from "./m1932.ts";
+import {I0,PR,uD} from "./m1639.ts";
+import {jg,LM} from "./m1717.ts";
+import {EA} from "./m1638.ts";
+import {UQe,H_n,bse} from "./m1928.ts";
+import {H0,Oh,VS,Lp} from "./m1636.ts";
+import {CredentialUnavailableError,cD} from "./m1637.ts";
 import {b} from "../runtime.ts";
-function y6u(){var e;return((e=process.env.AZURE_ADDITIONALLY_ALLOWED_TENANTS)!==null&&e!==void 0?e:"").split(";")}
-function T6u(){var e;let t=((e=process.env.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN)!==null&&e!==void 0?e:"").toLowerCase(),n=t==="true"||t==="1";return sfe.verbose(`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN: ${process.env.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN}; sendCertificateChain: ${n}`),n}
-class EnvironmentCredential{constructor(e){this._credential=void 0;let t=Spn(_6u).assigned.join(", ");sfe.info(`Found the following environment variables: ${t}`);let n=process.env.AZURE_TENANT_ID,r=process.env.AZURE_CLIENT_ID,o=process.env.AZURE_CLIENT_SECRET,s=y6u(),i=T6u(),a=Object.assign(Object.assign({},e),{additionallyAllowedTenantIds:s,sendCertificateChain:i});if(n)p0(sfe,n);if(n&&r&&o){sfe.info(`Invoking ClientSecretCredential with tenant ID: ${n}, clientId: ${r} and clientSecret: [REDACTED]`),this._credential=new ClientSecretCredential(n,r,o,a);return}let l=process.env.AZURE_CLIENT_CERTIFICATE_PATH,c=process.env.AZURE_CLIENT_CERTIFICATE_PASSWORD;if(n&&r&&l){sfe.info(`Invoking ClientCertificateCredential with tenant ID: ${n}, clientId: ${r} and certificatePath: ${l}`),this._credential=new ClientCertificateCredential(n,r,{certificatePath:l,certificatePassword:c},a);return}let u=process.env.AZURE_USERNAME,d=process.env.AZURE_PASSWORD;if(n&&r&&u&&d)sfe.info(`Invoking UsernamePasswordCredential with tenant ID: ${n}, clientId: ${r} and username: ${u}`),sfe.warning("Environment is configured to use username and password authentication. This authentication method is deprecated, as it doesn't support multifactor authentication (MFA). Use a more secure credential. For more details, see https://aka.ms/azsdk/identity/mfa."),this._credential=new UsernamePasswordCredential(n,r,u,d,a)}async getToken(e,t={}){return isKeybindingCustomizationEnabled.withSpan(`${zfn}.getToken`,t,async(n)=>{if(this._credential)try{let r=await this._credential.getToken(e,n);return sfe.getToken.info(d0(e)),r}catch(r){let o=new AuthenticationError(400,{error:`${zfn} authentication failed. To troubleshoot, visit https://aka.ms/azsdk/js/identity/environmentcredential/troubleshoot.`,error_description:r.message.toString().split("More details:").join("")});throw sfe.getToken.info(Hh(e,o)),o}throw new CredentialUnavailableError(`${zfn} is unavailable. No underlying credential could be used. To troubleshoot, visit https://aka.ms/azsdk/js/identity/environmentcredential/troubleshoot.`)})}}
-var _6u,zfn="EnvironmentCredential",sfe;
-var xPr=b(()=>{JD();GS();vPr();wPr();RPr();XD();S1();_6u=["AZURE_TENANT_ID","AZURE_CLIENT_ID","AZURE_CLIENT_SECRET","AZURE_CLIENT_CERTIFICATE_PATH","AZURE_CLIENT_CERTIFICATE_PASSWORD","AZURE_USERNAME","AZURE_PASSWORD","AZURE_ADDITIONALLY_ALLOWED_TENANTS","AZURE_CLIENT_SEND_CERTIFICATE_CHAIN"];sfe=hm(zfn)});
-export {y6u,T6u,EnvironmentCredential,_6u,zfn,sfe,xPr};
+function toi(e){if(eoi)return`${e}.exe`;else return e}
+async function Zri(e,t){let n=[];for(let r of e){let[o,...s]=r,i=await Xri.execFile(o,s,{encoding:"utf8",timeout:t});n.push(i)}return n}
+class AzurePowerShellCredential{constructor(e){if(e===null||e===void 0?void 0:e.tenantId)I0(mfe,e===null||e===void 0?void 0:e.tenantId),this.tenantId=e===null||e===void 0?void 0:e.tenantId;this.additionallyAllowedTenantIds=PR(e===null||e===void 0?void 0:e.additionallyAllowedTenants),this.timeout=e===null||e===void 0?void 0:e.processTimeoutInMs}async getAzurePowerShellAccessToken(e,t,n){for(let r of[...X1r]){try{await Zri([[r,"/?"]],n)}catch(i){X1r.shift();continue}let s=(await Zri([[r,"-NoProfile","-NonInteractive","-Command",`
+          $tenantId = "${t!==null&&t!==void 0?t:""}"
+          $m = Import-Module Az.Accounts -MinimumVersion 2.2.0 -PassThru
+          $useSecureString = $m.Version -ge [version]'2.17.0'
+
+          $params = @{
+            ResourceUrl = "${e}"
+          }
+
+          if ($tenantId.Length -gt 0) {
+            $params["TenantId"] = $tenantId
+          }
+
+          if ($useSecureString) {
+            $params["AsSecureString"] = $true
+          }
+
+          $token = Get-AzAccessToken @params
+
+          $result = New-Object -TypeName PSObject
+          $result | Add-Member -MemberType NoteProperty -Name ExpiresOn -Value $token.ExpiresOn
+          if ($useSecureString) {
+            $result | Add-Member -MemberType NoteProperty -Name Token -Value (ConvertFrom-SecureString -AsPlainText $token.Token)
+          } else {
+            $result | Add-Member -MemberType NoteProperty -Name Token -Value $token.Token
+          }
+
+          Write-Output (ConvertTo-Json $result)
+          `]]))[0];return OYu(s)}throw Error("Unable to execute PowerShell. Ensure that it is installed in your system")}async getToken(e,t={}){return jg.withSpan(`${this.constructor.name}.getToken`,t,async()=>{let n=EA(this.tenantId,t,this.additionallyAllowedTenantIds),r=typeof e==="string"?e:e[0];if(n)I0(mfe,n);try{UQe(r,mfe),mfe.getToken.info(`Using the scope ${r}`);let o=H_n(r),s=await this.getAzurePowerShellAccessToken(o,n,this.timeout);return mfe.getToken.info(H0(e)),{token:s.Token,expiresOnTimestamp:new Date(s.ExpiresOn).getTime(),tokenType:"Bearer"}}catch(o){if(PYu(o)){let i=new CredentialUnavailableError(J1r.installed);throw mfe.getToken.info(Oh(r,i)),i}else if(DYu(o)){let i=new CredentialUnavailableError(J1r.login);throw mfe.getToken.info(Oh(r,i)),i}let s=new CredentialUnavailableError(`${o}. ${J1r.troubleshoot}`);throw mfe.getToken.info(Oh(r,s)),s}})}}
+async function OYu(e){let t=/{[^{}]*}/g,n=e.match(t),r=e;if(n)try{for(let o of n)try{let s=JSON.parse(o);if(s===null||s===void 0?void 0:s.Token){if(r=r.replace(o,""),r)mfe.getToken.warning(r);return s}}catch(s){continue}}catch(o){throw Error(`Unable to parse the output of PowerShell. Received output: ${e}`)}throw Error(`No access token found in the output. Received output: ${e}`)}
+var mfe,eoi=!1,noi,J1r,DYu=(e)=>e.message.match(`(.*)${noi.login}(.*)`),PYu=(e)=>e.message.match(noi.installed),X1r;
+var Q1r=b(()=>{uD();VS();bse();cD();Qri();LM();mfe=Lp("AzurePowerShellCredential");noi={login:"Run Connect-AzAccount to login",installed:"The specified module 'Az.Accounts' with version '2.2.0' was not loaded because no valid module file was found in any module directory"},J1r={login:"Please run 'Connect-AzAccount' from PowerShell to authenticate before using this credential.",installed:`The 'Az.Account' module >= 2.2.0 is not installed. Install the Azure Az PowerShell module with: "Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force".`,troubleshoot:"To troubleshoot, visit https://aka.ms/azsdk/js/identity/powershellcredential/troubleshoot."},X1r=[toi("pwsh")];if(eoi)X1r.push(toi("powershell"))});
+export {toi,Zri,AzurePowerShellCredential,OYu,mfe,eoi,noi,J1r,DYu,PYu,X1r,Q1r};

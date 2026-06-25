@@ -1,6 +1,9 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {tC} from "./m829.ts";
-var PNs;
-var ONs=b(()=>{PNs=M(tC(),1)});
-export {PNs,ONs};
+import {AssumeRoleCommand,gpn} from "./m1340.ts";
+import {AssumeRoleWithWebIdentityCommand,ypn} from "./m1342.ts";
+import {b,x} from "../runtime.ts";
+import {b0} from "./m756.ts";
+import {iQ} from "./m921.ts";
+var wpn,c9s,u9s=(e)=>{if(typeof e?.Arn==="string"){let t=e.Arn.split(":");if(t.length>4&&t[4]!=="")return t[4]}return},d9s=async(e,t,n,r={})=>{let o=typeof e==="function"?await e():e,s=typeof t==="function"?await t():t,i=await c9s.stsRegionDefaultResolver(r)();return n?.debug?.("@aws-sdk/client-sts::resolveRegion","accepting first of:",`${o} (credential provider clientConfig)`,`${s} (contextual client)`,`${i} (STS default: AWS_REGION, profile region, or us-east-1)`),o??s??i},p9s=(e,t)=>{let n,r;return async(o,s)=>{if(r=o,!n){let{logger:u=e?.parentClientConfig?.logger,profile:d=e?.parentClientConfig?.profile,region:p,requestHandler:m=e?.parentClientConfig?.requestHandler,credentialProviderLogger:f,userAgentAppId:h=e?.parentClientConfig?.userAgentAppId}=e,g=await d9s(p,e?.parentClientConfig?.region,f,{logger:u,profile:d}),_=!f9s(m);n=new t({...e,userAgentAppId:h,profile:d,credentialDefaultProvider:()=>async()=>r,region:g,requestHandler:_?m:void 0,logger:u})}let{Credentials:i,AssumedRoleUser:a}=await n.send(new AssumeRoleCommand(s));if(!i||!i.AccessKeyId||!i.SecretAccessKey)throw Error(`Invalid response from STS.assumeRole call with role ${s.RoleArn}`);let l=u9s(a),c={accessKeyId:i.AccessKeyId,secretAccessKey:i.SecretAccessKey,sessionToken:i.SessionToken,expiration:i.Expiration,...i.CredentialScope&&{credentialScope:i.CredentialScope},...l&&{accountId:l}};return wpn.setCredentialFeature(c,"CREDENTIALS_STS_ASSUME_ROLE","i"),c}},m9s=(e,t)=>{let n;return async(r)=>{if(!n){let{logger:l=e?.parentClientConfig?.logger,profile:c=e?.parentClientConfig?.profile,region:u,requestHandler:d=e?.parentClientConfig?.requestHandler,credentialProviderLogger:p,userAgentAppId:m=e?.parentClientConfig?.userAgentAppId}=e,f=await d9s(u,e?.parentClientConfig?.region,p,{logger:l,profile:c}),h=!f9s(d);n=new t({...e,userAgentAppId:m,profile:c,region:f,requestHandler:h?d:void 0,logger:l})}let{Credentials:o,AssumedRoleUser:s}=await n.send(new AssumeRoleWithWebIdentityCommand(r));if(!o||!o.AccessKeyId||!o.SecretAccessKey)throw Error(`Invalid response from STS.assumeRoleWithWebIdentity call with role ${r.RoleArn}`);let i=u9s(s),a={accessKeyId:o.AccessKeyId,secretAccessKey:o.SecretAccessKey,sessionToken:o.SessionToken,expiration:o.Expiration,...o.CredentialScope&&{credentialScope:o.CredentialScope},...i&&{accountId:i}};if(i)wpn.setCredentialFeature(a,"RESOLVED_ACCOUNT_ID","T");return wpn.setCredentialFeature(a,"CREDENTIALS_STS_ASSUME_ROLE_WEB_ID","k"),a}},f9s=(e)=>e?.metadata?.handlerProtocol==="h2";
+var h9s=b(()=>{gpn();ypn();wpn=x(b0(),1),c9s=x(iQ(),1)});
+export {wpn,c9s,u9s,d9s,p9s,m9s,f9s,h9s};

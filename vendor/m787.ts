@@ -1,5 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {lis} from "./m786.ts";
-var cis=X((ggr)=>{var geu=lis(),hgr=require("buffer"),_eu=(e,t=0,n=e.byteLength-t)=>{if(!geu.isArrayBuffer(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return hgr.Buffer.from(e,t,n)},yeu=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?hgr.Buffer.from(e,t):hgr.Buffer.from(e)};ggr.fromArrayBuffer=_eu;ggr.fromString=yeu});
-export {cis};
+import {b,x} from "../runtime.ts";
+import {XN} from "./m786.ts";
+class Jds{config;middlewareStack=Yds.constructStack();initConfig;handlers;constructor(e){this.config=e}send(e,t,n){let r=typeof t!=="function"?t:void 0,o=typeof t==="function"?t:n,s=r===void 0&&this.config.cacheMiddleware===!0,i;if(s){if(!this.handlers)this.handlers=new WeakMap;let a=this.handlers;if(a.has(e.constructor))i=a.get(e.constructor);else i=e.resolveMiddleware(this.middlewareStack,this.config,r),a.set(e.constructor,i)}else delete this.handlers,i=e.resolveMiddleware(this.middlewareStack,this.config,r);if(o)i(e).then((a)=>o(null,a.output),(a)=>o(a)).catch(()=>{});else return i(e).then((a)=>a.output)}destroy(){this.config?.requestHandler?.destroy?.(),delete this.handlers}}
+var Yds;
+var Xds=b(()=>{Yds=x(XN(),1)});
+export {Jds,Yds,Xds};

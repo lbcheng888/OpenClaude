@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {fromProcess,RSs} from "./m1007.ts";
-var vSr={};
-isFullscreenWithTTY(vSr,{fromProcess:()=>fromProcess});
-var Vsn=b(()=>{RSs()});
-export {vSr,Vsn};
+import {b} from "../runtime.ts";
+import {aws} from "./m1007.ts";
+var lws=()=>{};
+var QRr=b(()=>{aws();lws()});
+export {lws,QRr};

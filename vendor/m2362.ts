@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {t2r,n2r,Kbi} from "./m2361.ts";
 import {b} from "../runtime.ts";
-function r2r(e){if(!Number.isInteger(e))return!1;return t2r(e)||n2r(e)}
-var zbi=b(()=>{Kbi()});
-export {r2r,zbi};
+function qki(e,t,n){let r=mPt.get(e);if(r)r.push(t);else mPt.set(e,[t]);if(n)A4r=!0}
+function Wki(){let e=A4r;return A4r=!1,e}
+var Zg,mPt,A4r=!1;
+var dhe=b(()=>{Zg=new WeakMap,mPt=new WeakMap});
+export {qki,Wki,Zg,mPt,A4r,dhe};

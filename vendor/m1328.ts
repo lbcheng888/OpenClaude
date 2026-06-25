@@ -1,22 +1,7 @@
 // @ts-nocheck
-import {Mvr,Lvr} from "./m1312.ts";
-import {g1s,_1s} from "./m1327.ts";
-import {defaultProvider} from "./m1018.ts";
-import {NMs,MMs} from "./m1320.ts";
-import {b,M} from "../runtime.ts";
-import {H1e} from "./m1019.ts";
-import {GD} from "./m1317.ts";
-import {nC} from "./m880.ts";
-import {ime} from "./m899.ts";
-import {nk} from "./m607.ts";
-import {Sd} from "./m850.ts";
-import {ame} from "./m902.ts";
-import {i1} from "./m894.ts";
-import {yB} from "./m601.ts";
-import {e4} from "./m750.ts";
-import {lme} from "./m903.ts";
-import {Ooe} from "./m889.ts";
-import {pme} from "./m913.ts";
-var rYe,Ecn,qEe,y1s,T1s,Ccn,$Ee,vcn,S1s,b1s,E1s,C1s=(e)=>{Mvr(process.version);let t=E1s.resolveDefaultsModeConfig(e),n=()=>t().then(Lvr),r=g1s(e);rYe.emitWarningIfUnsupportedVersion(process.version);let o={profile:e?.profile,logger:r.logger};return{...r,...e,runtime:"node",defaultsMode:t,authSchemePreference:e?.authSchemePreference??$Ee.loadConfig(rYe.NODE_AUTH_SCHEME_PREFERENCE_OPTIONS,o),bodyLengthChecker:e?.bodyLengthChecker??S1s.calculateBodyLength,credentialDefaultProvider:e?.credentialDefaultProvider??defaultProvider,defaultUserAgentProvider:e?.defaultUserAgentProvider??Ecn.createDefaultUserAgentProvider({serviceId:r.serviceId,clientVersion:NMs.version}),httpAuthSchemes:e?.httpAuthSchemes??[{schemeId:"aws.auth#sigv4",identityProvider:(s)=>s.getIdentityProvider("aws.auth#sigv4")||(async(i)=>await defaultProvider(i?.__config||{})()),signer:new rYe.AwsSdkSigV4Signer},{schemeId:"smithy.api#noAuth",identityProvider:(s)=>s.getIdentityProvider("smithy.api#noAuth")||(async()=>({})),signer:new y1s.NoAuthSigner}],maxAttempts:e?.maxAttempts??$Ee.loadConfig(Ccn.NODE_MAX_ATTEMPT_CONFIG_OPTIONS,e),region:e?.region??$Ee.loadConfig(qEe.NODE_REGION_CONFIG_OPTIONS,{...qEe.NODE_REGION_CONFIG_FILE_OPTIONS,...o}),requestHandler:vcn.NodeHttpHandler.create(e?.requestHandler??n),retryMode:e?.retryMode??$Ee.loadConfig({...Ccn.NODE_RETRY_MODE_CONFIG_OPTIONS,default:async()=>(await n()).retryMode||b1s.DEFAULT_RETRY_MODE},e),sha256:e?.sha256??T1s.Hash.bind(null,"sha256"),streamCollector:e?.streamCollector??vcn.streamCollector,useDualstackEndpoint:e?.useDualstackEndpoint??$Ee.loadConfig(qEe.NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS,o),useFipsEndpoint:e?.useFipsEndpoint??$Ee.loadConfig(qEe.NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS,o),userAgentAppId:e?.userAgentAppId??$Ee.loadConfig(Ecn.NODE_APP_ID_CONFIG_OPTIONS,o)}};
-var v1s=b(()=>{MMs();H1e();_1s();GD();GD();rYe=M(nC(),1),Ecn=M(ime(),1),qEe=M(nk(),1),y1s=M(Sd(),1),T1s=M(ame(),1),Ccn=M(i1(),1),$Ee=M(yB(),1),vcn=M(e4(),1),S1s=M(lme(),1),b1s=M(Ooe(),1),E1s=M(pme(),1)});
-export {rYe,Ecn,qEe,y1s,T1s,Ccn,$Ee,vcn,S1s,b1s,E1s,C1s,v1s};
+import {O2s,hIr} from "./m1326.ts";
+import {b,x} from "../runtime.ts";
+import {BS} from "./m793.ts";
+var F2s,B2s=(e)=>{let t;if(typeof e==="string")t=F2s.fromUtf8(e);else t=e;if(typeof t!=="object"||typeof t.byteOffset!=="number"||typeof t.byteLength!=="number")throw Error("@smithy/util-base64: toBase64 encoder function only accepts string | Uint8Array.");return O2s(t.buffer,t.byteOffset,t.byteLength).toString("base64")};
+var U2s=b(()=>{hIr();F2s=x(BS(),1)});
+export {F2s,B2s,U2s};

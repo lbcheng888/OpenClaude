@@ -1,0 +1,30 @@
+// @ts-nocheck
+import {Ygt,cVt,uVt,jgt,dVt} from "../src/permissions/5111_workerPid.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {VI,dne} from "./m4605.ts";
+import {Ce,Ct} from "./m197.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Bl,d_} from "./m3354.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {PO,Prt,formatPermissionRule} from "./m2695.ts";
+import {bs,ff} from "./m2561.ts";
+import {hr,Ol} from "./m2573.ts";
+import {T0e,G$t} from "./m3833.ts";
+import {b,x} from "../runtime.ts";
+import {lt} from "../src/session/0132_sent.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function CUl(e){if(e==="~"||e.startsWith("~/"))return RUl.homedir()+e.slice(1);return e}
+async function vUl(){let[e,t]=await Promise.all([Ygt().catch((n)=>(Ie(n),[])),VI().then((n)=>n!==null).catch(()=>!1)]);return{tasks:e,daemonAlive:t}}
+function wUl({task:e,onBack:t,onEdit:n,onDone:r,refresh:o}){let[s,i]=e_t.useState(!1),[a,l]=e_t.useState(!1);async function c(){if(s)return;i(!0);try{await cVt(nCm({...e,enabled:!e.enabled})),await o(),r(`${e.enabled?"Disabled":"Enabled"} scheduled task '${e.id}'.`,{display:"system"})}catch(p){Ie(p),r(`Toggle failed: ${Ce(p)}`,{display:"system"})}}async function u(){if(s)return;i(!0);try{await uVt(e.id),await o(),r(`Removed scheduled task '${e.id}'.`,{display:"system"})}catch(p){logForDebugging(`Failed to remove scheduled task '${e.id}' from daemon.json: ${Ce(p)}`,{level:"error"}),r(`Remove failed: ${Ce(p)}`,{display:"system"})}}if(a)return hN.jsx(preInitQueue,{title:"Remove task?",subtitle:`Delete '${e.id}' from daemon.json. The daemon will stop firing it on its next reconcile.`,onCancel:()=>l(!1),color:"error",children:hN.jsx(Bl,{cancelFirst:!0,focus:"cancel",confirmLabel:"Yes, remove",cancelLabel:"No, cancel",onConfirm:()=>void u(),onCancel:()=>l(!1)})});let d=[{label:e.enabled?"Disable":"Enable",value:"toggle"},{label:"Edit",value:"edit"},{label:"Remove",value:"remove"},{label:"Back",value:"back"}];return hN.jsxs(preInitQueue,{title:e.id,onCancel:t,children:[hN.jsxs(Box,{flexDirection:"column",marginBottom:1,children:[hN.jsxs(Text,{dimColor:!0,children:["Cron ",e.cron," (",PO(e.cron),")"]}),hN.jsxs(Text,{dimColor:!0,children:["Directory ",e.directory]}),hN.jsxs(Text,{dimColor:!0,children:["Prompt ",e.prompt]}),hN.jsxs(Text,{dimColor:!0,children:["Status"," ",hN.jsx(bs,{status:e.enabled?"success":"pending",withSpace:!0}),e.enabled?"enabled":"disabled"]}),hN.jsxs(Text,{dimColor:!0,children:["Mode ",e.permissionMode]}),e.model&&hN.jsxs(Text,{dimColor:!0,children:["Model ",e.model]}),hN.jsxs(Text,{dimColor:!0,children:["Timeout ",e.runTimeoutMinutes,"m"]}),hN.jsxs(Text,{dimColor:!0,children:["Max queue ",e.maxQueued]})]}),hN.jsx(hr,{options:d,isDisabled:s,onChange:(p)=>{if(p==="back")return t();if(p==="edit")return n(e);if(p==="remove")return l(!0);if(p==="toggle")return void c()},onCancel:t})]})}
+function kUl({defaultDir:e,existingIds:t,prefill:n,modelOptions:r=[{label:"default",value:""}],onCancel:o,onDone:s,onSaved:i}){let a=n!==void 0,l=a?t.filter((y)=>y!==n.id):t,[c,u]=e_t.useState({prompt:n?.prompt??"",schedule:n?.cron??"",dir:n?.directory??e,id:n?.id??"",permissionMode:n?.permissionMode??"dontAsk",model:n?.model??""}),[d,p]=e_t.useState(a),[m,f]=e_t.useState(!1);function h(y,S){if(y==="id")p(!0);u((E)=>{if(E[y]===S)return E;let R={...E,[y]:S};if(y!=="id"&&!d&&(y==="prompt"||y==="dir"))R.id=AUl(SVt.resolve(CUl(R.dir?.trim()||e)),R.prompt??"");return R})}let g=n?.model&&!r.some((y)=>y.value===n.model)?[...r,{label:n.model,value:n.model}]:r,_=[{type:"text",key:"prompt",label:"Prompt",placeholder:"/babysit-prs",required:!0,hint:()=>"Sent to Claude on each fire. Slash commands work."},{type:"text",key:"schedule",label:"Schedule",placeholder:"5m, 2h, 1d  or  */15 * * * *",required:!0,validate:(y)=>y.trim()===""?null:Prt(y).error??null,hint:(y)=>{if(y.trim()==="")return;let S=Prt(y);return S.error?void 0:`${S.human} \xB7 ${S.cron}`}},{type:"text",key:"dir",label:"Directory",placeholder:e},{type:"text",key:"id",label:"Id",validate:(y)=>{let S=y.trim();if(S!==""&&l.includes(S))return`id '${S}' is already in use`;return null},hint:()=>d?void 0:"Auto-generated from prompt and directory."},{type:"select",key:"permissionMode",label:"Permission mode",options:jgt.map((y)=>({label:y,value:y}))},{type:"select",key:"model",label:"Model",options:g,hint:(y)=>g.find((S)=>S.value===y)?.description??(y===""?"Uses your configured default model.":void 0)}];async function T(){if(m)return;f(!0);let y=SVt.resolve(CUl(c.dir?.trim()||e)),S=Prt(c.schedule??"");if(S.cron===void 0){f(!1);return}let E=c.id?.trim()||AUl(y,c.prompt?.trim()??""),R=c.permissionMode??"dontAsk",w=c.model?.trim()||void 0,H={id:E,cron:S.cron,prompt:c.prompt.trim(),directory:y,enabled:n?.enabled??!0,permissionMode:R,runTimeoutMinutes:n?.runTimeoutMinutes??30,maxQueued:n?.maxQueued??1,...w&&{model:w}};try{if(a&&n.id!==E)await uVt(n.id);await cVt(H),await i(E,a)}catch(k){Ie(k),s(`Save failed: ${Ce(k)}`,{display:"system"})}}return hN.jsx(T0e,{title:a?`Edit '${n.id}'`:"New scheduled task",subtitle:"Fire a prompt on a recurring schedule",fields:_,values:c,onChange:h,onSubmit:()=>void T(),onCancel:o,submitLabel:a?"Save changes":"Create task"})}
+function bVt(e){return e.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40)}
+function AUl(e,t){let n=bVt(SVt.basename(e)),r=bVt(t.split(/\s+/).slice(0,4).join(" "));return[n,r].filter(Boolean).join("-")||"task"}
+function nCm(e){return{id:e.id,cron:e.cron,prompt:e.prompt,directory:e.directory,enabled:e.enabled,permissionMode:e.permissionMode,runTimeoutMinutes:e.runTimeoutMinutes,maxQueued:e.maxQueued,...e.model&&{model:e.model}}}
+var tCm,RUl,SVt,e_t,hN;
+var DDo=b(()=>{lt();Ol();d_();di();G$t();ff();dne();dVt();je();formatPermissionRule();qe();Ct();vn();tCm=x(tt(),1),RUl=require("os"),SVt=require("path"),e_t=x(et(),1),hN=x(oe(),1)});
+export {CUl,vUl,wUl,kUl,bVt,AUl,nCm,tCm,RUl,SVt,e_t,hN,DDo};

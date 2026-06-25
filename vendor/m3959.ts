@@ -1,39 +1,19 @@
 // @ts-nocheck
-import {L9s,yxr} from "./m1476.ts";
-import {Text} from "./m2423.ts";
-import {mt,configProtoStore} from "./m2458.ts";
-import {Uwn,TUi,_Ot} from "../src/core/2738_message.ts";
-import {Xwn,OF,Ywn,Qwn,Q8r,X8r,Z8r,Zwn,lnt,B2e,F2e,sN,ob,fP} from "../src/api/2741_actualTokens.ts";
-import {Gn,Ewi,sc} from "./m2455.ts";
-import {Box} from "./m2422.ts";
-import {hce,PMa,OMa,iIe,act} from "../src/tui/3943_children.ts";
-import {HUn,lo} from "../src/tools/5190_userPromptCount.ts";
-import {l1a,c1a} from "../src/tui/3959_shouldShowUpsell.ts";
-import {rZ} from "./m2207.ts";
-import {Z4e,gUn} from "./m3940.ts";
-import {je} from "./m577.ts";
-import {renderModelName,getDefaultSonnetModel,Mo} from "../src/permissions/1453_swapShrinksContextWindow.ts";
-import {fce,rct} from "./m3928.ts";
-import {S9,fee} from "../src/permissions/4409_prompt.ts";
-import {NoSelect} from "./m2437.ts";
-import {fc,sl} from "./m715.ts";
-import {l_,dU} from "./m3932.ts";
-import {mr,ki} from "./m2453.ts";
-import {J2t,Iio} from "./m3941.ts";
-import {cx,iW} from "./m2798.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {Lr} from "./m578.ts";
-import {Pp} from "../src/config/2273_loggedTmuxCcDisable.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function kbp(){let e=Act.c(1);if(!Xc.use(L9s()))return null;let n;if(e[0]===Symbol.for("react.memo_cache_sentinel"))n=Xc.default.createElement(Text,{dimColor:!0},"\xB7 Run in another terminal: security unlock-keychain"),e[0]=n;else n=e[0];return n}
-function Hbp(){let e=Act.c(4),t=mt(Dbp),r=mt(Ibp)??t,o;if(e[0]!==r)o=Uwn(r),e[0]=r,e[1]=o;else o=e[1];let s=o,i;if(e[2]!==s)i=s?Xc.default.createElement(Text,{dimColor:!0},s):null,e[2]=s,e[3]=i;else i=e[3];return i}
-function Ibp(e){return e.mainLoopModelForSession}
-function Dbp(e){return e.mainLoopModel}
-function Pbp(){let e=Act.c(2),t;if(e[0]===Symbol.for("react.memo_cache_sentinel"))t=Xc.default.createElement(Text,{color:"error"},Xwn),e[0]=t;else t=e[0];let n;if(e[1]===Symbol.for("react.memo_cache_sentinel"))n=Xc.default.createElement(Gn,null,Xc.default.createElement(Box,{flexDirection:"column"},t,Xc.default.createElement(Xc.Suspense,{fallback:null},Xc.default.createElement(kbp,null)))),e[1]=n;else n=e[1];return n}
-function eao(e){let t=Act.c(56),{param:n,addMargin:r,shouldShowDot:o,verbose:s,onOpenRateLimitOptions:i,messageUuid:a}=e,{text:l}=n,c=Xc.useContext(hce),u=PMa(),d=OMa(),p=u===a,m=iIe(a),[f,A]=Xc.useState(null);if(HUn(l))return null;if(TUi(l)){let h;if(t[0]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Hbp,null),t[0]=h;else h=t[0];let g;if(t[1]!==i||t[2]!==l)g=Xc.default.createElement(l1a,{text:l,onOpenRateLimitOptions:i,fableSubline:h}),t[1]=i,t[2]=l,t[3]=g;else g=t[3];return g}switch(l){case rZ:return null;case OF:{let h;if(t[4]===Symbol.for("react.memo_cache_sentinel"))h=Z4e("warning"),t[4]=h;else h=t[4];let g=h,_=je.DISABLE_COMPACT?"/clear to continue":"/compact or /clear to continue",y;if(t[5]===Symbol.for("react.memo_cache_sentinel"))y=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(Text,{color:"error"},"Context limit reached \xB7 ",_,g?` \xB7 ${g}`:"")),t[5]=y;else y=t[5];return y}case Ywn:{let h;if(t[6]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(Text,{color:"error"},"Credit balance too low \xB7 Add funds: https://platform.claude.com/settings/billing")),t[6]=h;else h=t[6];return h}case Xwn:{let h;if(t[7]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Pbp,null),t[7]=h;else h=t[7];return h}case Qwn:{let h;if(t[8]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(Text,{color:"error"},Qwn)),t[8]=h;else h=t[8];return h}case Q8r:case X8r:case Z8r:{let h;if(t[9]!==l)h=Xc.default.createElement(Gn,null,Xc.default.createElement(Text,{color:"error"},l)),t[9]=l,t[10]=h;else h=t[10];return h}case Zwn:{let h;if(t[11]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(Text,{color:"error"},Zwn)),t[11]=h;else h=t[11];return h}case lnt:{let h;if(t[12]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(Text,{color:"error"},lnt,process.env.API_TIMEOUT_MS&&Xc.default.createElement(Xc.default.Fragment,null," ","(API_TIMEOUT_MS=",process.env.API_TIMEOUT_MS,"ms, try increasing it)"))),t[12]=h;else h=t[12];return h}case B2e:{let h;if(t[13]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Text,{color:"error"},"We are experiencing high demand for Opus 4."),t[13]=h;else h=t[13];let g;if(t[14]===Symbol.for("react.memo_cache_sentinel"))g=Xc.default.createElement(Gn,null,Xc.default.createElement(Box,{flexDirection:"column",gap:1},h,Xc.default.createElement(Text,null,"To continue immediately, use /model to switch to"," ",renderModelName(getDefaultSonnetModel())," and continue coding."))),t[14]=g;else g=t[14];return g}case F2e:{let h;if(t[15]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Text,{color:"error"},"We are experiencing high demand for Fable 5."),t[15]=h;else h=t[15];let g;if(t[16]===Symbol.for("react.memo_cache_sentinel"))g=Xc.default.createElement(Gn,null,Xc.default.createElement(Box,{flexDirection:"column",gap:1},h,Xc.default.createElement(Text,null,"To continue immediately, use /model to switch to"," ",renderModelName(getDefaultSonnetModel())," and continue coding."))),t[16]=g;else g=t[16];return g}case S9:{let h;if(t[17]===Symbol.for("react.memo_cache_sentinel"))h=Xc.default.createElement(Gn,{height:1},Xc.default.createElement(fce,null)),t[17]=h;else h=t[17];return h}default:{if(l.startsWith(`${OF} \xB7 `)){let I;if(t[18]===Symbol.for("react.memo_cache_sentinel"))I=Z4e("warning"),t[18]=I;else I=t[18];let P=I,L;if(t[19]!==l)L=Xc.default.createElement(Gn,null,Xc.default.createElement(Text,{color:"error"},l," \xB7 /clear to start fresh",P?` \xB7 ${P}`:"")),t[19]=l,t[20]=L;else L=t[20];return L}if(sN(l)){let I;if(t[21]!==r||t[22]!==l||t[23]!==s)I=Xc.default.createElement(Obp,{text:l,verbose:s,addMargin:r}),t[21]=r,t[22]=l,t[23]=s,t[24]=I;else I=t[24];return I}let h;if(t[25]!==a||t[26]!==c||t[27]!==o)h=!1,t[25]=a,t[26]=c,t[27]=o,t[28]=h;else h=t[28];let g=h,_=g&&(p||m!==void 0),y=r?1:0,T;if(t[29]!==a||t[30]!==g||t[31]!==d)T=g?()=>d?.(a??null):void 0,t[29]=a,t[30]=g,t[31]=d,t[32]=T;else T=t[32];let S;if(t[33]!==g||t[34]!==d)S=g?()=>{d?.(null),A(null)}:void 0,t[33]=g,t[34]=d,t[35]=S;else S=t[35];let v;if(t[36]!==o)v=o&&Xc.default.createElement(NoSelect,{fromLeftEdge:!0,minWidth:2},Xc.default.createElement(Text,{"aria-label":"claude:",color:"text"},fc)),t[36]=o,t[37]=v;else v=t[37];let R;if(t[38]!==l)R=Xc.default.createElement(l_,null,l),t[38]=l,t[39]=R;else R=t[39];let k;if(t[40]!==f||t[41]!==a||t[42]!==c||t[43]!==m||t[44]!==g||t[45]!==_)k=null,t[40]=f,t[41]=a,t[42]=c,t[43]=m,t[44]=g,t[45]=_,t[46]=k;else k=t[46];let x;if(t[47]!==R||t[48]!==k)x=Xc.default.createElement(Box,{flexDirection:"column"},R,k),t[47]=R,t[48]=k,t[49]=x;else x=t[49];let H;if(t[50]!==y||t[51]!==T||t[52]!==S||t[53]!==v||t[54]!==x)H=Xc.default.createElement(Box,{alignItems:"flex-start",flexDirection:"row",marginTop:y,width:"100%",onMouseEnter:T,onMouseLeave:S},v,x),t[50]=y,t[51]=T,t[52]=S,t[53]=v,t[54]=x,t[55]=H;else H=t[55];return H}}}
-function Obp(e){let t=Act.c(23),{text:n,verbose:r,addMargin:o}=e,{columns:s}=mr(),i=Ewi(),a=n===ob?`${ob}: Please wait a moment and try again.`:n,l,c;if(t[0]!==a||t[1]!==r){let _=a.trim();c=!r&&_.length>u1a,l=c?_.slice(0,u1a)+"\u2026":_,t[0]=a,t[1]=r,t[2]=l,t[3]=c}else l=t[2],c=t[3];let u=l;if(i){let _;if(t[4]!==u)_=Xc.default.createElement(J2t,{color:"warning"},u),t[4]=u,t[5]=_;else _=t[5];let y;if(t[6]!==c)y=c&&Xc.default.createElement(cx,null),t[6]=c,t[7]=y;else y=t[7];let T;if(t[8]!==_||t[9]!==y)T=Xc.default.createElement(Box,{flexDirection:"column"},_,y),t[8]=_,t[9]=y,t[10]=T;else T=t[10];return T}let d=o?1:0,p;if(t[11]===Symbol.for("react.memo_cache_sentinel"))p=Xc.default.createElement(Box,{minWidth:2},Xc.default.createElement(Text,{"aria-label":"error:",color:"warning"},fc)),t[11]=p;else p=t[11];let m=s-10,f;if(t[12]!==u)f=Xc.default.createElement(J2t,{color:"warning"},u),t[12]=u,t[13]=f;else f=t[13];let A;if(t[14]!==c)A=c&&Xc.default.createElement(cx,null),t[14]=c,t[15]=A;else A=t[15];let h;if(t[16]!==m||t[17]!==f||t[18]!==A)h=Xc.default.createElement(Box,{flexDirection:"column",width:m},f,A),t[16]=m,t[17]=f,t[18]=A,t[19]=h;else h=t[19];let g;if(t[20]!==d||t[21]!==h)g=Xc.default.createElement(Box,{flexDirection:"row",marginTop:d,width:"100%"},p,h),t[20]=d,t[21]=h,t[22]=g;else g=t[22];return g}
-var Act,Xc,u1a=1000;
-var d1a=b(()=>{fee();_Ot();configProtoStore();sl();ki();ze();fP();Lr();Pp();lo();gUn();Mo();yxr();iW();rct();Iio();dU();sc();act();c1a();Act=M(rt(),1),Xc=M(Te(),1)});
-export {kbp,Hbp,Ibp,Dbp,Pbp,eao,Obp,Act,Xc,u1a,d1a};
+import {dd,Xl} from "../src/config/0651_maxBytes.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {YN,FS} from "./m722.ts";
+import {Ql,Pa} from "./m720.ts";
+import {Yn,Pl} from "./m2465.ts";
+import {gh,G1} from "./m3957.ts";
+import {VD,Dw} from "../src/core/5176_encoding.ts";
+import {a9n,_do} from "./m3958.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {oe} from "./m2275.ts";
+function B2a(){return null}
+function U2a(e,t,{theme:n}){let{plan:r,filePath:o}=e,s=!r||r.trim()==="",i=o?dd(o):"",a=e.awaitingLeaderApproval;if(s)return uv.jsx(Box,{flexDirection:"column",marginTop:1,children:uv.jsxs(Box,{flexDirection:"row",children:[uv.jsx(Text,{color:YN("plan"),children:Ql}),uv.jsx(Text,{children:" Exited plan mode"})]})});if(a)return uv.jsxs(Box,{flexDirection:"column",marginTop:1,children:[uv.jsxs(Box,{flexDirection:"row",children:[uv.jsx(Text,{color:YN("plan"),children:Ql}),uv.jsx(Text,{children:" Plan submitted for team lead approval"})]}),uv.jsx(Yn,{children:uv.jsxs(Box,{flexDirection:"column",children:[o&&uv.jsxs(Text,{dimColor:!0,children:["Plan file: ",i]}),uv.jsx(Text,{dimColor:!0,children:"Waiting for team lead to review and approve..."})]})})]});return uv.jsxs(Box,{flexDirection:"column",marginTop:1,children:[uv.jsxs(Box,{flexDirection:"row",children:[uv.jsx(Text,{color:YN("plan"),children:Ql}),uv.jsx(Text,{children:" User approved Claude's plan"})]}),uv.jsx(Yn,{children:uv.jsxs(Box,{flexDirection:"column",children:[o&&uv.jsxs(Text,{dimColor:!0,children:["Plan saved to: ",i," \xB7 /plan to edit"]}),uv.jsx(gh,{children:r})]})})]})}
+function $2a({plan:e},{theme:t}){let n=e??VD()??"No plan found";return uv.jsx(Box,{flexDirection:"column",children:uv.jsx(a9n,{plan:n})})}
+var uv;
+var q2a=b(()=>{G1();Pl();_do();Pa();FS();je();Xl();Dw();uv=x(oe(),1)});
+export {B2a,U2a,$2a,uv,q2a};

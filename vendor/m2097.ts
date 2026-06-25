@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-var doi=X((lve)=>{Object.defineProperty(lve,"__esModule",{value:!0});lve.isAttributeValue=lve.isAttributeKey=lve.sanitizeAttributes=void 0;var aoi=Xi();function hKu(e){let t={};if(typeof e!=="object"||e==null)return t;for(let n in e){if(!Object.prototype.hasOwnProperty.call(e,n))continue;if(!loi(n)){aoi.diag.warn(`Invalid attribute key: ${n}`);continue}let r=e[n];if(!coi(r)){aoi.diag.warn(`Invalid attribute value set for key: ${n}`);continue}if(Array.isArray(r))t[n]=r.slice();else t[n]=r}return t}lve.sanitizeAttributes=hKu;function loi(e){return typeof e==="string"&&e!==""}lve.isAttributeKey=loi;function coi(e){if(e==null)return!0;if(Array.isArray(e))return gKu(e);return uoi(typeof e)}lve.isAttributeValue=coi;function gKu(e){let t;for(let n of e){if(n==null)continue;let r=typeof n;if(r===t)continue;if(!t){if(uoi(r)){t=r;continue}return!1}return!1}return!0}function uoi(e){switch(e){case"number":case"boolean":case"string":return!0}return!1}});
-export {doi};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+var Hxt=Q((WRe)=>{Object.defineProperty(WRe,"__esModule",{value:!0});WRe.isTracingSuppressed=WRe.unsuppressTracing=WRe.suppressTracing=void 0;var vrd=xi(),WUr=(0,vrd.createContextKey)("OpenTelemetry SDK Context Key SUPPRESS_TRACING");function wrd(e){return e.setValue(WUr,!0)}WRe.suppressTracing=wrd;function krd(e){return e.deleteValue(WUr)}WRe.unsuppressTracing=krd;function Hrd(e){return e.getValue(WUr)===!0}WRe.isTracingSuppressed=Hrd});
+export {Hxt};

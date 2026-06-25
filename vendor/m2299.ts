@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {dF} from "./m2298.ts";
-var rUe=X((zth,dTi)=>{var uTi=dF(),snd=(e,t,n=!1)=>{if(e instanceof uTi)return e;try{return new uTi(e,t)}catch(r){if(!n)return null;throw r}};dTi.exports=snd});
-export {rUe};
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+var svi,ivi,pCn;
+var D3r=b(()=>{svi=x(et(),1),ivi=svi.createContext(!1);ivi.displayName="InternalAccessibilityContext";pCn=ivi});
+export {svi,ivi,pCn,D3r};

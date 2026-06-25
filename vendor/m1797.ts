@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {fT,eh} from "./m1717.ts";
-import {L0r,_v} from "./m1778.ts";
+import {MM,Co} from "./m1722.ts";
 import {b} from "../runtime.ts";
-import {AT} from "./m1775.ts";
-function Z7s(e){let t=e.credentialType===fT.REFRESH_TOKEN&&e.familyId||e.clientId,n=e.tokenType&&e.tokenType.toLowerCase()!==eh.BEARER.toLowerCase()?e.tokenType.toLowerCase():"";return[e.homeAccountId,e.environment,e.credentialType,t,e.realm||"",e.target||"",e.requestedClaimsHash||"",n].join(L0r.KEY_SEPARATOR).toLowerCase()}
-function eKs(e){let t=e.homeAccountId.split(".")[1];return[e.homeAccountId,e.environment,t||e.tenantId||""].join(L0r.KEY_SEPARATOR).toLowerCase()}
-var tKs=b(()=>{AT();_v();/*! @azure/msal-node v3.8.1 2025-10-29 */});
-export {Z7s,eKs,tKs};
+import {iT} from "./m1780.ts";
+class M3{static base64Encode(e,t){return Buffer.from(e,t).toString(MM.BASE64)}static base64EncodeUrl(e,t){return M3.base64Encode(e,t).replace(/=/g,Co.EMPTY_STRING).replace(/\+/g,"-").replace(/\//g,"_")}static base64Decode(e){return Buffer.from(e,MM.BASE64).toString("utf8")}static base64DecodeUrl(e){let t=e.replace(/-/g,"+").replace(/_/g,"/");while(t.length%4)t+="=";return M3.base64Decode(t)}}
+var WIt=b(()=>{iT();/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {M3,WIt};

@@ -1,13 +1,7 @@
 // @ts-nocheck
-import {KO,y5,hZ} from "./m2267.ts";
-import {Sk,aS,lg} from "./m2269.ts";
-import {b} from "../runtime.ts";
-function vem(e){let t="";for(let n=0;n<e.length;n++){let r=e.charCodeAt(n);if(r>=32&&r!==127&&!(r>=128&&r<=159))t+=e[n]}return t}
-function wem(e){if(e.length===0)return null;if(Buffer.byteLength(e,"utf8")>Cem)return null;let t=[],n=0;while(n<e.length){let r=e[n];if(r===KO){t.push({kind:"bel"}),n++;continue}if(r!==y5||e[n+1]!=="]")return null;let o=n+2,s=-1,i=0;while(o<e.length){if(e[o]===KO){s=o,i=1;break}if(e[o]===y5&&e[o+1]==="\\"){s=o,i=2;break}if(e[o]===y5)return null;o++}if(s===-1)return null;let a=e.slice(n+2,s),l=a.indexOf(";"),c=l===-1?a:a.slice(0,l),u=l===-1?"":a.slice(l+1);if(!/^\d+$/.test(c))return null;let d=Number(c);if(!Eem.has(d))return null;t.push({kind:"osc",ps:d,payload:vem(u)}),n=s+i}return t}
-function NEo(e){let t=wem(e);if(t===null)return null;return t.map((n)=>n.kind==="bel"?KO:Sk(aS(n.ps,n.payload))).join("")}
-function b_l(e){if(e===null){Njt.length=0;return}Njt.push(e)}
-function E_l(e){let t=Njt.lastIndexOf(e);if(t>=0)Njt.splice(t,1)}
-function BEo(e){Njt.at(-1)?.(e)}
-var Eem,Cem=4096,Njt;
-var FEo=b(()=>{hZ();lg();Eem=new Set([0,1,2,9,99,777]);Njt=[]});
-export {vem,wem,NEo,b_l,E_l,BEo,Eem,Cem,Njt,FEo};
+import {Q} from "../runtime.ts";
+import {XCl} from "./m4762.ts";
+import {aAl} from "./m4766.ts";
+import {vAl} from "./m4772.ts";
+var HAl=Q((kAl)=>{var Xam=require("util"),wAl=require("stream"),Qam=XCl(),Zam=aAl(),elm=vAl(),m9=kAl.PNG=function(e){if(wAl.call(this),e=e||{},this.width=e.width|0,this.height=e.height|0,this.data=this.width>0&&this.height>0?Buffer.alloc(4*this.width*this.height):null,e.fill&&this.data)this.data.fill(0);this.gamma=0,this.readable=this.writable=!0,this._parser=new Qam(e),this._parser.on("error",this.emit.bind(this,"error")),this._parser.on("close",this._handleClose.bind(this)),this._parser.on("metadata",this._metadata.bind(this)),this._parser.on("gamma",this._gamma.bind(this)),this._parser.on("parsed",function(t){this.data=t,this.emit("parsed",t)}.bind(this)),this._packer=new Zam(e),this._packer.on("data",this.emit.bind(this,"data")),this._packer.on("end",this.emit.bind(this,"end")),this._parser.on("close",this._handleClose.bind(this)),this._packer.on("error",this.emit.bind(this,"error"))};Xam.inherits(m9,wAl);m9.sync=elm;m9.prototype.pack=function(){if(!this.data||!this.data.length)return this.emit("error","No data provided"),this;return process.nextTick(function(){this._packer.pack(this.data,this.width,this.height,this.gamma)}.bind(this)),this};m9.prototype.parse=function(e,t){if(t){let n,r;n=function(o){this.removeListener("error",r),this.data=o,t(null,this)}.bind(this),r=function(o){this.removeListener("parsed",n),t(o,null)}.bind(this),this.once("parsed",n),this.once("error",r)}return this.end(e),this};m9.prototype.write=function(e){return this._parser.write(e),!0};m9.prototype.end=function(e){this._parser.end(e)};m9.prototype._metadata=function(e){this.width=e.width,this.height=e.height,this.emit("metadata",e)};m9.prototype._gamma=function(e){this.gamma=e};m9.prototype._handleClose=function(){if(!this._parser.writable&&!this._packer.readable)this.emit("close")};m9.bitblt=function(e,t,n,r,o,s,i,a){if(n|=0,r|=0,o|=0,s|=0,i|=0,a|=0,n>e.width||r>e.height||n+o>e.width||r+s>e.height)throw Error("bitblt reading outside image");if(i>t.width||a>t.height||i+o>t.width||a+s>t.height)throw Error("bitblt writing outside image");for(let l=0;l<s;l++)e.data.copy(t.data,(a+l)*t.width+i<<2,(r+l)*e.width+n<<2,(r+l)*e.width+n+o<<2)};m9.prototype.bitblt=function(e,t,n,r,o,s,i){return m9.bitblt(this,e,t,n,r,o,s,i),this};m9.adjustGamma=function(e){if(e.gamma){for(let t=0;t<e.height;t++)for(let n=0;n<e.width;n++){let r=e.width*t+n<<2;for(let o=0;o<3;o++){let s=e.data[r+o]/255;s=Math.pow(s,0.45454545454545453/e.gamma),e.data[r+o]=Math.round(s*255)}}e.gamma=0}};m9.prototype.adjustGamma=function(){m9.adjustGamma(this)}});
+export {HAl};

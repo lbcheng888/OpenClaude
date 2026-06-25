@@ -1,6 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {fZe,kZ} from "./m2370.ts";
-var owe;
-var Y2r=b(()=>{fZe();owe=class owe extends kZ{text;constructor(e){super("paste",{bubbles:!0,cancelable:!0});this.text=e}}});
-export {owe,Y2r};
+var s_d=(e,t=2)=>e.replace(/^\t+/gm,(n)=>" ".repeat(n.length*t)),SIi;
+var bIi=b(()=>{SIi=s_d});
+export {s_d,SIi,bIi};

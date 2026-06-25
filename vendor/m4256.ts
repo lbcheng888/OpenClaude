@@ -1,11 +1,12 @@
 // @ts-nocheck
-import {Q$s,hp} from "../src/session/1460_promise.ts";
-import {mfe,ykt} from "./m2029.ts";
-import {toCompatSessionId} from "../src/core/2797_toInfraSessionId.ts";
+import {Mo} from "../src/mcp/2200_mcpServerName.ts";
+import {ws} from "../src/config/2709_Zm.ts";
+import {lW} from "./m2705.ts";
 import {b} from "../runtime.ts";
-function Upo(e){let t=Fpo;Fpo=e,Q$s(qOp()??null).catch(()=>{});let n=t!==null&&!t.outboundOnly,r=e!==null&&!e.outboundOnly;if(n!==r||n&&r&&t?.bridgeSessionId!==e?.bridgeSessionId)mfe()}
-function ES(){return Fpo}
-function qOp(){let e=ES();return e?toCompatSessionId(e.bridgeSessionId):void 0}
-var Fpo=null;
-var EU=b(()=>{hp();ykt()});
-export {Upo,ES,qOp,Fpo,EU};
+function Qxe(e=process.env){let t=e.BASH_DEFAULT_TIMEOUT_MS;if(t){let n=parseInt(t,10);if(!isNaN(n)&&n>0)return n}return 120000}
+function X6n(e=process.env){let t=e.BASH_MAX_TIMEOUT_MS;if(t){let n=parseInt(t,10);if(!isNaN(n)&&n>0)return Math.max(n,Qxe(e))}return Math.max(600000,Qxe(e))}
+function Yja(e,t){let n=e.timeout;return typeof n==="number"&&n>0?n:t}
+function Jja(e,t){if(e.name===Mo||e.name===ws)return Yja(t,Qxe());if(e.name===lW)return Yja(t,30000);if(XUp.has(e.name))return 1e4;return}
+var XUp;
+var Xja=b(()=>{XUp=new Set(["Read","Write","Edit","Glob","Grep","NotebookEdit","TodoWrite","TaskCreate","TaskGet","TaskList","TaskStop","TaskUpdate"])});
+export {Qxe,X6n,Yja,Jja,XUp,Xja};

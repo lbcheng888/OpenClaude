@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {OTLPLogExporter} from "./m3498.ts";
-import {IAa} from "./m3500.ts";
-var iZr={};
-isFullscreenWithTTY(iZr,{OTLPLogExporter:()=>OTLPLogExporter});
-var aZr=b(()=>{IAa()});
-export {iZr,aZr};
+import {Q} from "../runtime.ts";
+import {_Ea} from "./m3499.ts";
+import {TMn} from "./m3448.ts";
+import {yEa} from "./m3500.ts";
+var EEa=Q((Qat)=>{Object.defineProperty(Qat,"__esModule",{value:!0});Qat.compressAndSend=Qat.sendWithHttp=void 0;var Ssp=require("zlib"),bsp=require("stream"),TEa=_Ea(),Esp=TMn(),Csp=yEa(),SEa=`OTel-OTLP-Exporter-JavaScript/${Csp.VERSION}`;function Asp(e,t,n,r,o,s,i,a,l){let c=new URL(t);if(o)n["User-Agent"]=`${o} ${SEa}`;else n["User-Agent"]=SEa;let u={hostname:c.hostname,port:c.port,path:c.pathname,method:"POST",headers:n,agent:s},d=e(u,(p)=>{let m=[];p.on("data",(f)=>m.push(f)),p.on("end",()=>{if(p.statusCode&&p.statusCode<299)a({status:"success",data:Buffer.concat(m)});else if(p.statusCode&&(0,TEa.isExportRetryable)(p.statusCode))a({status:"retryable",retryInMillis:(0,TEa.parseRetryAfterToMills)(p.headers["retry-after"])});else{let f=new Esp.OTLPExporterError(p.statusMessage,p.statusCode,Buffer.concat(m).toString());a({status:"failure",error:f})}})});d.setTimeout(l,()=>{d.destroy(),a({status:"failure",error:Error("Request Timeout")})}),d.on("error",(p)=>{a({status:"failure",error:p})}),bEa(d,r,i,(p)=>{a({status:"failure",error:p})})}Qat.sendWithHttp=Asp;function bEa(e,t,n,r){let o=Rsp(n);if(t==="gzip")e.setHeader("Content-Encoding","gzip"),o=o.on("error",r).pipe(Ssp.createGzip()).on("error",r);o.pipe(e).on("error",r)}Qat.compressAndSend=bEa;function Rsp(e){let t=new bsp.Readable;return t.push(e),t.push(null),t}});
+export {EEa};

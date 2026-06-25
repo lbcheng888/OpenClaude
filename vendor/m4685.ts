@@ -1,0 +1,31 @@
+// @ts-nocheck
+import {useTheme} from "./m2285.ts";
+import {_t,uo} from "./m2468.ts";
+import {hht,SPe,Sue} from "./m4678.ts";
+import {Ce,Ct} from "./m197.ts";
+import {fk,Sn,lr} from "./m233.ts";
+import {xxn,lB,qO} from "../src/mcp/3159_scope.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {gd,xw} from "../src/tui/3853_mode.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {dr,uc} from "./m2558.ts";
+import {bf,G8e} from "./m4537.ts";
+import {color} from "./m2431.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {bs,ff} from "./m2561.ts";
+import {getMcpConfigByName,KA} from "../src/telemetry/3158_unwrapCcrProxyUrl.ts";
+import {_7n,Jvo} from "./m4683.ts";
+import {hr} from "./m2573.ts";
+import {T7n,yWt} from "../src/tui/4685_message.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {TS} from "./m4541.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function TWt({server:e,serverToolsCount:t,onViewTools:n,onCancel:r,onComplete:o,borderless:s=!1}){let[i]=useTheme(),a=_t((g)=>g.mcp),l=hht(),c=SPe(),[u,d]=b7n.useState(!1),p=b7n.useCallback(async()=>{let g=e.client.type!=="disabled";try{await c(e.name),r()}catch(_){o(`Failed to ${g?"disable":"enable"} MCP server '${e.name}': ${Ce(_)}`)}},[e.client.type,e.name,c,r,o]),m=fk(String(e.name)),f=xxn(a.commands,e.name).length,h=[];if(e.client.type!=="disabled"&&t>0)h.push({label:"View tools",value:"tools"});if(e.client.type!=="disabled")h.push({label:"Reconnect",value:"reconnectMcpServer"});if(h.push({label:e.client.type!=="disabled"?"Disable":"Enable",value:"toggle-enabled"}),h.length===0)h.push({label:"Back",value:"back"});if(u)return ju.jsxs(preInitQueue,{title:`${m} MCP Server`,onCancel:()=>{},hideBorder:s,hideInputGuide:!0,children:[ju.jsxs(Text,{color:"text",children:["Reconnecting to ",ju.jsx(Text,{bold:!0,children:e.name})]}),ju.jsxs(Box,{children:[ju.jsx(gd,{}),ju.jsx(Text,{children:" Restarting MCP server process"})]}),ju.jsx(Text,{dimColor:!0,children:"This may take a few moments."})]});return ju.jsxs(preInitQueue,{title:`${m} MCP Server`,onCancel:r,hideBorder:s,inputGuide:ju.jsxs(bn,{children:[ju.jsx(at,{chord:["up","down"],action:"navigate"}),ju.jsx(at,{chord:"enter",action:"select"}),ju.jsx(dr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"back"})]}),children:[ju.jsxs(Box,{flexDirection:"column",gap:0,children:[ju.jsxs(bf,{box:"plain",columns:[{bold:!0},{}],children:[ju.jsxs(bf.Row,{children:[ju.jsx(ju.Fragment,{children:"Status:"}),e.client.type==="disabled"?ju.jsxs(Text,{children:[color("inactive",i)(Xe.radioOff)," disabled"]}):e.client.type==="connected"?e.client.toolsListError?ju.jsxs(Text,{children:[ju.jsx(bs,{status:"warning",withSpace:!0}),"connected \xB7 tools fetch failed"]}):e.client.capabilities?.tools&&t===0?ju.jsxs(Text,{children:[ju.jsx(bs,{status:"warning",withSpace:!0}),"connected \xB7 no tools"]}):ju.jsxs(Text,{children:[ju.jsx(bs,{status:"success",withSpace:!0}),"connected"]}):e.client.type==="pending"?ju.jsxs(Text,{children:[ju.jsx(bs,{status:"pending",withSpace:!0}),"connecting\u2026"]}):ju.jsxs(Text,{children:[ju.jsx(bs,{status:"error",withSpace:!0}),"failed"]})]}),ju.jsxs(bf.Row,{children:[ju.jsx(ju.Fragment,{children:"Command:"}),ju.jsx(Text,{dimColor:!0,children:e.config.command})]}),e.config.args&&e.config.args.length>0&&ju.jsxs(bf.Row,{children:[ju.jsx(ju.Fragment,{children:"Args:"}),ju.jsx(Text,{dimColor:!0,children:e.config.args.join(" ")})]}),ju.jsxs(bf.Row,{children:[ju.jsx(ju.Fragment,{children:"Config location:"}),ju.jsx(Text,{dimColor:!0,children:lB(getMcpConfigByName(e.name)?.scope??"dynamic")})]})]}),e.client.type==="connected"&&ju.jsx(_7n,{serverToolsCount:t,serverPromptsCount:f,serverResourcesCount:a.resources[e.name]?.length||0}),e.client.type==="connected"&&t>0&&ju.jsxs(Box,{children:[ju.jsx(Text,{bold:!0,children:"Tools: "}),ju.jsxs(Text,{dimColor:!0,children:[t," ",Sn(t,"tool")]})]}),e.client.type==="connected"&&e.client.toolsListError&&ju.jsxs(Box,{flexDirection:"column",children:[ju.jsx(Text,{bold:!0,children:"Issue: "}),ju.jsx(Text,{dimColor:!0,children:e.client.toolsListError})]})]}),h.length>0&&ju.jsx(Box,{children:ju.jsx(hr,{options:h,onChange:async(g)=>{if(g==="tools")n();else if(g==="reconnectMcpServer"){d(!0);try{let _=await l(e.name),{message:T}=T7n(_,e.name);o?.(T)}catch(_){o?.(yWt(_,e.name))}finally{d(!1)}}else if(g==="toggle-enabled")await p();else if(g==="back")r()},onCancel:r})})]})}
+var b7n,ju;
+var E7n=b(()=>{Zs();je();KA();Sue();qO();uo();Ct();lr();uc();TS();Is();di();Wo();ff();G8e();xw();Jvo();b7n=x(et(),1),ju=x(oe(),1)});
+export {TWt,b7n,ju,E7n};

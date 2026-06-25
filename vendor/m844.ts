@@ -1,8 +1,12 @@
 // @ts-nocheck
-import {p1e,zEt} from "./m765.ts";
-import {Wrn,d_r} from "./m843.ts";
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-var Grn,rcs="AWS_EC2_METADATA_DISABLED",ocs=async(e)=>{let{ENV_CMDS_FULL_URI:t,ENV_CMDS_RELATIVE_URI:n,fromContainerMetadata:r,fromInstanceMetadata:o}=await Promise.resolve().then(() => (p1e(),zEt));if(process.env[n]||process.env[t]){e.logger?.debug("@aws-sdk/credential-provider-node - remoteProvider::fromHttp/fromContainerMetadata");let{fromHttp:s}=await Promise.resolve().then(() => (Wrn(),d_r));return Grn.chain(s(e),r(e))}if(process.env[rcs]&&process.env[rcs]!=="false")return async()=>{throw new Grn.CredentialsProviderError("EC2 Instance Metadata Service access disabled",{logger:e.logger})};return e.logger?.debug("@aws-sdk/credential-provider-node - remoteProvider::fromInstanceMetadata"),o(e)};
-var scs=b(()=>{Grn=M(createDefaultGlobalConfig(),1)});
-export {Grn,rcs,ocs,scs};
+import {b,x} from "../runtime.ts";
+import {sC} from "./m834.ts";
+var Lmu=(e)=>Array.isArray(e)?e:[e];
+var Lfs=(e)=>{for(let n in e)if(e.hasOwnProperty(n)&&e[n]["#text"]!==void 0)e[n]=e[n]["#text"];else if(typeof e[n]==="object"&&e[n]!==null)e[n]=Lfs(e[n]);return e};
+var Mmu=(e)=>e!=null;
+class Mfs{trace(){}debug(){}info(){}warn(){}error(){}}
+function Nfs(e,t,n){let r,o,s;if(typeof t>"u"&&typeof n>"u")r={},s=e;else if(r=e,typeof t==="function")return o=t,s=n,Bmu(r,o,s);else s=t;for(let i of Object.keys(s)){if(!Array.isArray(s[i])){r[i]=s[i];continue}Ffs(r,null,s,i)}return r}
+var Nmu=(e)=>{let t={};for(let[n,r]of Object.entries(e||{}))t[n]=[,r];return t},Fmu=(e,t)=>{let n={};for(let r in t)Ffs(n,e,t,r);return n},Bmu=(e,t,n)=>Nfs(e,Object.entries(n).reduce((r,[o,s])=>{if(Array.isArray(s))r[o]=s;else if(typeof s==="function")r[o]=[t,s()];else r[o]=[t,s];return r},{})),Ffs=(e,t,n,r)=>{if(t!==null){let i=n[r];if(typeof i==="function")i=[,i];let[a=Umu,l=$mu,c=r]=i;if(typeof a==="function"&&a(t[c])||typeof a!=="function"&&!!a)e[r]=l(t[c]);return}let[o,s]=n[r];if(typeof s==="function"){let i,a=o===void 0&&(i=s())!=null,l=typeof o==="function"&&!!o(void 0)||typeof o!=="function"&&!!o;if(a)e[r]=i;else if(l)e[r]=s()}else{let i=o===void 0&&s!=null,a=typeof o==="function"&&!!o(s)||typeof o!=="function"&&!!o;if(i||a)e[r]=s}},Umu=(e)=>e!=null,$mu=(e)=>e;
+var Bfs;
+var Ufs=b(()=>{Bfs=x(sC(),1)});
+export {Lmu,Lfs,Mmu,Mfs,Nfs,Nmu,Fmu,Bmu,Ffs,Umu,$mu,Bfs,Ufs};

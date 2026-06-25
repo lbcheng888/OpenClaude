@@ -1,6 +1,31 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Yfn} from "./m1943.ts";
-var WJe=(e)=>{if(typeof globalThis.process<"u")return globalThis.process.env?.[e]?.trim()??void 0;if(typeof globalThis.Deno<"u")return globalThis.Deno.env?.get?.(e)?.trim();return};
-var wQs=b(()=>{Yfn()});
-export {WJe,wQs};
+import {ft,b} from "../runtime.ts";
+import {useIdentityPlugin,AXs} from "./m1720.ts";
+import {serializeAuthenticationRecord,deserializeAuthenticationRecord,b_n} from "./m1909.ts";
+import {logger,VS} from "./m1636.ts";
+import {getBearerTokenProvider,hoi} from "./m1945.ts";
+import {WorkloadIdentityCredential,k_n} from "./m1925.ts";
+import {VisualStudioCodeCredential,LOr} from "./m1719.ts";
+import {UsernamePasswordCredential,rNr} from "./m1937.ts";
+import {OnBehalfOfCredential,moi} from "./m1944.ts";
+import {ManagedIdentityCredential,K1r} from "./m1927.ts";
+import {InteractiveBrowserCredential,aoi} from "./m1940.ts";
+import {EnvironmentCredential,oNr} from "./m1938.ts";
+import {DeviceCodeCredential,loi} from "./m1941.ts";
+import {DefaultAzureCredential,iNr} from "./m1939.ts";
+import {CredentialUnavailableErrorName,CredentialUnavailableError,AuthenticationRequiredError,AuthenticationErrorName,AuthenticationError,AggregateAuthenticationErrorName,AggregateAuthenticationError,cD} from "./m1637.ts";
+import {ClientSecretCredential,nNr} from "./m1936.ts";
+import {ClientCertificateCredential,tNr} from "./m1935.ts";
+import {ClientAssertionCredential,w_n} from "./m1924.ts";
+import {ChainedTokenCredential,eNr} from "./m1934.ts";
+import {AzurePowerShellCredential,Q1r} from "./m1933.ts";
+import {AzurePipelinesCredential,coi} from "./m1942.ts";
+import {AzureDeveloperCliCredential,Y1r} from "./m1931.ts";
+import {AzureCliCredential,j1r} from "./m1930.ts";
+import {AzureAuthorityHosts,sse} from "./m1629.ts";
+import {AuthorizationCodeCredential,doi} from "./m1943.ts";
+var goi={};
+ft(goi,{useIdentityPlugin:()=>useIdentityPlugin,serializeAuthenticationRecord:()=>serializeAuthenticationRecord,logger:()=>logger,getDefaultAzureCredential:()=>getDefaultAzureCredential,getBearerTokenProvider:()=>getBearerTokenProvider,deserializeAuthenticationRecord:()=>deserializeAuthenticationRecord,WorkloadIdentityCredential:()=>WorkloadIdentityCredential,VisualStudioCodeCredential:()=>VisualStudioCodeCredential,UsernamePasswordCredential:()=>UsernamePasswordCredential,OnBehalfOfCredential:()=>OnBehalfOfCredential,ManagedIdentityCredential:()=>ManagedIdentityCredential,InteractiveBrowserCredential:()=>InteractiveBrowserCredential,EnvironmentCredential:()=>EnvironmentCredential,DeviceCodeCredential:()=>DeviceCodeCredential,DefaultAzureCredential:()=>DefaultAzureCredential,CredentialUnavailableErrorName:()=>CredentialUnavailableErrorName,CredentialUnavailableError:()=>CredentialUnavailableError,ClientSecretCredential:()=>ClientSecretCredential,ClientCertificateCredential:()=>ClientCertificateCredential,ClientAssertionCredential:()=>ClientAssertionCredential,ChainedTokenCredential:()=>ChainedTokenCredential,AzurePowerShellCredential:()=>AzurePowerShellCredential,AzurePipelinesCredential:()=>AzurePipelinesCredential,AzureDeveloperCliCredential:()=>AzureDeveloperCliCredential,AzureCliCredential:()=>AzureCliCredential,AzureAuthorityHosts:()=>AzureAuthorityHosts,AuthorizationCodeCredential:()=>AuthorizationCodeCredential,AuthenticationRequiredError:()=>AuthenticationRequiredError,AuthenticationErrorName:()=>AuthenticationErrorName,AuthenticationError:()=>AuthenticationError,AggregateAuthenticationErrorName:()=>AggregateAuthenticationErrorName,AggregateAuthenticationError:()=>AggregateAuthenticationError});
+function getDefaultAzureCredential(){return new DefaultAzureCredential}
+var _oi=b(()=>{iNr();cD();b_n();eNr();nNr();iNr();oNr();tNr();w_n();j1r();Y1r();aoi();K1r();loi();coi();doi();Q1r();rNr();LOr();moi();k_n();VS();sse();hoi();AXs()});
+export {goi,getDefaultAzureCredential,_oi};

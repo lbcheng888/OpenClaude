@@ -1,12 +1,15 @@
 // @ts-nocheck
-import {truncate,EH} from "./m237.ts";
-import {Text} from "./m2423.ts";
-import {Box} from "./m2422.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function $ke(e){let t=Xca.c(20),{title:n,subtitle:r,color:o,workerBadge:s,requestSource:i,srPrefix:a}=e,l=o===void 0?"permission":o,c=i?.workflowName,u;if(t[0]!==c)u=c!==void 0?truncate(c,24,!0):void 0,t[0]=c,t[1]=u;else u=t[1];let d=u,p=a!==void 0?`${a} ${n}`:void 0,m;if(t[2]!==l||t[3]!==p||t[4]!==n)m=m9.createElement(Text,{"aria-label":p,bold:!0,color:l},n),t[2]=l,t[3]=p,t[4]=n,t[5]=m;else m=t[5];let f;if(t[6]!==s)f=s&&m9.createElement(Text,{dimColor:!0},"\xB7 ","@",s.name),t[6]=s,t[7]=f;else f=t[7];let A;if(t[8]!==i?.type||t[9]!==d)A=i?.type==="workflow-agent"&&m9.createElement(Text,null,m9.createElement(Text,{dimColor:!0},"\xB7 "),d!==void 0?`from the "${d}" workflow`:"from a workflow"),t[8]=i?.type,t[9]=d,t[10]=A;else A=t[10];let h;if(t[11]!==m||t[12]!==f||t[13]!==A)h=m9.createElement(Box,{flexDirection:"row",gap:1},m,f,A),t[11]=m,t[12]=f,t[13]=A,t[14]=h;else h=t[14];let g;if(t[15]!==r)g=r!=null&&(typeof r==="string"?m9.createElement(Text,{dimColor:!0,wrap:"truncate-start"},r):r),t[15]=r,t[16]=g;else g=t[16];let _;if(t[17]!==h||t[18]!==g)_=m9.createElement(Box,{flexDirection:"column"},h,g),t[17]=h,t[18]=g,t[19]=_;else _=t[19];return _}
-var Xca,m9;
-var CNt=b(()=>{ze();EH();Xca=M(rt(),1),m9=M(Te(),1)});
-export {$ke,Xca,m9,CNt};
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {xe,He,mn} from "../src/telemetry/0600_feature_name.ts";
+import {toCompatSessionId} from "../src/core/2809_toInfraSessionId.ts";
+import {ho} from "./m572.ts";
+import {Ce,Ct} from "./m197.ts";
+import {Mj,rle} from "../src/telemetry/3340_reason.ts";
+import {getClientPlatform,Fg} from "./m5.ts";
+import {b} from "../runtime.ts";
+import {ap} from "./m573.ts";
+async function LBt(e,t,n,r,o,s,i){let a=e==="subscribe"?"bridge_pr_subscribe":"bridge_pr_unsubscribe",l=s();if(!l)return logForDebugging(`[bridge] No access token for ${e}-pr`),xe(a,"no_token"),!1;let c=`${o}/v1/code/github/${e}-pr`,u={session_id:toCompatSessionId(t),repo:n,pr_number:r},d;try{d=await ho.post(c,u,{headers:Nep(l,{trustedDeviceToken:await i?.()}),timeout:1e4,validateStatus:(m)=>m<500})}catch(m){return logForDebugging(`[bridge] ${e}-pr request failed: ${Ce(m)}`),xe(a,"request_failed"),!1}if(!(d.status>=200&&d.status<300||d.status===409)){let m=Mj(d.data);return logForDebugging(`[bridge] ${e}-pr failed ${d.status}${m?`: ${m}`:""}`),xe(a,"http_error"),!1}return logForDebugging(`[bridge] ${e}-pr ${n}#${r} ok`),He(a),!0}
+function Nep(e,{orgUUID:t,trustedDeviceToken:n}={}){let r={Authorization:`Bearer ${e}`,"Content-Type":"application/json","anthropic-version":Lep,"anthropic-beta":Mep,"anthropic-client-platform":getClientPlatform(),"User-Agent":Fg()};if(t!==void 0)r["x-organization-uuid"]=t;if(n!==void 0)r["X-Trusted-Device-Token"]=n;return r}
+var Lep="2023-06-01",Mep="ccr-byoc-2025-07-29";
+var wto=b(()=>{ap();mn();qe();Ct();rle()});
+export {LBt,Nep,Lep,Mep,wto};

@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Nri=X((dgn)=>{Object.defineProperty(dgn,"__esModule",{value:!0});dgn.NoopTextMapPropagator=void 0;class Mri{inject(e,t){}extract(e,t){return e}fields(){return[]}}dgn.NoopTextMapPropagator=Mri});
-export {Nri};
+import {Q} from "../runtime.ts";
+import {Axt} from "./m2069.ts";
+var Rci=Q((UTn)=>{Object.defineProperty(UTn,"__esModule",{value:!0});UTn.context=void 0;var Znd=Axt();UTn.context=Znd.ContextAPI.getInstance()});
+export {Rci};

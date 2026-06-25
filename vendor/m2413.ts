@@ -1,13 +1,25 @@
 // @ts-nocheck
-import {Zyn,hZ} from "./m2267.ts";
-import {Jfe,lie,T5,zO} from "./m2268.ts";
-import {HIt,qTn,$Tn,N1,BK} from "./m2339.ts";
-import {oUe,XS} from "../src/config/2341_XS.ts";
-import {rTn,supportsTabStatus,Sk,oTn,lg} from "./m2269.ts";
-import {qp,bt} from "./m195.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {dCn,ovi,N8} from "../src/config/2299_level.ts";
+import {cqr,rAn,oAn,HZ,lqr,Ttt,XHi,jHi,Fve,YHi,Stt,o4} from "./m2386.ts";
+import {i2e,B8} from "./m2385.ts";
+import {xPt,Oqr} from "./m2412.ts";
+import {sn,mc} from "./m237.ts";
+import {ZM,Ove} from "./m2375.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {$T,p0} from "./m236.ts";
+import {n0i,r0i} from "./m2411.ts";
+import {eHi} from "./m2370.ts";
+import {utt} from "./m2373.ts";
 import {b} from "../runtime.ts";
-function PSn(){try{if(MZ.writeSync(1,Zyn),MZ.writeSync(1,Jfe),MZ.writeSync(1,lie),MZ.writeSync(1,HIt),MZ.writeSync(1,qTn),MZ.writeSync(1,$Tn),MZ.writeSync(1,N1),MZ.writeSync(1,"\x1B7"+T5+"\x1B8"),oUe())MZ.writeSync(1,rTn);if(supportsTabStatus())MZ.writeSync(1,Sk(oTn))}catch(e){if(qp(e))logForDebugging(`restoreTerminalModes writeSync failed: ${e}`,{level:"error"});else throw e}}
-var MZ;
-var g$r=b(()=>{qe();bt();XS();hZ();zO();BK();lg();MZ=require("fs")});
-export {PSn,MZ,g$r};
+import {dtt} from "./m2374.ts";
+function U_d(e,t){if(!e)return t;return{x1:o0i(e.x1,t.x1),x2:s0i(e.x2,t.x2),y1:o0i(e.y1,t.y1),y2:s0i(e.y2,t.y2)}}
+function o0i(e,t){if(e===void 0)return t;if(t===void 0)return e;return Math.max(e,t)}
+function s0i(e,t){if(e===void 0)return t;if(t===void 0)return e;return Math.min(e,t)}
+class hhe{width;height;stylePool;screen;operations=[];charCache=new Map;charCacheGeneration;charCacheChalkGeneration;constructor(e){let{width:t,height:n,stylePool:r,screen:o}=e;this.width=t,this.height=n,this.stylePool=r,this.screen=o,this.charCacheGeneration=r.generation,this.charCacheChalkGeneration=dCn(),cqr(o,t,n)}reset(e,t,n){if(this.width=e,this.height=t,this.screen=n,this.operations.length=0,cqr(n,e,t),this.charCache.size>16384||this.stylePool.generation!==this.charCacheGeneration||dCn()!==this.charCacheChalkGeneration)this.charCacheGeneration=this.stylePool.generation,this.charCacheChalkGeneration=dCn(),this.charCache.clear()}blit(e,t,n,r,o){this.operations.push({type:"blit",src:e,x:t,y:n,width:r,height:o})}shift(e,t,n){this.operations.push({type:"shift",top:e,bottom:t,n})}clear(e,t){this.operations.push({type:"clear",region:e,fromAbsolute:t})}noSelect(e){this.operations.push({type:"noSelect",region:e})}write(e,t,n,r){if(!n)return;this.operations.push({type:"write",x:e,y:t,text:n,softWrap:r})}clip(e){this.operations.push({type:"clip",clip:e})}unclip(){this.operations.push({type:"unclip"})}get(){let e=this.screen,t=this.width,n=this.height,r=0,o=0,s=[];for(let l=0;l<this.operations.length;l++){let c=this.operations[l];if(c.type!=="clear")continue;let{x:u,y:d,width:p,height:m}=c.region,f=Math.max(0,u),h=Math.max(0,d),g=Math.min(u+p,t),_=Math.min(d+m,n);if(f>=g||h>=_)continue;let T={x:f,y:h,width:g-f,height:_-h};if(e.damage=e.damage?i2e(e.damage,T):T,c.fromAbsolute)s.push({rect:T,opIndex:l})}let i=[];for(let l=0;l<this.operations.length;l++){let c=this.operations[l];switch(c.type){case"clear":continue;case"clip":i.push(U_d(i.at(-1),c.clip));continue;case"unclip":i.pop();continue;case"blit":{let{src:u,x:d,y:p,width:m,height:f}=c,h=i.at(-1),g=Math.max(d,h?.x1??0),_=Math.max(p,h?.y1??0),T=Math.min(p+f,n,u.height,h?.y2??1/0),y=Math.min(d+m,t,u.width,h?.x2??1/0);if(g>=y||_>=T)continue;if(s.length===0){rAn(e,u,g,_,y,T),r+=(T-_)*(y-g);continue}let S=s.filter((R)=>R.opIndex>l);if(S.length===0){rAn(e,u,g,_,y,T),r+=(T-_)*(y-g);continue}let E=_;for(let R=_;R<=T;R++)if(R<T&&S.some(({rect:H})=>R>=H.y&&R<H.y+H.height&&g>=H.x&&y<=H.x+H.width)||R===T){if(R>E)rAn(e,u,g,E,y,R),r+=(R-E)*(y-g);E=R+1}continue}case"shift":{oAn(e,c.top,c.bottom,c.n);continue}case"write":{let{text:u,softWrap:d}=c,{x:p,y:m}=c,f=u.split(`
+`),h=0,g=0,_=i.at(-1);if(_){let S=typeof _?.x1==="number"&&typeof _?.x2==="number",E=typeof _?.y1==="number"&&typeof _?.y2==="number";if(S){let R=xPt(u);if(p+R<_.x1||p>_.x2)continue}if(E){let R=f.length;if(m+R<_.y1||m>_.y2)continue}if(S){if(f=f.map((R)=>{let w=p<_.x1?_.x1-p:0,H=sn(R),k=p+H>_.x2?_.x2-p:H;if(w===0&&k>=H)return R;let I=ZM(R,w,k);while(sn(I)>k-w&&k>w)k--,I=ZM(R,w,k);return I}),p<_.x1)p=_.x1}if(E){let R=m<_.y1?_.y1-m:0,w=f.length,H=m+w>_.y2?_.y2-m:w;if(d&&R>0&&(d[R]??HZ.HardBreak)!==HZ.HardBreak)g=lqr(p+sn(f[R-1]),p);if(f=f.slice(R,H),h=R,m<_.y1)m=_.y1}}let T=e.softWrap,y=0;for(let S of f){let E=m+y;if(E>=n)break;let R=W_d(e,S,p,E,t,this.stylePool,this.charCache);if(o+=R-p,d){let w=d[h+y];T[E]=w===HZ.HardBreak||w===void 0?0:w===HZ.ContinuationElidedSep?g|Ttt:g,g=lqr(R,p)}y++}continue}}}for(let l of this.operations)if(l.type==="noSelect"){let{x:c,y:u,width:d,height:p}=l.region;XHi(e,c,u,d,p)}let a=r+o;if(a>1000&&o>r)logForDebugging(`High write ratio: blit=${r}, write=${o} (${(o/a*100).toFixed(1)}% writes), screen=${n}x${t}`);return e}}
+function $_d(e,t){if(e===t)return!0;let n=e.length;if(n!==t.length)return!1;if(n===0)return!0;for(let r=0;r<n;r++)if(e[r].code!==t[r].code)return!1;return!0}
+function q_d(e,t){let n=e.length;if(n===0)return[];let r=[],o=[],s=e[0].styles;for(let i=0;i<n;i++){let a=e[i],l=a.styles;if(o.length>0&&!$_d(l,s))i0i(o.join(""),s,t,r),o.length=0;o.push(a.value),s=l}if(o.length>0)i0i(o.join(""),s,t,r);return r}
+function i0i(e,t,n,r){let o=jHi(t)??void 0,i=o!==void 0||t.some((l)=>l.code.length>=Fve.length&&l.code.startsWith(Fve))?YHi(t):t,a=n.intern(ovi(i));for(let{segment:l}of $T().segment(e))r.push({value:l,width:sn(l),styleId:a,hyperlink:o})}
+function W_d(e,t,n,r,o,s,i){let a=i.get(t);if(!a)a=n0i(q_d(eHi(utt(t)),s)),i.set(t,a);let l=n,c={char:" ",styleId:s.none,width:0,hyperlink:void 0};for(let u=0;u<a.length;u++){let d=a[u],p=d.value.codePointAt(0);if(p!==void 0&&p<=31){if(p===9){let g=8-l%8;c.char=" ",c.styleId=s.none,c.width=0,c.hyperlink=void 0;for(let _=0;_<g&&l<o;_++)Stt(e,l,r,c),l++}else if(p===27){let h=a[u+1]?.value,g=h?.codePointAt(0);if(h==="("||h===")"||h==="*"||h==="+")u+=2;else if(h==="["){u++;while(u<a.length-1){u++;let _=a[u]?.value.codePointAt(0);if(_!==void 0&&_>=64&&_<=126)break}}else if(h==="]"||h==="P"||h==="_"||h==="^"||h==="X"){u++;while(u<a.length-1){u++;let _=a[u]?.value;if(_==="\x07")break;if(_==="\x1B"){if(a[u+1]?.value==="\\"){u++;break}}}}else if(g!==void 0&&g>=48&&g<=126)u++}continue}if(p!==void 0&&d.value.length===1&&(p===1564||p>=8234&&p<=8238||p>=8294&&p<=8297)){c.char="\uFFFD",c.styleId=d.styleId,c.width=0,c.hyperlink=d.hyperlink,Stt(e,l,r,c),l++;continue}let m=d.width;if(m===0)continue;let f=m>=2;if(f&&l+m>o){c.char=" ",c.styleId=s.none,c.width=3,c.hyperlink=void 0,Stt(e,l,r,c),l++;continue}c.char=d.value,c.styleId=d.styleId,c.width=f?1:0,c.hyperlink=d.hyperlink,Stt(e,l,r,c);for(let h=2;h<m;h++)c.char="",c.width=2,Stt(e,l+h,r,c);l+=f?m:1}return l}
+var DPt=b(()=>{dtt();qe();p0();Ove();r0i();N8();B8();o4();mc();Oqr()});
+export {U_d,o0i,s0i,hhe,$_d,q_d,i0i,W_d,DPt};

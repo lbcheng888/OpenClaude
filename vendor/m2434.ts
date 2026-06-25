@@ -1,8 +1,5 @@
 // @ts-nocheck
-import {wTn,tUr} from "./m2288.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function useIsScreenReaderEnabled(){return twi.useContext(wTn)}
-var twi;
-var dwe=b(()=>{tUr();twi=M(Te(),1)});
-export {useIsScreenReaderEnabled,twi,dwe};
+import {Q} from "../runtime.ts";
+import {Vnn} from "./m541.ts";
+var X0i=Q((lEg,J0i)=>{var aEg=require("os"),Y0i=require("tty"),Ez=Vnn(),{env:mO}=process,jve;if(Ez("no-color")||Ez("no-colors")||Ez("color=false")||Ez("color=never"))jve=0;else if(Ez("color")||Ez("colors")||Ez("color=true")||Ez("color=always"))jve=1;if("FORCE_COLOR"in mO)if(mO.FORCE_COLOR==="true")jve=1;else if(mO.FORCE_COLOR==="false")jve=0;else jve=mO.FORCE_COLOR.length===0?1:Math.min(parseInt(mO.FORCE_COLOR,10),3);function e6r(e){if(e===0)return!1;return{level:e,hasBasic:!0,has256:e>=2,has16m:e>=3}}function t6r(e,t){if(jve===0)return 0;if(Ez("color=16m")||Ez("color=full")||Ez("color=truecolor"))return 3;if(Ez("color=256"))return 2;if(e&&!t&&jve===void 0)return 0;let n=jve||0;if(mO.TERM==="dumb")return n;if("CI"in mO){if(["TRAVIS","CIRCLECI","APPVEYOR","GITLAB_CI","GITHUB_ACTIONS","BUILDKITE"].some((r)=>(r in mO))||mO.CI_NAME==="codeship")return 1;return n}if("TEAMCITY_VERSION"in mO)return/^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(mO.TEAMCITY_VERSION)?1:0;if(mO.COLORTERM==="truecolor")return 3;if("TERM_PROGRAM"in mO){let r=parseInt((mO.TERM_PROGRAM_VERSION||"").split(".")[0],10);switch(mO.TERM_PROGRAM){case"iTerm.app":return r>=3?3:2;case"Apple_Terminal":return 2}}if(/-256(color)?$/i.test(mO.TERM))return 2;if(/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(mO.TERM))return 1;if("COLORTERM"in mO)return 1;return n}function kyd(e){let t=t6r(e,e&&e.isTTY);return e6r(t)}J0i.exports={supportsColor:kyd,stdout:e6r(t6r(!0,Y0i.isatty(1))),stderr:e6r(t6r(!0,Y0i.isatty(2)))}});
+export {X0i};

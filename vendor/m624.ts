@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function ezc(e){return function(){return e}}
-var hXo;
-var gXo=b(()=>{hXo=ezc});
-export {ezc,hXo,gXo};
+function pou(e,t){if(t==="constructor"&&typeof e[t]==="function")return;if(t=="__proto__")return;return e[t]}
+var eRt;
+var Cyr=b(()=>{eRt=pou});
+export {pou,eRt,Cyr};

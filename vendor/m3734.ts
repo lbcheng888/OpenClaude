@@ -1,5 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Pva} from "./m3733.ts";
-var Ova=X((sNn)=>{Object.defineProperty(sNn,"__esModule",{value:!0});sNn.OTLPLogExporter=void 0;var Oup=Pva();Object.defineProperty(sNn,"OTLPLogExporter",{enumerable:!0,get:function(){return Oup.OTLPLogExporter}})});
-export {Ova};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {vBn} from "./m3723.ts";
+import {cxa} from "./m3733.ts";
+import {Lle} from "./m3676.ts";
+var mxa=Q((LBn)=>{Object.defineProperty(LBn,"__esModule",{value:!0});LBn.ObservableRegistry=void 0;var TSp=xi(),uxa=vBn(),dxa=cxa(),gao=Lle();class pxa{_callbacks=[];_batchCallbacks=[];addCallback(e,t){if(this._findCallback(e,t)>=0)return;this._callbacks.push({callback:e,instrument:t})}removeCallback(e,t){let n=this._findCallback(e,t);if(n<0)return;this._callbacks.splice(n,1)}addBatchCallback(e,t){let n=new Set(t.filter(uxa.isObservableInstrument));if(n.size===0){TSp.diag.error("BatchObservableCallback is not associated with valid instruments",t);return}if(this._findBatchCallback(e,n)>=0)return;this._batchCallbacks.push({callback:e,instruments:n})}removeBatchCallback(e,t){let n=new Set(t.filter(uxa.isObservableInstrument)),r=this._findBatchCallback(e,n);if(r<0)return;this._batchCallbacks.splice(r,1)}async observe(e,t){let n=this._observeCallbacks(e,t),r=this._observeBatchCallbacks(e,t);return(await Promise.allSettled([...n,...r])).filter((i)=>i.status==="rejected").map((i)=>i.reason)}_observeCallbacks(e,t){return this._callbacks.map(async({callback:n,instrument:r})=>{let o=new dxa.ObservableResultImpl(r._descriptor.name,r._descriptor.valueType),s=Promise.resolve(n(o));if(t!=null)s=(0,gao.callWithTimeout)(s,t);await s,r._metricStorages.forEach((i)=>{i.record(o._buffer,e)})})}_observeBatchCallbacks(e,t){return this._batchCallbacks.map(async({callback:n,instruments:r})=>{let o=new dxa.BatchObservableResultImpl,s=Promise.resolve(n(o));if(t!=null)s=(0,gao.callWithTimeout)(s,t);await s,r.forEach((i)=>{let a=o._buffer.get(i);if(a==null)return;i._metricStorages.forEach((l)=>{l.record(a,e)})})})}_findCallback(e,t){return this._callbacks.findIndex((n)=>n.callback===e&&n.instrument===t)}_findBatchCallback(e,t){return this._batchCallbacks.findIndex((n)=>n.callback===e&&(0,gao.setEquals)(n.instruments,t))}}LBn.ObservableRegistry=pxa});
+export {mxa};

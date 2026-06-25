@@ -1,10 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var r0=X((gKe)=>{var tgr={warningEmitted:!1},NZc=(e)=>{if(e&&!tgr.warningEmitted&&parseInt(e.substring(1,e.indexOf(".")))<18)tgr.warningEmitted=!0,process.emitWarning(`NodeDeprecationWarning: The AWS SDK for JavaScript (v3) will
-no longer support Node.js 16.x on January 6, 2025.
-
-To continue receiving updates to AWS services, bug fixes, and security
-updates please upgrade to a supported Node.js LTS version.
-
-More information can be found at: https://a.co/74kJMmI`)};function BZc(e,t,n){if(!e.$source)e.$source={};return e.$source[t]=n,e}function FZc(e,t,n){if(!e.__aws_sdk_context)e.__aws_sdk_context={features:{}};else if(!e.__aws_sdk_context.features)e.__aws_sdk_context.features={};e.__aws_sdk_context.features[t]=n}function UZc(e,t,n){if(!e.$source)e.$source={};return e.$source[t]=n,e}gKe.emitWarningIfUnsupportedVersion=NZc;gKe.setCredentialFeature=BZc;gKe.setFeature=FZc;gKe.setTokenFeature=UZc;gKe.state=tgr});
-export {r0};
+import {Q} from "../runtime.ts";
+var vcs=Q((zb)=>{zb.HttpAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(zb.HttpAuthLocation||(zb.HttpAuthLocation={}));zb.HttpApiKeyAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(zb.HttpApiKeyAuthLocation||(zb.HttpApiKeyAuthLocation={}));zb.EndpointURLScheme=void 0;(function(e){e.HTTP="http",e.HTTPS="https"})(zb.EndpointURLScheme||(zb.EndpointURLScheme={}));zb.AlgorithmId=void 0;(function(e){e.MD5="md5",e.CRC32="crc32",e.CRC32C="crc32c",e.SHA1="sha1",e.SHA256="sha256"})(zb.AlgorithmId||(zb.AlgorithmId={}));var Hcu=(e)=>{let t=[];if(e.sha256!==void 0)t.push({algorithmId:()=>zb.AlgorithmId.SHA256,checksumConstructor:()=>e.sha256});if(e.md5!=null)t.push({algorithmId:()=>zb.AlgorithmId.MD5,checksumConstructor:()=>e.md5});return{addChecksumAlgorithm(n){t.push(n)},checksumAlgorithms(){return t}}},Icu=(e)=>{let t={};return e.checksumAlgorithms().forEach((n)=>{t[n.algorithmId()]=n.checksumConstructor()}),t},xcu=(e)=>Hcu(e),Dcu=(e)=>Icu(e);zb.FieldPosition=void 0;(function(e){e[e.HEADER=0]="HEADER",e[e.TRAILER=1]="TRAILER"})(zb.FieldPosition||(zb.FieldPosition={}));var Pcu="__smithy_context";zb.IniSectionType=void 0;(function(e){e.PROFILE="profile",e.SSO_SESSION="sso-session",e.SERVICES="services"})(zb.IniSectionType||(zb.IniSectionType={}));zb.RequestHandlerProtocol=void 0;(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(zb.RequestHandlerProtocol||(zb.RequestHandlerProtocol={}));zb.SMITHY_CONTEXT_KEY=Pcu;zb.getDefaultClientConfiguration=xcu;zb.resolveDefaultRuntimeConfig=Dcu});
+export {vcs};

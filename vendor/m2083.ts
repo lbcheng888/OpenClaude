@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Dri} from "./m2082.ts";
-import {ZBe} from "./m2050.ts";
-import {eFe} from "./m2054.ts";
-var Ori=X((cgn)=>{Object.defineProperty(cgn,"__esModule",{value:!0});cgn.MetricsAPI=void 0;var N7u=Dri(),o1r=ZBe(),Pri=eFe(),s1r="metrics";class i1r{constructor(){}static getInstance(){if(!this._instance)this._instance=new i1r;return this._instance}setGlobalMeterProvider(e){return(0,o1r.registerGlobal)(s1r,e,Pri.DiagAPI.instance())}getMeterProvider(){return(0,o1r.getGlobal)(s1r)||N7u.NOOP_METER_PROVIDER}getMeter(e,t,n){return this.getMeterProvider().getMeter(e,t,n)}disable(){(0,o1r.unregisterGlobal)(s1r,Pri.DiagAPI.instance())}}cgn.MetricsAPI=i1r});
-export {Ori};
+import {Q} from "../runtime.ts";
+import {yci} from "./m2082.ts";
+var Cci=Q((FTn)=>{Object.defineProperty(FTn,"__esModule",{value:!0});FTn.TraceStateImpl=void 0;var Tci=yci(),Sci=32,Jnd=512,bci=",",Eci="=";class HUr{constructor(e){if(this._internalState=new Map,e)this._parse(e)}set(e,t){let n=this._clone();if(n._internalState.has(e))n._internalState.delete(e);return n._internalState.set(e,t),n}unset(e){let t=this._clone();return t._internalState.delete(e),t}get(e){return this._internalState.get(e)}serialize(){return this._keys().reduce((e,t)=>(e.push(t+Eci+this.get(t)),e),[]).join(bci)}_parse(e){if(e.length>Jnd)return;if(this._internalState=e.split(bci).reverse().reduce((t,n)=>{let r=n.trim(),o=r.indexOf(Eci);if(o!==-1){let s=r.slice(0,o),i=r.slice(o+1,n.length);if((0,Tci.validateKey)(s)&&(0,Tci.validateValue)(i))t.set(s,i)}return t},new Map),this._internalState.size>Sci)this._internalState=new Map(Array.from(this._internalState.entries()).reverse().slice(0,Sci))}_keys(){return Array.from(this._internalState.keys()).reverse()}_clone(){let e=new HUr;return e._internalState=new Map(this._internalState),e}}FTn.TraceStateImpl=HUr});
+export {Cci};

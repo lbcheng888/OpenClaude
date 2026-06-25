@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {YMn} from "./m3658.ts";
-import {yFt} from "./m3676.ts";
-var hno=X((nat)=>{Object.defineProperty(nat,"__esModule",{value:!0});nat.DEFAULT_AGGREGATION_TEMPORALITY_SELECTOR=nat.DEFAULT_AGGREGATION_SELECTOR=void 0;var plp=YMn(),mlp=yFt(),flp=(e)=>({type:mlp.AggregationType.DEFAULT});nat.DEFAULT_AGGREGATION_SELECTOR=flp;var Alp=(e)=>plp.AggregationTemporality.CUMULATIVE;nat.DEFAULT_AGGREGATION_TEMPORALITY_SELECTOR=Alp});
-export {hno};
+import {Q} from "../runtime.ts";
+var Glt=Q((q2t)=>{Object.defineProperty(q2t,"__esModule",{value:!0});q2t.AggregatorKind=void 0;var Ayp;(function(e){e[e.DROP=0]="DROP",e[e.SUM=1]="SUM",e[e.LAST_VALUE=2]="LAST_VALUE",e[e.HISTOGRAM=3]="HISTOGRAM",e[e.EXPONENTIAL_HISTOGRAM=4]="EXPONENTIAL_HISTOGRAM"})(Ayp=q2t.AggregatorKind||(q2t.AggregatorKind={}))});
+export {Glt};

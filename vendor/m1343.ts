@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {GD} from "./m1317.ts";
-import {H8,uk} from "./m1319.ts";
-import {U7,Q1s} from "./m1334.ts";
-import {yo} from "./m887.ts";
-import {oC} from "./m1309.ts";
-var cNs,GetFederationTokenCommand;
-var Xvr=b(()=>{GD();H8();U7();cNs=M(yo(),1);GetFederationTokenCommand=class GetFederationTokenCommand extends oC.classBuilder().ep(uk).m(function(e,t,n,r){return[cNs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","GetFederationToken",{}).n("STSClient","GetFederationTokenCommand").sc(Q1s).build(){}});
-export {cNs,GetFederationTokenCommand,Xvr};
+import {b,x} from "../runtime.ts";
+import {rD} from "./m1322.ts";
+import {V5,getTeamByName} from "./m1324.ts";
+import {p7,q$s} from "./m1339.ts";
+import {yo} from "./m892.ts";
+import {lC} from "./m1314.ts";
+var Z$s,AssumeRootCommand;
+var bIr=b(()=>{rD();V5();p7();Z$s=x(yo(),1);AssumeRootCommand=class AssumeRootCommand extends lC.classBuilder().ep(getTeamByName).m(function(e,t,n,r){return[Z$s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","AssumeRoot",{}).n("STSClient","AssumeRootCommand").sc(q$s).build(){}});
+export {Z$s,AssumeRootCommand,bIr};

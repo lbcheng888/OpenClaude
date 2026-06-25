@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {or,dn} from "../src/config/0137_namespace.ts";
 import {b} from "../runtime.ts";
-import {xul,Rul} from "./m4605.ts";
-var DKp,kul;
-var Hul=b(()=>{DKp={type:"local-jsx",name:"memory",description:"Open a memory file in your editor",load:()=>Promise.resolve().then(() => (xul(),Rul))},kul=DKp});
-export {DKp,kul,Hul};
+function _6(){return GRo.join(or(),"daemon.json")}
+function fPe(){return GRo.join(or(),"daemon.log")}
+var GRo;
+var hPe=b(()=>{dn();GRo=require("path")});
+export {_6,fPe,GRo,hPe};

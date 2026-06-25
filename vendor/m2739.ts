@@ -1,16 +1,21 @@
 // @ts-nocheck
-import {fromSanitizer_SANITIZER_OUTPUT_ONLY,Qe} from "./m5.ts";
 import {b} from "../runtime.ts";
-function V8r(e){return ZRe.has(e)?fromSanitizer_SANITIZER_OUTPUT_ONLY(e):Qe("other")}
-function fq(e){if(!e||typeof e!=="object")return null;let t=e,n=5,r=0;while(t&&r<n){if(t instanceof Error){if("code"in t&&typeof t.code==="string"){let o=t.code,s=HRd.has(o);return{code:o,message:t.message,isSSLError:s}}if(t.message.startsWith(IRd))return{code:"ConnectionClosed",message:t.message,isSSLError:!1}}if(t instanceof Error&&"cause"in t&&t.cause!==t)t=t.cause,r++;else break}return null}
-function DRd(e){let t=fq(e);return t!==null&&Wwn.has(t.code)}
-function exe(e){let t=fq(e);if(!t?.isSSLError)return null;return`SSL certificate error (${t.code}). If you are behind a corporate proxy or TLS-intercepting firewall, set NODE_EXTRA_CA_CERTS to your CA bundle path, or ask IT to allowlist *.anthropic.com. Run /doctor for details.`}
-function G8r(e){if(e.includes("<!DOCTYPE html")||e.includes("<html")){let t=e.match(/<title>([^<]+)<\/title>/);if(t&&t[1])return t[1].trim();return""}return e}
-function PRd(e){let t=e.message;if(!t)return"";return G8r(t)}
-function ORd(e){return typeof e==="object"&&e!==null&&"error"in e&&typeof e.error==="object"&&e.error!==null}
-function HUi(e){if(!ORd(e))return null;let n=e.error,r=n?.error?.message;if(typeof r==="string"&&r.length>0){let s=G8r(r);if(s.length>0)return s}let o=n?.message;if(typeof o==="string"&&o.length>0){let s=G8r(o);if(s.length>0)return s}return null}
-function SOt(e){let t=fq(e);if(t){let{code:r,isSSLError:o}=t;if(r==="ETIMEDOUT")return"Request timed out. Check your internet connection and proxy settings";if(o)switch(r){case"UNABLE_TO_VERIFY_LEAF_SIGNATURE":case"UNABLE_TO_GET_ISSUER_CERT":case"UNABLE_TO_GET_ISSUER_CERT_LOCALLY":return"Unable to connect to API: SSL certificate verification failed. Check your proxy or corporate SSL certificates";case"CERT_HAS_EXPIRED":return"Unable to connect to API: SSL certificate has expired";case"CERT_REVOKED":return"Unable to connect to API: SSL certificate has been revoked";case"DEPTH_ZERO_SELF_SIGNED_CERT":case"SELF_SIGNED_CERT_IN_CHAIN":return"Unable to connect to API: Self-signed certificate detected. Check your proxy or corporate SSL certificates";case"ERR_TLS_CERT_ALTNAME_INVALID":case"HOSTNAME_MISMATCH":return"Unable to connect to API: SSL certificate hostname mismatch";case"CERT_NOT_YET_VALID":return"Unable to connect to API: SSL certificate is not yet valid";default:return`Unable to connect to API: SSL error (${r})`}}if(e.message==="Connection error."){if(t?.code)return`Unable to connect to API (${t.code})`;return"Unable to connect to API. Check your internet connection"}if(!e.message)return HUi(e)??`API error (status ${e.status??"unknown"})`;if(e.message.includes('{"')){let r=HUi(e);if(r)return e.status?`${e.status} ${r}`:r}let n=PRd(e);return n!==e.message&&n.length>0?n:e.message}
-function K8r(e){let t=(s)=>e.headers?.get?.(s)??void 0,n=t("anthropic-ratelimit-unified-representative-claim"),r=t("anthropic-ratelimit-unified-reset"),o=t("anthropic-ratelimit-unified-overage-status");return{message:e.message,status:e.status,requestId:e.requestID??void 0,formatted:SOt(e),connection:fq(e),isNetworkDown:DRd(e),rateLimits:n||o?{...n&&{rateLimitType:n},...r&&{resetsAt:Number(r)}}:null}}
-var HRd,Wwn,ZRe,IRd="The socket connection was closed unexpectedly";
-var txe=b(()=>{HRd=new Set(["UNABLE_TO_VERIFY_LEAF_SIGNATURE","UNABLE_TO_GET_ISSUER_CERT","UNABLE_TO_GET_ISSUER_CERT_LOCALLY","CERT_SIGNATURE_FAILURE","CERT_NOT_YET_VALID","CERT_HAS_EXPIRED","CERT_REVOKED","CERT_REJECTED","CERT_UNTRUSTED","DEPTH_ZERO_SELF_SIGNED_CERT","SELF_SIGNED_CERT_IN_CHAIN","CERT_CHAIN_TOO_LONG","PATH_LENGTH_EXCEEDED","ERR_TLS_CERT_ALTNAME_INVALID","HOSTNAME_MISMATCH","ERR_TLS_HANDSHAKE_TIMEOUT","ERR_SSL_WRONG_VERSION_NUMBER","ERR_SSL_DECRYPTION_FAILED_OR_BAD_RECORD_MAC"]),Wwn=new Set(["ECONNREFUSED","ConnectionRefused","ENOTFOUND","ENETUNREACH","ENETDOWN","EHOSTUNREACH","EHOSTDOWN","EAI_AGAIN","FailedToOpenSocket"]),ZRe=new Set(["ECONNRESET","EPIPE","ConnectionClosed"])});
-export {V8r,fq,DRd,exe,G8r,PRd,ORd,HUi,SOt,K8r,HRd,Wwn,ZRe,IRd,txe};
+function kl(e=hMd){let t=new AbortController;return oqi.setMaxListeners(e,t.signal),t}
+function gMd(e){let t=this.deref();e.deref()?.abort(t?.signal.reason)}
+function _Md(e){let t=this.deref(),n=e.deref();if(t&&n)t.signal.removeEventListener("abort",n)}
+function sqi(e,t,n){let r=new WeakRef(t),o=new WeakRef(e);if(e.signal.aborted){n.call(o,r);return}let s=n.bind(o,r);e.signal.addEventListener("abort",s,{once:!0}),yMd.register(t,{parentSignalRef:new WeakRef(e.signal),handler:s}),t.signal.addEventListener("abort",_Md.bind(o,new WeakRef(s)),{once:!0})}
+function h1(e,t){let n=kl(t);return sqi(e,n,gMd),n}
+function iqi(e,t){if(e.signal.aborted)return t.abort(e.signal.reason),()=>{};let n=()=>t.abort(e.signal.reason);return e.signal.addEventListener("abort",n,{once:!0}),()=>e.signal.removeEventListener("abort",n)}
+function qMt(e){return new DOMException(e,"AbortError")}
+function WMt(e){return e instanceof DOMException&&e.name==="AbortError"?e.message:e}
+function SMd(e){return TMd.has(WMt(e))}
+function Dke(e){return e.aborted&&WMt(e.reason)===e7r}
+function GMt(){return new DOMException(e7r,"AbortError")}
+function VMt(e){switch(WMt(e)){case"user-cancel":return"user_cancel";case"remote-cancel":return"remote_cancel";case"interrupt":return"interrupt";case"background":return"background";case"recovery-timeout":return"recovery_timeout";case e7r:return"server_fallback_tombstone";default:return"turn_teardown"}}
+function aqi(e){switch(e){case"user_cancel":case"remote_cancel":case"interrupt":case"background":return!0;case"turn_teardown":case"recovery_timeout":case"server_fallback_tombstone":return!1}}
+function bMd(e){let t=this.deref();if(!t||!SMd(t.signal.reason))return;e.deref()?.abort(t.signal.reason)}
+function EMd(e){e.deref()?.abort("recovery-timeout")}
+function lqi(e,t=t7r){let n=kl();if(sqi(e,n,bMd),n.signal.aborted)return n;let r=setTimeout(EMd,t,new WeakRef(n));return r.unref(),n.signal.addEventListener("abort",clearTimeout.bind(void 0,r),{once:!0}),n}
+var oqi,hMd=50,yMd,TMd,e7r="server-fallback-tombstone",t7r=600000;
+var lh=b(()=>{oqi=require("events");yMd=new FinalizationRegistry(({parentSignalRef:e,handler:t})=>{e.deref()?.removeEventListener("abort",t)});TMd=new Set(["user-cancel","remote-cancel","interrupt"])});
+export {kl,gMd,_Md,sqi,h1,iqi,qMt,WMt,SMd,Dke,GMt,VMt,aqi,bMd,EMd,lqi,oqi,hMd,yMd,TMd,e7r,t7r,lh};

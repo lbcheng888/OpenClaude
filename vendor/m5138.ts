@@ -1,10 +1,11 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {hp,_i} from "../src/session/1460_promise.ts";
-import {dLl,uLl} from "./m5136.ts";
-import {mLl,pLl} from "./m5137.ts";
-var fLl={};
-isFullscreenWithTTY(fLl,{stopNonInteractive:()=>stopNonInteractive,default:()=>Fhm});
-var Nhm,stopNonInteractive,Fhm;
-var ALl=b(()=>{hp();Nhm={type:"local-jsx",name:"stop",description:"Stop this background session; transcript and worktree are kept",immediate:!0,isEnabled:_i,load:()=>Promise.resolve().then(() => (dLl(),uLl))},stopNonInteractive={type:"local",name:"stop",supportsNonInteractive:!0,description:"Stop this background session; transcript and worktree are kept",isEnabled:_i,load:()=>Promise.resolve().then(() => (mLl(),pLl))},Fhm=Nhm});
-export {fLl,Nhm,stopNonInteractive,Fhm,ALl};
+import {ft,b} from "../runtime.ts";
+import {Sn,lr} from "./m233.ts";
+import {csl,uWn,Qmt,Ymt,Xmt,dWn,p8e} from "../src/telemetry/4398_condition.ts";
+import {Pt,mn} from "../src/telemetry/0600_feature_name.ts";
+var s2l={};
+ft(s2l,{call:()=>QCm});
+var QCm=async(e,t)=>{let n=e.trim();if(n===""){let o=t.options.activeGoal;if(!o)return{type:"text",value:"No goal set. Usage: `/goal <condition>`"};let s=o.iterations===0?"not yet evaluated":`${o.iterations} ${Sn(o.iterations,"turn")}`,i=o.lastReason?`
+${csl(o.lastReason)}`:"";return{type:"text",value:`Goal active: ${o.condition} (${s})${i}`}}if(uWn(n)){let o=Qmt(t);return{type:"text",value:o===null?"No goal set":`Goal cleared: ${o}`}}if(n.length>Ymt)return Pt("goal_set","too_long"),{type:"text",value:`Goal condition is limited to ${Ymt} characters (got ${n.length})`};let r=Xmt(n,t);if(r!==null)return{type:"text",value:r};return{type:"query",value:`Goal set: ${n}`,prompt:dWn(n)}};
+var i2l=b(()=>{mn();lr();p8e()});
+export {s2l,QCm,i2l};

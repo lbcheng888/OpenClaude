@@ -1,8 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {CHs} from "./m1190.ts";
-import {YEr} from "./m1187.ts";
-function XEr(e){if(e instanceof Uint8Array)return e;if(typeof e==="string")return tRu(e);if(ArrayBuffer.isView(e))return new Uint8Array(e.buffer,e.byteOffset,e.byteLength/Uint8Array.BYTES_PER_ELEMENT);return new Uint8Array(e)}
-var tRu;
-var vHs=b(()=>{CHs();tRu=typeof Buffer<"u"&&Buffer.from?function(e){return Buffer.from(e,"utf8")}:YEr});
-export {XEr,tRu,vHs};
+var hLs=(e)=>typeof ArrayBuffer==="function"&&e instanceof ArrayBuffer||Object.prototype.toString.call(e)==="[object ArrayBuffer]";
+var Qun,HNe=(e,t=0,n=e.byteLength-t)=>{if(!hLs(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return Qun.Buffer.from(e,t,n)},dAe=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?Qun.Buffer.from(e,t):Qun.Buffer.from(e)};
+var Foe=b(()=>{Qun=require("buffer")});
+export {hLs,Qun,HNe,dAe,Foe};

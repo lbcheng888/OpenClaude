@@ -1,10 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {aC,Ho} from "./m1717.ts";
-import {eK,AuthError} from "./m1719.ts";
-import {kmn,interactionRequired,consentRequired,loginRequired,badToken,uxNotAllowed,noTokensFound,nativeAccountUnavailable,refreshTokenExpired} from "./m1763.ts";
-function Imn(e,t,n){let r=!!e&&n7s.indexOf(e)>-1,o=!!n&&lFu.indexOf(n)>-1,s=!!t&&n7s.some((i)=>t.indexOf(i)>-1);return r||s||o}
-function Dmn(e){return new InteractionRequiredAuthError(e,Hmn[e])}
-var n7s,lFu,Hmn,InteractionRequiredAuthErrorMessage,InteractionRequiredAuthError;
-var lxt=b(()=>{aC();eK();kmn();/*! @azure/msal-common v15.13.1 2025-10-29 */n7s=[interactionRequired,consentRequired,loginRequired,badToken,uxNotAllowed],lFu=["message_only","additional_action","basic_action","user_password_expired","consent_required","bad_token"],Hmn={[noTokensFound]:"No refresh token found in the cache. Please sign-in.",[nativeAccountUnavailable]:"The requested account is not available in the native broker. It may have been deleted or logged out. Please sign-in again using an interactive API.",[refreshTokenExpired]:"Refresh token has expired.",[badToken]:"Identity provider returned bad_token due to an expired or invalid refresh token. Please invoke an interactive API to resolve.",[uxNotAllowed]:"`canShowUI` flag in Edge was set to false. User interaction required on web page. Please invoke an interactive API to resolve."},InteractionRequiredAuthErrorMessage={noTokensFoundError:{code:noTokensFound,desc:Hmn[noTokensFound]},native_account_unavailable:{code:nativeAccountUnavailable,desc:Hmn[nativeAccountUnavailable]},bad_token:{code:badToken,desc:Hmn[badToken]}};InteractionRequiredAuthError=class InteractionRequiredAuthError extends AuthError{constructor(e,t,n,r,o,s,i,a){super(e,t,n);Object.setPrototypeOf(this,InteractionRequiredAuthError.prototype),this.timestamp=r||Ho.EMPTY_STRING,this.traceId=o||Ho.EMPTY_STRING,this.correlationId=s||Ho.EMPTY_STRING,this.claims=i||Ho.EMPTY_STRING,this.name="InteractionRequiredAuthError",this.errorNo=a}}});
-export {Imn,Dmn,n7s,lFu,Hmn,InteractionRequiredAuthErrorMessage,InteractionRequiredAuthError,lxt};
+function vQe(e,t,n){return{clientId:e,authority:t.authority,scopes:t.scopes,homeAccountIdentifier:n,claims:t.claims,authenticationScheme:t.authenticationScheme,resourceRequestMethod:t.resourceRequestMethod,resourceRequestUri:t.resourceRequestUri,shrClaims:t.shrClaims,sshKid:t.sshKid,embeddedClientId:t.embeddedClientId||t.tokenBodyParameters?.clientId}}
+var agn=b(()=>{/*! @azure/msal-common v15.13.1 2025-10-29 */});
+export {vQe,agn};

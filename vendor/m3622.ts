@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {gOn} from "./m3507.ts";
-import {gle} from "./m3479.ts";
-import {age} from "./m3493.ts";
-var NSa,BSa,SMn,OTLPMetricExporter;
-var FSa=b(()=>{NSa=M(gOn(),1),BSa=M(gle(),1),SMn=M(age(),1);OTLPMetricExporter=class OTLPMetricExporter extends NSa.OTLPMetricExporterBase{constructor(e){super(SMn.createOtlpHttpExportDelegate(SMn.convertLegacyHttpOptions(e??{},"METRICS","v1/metrics",{"Content-Type":"application/x-protobuf"}),BSa.ProtobufMetricsSerializer),e)}}});
-export {NSa,BSa,SMn,OTLPMetricExporter,FSa};
+import {Q} from "../runtime.ts";
+import {Vee} from "./m3533.ts";
+import {y4e} from "./m3547.ts";
+var rka=Q((lio)=>{Object.defineProperty(lio,"__esModule",{value:!0});lio.setup=Vfp;var Wfp=Vee(),Gfp=y4e();class nka{constructor(e,t,n){this.listener=t,this.hasReturnedResult=!1,this.endpoints=[];let r;if(e.authority==="")r="/"+e.path;else r=e.path;this.endpoints=[{addresses:[{path:r}]}]}updateResolution(){if(!this.hasReturnedResult)this.hasReturnedResult=!0,process.nextTick(this.listener,(0,Gfp.statusOrFromValue)(this.endpoints),{},null,"")}destroy(){this.hasReturnedResult=!1}static getDefaultAuthority(e){return"localhost"}}function Vfp(){(0,Wfp.registerResolver)("unix",nka)}});
+export {rka};

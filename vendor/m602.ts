@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var TJo=X((u7e)=>{var B7c=(e,t,n)=>{if(!(t in e))return;if(e[t]==="true")return!0;if(e[t]==="false")return!1;throw Error(`Cannot load ${n} "${t}". Expected "true" or "false", got ${e[t]}.`)},F7c=(e,t,n)=>{if(!(t in e))return;let r=parseInt(e[t],10);if(Number.isNaN(r))throw TypeError(`Cannot load ${n} '${t}'. Expected number, got '${e[t]}'.`);return r};u7e.SelectorType=void 0;(function(e){e.ENV="env",e.CONFIG="shared config entry"})(u7e.SelectorType||(u7e.SelectorType={}));u7e.booleanSelector=B7c;u7e.numberSelector=F7c});
-export {TJo};
+import {Q} from "../runtime.ts";
+import {ryr} from "./m601.ts";
+var oyr=Q((frn)=>{Object.defineProperty(frn,"__esModule",{value:!0});frn.getSSOTokenFilepath=void 0;var Cnu=require("crypto"),Anu=require("path"),Rnu=ryr(),vnu=(e)=>{let n=(0,Cnu.createHash)("sha1").update(e).digest("hex");return(0,Anu.join)((0,Rnu.getHomeDir)(),".aws","sso","cache",`${n}.json`)};frn.getSSOTokenFilepath=vnu});
+export {oyr};

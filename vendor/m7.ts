@@ -1,5 +1,7 @@
 // @ts-nocheck
+import {mre,lKe} from "./m6.ts";
 import {b} from "../runtime.ts";
-var Hdc,M7t;
-var Her=b(()=>{Hdc=typeof global=="object"&&global&&global.Object===Object&&global,M7t=Hdc});
-export {Hdc,M7t,Her};
+function Mbc(e,t){var n=e.length;while(n--)if(mre(e[n][0],t))return n;return-1}
+var Sbe;
+var PTt=b(()=>{lKe();Sbe=Mbc});
+export {Mbc,Sbe,PTt};

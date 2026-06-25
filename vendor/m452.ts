@@ -1,6 +1,9 @@
 // @ts-nocheck
+import {dA,xpe} from "./m436.ts";
+import {_nn,ygr} from "./m451.ts";
+import {U9,Ibe} from "./m118.ts";
 import {b} from "../runtime.ts";
-import {xGo,RGo} from "./m451.ts";
-var u0c,dMe;
-var BZt=b(()=>{xGo();u0c=RGo(function(e,t,n){e[n?0:1].push(t)},function(){return[[],[]]}),dMe=u0c});
-export {u0c,dMe,BZt};
+function pUc(e,t){return dA(e,_nn(U9(t)))}
+var BN;
+var IEe=b(()=>{Ibe();ygr();xpe();BN=pUc});
+export {pUc,BN,IEe};

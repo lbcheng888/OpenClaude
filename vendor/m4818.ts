@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {LY,WUt} from "./m3871.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
 import {b} from "../runtime.ts";
-function Zje(e,t){return{markTypeInvoked(n){t((r)=>r.agentTypesInvokedThisSession.has(n)?r:{...r,agentTypesInvokedThisSession:new Set(r.agentTypesInvokedThisSession).add(n)})},registerName(n,r){if(n===LY){logForDebugging(`[registerName] refused reserved name "${n}" for ${r} \u2014 SendMessage routes it to the main conversation`);return}t((o)=>{if(o.agentNameRegistry.get(n)===r)return o;let s=new Map(o.agentNameRegistry);return s.set(n,r),{...o,agentNameRegistry:s}})},allocateName(n){let r=e(),o=r.agentNameRegistry,s=new Set(Object.values(r.teamContext?.teammates??{}).map((i)=>i.name));for(let i=1;;i++){let a=i===1?n:`${n}-${i}`;if(a!==LY&&!o.has(a)&&!s.has(a))return a}},clearTodos(n){t((r)=>{if(!(n in r.todos))return r;let{[n]:o,...s}=r.todos;return{...r,todos:s}})},setTeammate(n,r){t((o)=>{let s=o.teamContext;if(!s)return o;let i=s.teammates?.[n];if(r===void 0){if(!i)return o;let{[n]:a,...l}=s.teammates;return{...o,teamContext:{...s,teammates:l}}}if(i===r)return o;return{...o,teamContext:{...s,teammates:{...s.teammates,[n]:r}}}})}}}
-var wGn;
-var Jmt=b(()=>{WUt();qe();wGn={markTypeInvoked(){},registerName(){},allocateName(e){return e},clearTodos(){},setTeammate(){}}});
-export {Zje,wGn,Jmt};
+function jzn(e){return e.type==="attachment"&&cum.has(e.attachment.type)}
+var lum,cum;
+var mHo=b(()=>{lum=["hook_success","hook_additional_context","hook_cancelled","command_permissions","agent_mention","budget_usd","critical_system_reminder","edited_image_file","edited_text_file","opened_file_in_ide","output_style","plan_mode","plan_mode_exit","plan_mode_reentry","structured_output","team_context","todo_reminder","context_efficiency","deferred_tools_delta","mcp_instructions_delta","memory_update","token_usage","total_tokens_reminder","ultrathink_effort","max_turns_reached","task_reminder","tool_search_usage_reminder","auto_mode","auto_mode_exit","output_token_usage","date_change","workflow_keyword_request","ultra_effort_enter","ultra_effort_exit"],cum=new Set(lum)});
+export {jzn,lum,cum,mHo};

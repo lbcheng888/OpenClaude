@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {performSetColor,Z_o} from "./m4486.ts";
-var esl={};
-isFullscreenWithTTY(esl,{call:()=>Bjp});
-async function Bjp(e,t){return{type:"text",value:await performSetColor(e,t)}}
-var tsl=b(()=>{Z_o()});
-export {esl,Bjp,tsl};
+import {b} from "../runtime.ts";
+import {Wul,qul} from "../src/tui/4487_call.ts";
+var Cjp,_Co;
+var Vul=b(()=>{Cjp={type:"local-jsx",name:"btw",description:"Ask a quick side question without interrupting the main conversation",immediate:!0,argumentHint:"<question>",thinClientDispatch:"control-request",load:()=>Promise.resolve().then(() => (Wul(),qul))},_Co=Cjp});
+export {Cjp,_Co,Vul};

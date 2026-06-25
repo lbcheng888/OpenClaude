@@ -1,8 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Cie} from "./m2469.ts";
-var Uxi=X((wmh,Fxi)=>{/*!
-  Copyright 2013 Lovell Fuller and others.
-  SPDX-License-Identifier: Apache-2.0
-*/var QS=Cie(),y9r={clear:"clear",source:"source",over:"over",in:"in",out:"out",atop:"atop",dest:"dest","dest-over":"dest-over","dest-in":"dest-in","dest-out":"dest-out","dest-atop":"dest-atop",xor:"xor",add:"add",saturate:"saturate",multiply:"multiply",screen:"screen",overlay:"overlay",darken:"darken",lighten:"lighten","colour-dodge":"colour-dodge","color-dodge":"colour-dodge","colour-burn":"colour-burn","color-burn":"colour-burn","hard-light":"hard-light","soft-light":"soft-light",difference:"difference",exclusion:"exclusion"};function Ddd(e){if(!Array.isArray(e))throw QS.invalidParameterError("images to composite","array",e);return this.options.composite=e.map((t)=>{if(!QS.object(t))throw QS.invalidParameterError("image to composite","object",t);let n=this._inputOptionsFromObject(t),r={input:this._createInputDescriptor(t.input,n,{allowStream:!1}),blend:"over",tile:!1,left:0,top:0,hasOffset:!1,gravity:0,premultiplied:!1};if(QS.defined(t.blend))if(QS.string(y9r[t.blend]))r.blend=y9r[t.blend];else throw QS.invalidParameterError("blend","valid blend name",t.blend);if(QS.defined(t.tile))if(QS.bool(t.tile))r.tile=t.tile;else throw QS.invalidParameterError("tile","boolean",t.tile);if(QS.defined(t.left))if(QS.integer(t.left))r.left=t.left;else throw QS.invalidParameterError("left","integer",t.left);if(QS.defined(t.top))if(QS.integer(t.top))r.top=t.top;else throw QS.invalidParameterError("top","integer",t.top);if(QS.defined(t.top)!==QS.defined(t.left))throw Error("Expected both left and top to be set");else r.hasOffset=QS.integer(t.top)&&QS.integer(t.left);if(QS.defined(t.gravity))if(QS.integer(t.gravity)&&QS.inRange(t.gravity,0,8))r.gravity=t.gravity;else if(QS.string(t.gravity)&&QS.integer(this.constructor.gravity[t.gravity]))r.gravity=this.constructor.gravity[t.gravity];else throw QS.invalidParameterError("gravity","valid gravity",t.gravity);if(QS.defined(t.premultiplied))if(QS.bool(t.premultiplied))r.premultiplied=t.premultiplied;else throw QS.invalidParameterError("premultiplied","boolean",t.premultiplied);return r}),this}Fxi.exports=(e)=>{e.prototype.composite=Ddd,e.blend=y9r}});
-export {Uxi};
+import {Q} from "../runtime.ts";
+import {mPi} from "./m2495.ts";
+import {hPi} from "./m2496.ts";
+import {_Pi} from "./m2497.ts";
+import {N6r} from "./m2493.ts";
+import {TPi} from "./m2498.ts";
+import {bPi} from "./m2499.ts";
+var CPi=Q((XRg,EPi)=>{var NSd=mPi(),FSd=hPi(),BSd=_Pi(),USd=N6r(),$Sd=TPi(),qSd=bPi(),WSd=(e,t,n,r)=>{switch(t){case"===":if(typeof e==="object")e=e.version;if(typeof n==="object")n=n.version;return e===n;case"!==":if(typeof e==="object")e=e.version;if(typeof n==="object")n=n.version;return e!==n;case"":case"=":case"==":return NSd(e,n,r);case"!=":return FSd(e,n,r);case">":return BSd(e,n,r);case">=":return USd(e,n,r);case"<":return $Sd(e,n,r);case"<=":return qSd(e,n,r);default:throw TypeError(`Invalid operator: ${t}`)}};EPi.exports=WSd});
+export {CPi};

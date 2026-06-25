@@ -1,12 +1,6 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {sU,Pge} from "./m3855.ts";
-import {setBgExitCause,qV} from "./m229.ts";
-var xUt={};
-isFullscreenWithTTY(xUt,{severTtyInputForRelaunch:()=>severTtyInputForRelaunch,execRelaunch:()=>execRelaunch});
-function severTtyInputForRelaunch(){for(let e=0;e<32;e++){if(e===1||e===2)continue;try{if(ZIa.isatty(e))XIa.closeSync(e)}catch{}}}
-async function execRelaunch(){await new Promise((s)=>setImmediate(s));let{cmd:e,prefixArgs:t}=sU(),n=process.argv.slice(2),r=JIa.spawn(e,[...t,...n],{stdio:"inherit",env:process.env});severTtyInputForRelaunch();let o=["SIGINT","SIGTERM","SIGHUP"];for(let s of o)process.on(s,()=>{try{r.kill(s)}catch{}});return new Promise(()=>{r.on("close",(s,i)=>{let a=i?128+(QIa.constants.signals[i]??0):0;process.exit(s??a)}),r.on("error",(s)=>{process.stderr.write(`Failed to relaunch Claude Code: ${s.message}
-`),setBgExitCause("relaunch_child_error"),process.exit(1)})})}
-var JIa,XIa,QIa,ZIa;
-var kUt=b(()=>{qV();Pge();JIa=require("child_process"),XIa=require("fs"),QIa=require("os"),ZIa=require("tty")});
-export {xUt,severTtyInputForRelaunch,execRelaunch,JIa,XIa,QIa,ZIa,kUt};
+import {b} from "../runtime.ts";
+async function L1a(){let e=new Set,t=O1a.homedir();for(let{path:n,re:r}of[{path:Qlo.join(t,".aws","config"),re:/^\[(?:profile\s+)?([^\]]+)\]/gm},{path:Qlo.join(t,".aws","credentials"),re:/^\[([^\]]+)\]/gm}])try{for(let o of(await P1a.readFile(n,"utf8")).matchAll(r)){let s=o[1]?.trim();if(s&&!s.startsWith("sso-session "))e.add(s)}}catch{}return[...e].sort()}
+var P1a,O1a,Qlo;
+var M1a=b(()=>{P1a=require("fs/promises"),O1a=require("os"),Qlo=require("path")});
+export {L1a,P1a,O1a,Qlo,M1a};

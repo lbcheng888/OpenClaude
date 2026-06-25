@@ -1,10 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {RTn} from "./m2296.ts";
-import {oZe} from "./m2295.ts";
-import {dUr} from "./m2320.ts";
-import {bIt} from "./m2294.ts";
-import {dF} from "./m2298.ts";
-import {MK} from "./m2323.ts";
-var vIt=X((ynh,cSi)=>{var wIt=Symbol("SemVer ANY");class BTn{static get ANY(){return wIt}constructor(e,t){if(t=oSi(t),e instanceof BTn)if(e.loose===!!t.loose)return e;else e=e.value;if(e=e.trim().split(/\s+/).join(" "),fUr("comparator",e,t),this.options=t,this.loose=!!t.loose,this.parse(e),this.semver===wIt)this.value="";else this.value=this.operator+this.semver.version;fUr("comp",this)}parse(e){let t=this.options.loose?sSi[iSi.COMPARATORLOOSE]:sSi[iSi.COMPARATOR],n=e.match(t);if(!n)throw TypeError(`Invalid comparator: ${e}`);if(this.operator=n[1]!==void 0?n[1]:"",this.operator==="=")this.operator="";if(!n[2])this.semver=wIt;else this.semver=new aSi(n[2],this.options.loose)}toString(){return this.value}test(e){if(fUr("Comparator.test",e,this.options.loose),this.semver===wIt||e===wIt)return!0;if(typeof e==="string")try{e=new aSi(e,this.options)}catch(t){return!1}return mUr(e,this.operator,this.semver,this.options)}intersects(e,t){if(!(e instanceof BTn))throw TypeError("a Comparator is required");if(this.operator===""){if(this.value==="")return!0;return new lSi(e.value,t).test(this.value)}else if(e.operator===""){if(e.value==="")return!0;return new lSi(this.value,t).test(e.semver)}if(t=oSi(t),t.includePrerelease&&(this.value==="<0.0.0-0"||e.value==="<0.0.0-0"))return!1;if(!t.includePrerelease&&(this.value.startsWith("<0.0.0")||e.value.startsWith("<0.0.0")))return!1;if(this.operator.startsWith(">")&&e.operator.startsWith(">"))return!0;if(this.operator.startsWith("<")&&e.operator.startsWith("<"))return!0;if(this.semver.version===e.semver.version&&this.operator.includes("=")&&e.operator.includes("="))return!0;if(mUr(this.semver,"<",e.semver,t)&&this.operator.startsWith(">")&&e.operator.startsWith("<"))return!0;if(mUr(this.semver,">",e.semver,t)&&this.operator.startsWith("<")&&e.operator.startsWith(">"))return!0;return!1}}cSi.exports=BTn;var oSi=RTn(),{safeRe:sSi,t:iSi}=oZe(),mUr=dUr(),fUr=bIt(),aSi=dF(),lSi=MK()});
-export {vIt};
+import {Q} from "../runtime.ts";
+import {uz} from "./m2318.ts";
+var XDt=Q((Wfg,Jvi)=>{var rmd=uz(),omd=(e,t,n)=>rmd(e,t,n)>0;Jvi.exports=omd});
+export {XDt};

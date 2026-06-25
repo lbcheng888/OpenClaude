@@ -1,21 +1,8 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {bks,Cks} from "./m1160.ts";
-import {wks} from "./m1161.ts";
-import {xks} from "./m1162.ts";
-import {Hks} from "./m1163.ts";
-import {Dks} from "./m1164.ts";
-import {Oks} from "./m1165.ts";
-import {Mks} from "./m1166.ts";
-import {Bks} from "./m1167.ts";
-import {Uks} from "./m1168.ts";
-import {qks} from "./m1169.ts";
-import {Wks} from "./m1170.ts";
-import {Vks} from "./m1171.ts";
-import {zks} from "./m1172.ts";
-import {Jks} from "./m1173.ts";
-import {Qks} from "./m1174.ts";
-import {eHs} from "./m1175.ts";
-import {nHs} from "./m1176.ts";
-var rHs=b(()=>{bks();Cks();wks();xks();Hks();Dks();Oks();Mks();Bks();Uks();qks();Wks();Vks();zks();Jks();Qks();eHs();nHs()});
-export {rHs};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {kun,ListModelCustomizationJobsCommand} from "./m1141.ts";
+import {Zu} from "./m855.ts";
+var $Os,paginateListModelCustomizationJobs;
+var qOs=b(()=>{C0();kun();$Os=x(Zu(),1),paginateListModelCustomizationJobs=$Os.createPaginator(BedrockClient,ListModelCustomizationJobsCommand,"nextToken","nextToken","maxResults")});
+export {$Os,paginateListModelCustomizationJobs,qOs};

@@ -1,9 +1,8 @@
 // @ts-nocheck
+import {sleep} from "../src/telemetry/1488_withTimeout.ts";
 import {b} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-import {zg} from "./m2752.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-var cJ;
-var S4t=b(()=>{Xr();cJ=zg({kind:"refusal_fallback_prompt",payload:we(()=>E.object({originalModel:E.string(),fallbackModel:E.string(),apiRefusalCategory:E.string().nullable().optional(),guidanceText:E.string().optional(),retractedMessageUuids:E.array(E.string()).optional().describe("Wire uuids of the already-streamed messages this refusal concerns. Evict on RESOLUTION (your own response \u2014 any choice \u2014 or control_cancel_request retirement), never on receipt; a turn torn down mid-dialog keeps the partials. Eviction is idempotent.")})),result:we(()=>E.enum(["retry_fallback","edit_prompt","cancelled"])),default:"cancelled"})});
-export {cJ,S4t};
+function Znl(){Qnl=!0;for(let e of zTo)e();zTo=[]}
+async function erl(e){if(Qnl||Xnl)return;if(!process.env.CLAUDE_MEMORY_STORES?.trim())return;if(!b8n)b8n=Promise.race([new Promise((t)=>zTo.push(t)),sleep(Jnl)]),b8n.then(()=>{Xnl=!0});await Promise.race([b8n,sleep(Jnl,e)])}
+var Jnl=2500,Qnl=!1,b8n=null,Xnl=!1,zTo;
+var jTo=b(()=>{zTo=[]});
+export {Znl,erl,Jnl,Qnl,b8n,Xnl,zTo,jTo};

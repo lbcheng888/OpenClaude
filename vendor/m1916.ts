@@ -1,9 +1,6 @@
 // @ts-nocheck
-import {sPr,wXs} from "./m1912.ts";
-import {aPr,IXs} from "./m1914.ts";
-import {cPr,OXs} from "./m1915.ts";
-import {b,M} from "../runtime.ts";
-async function uPr(){if($fn.default.platform==="darwin"){let e=await sPr();return{name:await aPr(e),id:e}}if($fn.default.platform==="linux"){let{stdout:e}=await n6u("xdg-mime",["query","default","x-scheme-handler/http"]),t=e.trim();return{name:r6u(t.replace(/.desktop$/,"").replace("-"," ")),id:t}}if($fn.default.platform==="win32")return cPr();throw Error("Only macOS, Linux, and Windows are supported")}
-var LXs,$fn,MXs,n6u,r6u=(e)=>e.toLowerCase().replaceAll(/(?:^|\s|-)\S/g,(t)=>t.toUpperCase());
-var NXs=b(()=>{wXs();IXs();OXs();LXs=require("util"),$fn=M(require("process")),MXs=require("child_process"),n6u=LXs.promisify(MXs.execFile)});
-export {uPr,LXs,$fn,MXs,n6u,r6u,NXs};
+import {ERe,D1r} from "./m1915.ts";
+import {b,x} from "../runtime.ts";
+var P1r,p0t,hYu,gYu=async()=>`${await hYu()}c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe`,O1r=async()=>{if(ERe)return gYu();return`${P1r.default.env.SYSTEMROOT||P1r.default.env.windir||String.raw`C:\Windows`}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`};
+var _ri=b(()=>{D1r();D1r();P1r=x(require("process")),p0t=x(require("fs/promises")),hYu=(()=>{let t;return async function(){if(t)return t;let n="/etc/wsl.conf",r=!1;try{await p0t.default.access(n,p0t.constants.F_OK),r=!0}catch{}if(!r)return"/mnt/";let o=await p0t.default.readFile(n,{encoding:"utf8"}),s=/(?<!#.*)root\s*=\s*(?<mountPoint>.*)/g.exec(o);if(!s)return"/mnt/";return t=s.groups.mountPoint.trim(),t=t.endsWith("/")?t:`${t}/`,t}})()});
+export {P1r,p0t,hYu,gYu,O1r,_ri};

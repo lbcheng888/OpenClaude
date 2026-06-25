@@ -1,9 +1,9 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function K9i(e){let t=W9i.c(2),{children:n}=e,r;if(t[0]!==n)r=cLt.createElement(V9i.Provider,{value:!0},n),t[0]=n,t[1]=r;else r=t[1];return r}
-function z9i(){return G9i.useContext(V9i)}
-var W9i,cLt,G9i,V9i;
-var HWr=b(()=>{W9i=M(rt(),1),cLt=M(Te(),1),G9i=M(Te(),1),V9i=cLt.createContext(!1)});
-export {K9i,z9i,W9i,cLt,G9i,V9i,HWr};
+import {lAt,Gtn,Vtn} from "./m432.ts";
+import {b,x} from "../runtime.ts";
+import {zyr} from "./m663.ts";
+function Qzr(){let e={};for(let t of DFd){let n=MIn.default.env[t];if(n===void 0)continue;if(n.startsWith("()"))continue;e[t]=n}return e}
+class Zzr{constructor(e){if(this._readBuffer=new lAt,this._stderrStream=null,this._serverParams=e,e.stderr==="pipe"||e.stderr==="overlapped")this._stderrStream=new pWi.PassThrough}async start(){if(this._process)throw Error("StdioClientTransport already started! If using Client class, note that connect() calls start() automatically.");return new Promise((e,t)=>{if(this._process=dWi.default(this._serverParams.command,this._serverParams.args??[],{env:{...Qzr(),...this._serverParams.env},stdio:["pipe","pipe",this._serverParams.stderr??"inherit"],shell:!1,windowsHide:MIn.default.platform==="win32",cwd:this._serverParams.cwd}),this._process.on("error",(n)=>{t(n),this.onerror?.(n)}),this._process.on("spawn",()=>{e()}),this._process.on("close",(n)=>{this._process=void 0,this.onclose?.()}),this._process.stdin?.on("error",(n)=>{this.onerror?.(n)}),this._process.stdout?.on("data",(n)=>{this._readBuffer.append(n),this.processReadBuffer()}),this._process.stdout?.on("error",(n)=>{this.onerror?.(n)}),this._stderrStream&&this._process.stderr)this._process.stderr.pipe(this._stderrStream)})}get stderr(){if(this._stderrStream)return this._stderrStream;return this._process?.stderr??null}get pid(){return this._process?.pid??null}processReadBuffer(){while(!0)try{let e=this._readBuffer.readMessage();if(e===null)break;this.onmessage?.(e)}catch(e){this.onerror?.(e)}}async close(){if(this._process){let e=this._process;this._process=void 0;let t=new Promise((n)=>{e.once("close",()=>{n()})});try{e.stdin?.end()}catch{}if(await Promise.race([t,new Promise((n)=>setTimeout(n,2000).unref())]),e.exitCode===null){try{e.kill("SIGTERM")}catch{}await Promise.race([t,new Promise((n)=>setTimeout(n,2000).unref())])}if(e.exitCode===null)try{e.kill("SIGKILL")}catch{}}this._readBuffer.clear()}send(e){return new Promise((t)=>{if(!this._process?.stdin)throw Error("Not connected");let n=Gtn(e);if(this._process.stdin.write(n))t();else this._process.stdin.once("drain",t)})}}
+var dWi,MIn,pWi,DFd;
+var ejr=b(()=>{Vtn();dWi=x(zyr(),1),MIn=x(require("process")),pWi=require("stream"),DFd=MIn.default.platform==="win32"?["APPDATA","HOMEDRIVE","HOMEPATH","LOCALAPPDATA","PATH","PROCESSOR_ARCHITECTURE","SYSTEMDRIVE","SYSTEMROOT","TEMP","USERNAME","USERPROFILE","PROGRAMFILES"]:["HOME","LOGNAME","PATH","SHELL","TERM","USER"]});
+export {Qzr,Zzr,dWi,MIn,pWi,DFd,ejr};

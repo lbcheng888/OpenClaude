@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {ysn,GTr} from "./m981.ts";
-import {b,M} from "../runtime.ts";
-import {r0} from "./m751.ts";
-var wSr,DSs=async(e,t,n={})=>{let{fromSSO:r}=await Promise.resolve().then(() => (ysn(),GTr));return r({profile:e,logger:n.logger,parentClientConfig:n.parentClientConfig,clientConfig:n.clientConfig})().then((o)=>{if(t.sso_session)return wSr.setCredentialFeature(o,"CREDENTIALS_PROFILE_SSO","r");else return wSr.setCredentialFeature(o,"CREDENTIALS_PROFILE_SSO_LEGACY","t")})},PSs=(e)=>e&&(typeof e.sso_start_url==="string"||typeof e.sso_account_id==="string"||typeof e.sso_session==="string"||typeof e.sso_region==="string"||typeof e.sso_role_name==="string");
-var OSs=b(()=>{wSr=M(r0(),1)});
-export {wSr,DSs,PSs,OSs};
+import {b,x} from "../runtime.ts";
+import {b0} from "./m756.ts";
+var mws,fws=(e,t,n)=>{if(t.Version!==1)throw Error(`Profile ${e} credential_process did not return Version 1.`);if(t.AccessKeyId===void 0||t.SecretAccessKey===void 0)throw Error(`Profile ${e} credential_process returned invalid credentials.`);if(t.Expiration){let s=new Date;if(new Date(t.Expiration)<s)throw Error(`Profile ${e} credential_process returned expired credentials.`)}let r=t.AccountId;if(!r&&n?.[e]?.aws_account_id)r=n[e].aws_account_id;let o={accessKeyId:t.AccessKeyId,secretAccessKey:t.SecretAccessKey,...t.SessionToken&&{sessionToken:t.SessionToken},...t.Expiration&&{expiration:new Date(t.Expiration)},...t.CredentialScope&&{credentialScope:t.CredentialScope},...r&&{accountId:r}};return mws.setCredentialFeature(o,"CREDENTIALS_PROCESS","w"),o};
+var hws=b(()=>{mws=x(b0(),1)});
+export {mws,fws,hws};

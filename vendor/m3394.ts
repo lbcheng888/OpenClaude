@@ -1,13 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {FNt} from "./m3385.ts";
-import {Xi} from "./m2091.ts";
-import {Gda} from "./m3393.ts";
-var Kda=X((rPn)=>{Object.defineProperty(rPn,"__esModule",{value:!0});rPn.MetricStorageRegistry=void 0;var YVd=FNt(),Vda=Xi(),nPn=Gda();class cQr{_sharedRegistry=new Map;_perCollectorRegistry=new Map;static create(){return new cQr}getStorages(e){let t=[];for(let r of this._sharedRegistry.values())t=t.concat(r);let n=this._perCollectorRegistry.get(e);if(n!=null)for(let r of n.values())t=t.concat(r);return t}register(e){this._registerStorage(e,this._sharedRegistry)}registerForCollector(e,t){let n=this._perCollectorRegistry.get(e);if(n==null)n=new Map,this._perCollectorRegistry.set(e,n);this._registerStorage(t,n)}findOrUpdateCompatibleStorage(e){let t=this._sharedRegistry.get(e.name);if(t===void 0)return null;return this._findOrUpdateCompatibleStorage(e,t)}findOrUpdateCompatibleCollectorStorage(e,t){let n=this._perCollectorRegistry.get(e);if(n===void 0)return null;let r=n.get(t.name);if(r===void 0)return null;return this._findOrUpdateCompatibleStorage(t,r)}_registerStorage(e,t){let n=e.getInstrumentDescriptor(),r=t.get(n.name);if(r===void 0){t.set(n.name,[e]);return}r.push(e)}_findOrUpdateCompatibleStorage(e,t){let n=null;for(let r of t){let o=r.getInstrumentDescriptor();if((0,YVd.isDescriptorCompatibleWith)(o,e)){if(o.description!==e.description){if(e.description.length>o.description.length)r.updateDescription(e.description);Vda.diag.warn("A view or instrument with the name ",e.name,` has already been registered, but has a different description and is incompatible with another registered view.
-`,`Details:
-`,(0,nPn.getIncompatibilityDetails)(o,e),`The longer description will be used.
-To resolve the conflict:`,(0,nPn.getConflictResolutionRecipe)(o,e))}n=r}else Vda.diag.warn("A view or instrument with the name ",e.name,` has already been registered and is incompatible with another registered view.
-`,`Details:
-`,(0,nPn.getIncompatibilityDetails)(o,e),`To resolve the conflict:
-`,(0,nPn.getConflictResolutionRecipe)(o,e))}return n}}rPn.MetricStorageRegistry=cQr});
-export {Kda};
+import {Q} from "../runtime.ts";
+import {vya} from "./m3393.ts";
+var fUt=Q((r4e)=>{Object.defineProperty(r4e,"__esModule",{value:!0});r4e.toAggregation=r4e.AggregationType=void 0;var t4e=vya(),n4e;(function(e){e[e.DEFAULT=0]="DEFAULT",e[e.DROP=1]="DROP",e[e.SUM=2]="SUM",e[e.LAST_VALUE=3]="LAST_VALUE",e[e.EXPLICIT_BUCKET_HISTOGRAM=4]="EXPLICIT_BUCKET_HISTOGRAM",e[e.EXPONENTIAL_HISTOGRAM=5]="EXPONENTIAL_HISTOGRAM"})(n4e=r4e.AggregationType||(r4e.AggregationType={}));function unp(e){switch(e.type){case n4e.DEFAULT:return t4e.DEFAULT_AGGREGATION;case n4e.DROP:return t4e.DROP_AGGREGATION;case n4e.SUM:return t4e.SUM_AGGREGATION;case n4e.LAST_VALUE:return t4e.LAST_VALUE_AGGREGATION;case n4e.EXPONENTIAL_HISTOGRAM:{let t=e;return new t4e.ExponentialHistogramAggregation(t.options?.maxSize,t.options?.recordMinMax)}case n4e.EXPLICIT_BUCKET_HISTOGRAM:{let t=e;if(t.options==null)return t4e.HISTOGRAM_AGGREGATION;else return new t4e.ExplicitBucketHistogramAggregation(t.options?.boundaries,t.options?.recordMinMax)}default:throw Error("Unsupported Aggregation")}}r4e.toAggregation=unp});
+export {fUt};

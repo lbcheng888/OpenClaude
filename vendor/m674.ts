@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {Mbt,Nbt} from "./m670.ts";
-import {b} from "../runtime.ts";
-import {Ifr,Etn,Ctn,Pfr} from "./m671.ts";
-async function Mfr(e,t){return Mbt(e,tJc,t)}
-var XYc=()=>({contents:"",textDecoder:new TextDecoder}),wtn=(e,{textDecoder:t})=>t.decode(e,{stream:!0}),QYc=(e,{contents:t})=>t+e,ZYc=(e,t)=>e.slice(0,t),eJc=({textDecoder:e})=>{let t=e.decode();return t===""?void 0:t},tJc;
-var NZo=b(()=>{Nbt();tJc={init:XYc,convertChunk:{string:Ifr,buffer:wtn,arrayBuffer:wtn,dataView:wtn,typedArray:wtn,others:Etn},getSize:Ctn,truncateChunk:ZYc,addChunk:QYc,getFinalChunk:eJc,finalize:Pfr}});
-export {Mfr,XYc,wtn,QYc,ZYc,eJc,tJc,NZo};
+import {ZX,Pje} from "./m673.ts";
+import {b,x} from "../runtime.ts";
+var pss,Ysu=5000,mss=(e,t="SIGTERM",n={})=>{let r=e(t);return Jsu(e,t,n,r),r},Jsu=(e,t,n,r)=>{if(!Xsu(t,n,r))return;let o=Zsu(n),s=setTimeout(()=>{e("SIGKILL")},o);if(s.unref)s.unref()},Xsu=(e,{forceKillAfterTimeout:t},n)=>Qsu(e)&&t!==!1&&n,Qsu=(e)=>e===pss.default.constants.signals.SIGTERM||typeof e==="string"&&e.toUpperCase()==="SIGTERM",Zsu=({forceKillAfterTimeout:e=!0})=>{if(e===!0)return Ysu;if(!Number.isFinite(e)||e<0)throw TypeError(`Expected the \`forceKillAfterTimeout\` option to be a non-negative integer, got \`${e}\` (${typeof e})`);return e},fss=(e,t)=>{if(e.kill())t.isCanceled=!0},eiu=(e,t,n)=>{e.kill(t),n(Object.assign(Error("Timed out"),{timedOut:!0,signal:t}))},hss=(e,{timeout:t,killSignal:n="SIGTERM"},r)=>{if(t===0||t===void 0)return r;let o,s=new Promise((a,l)=>{o=setTimeout(()=>{eiu(e,n,l)},t)}),i=r.finally(()=>{clearTimeout(o)});return Promise.race([s,i])},gss=({timeout:e})=>{if(e!==void 0&&(!Number.isFinite(e)||e<0))throw TypeError(`Expected the \`timeout\` option to be a non-negative integer, got \`${e}\` (${typeof e})`)},_ss=async(e,{cleanup:t,detached:n},r)=>{if(!t||n)return r;let o=ZX(()=>{e.kill()});return r.finally(()=>{o()})};
+var yss=b(()=>{Pje();pss=x(require("os"))});
+export {pss,Ysu,mss,Jsu,Xsu,Qsu,Zsu,fss,eiu,hss,gss,_ss,yss};

@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {Vsn,vSr} from "./m1008.ts";
-import {b,M} from "../runtime.ts";
-import {r0} from "./m751.ts";
-var xSs,kSs=(e)=>Boolean(e)&&typeof e==="object"&&typeof e.credential_process==="string",HSs=async(e,t)=>Promise.resolve().then(() => (Vsn(),vSr)).then(({fromProcess:n})=>n({...e,profile:t})().then((r)=>xSs.setCredentialFeature(r,"CREDENTIALS_PROFILE_PROCESS","v")));
-var ISs=b(()=>{xSs=M(r0(),1)});
-export {xSs,kSs,HSs,ISs};
+import {vln} from "./m1007.ts";
+import {b,x} from "../runtime.ts";
+import {QRr} from "./m1008.ts";
+import {b0} from "./m756.ts";
+var cws,uws=(e)=>Boolean(e&&e.login_session),dws=async(e,t)=>{let n=await vln({...t,profile:e})();return cws.setCredentialFeature(n,"CREDENTIALS_PROFILE_LOGIN","AC")};
+var pws=b(()=>{QRr();cws=x(b0(),1)});
+export {cws,uws,dws,pws};

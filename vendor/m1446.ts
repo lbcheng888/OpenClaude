@@ -1,8 +1,7 @@
 // @ts-nocheck
+import {fromWebToken} from "./m1017.ts";
 import {b} from "../runtime.ts";
-function u$s(e){CRr=e}
-function Z1e(e){return CRr.includes(e)}
-function twt(){return[...CRr]}
-var CRr;
-var KEe=b(()=>{CRr=[]});
-export {u$s,Z1e,twt,CRr,KEe};
+import {mwt} from "./m1018.ts";
+var e9u=(e)=>fromWebToken({...e});
+var X6s=b(()=>{mwt()});
+export {e9u,X6s};

@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var KVo=X((ddf,VVo)=>{VVo.exports=Math.round});
-export {KVo};
+import {Q} from "../runtime.ts";
+var DXo=Q((vCf,xXo)=>{xXo.exports=URIError});
+export {DXo};

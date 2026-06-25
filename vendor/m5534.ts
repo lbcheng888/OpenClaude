@@ -1,13 +1,186 @@
 // @ts-nocheck
-import {Text} from "./m2423.ts";
-import {Box} from "./m2422.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function GXl(e){let t=WXl.c(18),{questions:n,ageLabel:r,ageColor:o}=e,s=n[0];if(!s)return null;let i;if(t[0]!==o||t[1]!==r)i=F_.createElement(Text,{color:o},r),t[0]=o,t[1]=r,t[2]=i;else i=t[2];let a;if(t[3]===Symbol.for("react.memo_cache_sentinel"))a=F_.createElement(Text,null," "),t[3]=a;else a=t[3];let l;if(t[4]!==s.question)l=F_.createElement(Box,{flexGrow:1,width:0},F_.createElement(Text,{bold:!0,wrap:"truncate"},s.question)),t[4]=s.question,t[5]=l;else l=t[5];let c;if(t[6]!==n.length)c=n.length>1&&F_.createElement(Box,{flexShrink:0,paddingLeft:1},F_.createElement(Text,{dimColor:!0},"+",n.length-1," more \xB7 enter to open")),t[6]=n.length,t[7]=c;else c=t[7];let u;if(t[8]!==i||t[9]!==l||t[10]!==c)u=F_.createElement(Box,null,i,a,l,c),t[8]=i,t[9]=l,t[10]=c,t[11]=u;else u=t[11];let d;if(t[12]!==s.options)d=s.options.map(IFm),t[12]=s.options,t[13]=d;else d=t[13];let p;if(t[14]===Symbol.for("react.memo_cache_sentinel"))p=F_.createElement(Box,{paddingLeft:5},F_.createElement(Text,{dimColor:!0},"or type your own answer below")),t[14]=p;else p=t[14];let m;if(t[15]!==u||t[16]!==d)m=F_.createElement(Box,{flexDirection:"column"},u,d,p),t[15]=u,t[16]=d,t[17]=m;else m=t[17];return m}
-function IFm(e,t){return F_.createElement(Box,{key:e.label,paddingLeft:2},F_.createElement(Box,{width:3,flexShrink:0},F_.createElement(Text,{dimColor:!0},t+1,".")),F_.createElement(Box,{flexGrow:1,width:0},F_.createElement(Text,{wrap:"truncate"},e.label,e.description&&F_.createElement(Text,{dimColor:!0}," \xB7 ",e.description))))}
-function VXl(e,t){let n=t?.[0];if(!n||e<"1"||e>"9")return null;let r=Number(e)-1;return n.options[r]?.label??null}
-var WXl,F_;
-var KXl=b(()=>{ze();WXl=M(rt(),1),F_=M(Te(),1)});
-export {GXl,IFm,VXl,WXl,F_,KXl};
+import {Q} from "../runtime.ts";
+var rnc=Q((BiE,k4m)=>{k4m.exports=`// Preview .tsx files \u2014 one per component; named exports become labeled cells
+// in <Name>.html, compiled to ds-bundle/_preview/<Name>.js (IIFE \u2192
+// window.__dsPreview) by buildPreviews. Two homes: .design-sync/previews/
+// (user-authored, committed, markerless, always wins) and
+// .design-sync/.cache/previews/ (generated, gitignored, marker-carrying,
+// regenerated every build).
+
+import { build } from 'esbuild';
+import { createHash } from 'node:crypto';
+import { IIFE_IMPORT_META_DEFINE, hypothesisLine } from './common.mjs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+// The ownership marker embeds a sha12 of the body-after-line-1 so an edit
+// below the marker is detected (not silently overwritten). BOM-stripped and
+// prefix-matched \u2014 Windows editors can prepend U+FEFF. A marker without a
+// hash is treated as generated and regenerates once.
+const MARKER_TAIL = '\u2014 generated; to OWN it, copy to .design-sync/previews/ and delete this line there.';
+export const MARKER_RE = /^\\uFEFF?\\/\\/ @ds-preview generated(?:\\s+([0-9a-f]{12}))?\\b/;
+const bodyHash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 12);
+const markerLine = (body) => \`// @ds-preview generated \${bodyHash(body)} \${MARKER_TAIL}\`;
+
+// Apply the two-home rule per component. Ownership is by LOCATION:
+// .design-sync/previews/ holds the USER'S files (committed \u2014 the creative
+// work a sync can't regenerate); anything there wins and the machine NEVER
+// writes or deletes there. genDir (.design-sync/.cache/previews/,
+// gitignored) holds the GENERATED wrappers \u2014 deterministic outputs of
+// stories + config, regenerated every build \u2014 except that a modified cache
+// file (markerless, or edited under its marker) is preserved, never
+// clobbered. The marker's only job is that cache-side regeneration guard.
+export function writePreviewFiles({ components, previewDir, genDir, gen }) {
+  mkdirSync(previewDir, { recursive: true });
+  mkdirSync(genDir, { recursive: true });
+  const names = new Set(components.map((c) => c.name));
+  let generated = 0, overrides = 0, modified = 0;
+  const markered = [];
+  const readNorm = (p) => {
+    // CRLF-normalize so a Windows checkout hashes the same as the commit.
+    try { return readFileSync(p, 'utf8').replace(/\\r\\n/g, '\\n'); } catch { return null; }
+  };
+  for (const c of components) {
+    const genPath = join(genDir, \`\${c.name}.tsx\`);
+    const ownedTxt = readNorm(join(previewDir, \`\${c.name}.tsx\`));
+    if (ownedTxt !== null) {
+      overrides++;
+      console.error(\`  (preview override: \${c.name})\`);
+      // A leftover marker line is only a cosmetic mistake (it's a JS
+      // comment, the file compiles fine): warn once after the loop, don't act.
+      const nl = ownedTxt.indexOf('\\n');
+      if (MARKER_RE.test(nl < 0 ? ownedTxt : ownedTxt.slice(0, nl))) {
+        markered.push(c.name);
+      }
+      // Drop the generated twin \u2014 but only when it's provably machine
+      // output. A modified cache file is user content even while an owned
+      // file shadows it.
+      const twin = readNorm(genPath);
+      if (twin !== null) {
+        const tnl = twin.indexOf('\\n');
+        const tm = (tnl < 0 ? twin : twin.slice(0, tnl)).match(MARKER_RE);
+        if (tm && (!tm[1] || tm[1] === bodyHash(tnl < 0 ? '' : twin.slice(tnl + 1)))) {
+          rmSync(genPath);
+        } else {
+          console.error(\`  (modified cache twin kept: \${c.name} \u2014 the owned .design-sync/previews/\${c.name}.tsx wins; delete .design-sync/.cache/previews/\${c.name}.tsx yourself if it is no longer wanted)\`);
+        }
+      }
+      continue;
+    }
+    const genTxt = readNorm(genPath);
+    if (genTxt !== null) {
+      const nl = genTxt.indexOf('\\n');
+      const m = (nl < 0 ? genTxt : genTxt.slice(0, nl)).match(MARKER_RE);
+      if (!m || (m[1] && m[1] !== bodyHash(nl < 0 ? '' : genTxt.slice(nl + 1)))) {
+        modified++;
+        console.error(\`  (preview modified in the cache: \${c.name} \u2014 NOT regenerating over it; it is gitignored AND outside the grade key, so edits here never re-grade \u2014 move it to .design-sync/previews/\${c.name}.tsx, minus any marker line, to own it durably and re-key it)\`);
+        continue;
+      }
+    }
+    const body = gen(c);
+    if (body == null) {
+      // Generator declined (nothing paired) \u2014 the html shows the floor card
+      // instead. Remove our stale generated file if one exists.
+      if (genTxt !== null) {
+        rmSync(genPath);
+        console.error(\`  (stale preview removed: \${c.name})\`);
+      }
+      continue;
+    }
+    writeFileSync(genPath, \`\${markerLine(body)}\\n\${body}\`);
+    generated++;
+  }
+  if (markered.length) {
+    const shown = markered.slice(0, 8).join(', ');
+    const more = markered.length > 8 ? \` (+\${markered.length - 8} more)\` : '';
+    console.error(\`  (note: \${markered.length} owned preview(s) in .design-sync/previews/ still carry the generated marker on line 1 \u2014 delete the line; owned files are markerless: \${shown}\${more})\`);
+  }
+  // Stale: file for a component that's no longer exported. previews/ is the
+  // user's dir \u2014 log only, never delete. In the cache, machine-clean files
+  // are removed (keeps re-sync idempotent); modified ones are kept.
+  for (const f of readdirSync(previewDir)) {
+    if (!f.endsWith('.tsx')) continue;
+    const n = f.slice(0, -4);
+    if (!names.has(n)) console.error(\`  (stale preview: \${n} \u2014 component no longer exported)\`);
+  }
+  for (const f of readdirSync(genDir)) {
+    if (!f.endsWith('.tsx')) continue;
+    const n = f.slice(0, -4);
+    if (names.has(n)) continue;
+    const p = join(genDir, f);
+    let txt;
+    // A junk entry (unreadable file, .tsx-named directory) must not abort
+    // the build \u2014 skip it; it can't be proven machine-clean, so keep it.
+    try { txt = readFileSync(p, 'utf8').replace(/\\r\\n/g, '\\n'); } catch { continue; }
+    const nl = txt.indexOf('\\n');
+    const m = (nl < 0 ? txt : txt.slice(0, nl)).match(MARKER_RE);
+    if (m && (!m[1] || m[1] === bodyHash(nl < 0 ? '' : txt.slice(nl + 1)))) {
+      rmSync(p);
+      console.error(\`  (stale preview removed: \${n})\`);
+    } else {
+      console.error(\`  (stale preview kept: \${n} \u2014 component no longer exported; modified in the cache, never deleted)\`);
+    }
+  }
+  const extras = [overrides && \`\${overrides} user-owned\`, modified && \`\${modified} modified-in-cache\`].filter(Boolean);
+  console.error(\`  previews: \${generated} generated \u2192 .design-sync/.cache/previews/\${extras.length ? \` (\${extras.join(', ')})\` : ''}\`);
+}
+
+// Compile each .design-sync/previews/<Name>.tsx \u2192 ds-bundle/_preview/<Name>.js
+// (IIFE assigning named exports to window.__dsPreview). react/react-dom and the
+// DS package are externalized to the window globals already on the page;
+// import resolution (package shim, relative-component redirect, storybook
+// stubs, asset loaders) comes from the caller-supplied story-imports plugin
+// set, so .design-sync/overrides/story-imports.mjs forks apply everywhere previews
+// compile. Per-file build so one bad file doesn't sink the rest.
+export async function buildPreviews({ components, previewDir, genDir, OUT, reactShim, NODE_MODULES, pathsPlugin, importPlugins, loaders }) {
+  const built = new Set();
+  const outDir = join(OUT, '_preview');
+  mkdirSync(outDir, { recursive: true });
+  // Same nodePaths + tsconfig-paths plugin bundleToIife uses, so a user-owned
+  // preview that imports \`@/lib/utils\` or a workspace dep resolves the same way.
+  // pathsPlugin registers LAST: the story-imports policy plugin resolves alias
+  // specifiers via b.resolve (which consults pathsPlugin) and then applies the
+  // exported-component shim rules to the result \u2014 a paths plugin registered
+  // first would short-circuit resolution and bypass the policy.
+  const plugins = [reactShim, ...(importPlugins ?? []), ...(pathsPlugin ? [pathsPlugin] : [])];
+  for (const c of components) {
+    const owned = join(previewDir, \`\${c.name}.tsx\`);
+    const entry = existsSync(owned) ? owned : join(genDir, \`\${c.name}.tsx\`);
+    if (!existsSync(entry)) continue;
+    try {
+      await build({
+        entryPoints: [entry], outfile: join(outDir, \`\${c.name}.js\`),
+        bundle: true, format: 'iife', globalName: '__dsPreview',
+        jsx: 'automatic', platform: 'browser', charset: 'utf8',
+        nodePaths: NODE_MODULES ? [NODE_MODULES] : undefined,
+        plugins,
+        ...(loaders ? { loader: loaders } : {}),
+        // __DEV__ is a React-ecosystem convention (dev-only guards) \u2014 leaving
+        // it undefined crashes any story module that touches it.
+        define: {
+          'process.env.NODE_ENV': '"development"', __DEV__: 'true',
+          ...IIFE_IMPORT_META_DEFINE,
+        },
+        logLevel: 'silent',
+      });
+      built.add(c.name);
+    } catch (e) {
+      // Surface esbuild's location info so the agent can fix the .tsx, not
+      // just "build failed".
+      const err = e?.errors?.[0];
+      const loc = err?.location;
+      const where = loc ? \` (\${loc.file}:\${loc.line}:\${loc.column})\` : '';
+      const msg = err?.text ?? e?.message ?? String(e);
+      // Match exactly the printed line \u2014 never a hint under a line that
+      // lacks its signature.
+      const firstLine = String(msg).split('\\n')[0];
+      console.error(\`  ! preview build failed: \${c.name}: \${firstLine}\${where}\`);
+      if (loc?.lineText) console.error(\`    \${loc.lineText}\\n    \${' '.repeat(loc.column)}^\`);
+      const hyp = hypothesisLine(firstLine);
+      if (hyp) console.error(hyp);
+    }
+  }
+  return built;
+}
+`});
+export {rnc};

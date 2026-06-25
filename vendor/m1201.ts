@@ -1,5 +1,7 @@
 // @ts-nocheck
+import {pAe,Dkr} from "./m1200.ts";
 import {b} from "../runtime.ts";
-var lCr;
-var BHs=b(()=>{lCr=class lCr{options;constructor(e){this.options=e}[Symbol.asyncIterator](){return this.asyncIterator()}async*asyncIterator(){for await(let e of this.options.messageStream)yield this.options.encoder.encode(e);if(this.options.includeEndFrame)yield new Uint8Array(0)}}});
-export {lCr,BHs};
+class PJe{bytes;constructor(e){if(this.bytes=e,e.byteLength!==8)throw Error("Int64 buffers must be exactly 8 bytes")}static fromNumber(e){if(e>9223372036854776000||e<-9223372036854776000)throw Error(`${e} is too large (or, if negative, too small) to represent as an Int64`);let t=new Uint8Array(8);for(let n=7,r=Math.abs(Math.round(e));n>-1&&r>0;n--,r/=256)t[n]=r;if(e<0)CLs(t);return new PJe(t)}valueOf(){let e=this.bytes.slice(0),t=e[0]&128;if(t)CLs(e);return parseInt(pAe(e),16)*(t?-1:1)}toString(){return String(this.valueOf())}}
+function CLs(e){for(let t=0;t<8;t++)e[t]^=255;for(let t=7;t>-1;t--)if(e[t]++,e[t]!==0)break}
+var Pkr=b(()=>{Dkr()});
+export {PJe,CLs,Pkr};

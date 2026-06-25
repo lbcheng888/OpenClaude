@@ -1,11 +1,17 @@
 // @ts-nocheck
-import {$ke,CNt} from "./m3340.ts";
-import {Box} from "./m2422.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Tm(e){let t=Qca.c(16),{title:n,subtitle:r,color:o,titleColor:s,innerPaddingX:i,workerBadge:a,requestSource:l,titleRight:c,children:u}=e,d=o===void 0?"permission":o,p=i===void 0?1:i,m;if(t[0]!==l||t[1]!==r||t[2]!==n||t[3]!==s||t[4]!==a)m=Kee.createElement($ke,{title:n,subtitle:r,color:s,workerBadge:a,requestSource:l,srPrefix:"Permission Required:"}),t[0]=l,t[1]=r,t[2]=n,t[3]=s,t[4]=a,t[5]=m;else m=t[5];let f;if(t[6]!==m||t[7]!==c)f=Kee.createElement(Box,{paddingX:1,flexDirection:"column"},Kee.createElement(Box,{justifyContent:"space-between"},m,c)),t[6]=m,t[7]=c,t[8]=f;else f=t[8];let A;if(t[9]!==u||t[10]!==p)A=Kee.createElement(Box,{flexDirection:"column",paddingX:p},u),t[9]=u,t[10]=p,t[11]=A;else A=t[11];let h;if(t[12]!==d||t[13]!==f||t[14]!==A)h=Kee.createElement(Box,{flexDirection:"column",borderStyle:"round",borderColor:d,borderLeft:!1,borderRight:!1,borderBottom:!1,marginTop:1},f,A),t[12]=d,t[13]=f,t[14]=A,t[15]=h;else h=t[15];return h}
-var Qca,Kee;
-var Fk=b(()=>{ze();CNt();Qca=M(rt(),1),Kee=M(Te(),1)});
-export {Tm,Qca,Kee,Fk};
+import {He,Pt,xe,mn} from "../src/telemetry/0600_feature_name.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
+import {b} from "../runtime.ts";
+import {Qr} from "./m323.ts";
+import {ve} from "./m461.ts";
+import {C} from "./m321.ts";
+function Uep(e){if(e===void 0||e===null)return"UNSPECIFIED";if(typeof e==="number")return Bep[e]??"UNSPECIFIED";if(typeof e!=="string")return"UNSPECIFIED";let t=e.startsWith(yga)?e.slice(yga.length):e;return Fep.find((n)=>n===t)??"UNSPECIFIED"}
+function $ep(e,t){if(e==="SERVICE_VOUCHED")return!0;let n=kto.findIndex((r)=>r===e);return n!==-1&&n<=kto.indexOf(t)}
+function Tga(e){let t=Wep().safeParse(e);return{enforce:!0,acceptLevel:t.success?t.data.accept_level:"VERIFIED",acceptStatuses:new Set(t.success?t.data.accept_statuses:[])}}
+function gat(e){Sga=e}
+function Hto(e){bga=e}
+function WOn(e){let t=typeof e.payload?.type==="string"?e.payload.type:e.event_type,n=t==="user"||t==="control_response",r=Uep(e.device_attestation_status),o=Sga?.()??qOn;if($ep(r,o.acceptLevel)){if(n)He("bridge_event_attestation");return!1}if(!o.enforce){if(r==="UNSPECIFIED")return!1;if(n)logForDebugging(`[bridge:attestation] accepting unverified ${t} event_id=${e.event_id} status=${r}`,{level:"info"}),Pt("bridge_event_attestation",`${r.toLowerCase()}_${t}`);return!1}let s=o.acceptStatuses.has(r);if(n){let i=`${r.toLowerCase()}_${t}`;if(logForDebugging(`[bridge:attestation] ${s?"accepting (config exception)":"DROPPING"} unverified ${t} event_id=${e.event_id} status=${r}`,{level:s?"info":"warn"}),s)Pt("bridge_event_attestation",i);else{xe("bridge_event_attestation",i);try{bga?.({status:r,payloadType:t})}catch(a){logForDebugging(`[bridge:attestation] drop notifier threw: ${Ce(a)}`,{level:"error"})}}}return!s}
+var Fep,yga="DEVICE_ATTESTATION_STATUS_",Bep,kto,qOn,qep,Wep,Sga,bga;
+var M3e=b(()=>{Qr();mn();qe();Ct();Fep=["UNSPECIFIED","ABSENT","VERIFIED","VERIFIED_BY_GATE","INVALID","UNCHECKED","VERIFIED_KEYLESS_DEVICE","SERVICE_VOUCHED"],Bep=["UNSPECIFIED","ABSENT","VERIFIED","VERIFIED_BY_GATE","INVALID","UNCHECKED"];kto=["VERIFIED","VERIFIED_KEYLESS_DEVICE","VERIFIED_BY_GATE"];qOn={enforce:!1,acceptLevel:"VERIFIED",acceptStatuses:new Set},qep=["UNSPECIFIED","ABSENT","INVALID","UNCHECKED"],Wep=ve(()=>C.object({accept_level:C.enum(kto).default("VERIFIED"),accept_statuses:C.array(C.enum(qep)).default([])}))});
+export {Uep,$ep,Tga,gat,Hto,WOn,Fep,yga,Bep,kto,qOn,qep,Wep,Sga,bga,M3e};

@@ -1,9 +1,9 @@
 // @ts-nocheck
-import {w5,F4} from "./m2416.ts";
-import {supportsTabStatus,Sk,oTn,v_i,lg} from "./m2269.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function useTabStatus(e,t){let n=$Ze.useContext(w5),r=$Ze.useRef(null);$Ze.useEffect(()=>{if(e===null){if(r.current!==null&&n&&supportsTabStatus())n(Sk(oTn));r.current=null;return}if(r.current=e,!n||!supportsTabStatus())return;let o=Cld[e],s=e==="idle"&&t!==void 0?{...o,status:t}:o;n(Sk(v_i(s)))},[e,t,n])}
-var $Ze,UZe=(e,t,n)=>({type:"rgb",r:e,g:t,b:n}),Cld;
-var ywi=b(()=>{lg();F4();$Ze=M(Te(),1),Cld={idle:{indicator:UZe(0,215,95),status:"Idle",statusColor:UZe(136,136,136)},busy:{indicator:UZe(255,149,0),status:"Working\u2026",statusColor:UZe(255,149,0)},waiting:{indicator:UZe(95,135,255),status:"Waiting",statusColor:UZe(95,135,255)}}});
-export {useTabStatus,$Ze,UZe,Cld,ywi};
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function RawAnsi(e){let t=vxi.c(6),{lines:n,width:r}=e;if(n.length===0)return null;let o;if(t[0]!==n)o=n.join(`
+`),t[0]=n,t[1]=o;else o=t[1];let s;if(t[2]!==n.length||t[3]!==o||t[4]!==r)s=wxi.jsx("ink-raw-ansi",{rawText:o,rawWidth:r,rawHeight:n.length}),t[2]=n.length,t[3]=o,t[4]=r,t[5]=s;else s=t[5];return s}
+var vxi,wxi;
+var kxi=b(()=>{vxi=x(tt(),1),wxi=x(oe(),1)});
+export {RawAnsi,vxi,wxi,kxi};

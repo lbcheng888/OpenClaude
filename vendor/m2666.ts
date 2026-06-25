@@ -1,28 +1,6 @@
 // @ts-nocheck
-import {ca} from "./m5.ts";
-import {pKe,Bnn} from "./m737.ts";
-import {ec,Dd} from "./m687.ts";
-import {Gi,ReactHooks} from "./m133.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {M1,sie} from "./m2261.ts";
-import {Se,bt} from "./m195.ts";
-import {uts,cts,Ktn} from "./m703.ts";
-import {executeConfigChangeHooks} from "./m5156.ts";
-import {hasBlockingResult,yp} from "../src/tools/5171_shouldSkipHookDueToTrust.ts";
-import {voe,Ibe,iQ,Ihr,nrs,trs,Dbe} from "./m736.ts";
-import {Le,Xt} from "../src/config/0228_encoding.ts";
-import {f_,Kx} from "./m128.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {Tw,mf} from "./m702.ts";
-import {getSettingsFilePathForSource,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {rEt,h7} from "./m704.ts";
-import {zt,qs} from "./m635.ts";
-import {b,M} from "../runtime.ts";
-import {kg} from "./m129.ts";
-function jSd(e){let t=e?.stabilityThreshold??bMi,n=e?.pollInterval??EMi,r=e?.mdmPollInterval??$Sd,o=e?.deletionGrace??qSd,s=ca(),i=pKe.subscribe((x)=>s.emit(x)),a=null,l=null,c=null,u=!1,d=!1,p=new Map,m=null,f=new Map;async function A(){if(ec())return;if(u||d)return;u=!0,v(),m=Gi(h);let x=await WSd(),{dirs:H,settingsFiles:I,dropInDir:P}=x;if(f=x.realpathToCanonical,d)return;if(H.length===0)return;logForDebugging(`Watching for changes in setting files ${[...I].join(", ")}...${P?` and drop-in directory ${P}`:""}`);for(let[L,D]of f)logForDebugging(`Settings file ${D} is a symlink to ${L}; also watching ${pL.dirname(L)} so atomic-save edits to the target are detected`);a=M1.watch(H,{persistent:!0,ignoreInitial:!0,depth:0,awaitWriteFinish:{stabilityThreshold:t,pollInterval:n},ignored:(L,D)=>{if(D&&!D.isFile()&&!D.isDirectory())return!0;if(L.split(/[/\\]/).some((O)=>O===".git"))return!0;if(!D||D.isDirectory())return!1;let N=pL.normalize(L);if(I.has(N))return!1;if(P&&N.startsWith(P+pL.sep)&&N.endsWith(".json"))return!1;return!0},ignorePermissionErrors:!0,usePolling:!1,atomic:!0}),a.on("change",_),a.on("unlink",T),a.on("add",y),a.on("error",(L)=>logForDebugging(`[settings] watcher error: ${Se(L)}`,{level:"warn"}))}function h(){if(d=!0,m)m(),m=null;if(l)clearInterval(l),l=null;for(let H of p.values())clearTimeout(H);p.clear(),f=new Map,c=null,uts(),i(),s.clear();let x=a;return a=null,x?x.close():Promise.resolve()}function g(x){return f.get(pL.normalize(x))??x}function _(x){let H=g(x),I=uvn(H);if(!I)return;let P=p.get(H);if(P)clearTimeout(P),p.delete(H),logForDebugging(`Cancelled pending deletion of ${H} \u2014 file was recreated`);if(cts(H,TMi)){logForDebugging(`Suppressed change to ${H} \u2014 echo of our own write within the last ${TMi}ms`);return}logForDebugging(`Detected change to ${H}${x!==H?` (via symlink target ${x})`:""}`),executeConfigChangeHooks(SMi(I),H).then((L)=>{if(hasBlockingResult(L)){logForDebugging(`ConfigChange hook blocked change to ${H}`);return}R(I)})}function y(x){let H=g(x);if(!uvn(H))return;let P=p.get(H);if(P)clearTimeout(P),p.delete(H),logForDebugging(`Cancelled pending deletion of ${H} \u2014 file was re-added`);_(x)}function T(x){let H=g(x),I=uvn(H);if(!I)return;if(logForDebugging(`Detected deletion of ${H}`),a?.add(pL.dirname(x)),p.has(H))return;let P=setTimeout(S,o,H,I);p.set(H,P)}function S(x,H){p.delete(x),executeConfigChangeHooks(SMi(H),x).then((I)=>{if(hasBlockingResult(I)){logForDebugging(`ConfigChange hook blocked deletion of ${x}`);return}R(H)})}function v(){let x=voe(),H=Ibe();c=Le({mdm:x.settings,hkcu:H.settings,wslInherits:iQ(),wslWindowsFile:Ihr()}),l=setInterval(()=>{if(d)return;(async()=>{try{let{mdm:I,hkcu:P,wslInherits:L}=await nrs();if(d)return;trs(I,P,L);let D=Le({mdm:I.settings,hkcu:P.settings,wslInherits:L,wslWindowsFile:Ihr()});if(D!==c)c=D,logForDebugging("Detected MDM settings change via poll"),R("policySettings")}catch(I){logForDebugging(`MDM poll error: ${Se(I)}`)}})()},r),l.unref()}function R(x){f_();try{s.emit(x)}catch(H){for(let I of H instanceof AggregateError?H.errors:[H])De(I)}}function k(x){logForDebugging(`Programmatic settings change notification for ${x}`),R(x)}return{initialize:A,dispose:h,[Symbol.asyncDispose]:h,subscribe:s.subscribe,notifyChange:k}}
-async function WSd(){let e=new Map,t=new Set,n=new Map,r=new Set;for(let c of Tw){if(c==="flagSettings")continue;let u=getSettingsFilePathForSource(c);if(!u)continue;let d=pL.dirname(u);if(!e.has(d))e.set(d,new Set);if(e.get(d).add(u),!t.has(d))try{if((await m2e.stat(d)).isDirectory())t.add(d)}catch{}try{let p=await m2e.realpath(u);if(p===u)continue;let m=await m2e.realpath(d),f=pL.dirname(p);if(pL.join(m,pL.basename(u))===p)continue;let A=f===m,h=A?pL.join(d,pL.basename(p)):p;if(uvn(h)!==void 0)continue;if(n.set(h,u),r.add(d),A)e.get(d).add(h);else{if(!e.has(f))e.set(f,new Set);e.get(f).add(h),t.add(f),r.add(f)}}catch{}}let o=new Set;for(let c of t){let u=e.get(c);if(u)for(let d of u)o.add(d)}let s=null,i=rEt();try{if((await m2e.stat(i)).isDirectory())t.add(i),s=i,r.add(i)}catch{}let a=zt()==="macos",l=new Set;for(let c of t){let u=e.get(c);if(!u||!a||r.has(c)){l.add(c);continue}let d=!1;for(let p of u)try{if((await m2e.stat(p)).isFile())l.add(p);else d=!0}catch{d=!0}if(d)l.add(c)}return{dirs:[...l],settingsFiles:o,dropInDir:s,realpathToCanonical:n}}
-function SMi(e){switch(e){case"userSettings":return"user_settings";case"projectSettings":return"project_settings";case"localSettings":return"local_settings";case"flagSettings":case"policySettings":return"policy_settings"}}
-function uvn(e){let t=pL.normalize(e),n=rEt();if(t.startsWith(n+pL.sep))return"policySettings";return Tw.find((r)=>getSettingsFilePathForSource(r)===t)}
-var m2e,pL,bMi=1000,EMi=500,TMi=5000,$Sd=1800000,qSd,buildDefaultSystemPromptSections;
-var eae=b(()=>{sie();Dd();ReactHooks();qe();bt();yp();Rn();qs();kg();Xt();mf();Ktn();h7();Dbe();yr();Kx();Bnn();m2e=require("fs/promises"),pL=M(require("path")),qSd=bMi+EMi+200;buildDefaultSystemPromptSections=jSd()});
-export {jSd,WSd,SMi,uvn,m2e,pL,bMi,EMi,TMi,$Sd,qSd,buildDefaultSystemPromptSections,eae};
+import {Q} from "../runtime.ts";
+import {BUi} from "./m2664.ts";
+import {KUi} from "./m2665.ts";
+var nGr=Q((tGr)=>{tGr.quote=BUi();tGr.parse=KUi()});
+export {nGr};

@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-var res,oes,ses,xtn=(e,t)=>String(e).padStart(t,"0"),pJc=()=>{let e=new Date;return`${xtn(e.getHours(),2)}:${xtn(e.getMinutes(),2)}:${xtn(e.getSeconds(),2)}.${xtn(e.getMilliseconds(),3)}`},jfr=(e,{verbose:t})=>{if(!t)return;oes.default.stderr.write(`[${pJc()}] ${e}
-`)};
-var ies=b(()=>{res=require("util"),oes=M(require("process")),ses=res.debuglog("execa").enabled});
-export {res,oes,ses,xtn,pJc,jfr,ies};
+import {lRt,cRt} from "./m676.ts";
+import {b} from "../runtime.ts";
+import {iTr,oon,son,lTr} from "./m677.ts";
+async function dTr(e,t){return lRt(e,yiu,t)}
+var fiu=()=>({contents:"",textDecoder:new TextDecoder}),aon=(e,{textDecoder:t})=>t.decode(e,{stream:!0}),hiu=(e,{contents:t})=>t+e,giu=(e,t)=>e.slice(0,t),_iu=({textDecoder:e})=>{let t=e.decode();return t===""?void 0:t},yiu;
+var Oss=b(()=>{cRt();yiu={init:fiu,convertChunk:{string:iTr,buffer:aon,arrayBuffer:aon,dataView:aon,typedArray:aon,others:oon},getSize:son,truncateChunk:giu,addChunk:hiu,getFinalChunk:_iu,finalize:lTr}});
+export {dTr,fiu,aon,hiu,giu,_iu,yiu,Oss};

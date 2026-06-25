@@ -1,13 +1,7 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {pT} from "./m1289.ts";
-import {ReactHooks} from "./m133.ts";
-import {qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {sn} from "../src/config/0047_namespace.ts";
-import {bt} from "./m195.ts";
-import {Ug} from "./m2264.ts";
-import {Xt} from "../src/config/0228_encoding.ts";
-function Zat(e){if(!e?.excludeDefault)return!1;return e.tips.length>0}
-var noo=15,xIg;
-var gUt=b(()=>{pT();ReactHooks();qe();sn();bt();Ug();Xt();xIg=noo*60000});
-export {Zat,noo,xIg,gUt};
+import {Q} from "../runtime.ts";
+import {LI} from "./m3796.ts";
+import {xlo} from "./m3818.ts";
+import {q$t} from "./m3817.ts";
+var mMa=Q((dMa,pMa)=>{(function(){var e,t,n,r,o={}.hasOwnProperty;e=LI(),r=xlo(),t=q$t(),pMa.exports=n=class extends r{constructor(i,a){super(a);this.stream=i}endline(i,a,l){if(i.isLastRootNode&&a.state===t.CloseTag)return"";else return super.endline(i,a,l)}document(i,a){var l,c,u,d,p,m,f,h,g;f=i.children;for(c=u=0,p=f.length;u<p;c=++u)l=f[c],l.isLastRootNode=c===i.children.length-1;a=this.filterOptions(a),h=i.children,g=[];for(d=0,m=h.length;d<m;d++)l=h[d],g.push(this.writeChildNode(l,a,0));return g}cdata(i,a,l){return this.stream.write(super.cdata(i,a,l))}comment(i,a,l){return this.stream.write(super.comment(i,a,l))}declaration(i,a,l){return this.stream.write(super.declaration(i,a,l))}docType(i,a,l){var c,u,d,p;if(l||(l=0),this.openNode(i,a,l),a.state=t.OpenTag,this.stream.write(this.indent(i,a,l)),this.stream.write("<!DOCTYPE "+i.root().name),i.pubID&&i.sysID)this.stream.write(' PUBLIC "'+i.pubID+'" "'+i.sysID+'"');else if(i.sysID)this.stream.write(' SYSTEM "'+i.sysID+'"');if(i.children.length>0){this.stream.write(" ["),this.stream.write(this.endline(i,a,l)),a.state=t.InsideTag,p=i.children;for(u=0,d=p.length;u<d;u++)c=p[u],this.writeChildNode(c,a,l+1);a.state=t.CloseTag,this.stream.write("]")}return a.state=t.CloseTag,this.stream.write(a.spaceBeforeSlash+">"),this.stream.write(this.endline(i,a,l)),a.state=t.None,this.closeNode(i,a,l)}element(i,a,l){var c,u,d,p,m,f,h,g,_,T,y,S,E,R,w,H;if(l||(l=0),this.openNode(i,a,l),a.state=t.OpenTag,y=this.indent(i,a,l)+"<"+i.name,a.pretty&&a.width>0){h=y.length,E=i.attribs;for(_ in E){if(!o.call(E,_))continue;if(c=E[_],S=this.attribute(c,a,l),u=S.length,h+u>a.width)H=this.indent(i,a,l+1)+S,y+=this.endline(i,a,l)+H,h=H.length;else H=" "+S,y+=H,h+=H.length}}else{R=i.attribs;for(_ in R){if(!o.call(R,_))continue;c=R[_],y+=this.attribute(c,a,l)}}if(this.stream.write(y),p=i.children.length,m=p===0?null:i.children[0],p===0||i.children.every(function(k){return(k.type===e.Text||k.type===e.Raw||k.type===e.CData)&&k.value===""}))if(a.allowEmpty)this.stream.write(">"),a.state=t.CloseTag,this.stream.write("</"+i.name+">");else a.state=t.CloseTag,this.stream.write(a.spaceBeforeSlash+"/>");else if(a.pretty&&p===1&&(m.type===e.Text||m.type===e.Raw||m.type===e.CData)&&m.value!=null)this.stream.write(">"),a.state=t.InsideTag,a.suppressPrettyCount++,T=!0,this.writeChildNode(m,a,l+1),a.suppressPrettyCount--,T=!1,a.state=t.CloseTag,this.stream.write("</"+i.name+">");else{this.stream.write(">"+this.endline(i,a,l)),a.state=t.InsideTag,w=i.children;for(f=0,g=w.length;f<g;f++)d=w[f],this.writeChildNode(d,a,l+1);a.state=t.CloseTag,this.stream.write(this.indent(i,a,l)+"</"+i.name+">")}return this.stream.write(this.endline(i,a,l)),a.state=t.None,this.closeNode(i,a,l)}processingInstruction(i,a,l){return this.stream.write(super.processingInstruction(i,a,l))}raw(i,a,l){return this.stream.write(super.raw(i,a,l))}text(i,a,l){return this.stream.write(super.text(i,a,l))}dtdAttList(i,a,l){return this.stream.write(super.dtdAttList(i,a,l))}dtdElement(i,a,l){return this.stream.write(super.dtdElement(i,a,l))}dtdEntity(i,a,l){return this.stream.write(super.dtdEntity(i,a,l))}dtdNotation(i,a,l){return this.stream.write(super.dtdNotation(i,a,l))}}}).call(dMa)});
+export {mMa};

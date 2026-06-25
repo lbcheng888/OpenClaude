@@ -1,17 +1,7 @@
 // @ts-nocheck
-import {tn,Hc} from "./m235.ts";
-import {Text} from "./m2423.ts";
-import {truncate} from "./m237.ts";
-import {ic,Ny} from "./m2574.ts";
-import {Box} from "./m2422.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {ps} from "./m238.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function P_l(e){let{title:t,lines:n,footer:r,emptyMessage:o,customContent:s}=e,i=tn(t);if(s!==void 0)i=Math.max(i,s.width);else if(n.length===0&&o)i=Math.max(i,tn(o));else{let l=Math.max(0,...n.map((c)=>c.timestamp?tn(c.timestamp):0));for(let c of n){let u=l>0?l:0,d=tn(c.text)+(u>0?u+2:0);i=Math.max(i,d)}}if(r)i=Math.max(i,tn(r));return i}
-function O_l(e){let t=D_l.c(15),{config:n,actualWidth:r}=e,{title:o,lines:s,footer:i,emptyMessage:a,customContent:l}=n,c;if(t[0]!==s)c=Math.max(0,...s.map(Iem)),t[0]=s,t[1]=c;else c=t[1];let u=c,d;if(t[2]!==o)d=MT.createElement(Text,{bold:!0,color:"claude"},o),t[2]=o,t[3]=d;else d=t[3];let p;if(t[4]!==r||t[5]!==l||t[6]!==a||t[7]!==i||t[8]!==s||t[9]!==u)p=l?MT.createElement(MT.Fragment,null,l.content,i&&MT.createElement(Text,{dimColor:!0,italic:!0},truncate(i,r))):s.length===0&&a?MT.createElement(ic,null,truncate(a,r)):MT.createElement(MT.Fragment,null,s.map((f,A)=>{let h=Math.max(10,r-(u>0?u+2:0));return MT.createElement(Text,{key:A},u>0&&MT.createElement(MT.Fragment,null,MT.createElement(Text,{dimColor:!0},(f.timestamp||"").padEnd(u)),"  "),MT.createElement(Text,null,truncate(f.text,h)))}),i&&MT.createElement(Text,{dimColor:!0,italic:!0},truncate(i,r))),t[4]=r,t[5]=l,t[6]=a,t[7]=i,t[8]=s,t[9]=u,t[10]=p;else p=t[10];let m;if(t[11]!==r||t[12]!==d||t[13]!==p)m=MT.createElement(Box,{flexDirection:"column",width:r},d,p),t[11]=r,t[12]=d,t[13]=p,t[14]=m;else m=t[14];return m}
-function Iem(e){return e.timestamp?tn(e.timestamp):0}
-var D_l,MT;
-var L_l=b(()=>{Hc();ze();ps();Ny();D_l=M(rt(),1),MT=M(Te(),1)});
-export {P_l,O_l,Iem,D_l,MT,L_l};
+import {Q} from "../runtime.ts";
+import {VWt} from "./m4774.ts";
+var DAl=Q((_zn)=>{var rlm=VWt(),olm={WW:" ",WB:"\u2584",BB:"\u2588",BW:"\u2580"},slm={BB:" ",BW:"\u2584",WW:"\u2588",WB:"\u2580"};function ilm(e,t,n){if(e&&t)return n.BB;if(e&&!t)return n.BW;if(!e&&t)return n.WB;return n.WW}_zn.render=function(e,t,n){let r=rlm.getOptions(t),o=olm;if(r.color.dark.hex==="#ffffff"||r.color.light.hex==="#000000")o=slm;let s=e.modules.size,i=e.modules.data,a="",l=Array(s+r.margin*2+1).join(o.WW);l=Array(r.margin/2+1).join(l+`
+`);let c=Array(r.margin+1).join(o.WW);a+=l;for(let u=0;u<s;u+=2){a+=c;for(let d=0;d<s;d++){let p=i[u*s+d],m=i[(u+1)*s+d];a+=ilm(p,m,o)}a+=c+`
+`}if(a+=l.slice(0,-1),typeof n==="function")n(null,a);return a};_zn.renderToFile=function(t,n,r,o){if(typeof o>"u")o=r,r=void 0;let s=require("fs"),i=_zn.render(n,r);s.writeFile(t,i,o)}});
+export {DAl};

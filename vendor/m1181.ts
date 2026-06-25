@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {O1e,WEr} from "./m1180.ts";
-import {b} from "../runtime.ts";
-var uHs=(e)=>(t,n)=>async(r)=>{let{request:o}=r;if(!O1e.isInstance(o))return t(r);return e.eventStreamPayloadHandler.handle(t,r,n)},dHs;
-var GEr=b(()=>{WEr();dHs={tags:["EVENT_STREAM","SIGNATURE","HANDLE"],name:"eventStreamHandlingMiddleware",relation:"after",toMiddleware:"awsAuthMiddleware",override:!0}});
-export {uHs,dHs,GEr};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {Dun,ListProvisionedModelThroughputsCommand} from "./m1145.ts";
+import {Zu} from "./m855.ts";
+var YOs,paginateListProvisionedModelThroughputs;
+var JOs=b(()=>{C0();Dun();YOs=x(Zu(),1),paginateListProvisionedModelThroughputs=YOs.createPaginator(BedrockClient,ListProvisionedModelThroughputsCommand,"nextToken","nextToken","maxResults")});
+export {YOs,paginateListProvisionedModelThroughputs,JOs};

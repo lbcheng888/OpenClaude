@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {_Mn} from "./m3619.ts";
-import {gle} from "./m3479.ts";
-import {ple} from "./m3439.ts";
-var Wva=X((aNn)=>{Object.defineProperty(aNn,"__esModule",{value:!0});aNn.OTLPTraceExporter=void 0;var qva=_Mn(),Lup=gle(),Mup=ple();class jva extends Mup.OTLPExporterBase{constructor(e={}){super((0,qva.createOtlpGrpcExportDelegate)((0,qva.convertLegacyOtlpGrpcOptions)(e,"TRACES"),Lup.ProtobufTraceSerializer,"TraceExportService","/opentelemetry.proto.collector.trace.v1.TraceService/Export"))}}aNn.OTLPTraceExporter=jva});
-export {Wva};
+import {Q} from "../runtime.ts";
+import {ote} from "./m3673.ts";
+var Rxa=Q((UBn)=>{Object.defineProperty(UBn,"__esModule",{value:!0});UBn.MetricCollector=void 0;var USp=ote();class Axa{_sharedState;_metricReader;constructor(e,t){this._sharedState=e,this._metricReader=t}async collect(e){let t=(0,USp.millisToHrTime)(Date.now()),n=[],r=[],o=Array.from(this._sharedState.meterSharedStates.values()).map(async(s)=>{let i=await s.collect(this,t,e);if(i?.scopeMetrics!=null)n.push(i.scopeMetrics);if(i?.errors!=null)r.push(...i.errors)});return await Promise.all(o),{resourceMetrics:{resource:this._sharedState.resource,scopeMetrics:n},errors:r}}async forceFlush(e){await this._metricReader.forceFlush(e)}async shutdown(e){await this._metricReader.shutdown(e)}selectAggregationTemporality(e){return this._metricReader.selectAggregationTemporality(e)}selectAggregation(e){return this._metricReader.selectAggregation(e)}selectCardinalityLimit(e){return this._metricReader.selectCardinalityLimit?.(e)??2000}}UBn.MetricCollector=Axa});
+export {Rxa};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Wws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Hxs,GetModelCopyJobCommand;
-var hEr=b(()=>{ri();wi();xi();Hxs=M(yo(),1);GetModelCopyJobCommand=class GetModelCopyJobCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Hxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetModelCopyJob",{}).n("BedrockClient","GetModelCopyJobCommand").sc(Wws).build(){}});
-export {Hxs,GetModelCopyJobCommand,hEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Dxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var TPs,GetFoundationModelCommand;
+var Uwr=b(()=>{$s();ai();ci();TPs=x(yo(),1);GetFoundationModelCommand=class GetFoundationModelCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[TPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetFoundationModel",{}).n("BedrockClient","GetFoundationModelCommand").sc(Dxs).build(){}});
+export {TPs,GetFoundationModelCommand,Uwr};

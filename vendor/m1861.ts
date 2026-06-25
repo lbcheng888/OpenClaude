@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Rfn} from "./m1859.ts";
-var jYs=X((cBA,qYs)=>{var a3u=Rfn();qYs.exports=a3u.satisfies(process.version,">=16.9.0")});
-export {jYs};
+import {Q} from "../runtime.ts";
+import {x7} from "./m1850.ts";
+var Cti=Q((vWh,Eti)=>{var bti=x7(),LKu=(e,t,n)=>(e=new bti(e,n),t=new bti(t,n),e.intersects(t,n));Eti.exports=LKu});
+export {Cti};

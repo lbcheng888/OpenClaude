@@ -1,13 +1,15 @@
 // @ts-nocheck
-import {Whe,Ske} from "./m3273.ts";
-import {zt,qs} from "./m635.ts";
-import {_A} from "./m459.ts";
+import {isTeammate,Op} from "../src/agent/1464_waitForTeammatesToBecomeIdle.ts";
+import {normalizeSessionTitle,getCurrentSessionTitle,_a} from "../src/permissions/5175_writeRemoteAgentMetadata.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {oTe,s5t} from "./m4409.ts";
+import {Mie,eb,Pf} from "../src/agent/2591_level.ts";
+import {hasHookForEvent,createBaseHookInput,executeHooks,Wd} from "../src/tools/5204_shouldSkipHookDueToTrust.ts";
+import {W6a} from "./m4092.ts";
 import {b} from "../runtime.ts";
-async function tCm(){let e=HPe.join(Whe(),"claude");if(!process.execPath.startsWith(HPe.join(e,"versions")+HPe.sep))return null;let t=HPe.join(e,"ClaudeCode.app","Contents","MacOS"),n=HPe.join(t,"claude");try{let r=(await Kne.stat(process.execPath)).ino;await Kne.mkdir(t,{recursive:!0}),await Kne.writeFile(HPe.join(t,"..","Info.plist"),`<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict><key>CFBundleIdentifier</key><string>com.anthropic.claude-code</string><key>CFBundleName</key><string>Claude Code</string><key>CFBundleDisplayName</key><string>Claude Code</string><key>CFBundleExecutable</key><string>claude</string><key>CFBundlePackageType</key><string>APPL</string><key>LSUIElement</key><true/><key>NSMicrophoneUsageDescription</key><string>Claude Code uses the microphone for voice dictation.</string><key>NSAppleEventsUsageDescription</key><string>Claude Code needs to send Apple Events to open URLs and control applications you authorize.</string></dict></plist>
-`);try{if((await Kne.stat(n)).ino===r)return n;await Kne.unlink(n)}catch{}return await Kne.link(process.execPath,n),n}catch{return null}}
-async function tUl(){if(zt()!=="macos")return;if(process.env.CLAUDE_BG_TCC_DISCLAIMED){delete process.env.CLAUDE_BG_TCC_DISCLAIMED;return}let e=await tCm()??process.execPath;try{let t=require("bun:ffi"),{symbols:n}=t.dlopen("/usr/lib/libSystem.B.dylib",{posix_spawnattr_init:{args:["ptr"],returns:"int"},posix_spawnattr_setflags:{args:["ptr","i16"],returns:"int"},posix_spawnattr_destroy:{args:["ptr"],returns:"int"},responsibility_spawnattrs_setdisclaim:{args:["ptr","int"],returns:"int"},posix_spawn:{args:["ptr","ptr","ptr","ptr","ptr","ptr"],returns:"int"}}),r=new BigUint64Array(1);if(n.posix_spawnattr_init(r)!==0)return;try{if(n.posix_spawnattr_setflags(r,64)!==0||n.responsibility_spawnattrs_setdisclaim(r,1)!==0)return;let s=[],i=(p)=>{let m=Buffer.from(p+"\x00","utf8");return s.push(m),BigInt(t.ptr(m))},a=(p)=>{let m=new BigUint64Array(p.length+1);return p.forEach((f,A)=>m[A]=i(f)),m},l=_A()?[e]:[e,process.argv[1]],c=Buffer.from(e+"\x00","utf8"),u=a([...l,...process.argv.slice(2)]),d=a(Object.entries({...process.env,CLAUDE_BG_TCC_DISCLAIMED:"1"}).flatMap(([p,m])=>m===void 0?[]:[`${p}=${m}`]));n.posix_spawn(null,c,null,r,u,d)}finally{n.posix_spawnattr_destroy(r)}}catch{}}
-var Kne,HPe;
-var nUl=b(()=>{qs();Ske();Kne=require("fs/promises"),HPe=require("path")});
-export {tCm,tUl,Kne,HPe,nUl};
+async function applyHookSessionTitle(e){if(isTeammate())return;let t=normalizeSessionTitle(e);if(!t)return;let n=getSessionId(),r=getCurrentSessionTitle(n);if(t===(r&&normalizeSessionTitle(r)))return;logForDebugging(`Hook sessionTitle applied (${[...t].length} chars)`),await oTe(t,"hook"),await Mie(eb(),t,"user")}
+async function*executeUserPromptSubmitHooks(e,t,n){let r=n.getAppState(),o=n.agentId??getSessionId();if(!hasHookForEvent("UserPromptSubmit",r,o))return;let s={...createBaseHookInput(t),hook_event_name:"UserPromptSubmit",prompt:e,session_title:getCurrentSessionTitle(getSessionId())};yield*executeHooks({hookInput:s,toolUseID:m4l.randomUUID(),signal:n.abortController.signal,timeoutMs:W6a,toolUseContext:n})}
+var m4l;
+var f4l=b(()=>{lt();s5t();Pf();qe();Wd();_a();Op();m4l=require("crypto")});
+export {applyHookSessionTitle,executeUserPromptSubmitHooks,m4l,f4l};

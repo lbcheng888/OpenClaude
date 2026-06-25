@@ -1,6 +1,7 @@
 // @ts-nocheck
+import {z9e,eDn} from "./m3186.ts";
+import {d3,wm} from "./m707.ts";
 import {b} from "../runtime.ts";
-import {ZRl,QRl} from "./m4974.ts";
-var _lm,xVn;
-var exl=b(()=>{_lm={type:"local",name:"reload-plugins",description:"Activate pending plugin changes in the current session",argumentHint:"[--force]",supportsNonInteractive:!1,thinClientDispatch:"control-request",load:()=>Promise.resolve().then(() => (ZRl(),QRl))},xVn=_lm});
-export {_lm,xVn,exl};
+function fYn(e){if(e==="all")return"Agents";if(e==="built-in")return"Built-in agents";if(e==="plugin")return"Plugin agents";return z9e(d3(e))}
+var A0o=b(()=>{eDn();wm()});
+export {fYn,A0o};

@@ -1,10 +1,13 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {wKo} from "./m536.ts";
-import {Dpr} from "./m533.ts";
-var xKo=X((yO,men)=>{var f2c=require("tty"),pen=require("util");yO.init=S2c;yO.log=_2c;yO.formatArgs=h2c;yO.save=y2c;yO.load=T2c;yO.useColors=A2c;yO.destroy=pen.deprecate(()=>{},"Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");yO.colors=[6,2,3,4,5,1];try{let e=wKo();if(e&&(e.stderr||e).level>=2)yO.colors=[20,21,26,27,32,33,38,39,40,41,42,43,44,45,56,57,62,63,68,69,74,75,76,77,78,79,80,81,92,93,98,99,112,113,128,129,134,135,148,149,160,161,162,163,164,165,166,167,168,169,170,171,172,173,178,179,184,185,196,197,198,199,200,201,202,203,204,205,206,207,208,209,214,215,220,221]}catch(e){}yO.inspectOpts=Object.keys(process.env).filter((e)=>/^debug_/i.test(e)).reduce((e,t)=>{let n=t.substring(6).toLowerCase().replace(/_([a-z])/g,(o,s)=>s.toUpperCase()),r=process.env[t];if(/^(yes|on|true|enabled)$/i.test(r))r=!0;else if(/^(no|off|false|disabled)$/i.test(r))r=!1;else if(r==="null")r=null;else r=Number(r);return e[n]=r,e},{});function A2c(){return"colors"in yO.inspectOpts?Boolean(yO.inspectOpts.colors):f2c.isatty(process.stderr.fd)}function h2c(e){let{namespace:t,useColors:n}=this;if(n){let r=this.color,o="\x1B[3"+(r<8?r:"8;5;"+r),s=`  ${o};1m${t} \x1B[0m`;e[0]=s+e[0].split(`
-`).join(`
-`+s),e.push(o+"m+"+men.exports.humanize(this.diff)+"\x1B[0m")}else e[0]=g2c()+t+" "+e[0]}function g2c(){if(yO.inspectOpts.hideDate)return"";return new Date().toISOString()+" "}function _2c(...e){return process.stderr.write(pen.formatWithOptions(yO.inspectOpts,...e)+`
-`)}function y2c(e){if(e)process.env.DEBUG=e;else delete process.env.DEBUG}function T2c(){return process.env.DEBUG}function S2c(e){e.inspectOpts={};let t=Object.keys(yO.inspectOpts);for(let n=0;n<t.length;n++)e.inspectOpts[t[n]]=yO.inspectOpts[t[n]]}men.exports=Dpr()(yO);var{formatters:RKo}=men.exports;RKo.o=function(e){return this.inspectOpts.colors=this.useColors,pen.inspect(e,this.inspectOpts).split(`
-`).map((t)=>t.trim()).join(" ")};RKo.O=function(e){return this.inspectOpts.colors=this.useColors,pen.inspect(e,this.inspectOpts)}});
-export {xKo};
+import {b} from "../runtime.ts";
+function r_r(e){if(typeof e!=="string")return!1;return/^([a-z][a-z\d+\-.]*:)?\/\//i.test(e)}
+function o_r(e,t){return t?e.replace(/\/?\/$/,"")+"/"+t.replace(/^\/+/,""):e}
+function u1e(e,t,n){let r=!r_r(t);if(e&&(r||n===!1))return o_r(e,t);return t}
+var qnn=()=>{};
+function oGc(e){try{return new URL(e)}catch{return null}}
+function hZo(e){var t=(typeof e==="string"?oGc(e):e)||{},n=t.protocol,r=t.host,o=t.port;if(typeof r!=="string"||!r||typeof n!=="string")return"";if(n=n.split(":",1)[0],r=r.replace(/:\d*$/,""),o=parseInt(o)||rGc[n]||0,!sGc(r,o))return"";var s=s_r(n+"_proxy")||s_r("all_proxy");if(s&&s.indexOf("://")===-1)s=n+"://"+s;return s}
+function sGc(e,t){var n=s_r("no_proxy").toLowerCase();if(!n)return!0;if(n==="*")return!1;return n.split(/[,\s]/).every(function(r){if(!r)return!0;var o=r.match(/^(.+):(\d+)$/),s=o?o[1]:r,i=o?parseInt(o[2]):0;if(i&&i!==t)return!0;if(!/^[.*]/.test(s))return e!==s;if(s.charAt(0)==="*")s=s.slice(1);return!e.endsWith(s)})}
+function s_r(e){return process.env[e.toLowerCase()]||process.env[e.toUpperCase()]||""}
+var rGc;
+var gZo=b(()=>{rGc={ftp:21,gopher:70,http:80,https:443,ws:80,wss:443}});
+export {r_r,o_r,u1e,qnn,oGc,hZo,sGc,s_r,rGc,gZo};

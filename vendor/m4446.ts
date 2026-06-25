@@ -1,12 +1,15 @@
 // @ts-nocheck
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {fGn,EH,hGn} from "../src/mcp/4446_type.ts";
+import {qt,TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {Rot,Z$e} from "./m2776.ts";
 import {b} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-import {Go} from "./m632.ts";
-import {qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Xt} from "../src/config/0228_encoding.ts";
-import {uZ} from "../src/config/2245_displayName.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-var ddy,pdy;
-var crl=b(()=>{Xr();Go();qe();Xt();uZ();ddy=we(()=>E.object({updatedAt:E.string().min(1)})),pdy=we(()=>E.object({syncedFrom:E.string().min(1)}))});
-export {ddy,pdy,crl};
+function Gal({processId:e,hookId:t,asyncResponse:n,hookName:r,hookEvent:o,command:s,shellCommand:i,toolName:a,pluginId:l}){let c=n.asyncTimeout||15000;logForDebugging(`Hooks: Registering async hook ${e} (${r}) with timeout ${c}ms`);let u=fGn({hookId:t,hookName:r,hookEvent:o,getOutput:async()=>{let d=jce.get(e)?.shellCommand?.taskOutput;if(!d)return{stdout:"",stderr:"",output:""};let p=await d.getStdout(),m=d.getStderr();return{stdout:p,stderr:m,output:p+m}}});jce.set(e,{processId:e,hookId:t,hookName:r,hookEvent:o,toolName:a,pluginId:l,command:s,startTime:Date.now(),timeout:c,responseAttachmentSent:!1,shellCommand:i,stopProgressInterval:u})}
+async function cEo(e,t,n){e.stopProgressInterval();let r=e.shellCommand?.taskOutput,o=r?await r.getStdout():"",s=r?.getStderr()??"";e.shellCommand?.cleanup(),EH({hookId:e.hookId,hookName:e.hookName,hookEvent:e.hookEvent,output:o+s,stdout:o,stderr:s,exitCode:t,outcome:n})}
+async function Val(){let e=[],t=jce.size;logForDebugging(`Hooks: Found ${t} total hooks in registry`);let n=Array.from(jce.values()),r=await Promise.allSettled(n.map(async(s)=>{let i=await s.shellCommand?.taskOutput.getStdout()??"",a=s.shellCommand?.taskOutput.getStderr()??"";if(logForDebugging(`Hooks: Checking hook ${s.processId} (${s.hookName}) - attachmentSent: ${s.responseAttachmentSent}, stdout length: ${i.length}`),!s.shellCommand)return logForDebugging(`Hooks: Hook ${s.processId} has no shell command, removing from registry`),s.stopProgressInterval(),{type:"remove",processId:s.processId};if(logForDebugging(`Hooks: Hook shell status ${s.shellCommand.status}`),s.shellCommand.status==="killed")return logForDebugging(`Hooks: Hook ${s.processId} is ${s.shellCommand.status}, removing from registry`),s.stopProgressInterval(),s.shellCommand.cleanup(),{type:"remove",processId:s.processId};if(s.shellCommand.status!=="completed")return{type:"skip"};if(s.responseAttachmentSent)return logForDebugging(`Hooks: Skipping hook ${s.processId} - already delivered`),s.stopProgressInterval(),{type:"remove",processId:s.processId};let l=i.split(`
+`);logForDebugging(`Hooks: Processing ${l.length} lines of stdout for ${s.processId}`);let u=(await s.shellCommand.result).code,d={};for(let p of l)if(p.trim().startsWith("{")){logForDebugging(`Hooks: Found JSON line: ${p.trim().substring(0,100)}...`);try{let m=qt(p.trim());if(!("async"in m)){logForDebugging(`Hooks: Found sync response from ${s.processId}: ${TeamDeleteToolName(m)}`),d=m;break}}catch{logForDebugging(`Hooks: Failed to parse JSON from ${s.processId}: ${p.trim()}`)}}if(s.responseAttachmentSent=!0,await cEo(s,u,u===0?"success":"error"),Object.keys(d).length===0&&u===0&&!a.trim())return logForDebugging(`Hooks: ${s.processId} (${s.hookName}) produced no response payload \u2014 skipping attachment`),{type:"remove",processId:s.processId,isSessionStart:s.hookEvent==="SessionStart"};return{type:"response",processId:s.processId,isSessionStart:s.hookEvent==="SessionStart",payload:{processId:s.processId,response:d,hookName:s.hookName,hookEvent:s.hookEvent,toolName:s.toolName,pluginId:s.pluginId,stdout:i,stderr:a,exitCode:u}}})),o=!1;for(let s of r){if(s.status!=="fulfilled"){logForDebugging(`Hooks: checkForAsyncHookResponses callback rejected: ${s.reason}`,{level:"error"});continue}let i=s.value;if(i.type==="remove"){if(jce.delete(i.processId),"isSessionStart"in i&&i.isSessionStart)o=!0}else if(i.type==="response"){if(e.push(i.payload),jce.delete(i.processId),i.isSessionStart)o=!0}}if(o)logForDebugging("Invalidating session env cache after SessionStart hook completed"),Rot();return logForDebugging(`Hooks: checkForNewResponses returning ${e.length} responses`),e}
+function Kal(e){for(let t of e){let n=jce.get(t);if(n&&n.responseAttachmentSent)logForDebugging(`Hooks: Removing delivered hook ${t}`),n.stopProgressInterval(),jce.delete(t)}}
+async function uEo(){let e=Array.from(jce.values());await Promise.all(e.map(async(t)=>{if(t.shellCommand?.status==="completed"){let n=await t.shellCommand.result;await cEo(t,n.code,n.code===0?"success":"error")}else{if(t.shellCommand&&t.shellCommand.status!=="killed")t.shellCommand.kill();await cEo(t,1,"cancelled")}})),jce.clear()}
+var jce;
+var gGn=b(()=>{qe();Z$e();tn();hGn();jce=new Map});
+export {Gal,cEo,Val,Kal,uEo,jce,gGn};

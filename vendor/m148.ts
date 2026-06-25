@@ -1,12 +1,9 @@
 // @ts-nocheck
-import {Ia,Yr,Wde} from "./m135.ts";
-import {QWe,u$o,Drr} from "./m140.ts";
+import {QJt,WorkloadIdentityError,Gbe,JJt,J6o,jJt,OAUTH_API_BETA_HEADER,W9,XJt,zKe,TX} from "./m140.ts";
+import {SX} from "./m141.ts";
+import {initSessionMetadataPersistence} from "../src/core/0140_key.ts";
+import {nXt,tbt} from "../src/core/0146_fromFile.ts";
 import {b} from "../runtime.ts";
-class uSe{constructor(){zj.set(this,void 0),Yj.set(this,void 0),Ia(this,zj,new Uint8Array,"f"),Ia(this,Yj,null,"f")}decode(e){if(e==null)return[];let t=e instanceof ArrayBuffer?new Uint8Array(e):typeof e==="string"?QWe(e):e;Ia(this,zj,u$o([Yr(this,zj,"f"),t]),"f");let n=[],r;while((r=Thc(Yr(this,zj,"f"),Yr(this,Yj,"f")))!=null){if(r.carriage&&Yr(this,Yj,"f")==null){Ia(this,Yj,r.index,"f");continue}if(Yr(this,Yj,"f")!=null&&(r.index!==Yr(this,Yj,"f")+1||r.carriage)){n.push(Drr(Yr(this,zj,"f").subarray(0,Yr(this,Yj,"f")-1))),Ia(this,zj,Yr(this,zj,"f").subarray(Yr(this,Yj,"f")),"f"),Ia(this,Yj,null,"f");continue}let o=Yr(this,Yj,"f")!==null?r.preceding-1:r.preceding,s=Drr(Yr(this,zj,"f").subarray(0,o));n.push(s),Ia(this,zj,Yr(this,zj,"f").subarray(r.index),"f"),Ia(this,Yj,null,"f")}return n}flush(){if(!Yr(this,zj,"f").length)return[];return this.decode(`
-`)}}
-function Thc(e,t){for(let o=t??0;o<e.length;o++){if(e[o]===10)return{preceding:o,index:o+1,carriage:!1};if(e[o]===13)return{preceding:o,index:o+1,carriage:!0}}return null}
-function E$o(e){for(let r=0;r<e.length-1;r++){if(e[r]===10&&e[r+1]===10)return r+2;if(e[r]===13&&e[r+1]===13)return r+2;if(e[r]===13&&e[r+1]===10&&r+3<e.length&&e[r+2]===13&&e[r+3]===10)return r+4}return-1}
-var zj,Yj;
-var Nrr=b(()=>{Wde();zj=new WeakMap,Yj=new WeakMap;uSe.NEWLINE_CHARS=new Set([`
-`,"\r"]);uSe.NEWLINE_REGEXP=/\r\n|[\n\r]/g});
-export {uSe,Thc,E$o,zj,Yj,Nrr};
+function p5o(e){return async(t)=>{let n=await import("fs");await QJt(e.credentialsPath,e.onSafetyWarning);let r;try{r=await n.promises.readFile(e.credentialsPath,"utf-8")}catch(g){throw new WorkloadIdentityError(`Credentials file not found at ${e.credentialsPath}: ${g}`)}let o;try{o=JSON.parse(r)}catch(g){throw new WorkloadIdentityError(`Credentials file at ${e.credentialsPath} is not valid JSON: ${g}`)}let s=o.access_token;if(!s)throw new WorkloadIdentityError(`Credentials file at ${e.credentialsPath} must include 'access_token'`);let i=o.expires_at;if(!t?.forceRefresh&&(i==null||SX()<i-Gbe))return{token:s,expiresAt:i??null};let a=o.refresh_token;if(!e.clientId||!a)throw new WorkloadIdentityError(`Access token at ${e.credentialsPath} has expired and no refresh is available (client_id ${e.clientId?"set":"empty"}, refresh_token ${a?"set":"empty"})`);JJt(e.baseURL);let l={grant_type:J6o,refresh_token:a,client_id:e.clientId},c=`${e.baseURL}${jJt}`,u;try{u=await e.fetch(c,{method:"POST",headers:{"Content-Type":"application/json","anthropic-beta":OAUTH_API_BETA_HEADER,"User-Agent":e.userAgent||`anthropic-sdk-typescript/${initSessionMetadataPersistence} userOAuthProvider`},body:JSON.stringify(l)})}catch(g){throw new WorkloadIdentityError(`User OAuth refresh failed to reach token endpoint: ${g}`)}let d=u.headers.get("Request-Id");if(!u.ok){let g=await u.text().catch(()=>"");throw new WorkloadIdentityError(`User OAuth refresh failed (HTTP ${u.status}): ${W9(g)}`,u.status,W9(g),d)}let p=await XJt(u,d),m=Number(p.expires_in);if(!Number.isFinite(m))throw new WorkloadIdentityError(`User OAuth refresh response missing or invalid expires_in: ${JSON.stringify(W9(p))}`,u.status,W9(p),d);let f=SX()+m,h=p.refresh_token||a;return await zKe(e.credentialsPath,{...o,version:nXt,type:"oauth_token",access_token:p.access_token,expires_at:f,refresh_token:h}),{token:p.access_token,expiresAt:f}}}
+var m5o=b(()=>{tbt();TX()});
+export {p5o,m5o};

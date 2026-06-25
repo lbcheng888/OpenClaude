@@ -1,0 +1,12 @@
+// @ts-nocheck
+import {markScrollActivity,lt} from "../src/session/0132_sent.ts";
+import {pO,mHi,mtt} from "./m2377.ts";
+import {MHi,_tt} from "../src/config/2385__eventHandlers.ts";
+import {BaseBox,xZ} from "./m2397.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function ajp({children:e,ref:t,stickyScroll:n,followGrowth:r,...o}){let s=KDe.useRef(null),[,i]=KDe.useState(0),a=KDe.useRef(new Set),l=KDe.useRef(!1),c=()=>{for(let d of a.current)d()};function u(d){if(markScrollActivity(),pO(d),MHi(),c(),l.current)return;l.current=!0,queueMicrotask(()=>{l.current=!1,mHi(d)})}return KDe.useImperativeHandle(t,()=>({scrollTo(d){let p=s.current;if(!p)return;p.stickyScroll=!1,p.pendingScrollDelta=void 0,p.scrollAnchor=void 0,p.scrollTop=Math.max(0,Math.floor(d)),u(p)},scrollToElement(d,p=0){let m=s.current;if(!m)return;m.stickyScroll=!1,m.pendingScrollDelta=void 0,m.scrollAnchor={el:d,offset:p},u(m)},scrollBy(d){let p=s.current;if(!p)return;p.stickyScroll=!1,p.scrollAnchor=void 0,p.pendingScrollDelta=(p.pendingScrollDelta??0)+Math.floor(d),u(p)},scrollToBottom(){let d=s.current;if(!d)return;if(d.pendingScrollDelta=void 0,n===!1){d.scrollAnchor=void 0,d.scrollTop=Math.max(0,(d.scrollHeight??0)-(d.scrollViewportHeight??0)),u(d);return}d.stickyScroll=!0,pO(d),c(),i((p)=>p+1)},getScrollTop(){return s.current?.scrollTop??0},getPendingDelta(){return s.current?.pendingScrollDelta??0},getScrollHeight(){return s.current?.scrollHeight??0},getFreshScrollHeight(){return s.current?.childNodes[0]?.yogaNode?.getComputedHeight()??s.current?.scrollHeight??0},getViewportHeight(){return s.current?.scrollViewportHeight??0},getViewportTop(){return s.current?.scrollViewportTop??0},isSticky(){let d=s.current;if(!d)return!1;return d.stickyScroll??Boolean(d.attributes.stickyScroll)},subscribe(d){return a.current.add(d),()=>a.current.delete(d)},setClampBounds(d,p){let m=s.current;if(!m)return;m.scrollClampMin=d,m.scrollClampMax=p},getDomElement(){return s.current}}),[n]),cCo.jsx("ink-box",{ref:(d)=>{if(s.current=d,d)d.scrollTop??=0},style:{flexWrap:"nowrap",flexDirection:o.flexDirection??"row",flexGrow:o.flexGrow??0,flexShrink:o.flexShrink??1,...o,overflowX:"scroll",overflowY:"scroll"},...n!==void 0&&{stickyScroll:n},...r!==void 0&&{followGrowth:r},children:cCo.jsx(BaseBox,{flexDirection:"column",flexGrow:1,flexShrink:0,width:"100%",children:e})})}
+var KDe,cCo,f6;
+var zDe=b(()=>{lt();mtt();_tt();xZ();KDe=x(et(),1),cCo=x(oe(),1);f6=ajp});
+export {ajp,KDe,cCo,f6,zDe};

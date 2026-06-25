@@ -1,16 +1,11 @@
 // @ts-nocheck
-import {IQ,vpn} from "./m1643.ts";
-import {b,M} from "../runtime.ts";
-import {qEt} from "./m743.ts";
-import {pWs} from "./m1659.ts";
-function Dpn(e){if(process.env[e])return process.env[e];else if(process.env[e.toLowerCase()])return process.env[e.toLowerCase()];return}
-function lNu(){if(!process)return;let e=Dpn(rNu),t=Dpn(sNu),n=Dpn(oNu);return e||t||n}
-function cNu(e,t,n){if(t.length===0)return!1;let r=new URL(e).hostname;if(n===null||n===void 0?void 0:n.has(r))return n.get(r);let o=!1;for(let s of t)if(s[0]==="."){if(r.endsWith(s))o=!0;else if(r.length===s.length-1&&r===s.slice(1))o=!0}else if(r===s)o=!0;return n===null||n===void 0||n.set(r,o),o}
-function uNu(){let e=Dpn(iNu);if(_Ws=!0,e)return e.split(",").map((t)=>t.trim()).filter((t)=>t.length);return[]}
-function dNu(){let e=lNu();return e?new URL(e):void 0}
-function fWs(e){let t;try{t=new URL(e.host)}catch(n){throw Error(`Expecting a valid host string in proxy settings, but found "${e.host}".`)}if(t.port=String(e.port),e.username)t.username=e.username;if(e.password)t.password=e.password;return t}
-function AWs(e,t,n){if(e.agent)return;let o=new URL(e.url).protocol!=="https:";if(e.tlsSettings)IQ.warning("TLS settings are not supported in combination with custom Proxy, certificates provided to the client will be ignored.");let s=e.headers.toJSON();if(o){if(!t.httpProxyAgent)t.httpProxyAgent=new gWs.HttpProxyAgent(n,{headers:s});e.agent=t.httpProxyAgent}else{if(!t.httpsProxyAgent)t.httpsProxyAgent=new hWs.HttpsProxyAgent(n,{headers:s});e.agent=t.httpsProxyAgent}}
-function FHr(e,t){if(!_Ws)mWs.push(...uNu());let n=e?fWs(e):dNu(),r={};return{name:BHr,async sendRequest(o,s){var i;if(!o.proxySettings&&n&&!cNu(o.url,(i=t===null||t===void 0?void 0:t.customNoProxyList)!==null&&i!==void 0?i:mWs,(t===null||t===void 0?void 0:t.customNoProxyList)?void 0:aNu))AWs(o,r,n);else if(o.proxySettings)AWs(o,r,fWs(o.proxySettings));return s(o)}}}
-var hWs,gWs,rNu="HTTPS_PROXY",oNu="HTTP_PROXY",sNu="ALL_PROXY",iNu="NO_PROXY",BHr="proxyPolicy",mWs,_Ws=!1,aNu;
-var yWs=b(()=>{vpn();hWs=M(qEt(),1),gWs=M(pWs(),1),mWs=[],aNu=new Map});
-export {Dpn,lNu,cNu,uNu,dNu,fWs,AWs,FHr,hWs,gWs,rNu,oNu,sNu,iNu,BHr,mWs,_Ws,aNu,yWs};
+import {eQe,lse,aOr} from "./m1659.ts";
+import {ise,fHt} from "./m1640.ts";
+import {b} from "../runtime.ts";
+function e6u(e){var t;let n={};for(let[r,o]of e.entries())(t=n[r])!==null&&t!==void 0||(n[r]=[]),n[r].push(o);return n}
+function cOr(){return{name:lOr,async sendRequest(e,t){if(eQe&&typeof FormData<"u"&&e.body instanceof FormData)e.formData=e6u(e.body),e.body=void 0;if(e.formData){let n=e.headers.get("Content-Type");if(n&&n.indexOf("application/x-www-form-urlencoded")!==-1)e.body=t6u(e.formData);else await n6u(e.formData,e);e.formData=void 0}return t(e)}}}
+function t6u(e){let t=new URLSearchParams;for(let[n,r]of Object.entries(e))if(Array.isArray(r))for(let o of r)t.append(n,o.toString());else t.append(n,r.toString());return t.toString()}
+async function n6u(e,t){let n=t.headers.get("Content-Type");if(n&&!n.startsWith("multipart/form-data"))return;t.headers.set("Content-Type",n!==null&&n!==void 0?n:"multipart/form-data");let r=[];for(let[o,s]of Object.entries(e))for(let i of Array.isArray(s)?s:[s])if(typeof i==="string")r.push({headers:ise({"Content-Disposition":`form-data; name="${o}"`}),body:lse(i,"utf-8")});else if(i===void 0||i===null||typeof i!=="object")throw Error(`Unexpected value for key ${o}: ${i}. Value should be serialized to string first.`);else{let a=i.name||"blob",l=ise();l.set("Content-Disposition",`form-data; name="${o}"; filename="${a}"`),l.set("Content-Type",i.type||"application/octet-stream"),r.push({headers:l,body:i})}t.multipartBody={parts:r}}
+var lOr="formDataPolicy";
+var Qjs=b(()=>{aOr();fHt()});
+export {e6u,cOr,t6u,n6u,lOr,Qjs};

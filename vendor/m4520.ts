@@ -1,22 +1,7 @@
 // @ts-nocheck
-import {useIsScreenReaderEnabled} from "./m2434.ts";
-import {hIi,IEn} from "./m2552.ts";
-import {T3r,Yl} from "./m2562.ts";
-import {bil,Eil} from "./m4519.ts";
-import {iP,gAe} from "./m2533.ts";
-import {Box} from "./m2422.ts";
-import {Eet,g3r} from "./m2557.ts";
-import {Text} from "./m2423.ts";
-import {et,Ai} from "./m2208.ts";
-import {Owe,DEn} from "./m2556.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function sDe(e){let t=Myo.c(11);if(useIsScreenReaderEnabled()){let o;if(t[0]!==e.defaultValue||t[1]!==e.isDisabled||t[2]!==e.onCancel||t[3]!==e.onChange||t[4]!==e.onFocus||t[5]!==e.onSubmit||t[6]!==e.options||t[7]!==e.submitButtonText)o=oD.default.createElement(hIi,{options:e.options,defaultValue:e.defaultValue,onChange:e.onChange,onSubmit:e.onSubmit,onFocus:e.onFocus,onCancel:e.onCancel,isDisabled:e.isDisabled,submitButtonText:e.submitButtonText}),t[0]=e.defaultValue,t[1]=e.isDisabled,t[2]=e.onCancel,t[3]=e.onChange,t[4]=e.onFocus,t[5]=e.onSubmit,t[6]=e.options,t[7]=e.submitButtonText,t[8]=o;else o=t[8];return o}let r;if(t[9]!==e)r=oD.default.createElement(r5p,{...e}),t[9]=e,t[10]=r;else r=t[10];return r}
-function r5p(e){let t=Myo.c(51),{isDisabled:n,visibleOptionCount:r,options:o,defaultValue:s,onCancel:i,onChange:a,onFocus:l,focusValue:c,submitButtonText:u,onSubmit:d,onDownFromLastItem:p,onUpFromFirstItem:m,initialFocusLast:f,onOpenEditor:A,hideIndexes:h,onImagePaste:g,pastedContents:_,onRemoveImage:y}=e,T=n===void 0?!1:n,S=r===void 0?5:r,v;if(t[0]!==s)v=s===void 0?[]:s,t[0]=s,t[1]=v;else v=t[1];let R=v,k=h===void 0?!1:h,x=o.some(s5p),H=T3r(S,x?"compact-vertical":"compact"),I;if(t[2]!==R||t[3]!==c||t[4]!==k||t[5]!==f||t[6]!==T||t[7]!==i||t[8]!==a||t[9]!==p||t[10]!==l||t[11]!==d||t[12]!==m||t[13]!==o||t[14]!==u||t[15]!==H)I={isDisabled:T,visibleOptionCount:H,options:o,defaultValue:R,onChange:a,onCancel:i,onFocus:l,focusValue:c,submitButtonText:u,onSubmit:d,onDownFromLastItem:p,onUpFromFirstItem:m,initialFocusLast:f,hideIndexes:k},t[2]=R,t[3]=c,t[4]=k,t[5]=f,t[6]=T,t[7]=i,t[8]=a,t[9]=p,t[10]=l,t[11]=d,t[12]=m,t[13]=o,t[14]=u,t[15]=H,t[16]=I;else I=t[16];let P=bil(I),L=oD.useRef(null);iP(L,!T);let D,N,O,$,U,W,G;if(t[17]!==k||t[18]!==T||t[19]!==i||t[20]!==g||t[21]!==A||t[22]!==y||t[23]!==o.length||t[24]!==_||t[25]!==P){let Y=o.length.toString().length;if(N=Box,O="column",$=L,t[33]!==T||t[34]!==P.handleKeyDown)U=T?{}:{tabIndex:0,onKeyDown:P.handleKeyDown},t[33]=T,t[34]=P.handleKeyDown,t[35]=U;else U=t[35];D=Box,W="column",G=P.visibleOptions.map((J,ee)=>{let te=!T&&P.focusedValue===J.value&&!P.isSubmitFocused,ne=P.selectedValues.includes(J.value),re=J.index===P.visibleFromIndex,oe=J.index===P.visibleToIndex-1,ce=P.visibleToIndex<o.length,ue=P.visibleFromIndex>0,ae=P.visibleFromIndex+ee+1;if(J.type==="input"){let he=P.inputValues.get(J.value)||"";return oD.default.createElement(Box,{key:String(J.value),gap:1},oD.default.createElement(Eet,{option:J,isFocused:te,isSelected:!1,shouldShowDownArrow:ce&&oe,shouldShowUpArrow:ue&&re,maxIndexWidth:Y,index:ae,inputValue:he,onInputChange:(se)=>{P.updateInputValue(J.value,se)},onSubmit:o5p,onExit:()=>{i()},layout:"compact",onOpenEditor:A,onImagePaste:g,pastedContents:_,onRemoveImage:y},oD.default.createElement(Text,{color:ne?"success":void 0},"[",ne?et.tick:" ","]"," ")))}return oD.default.createElement(Box,{key:String(J.value),gap:1},oD.default.createElement(Owe,{isFocused:te,isSelected:!1,shouldShowDownArrow:ce&&oe,shouldShowUpArrow:ue&&re,description:J.description},!k&&oD.default.createElement(Text,{dimColor:!0},`${ae}.`.padEnd(Y)),oD.default.createElement(Text,{color:ne?"success":void 0},"[",ne?et.tick:" ","]"),oD.default.createElement(Text,{color:te?"suggestion":void 0},J.label)))}),t[17]=k,t[18]=T,t[19]=i,t[20]=g,t[21]=A,t[22]=y,t[23]=o.length,t[24]=_,t[25]=P,t[26]=D,t[27]=N,t[28]=O,t[29]=$,t[30]=U,t[31]=W,t[32]=G}else D=t[26],N=t[27],O=t[28],$=t[29],U=t[30],W=t[31],G=t[32];let V;if(t[36]!==D||t[37]!==W||t[38]!==G)V=oD.default.createElement(D,{flexDirection:W},G),t[36]=D,t[37]=W,t[38]=G,t[39]=V;else V=t[39];let Q;if(t[40]!==d||t[41]!==P.isSubmitFocused||t[42]!==u)Q=u&&d&&oD.default.createElement(Box,{marginTop:0,gap:1},P.isSubmitFocused?oD.default.createElement(Text,{color:"suggestion"},et.pointer):oD.default.createElement(Text,null," "),oD.default.createElement(Box,{marginLeft:3},oD.default.createElement(Text,{color:P.isSubmitFocused?"suggestion":void 0,bold:!0},u))),t[40]=d,t[41]=P.isSubmitFocused,t[42]=u,t[43]=Q;else Q=t[43];let K;if(t[44]!==N||t[45]!==O||t[46]!==$||t[47]!==U||t[48]!==V||t[49]!==Q)K=oD.default.createElement(N,{flexDirection:O,ref:$,...U},V,Q),t[44]=N,t[45]=O,t[46]=$,t[47]=U,t[48]=V,t[49]=Q,t[50]=K;else K=t[50];return K}
-function o5p(){}
-function s5p(e){return e.description}
-var Myo,oD;
-var d6t=b(()=>{Ai();gAe();ze();IEn();Yl();g3r();DEn();Eil();Myo=M(rt(),1),oD=M(Te(),1)});
-export {sDe,r5p,o5p,s5p,Myo,oD,d6t};
+import {b} from "../runtime.ts";
+import {Spl,ypl} from "./m4519.ts";
+function bpl(){return!0}
+var BYp,Epl;
+var Cpl=b(()=>{BYp={type:"local-jsx",name:"desktop",aliases:["app"],description:"Continue the current session in Claude Desktop",availability:["claude-ai"],isEnabled:bpl,get isHidden(){return!bpl()},load:()=>Promise.resolve().then(() => (Spl(),ypl))},Epl=BYp});
+export {bpl,BYp,Epl,Cpl};

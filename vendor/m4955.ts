@@ -1,17 +1,19 @@
 // @ts-nocheck
-import {Eu} from "./m3812.ts";
-import {Tn,zs} from "./m2554.ts";
-import {at,rs} from "./m2546.ts";
-import {lr,readRoster} from "./m2547.ts";
-import {React,CE} from "./m3813.ts";
-import {Box} from "./m2422.ts";
-import {pr,Yl} from "./m2562.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {$y} from "./m3814.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function uRl(){let e=cRl.c(11),{goNext:t,updateWizardData:n,cancel:r}=Eu(),o;if(e[0]===Symbol.for("react.memo_cache_sentinel"))o={label:"Project (.claude/agents/)",value:"projectSettings"},e[0]=o;else o=e[0];let s;if(e[1]===Symbol.for("react.memo_cache_sentinel"))s=[o,{label:"Personal (~/.claude/agents/)",value:"userSettings"}],e[1]=s;else s=e[1];let i=s,a;if(e[2]===Symbol.for("react.memo_cache_sentinel"))a=tPe.default.createElement(Tn,null,tPe.default.createElement(at,{chord:["up","down"],action:"navigate"}),tPe.default.createElement(at,{chord:"enter",action:"select"}),tPe.default.createElement(lr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"cancel"})),e[2]=a;else a=e[2];let l;if(e[3]!==t||e[4]!==n)l=(d)=>{n({location:d}),t()},e[3]=t,e[4]=n,e[5]=l;else l=e[5];let c;if(e[6]!==r)c=()=>r(),e[6]=r,e[7]=c;else c=e[7];let u;if(e[8]!==l||e[9]!==c)u=tPe.default.createElement(React,{subtitle:"Choose location",footerText:a},tPe.default.createElement(Box,null,tPe.default.createElement(pr,{key:"location-select",options:i,onChange:l,onCancel:c}))),e[8]=l,e[9]=c,e[10]=u;else u=e[10];return u}
-var cRl,tPe;
-var dRl=b(()=>{ze();readRoster();Yl();zs();rs();$y();CE();cRl=M(rt(),1),tPe=M(Te(),1)});
-export {uRl,cRl,tPe,dRl};
+import {os} from "../src/api/0465_getOauthConfig.ts";
+import {at,Wo} from "./m2557.ts";
+import {wl,sy} from "./m2585.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Box} from "./m2432.ts";
+import {hr,Ol} from "./m2573.ts";
+import {GDl,Cgt} from "./m4951.ts";
+import {Sn,lr} from "./m233.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function rPl(e){let t=nPl.c(26),{selectedEvent:n,matchersForSelectedEvent:r,hooksByEventAndMatcher:o,eventDescription:s,onSelect:i,onCancel:a}=e,l;if(t[0]!==o||t[1]!==r||t[2]!==n){let h;if(t[4]!==o||t[5]!==n)h=(g)=>{let _=o[n]?.[g]||[],T=os(_.map(Qhm));return{matcher:g,sources:T,hookCount:_.length}},t[4]=o,t[5]=n,t[6]=h;else h=t[6];l=r.map(h),t[0]=o,t[1]=r,t[2]=n,t[3]=l}else l=t[3];let c=l;if(r.length===0){let h=`${n} - Matchers`,g,_;if(t[7]===Symbol.for("react.memo_cache_sentinel"))g=GWe.jsx(at,{chord:"escape",action:"go back"}),_=GWe.jsx(wl,{hint:"To add hooks, edit settings.json directly or ask Claude",children:"No hooks configured for this event"}),t[7]=g,t[8]=_;else g=t[7],_=t[8];let T;if(t[9]!==s||t[10]!==a||t[11]!==h)T=GWe.jsx(preInitQueue,{title:h,subtitle:s,onCancel:a,inputGuide:g,children:_}),t[9]=s,t[10]=a,t[11]=h,t[12]=T;else T=t[12];return T}let u=`${n} - Matchers`,d;if(t[13]!==c)d=c.map(Xhm),t[13]=c,t[14]=d;else d=t[14];let p;if(t[15]!==i)p=(h)=>{i(h)},t[15]=i,t[16]=p;else p=t[16];let m;if(t[17]!==a||t[18]!==d||t[19]!==p)m=GWe.jsx(Box,{flexDirection:"column",children:GWe.jsx(hr,{options:d,onChange:p,onCancel:a})}),t[17]=a,t[18]=d,t[19]=p,t[20]=m;else m=t[20];let f;if(t[21]!==s||t[22]!==a||t[23]!==u||t[24]!==m)f=GWe.jsx(preInitQueue,{title:u,subtitle:s,onCancel:a,children:m}),t[21]=s,t[22]=a,t[23]=u,t[24]=m,t[25]=f;else f=t[25];return f}
+function Xhm(e){let t=e.sources.map(GDl).join(", "),n=e.matcher||"(all)";return{label:`[${t}] ${n}`,value:e.matcher,description:`${e.hookCount} ${Sn(e.hookCount,"hook")}`}}
+function Qhm(e){return e.source}
+var nPl,GWe;
+var oPl=b(()=>{je();Cgt();lr();Ol();di();sy();Wo();nPl=x(tt(),1),GWe=x(oe(),1)});
+export {rPl,Xhm,Qhm,nPl,GWe,oPl};

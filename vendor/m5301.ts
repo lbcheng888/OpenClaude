@@ -1,13 +1,12 @@
 // @ts-nocheck
-import {Lq,ab} from "../src/config/3178_path.ts";
-import {Ie,Oe,ln} from "../src/telemetry/0594_feature_name.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {b,M} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-import {Te} from "./m2253.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-function f4l(e,t){let n=YWt.useRef(void 0),r=YWt.useRef(t);r.current=t,YWt.useEffect(()=>{let o=Lq(e);if(n.current!==o)n.current=o;if(o)o.client.setNotificationHandler(Fxm(),(s)=>{if(n.current!==o)return;try{let i=s.params,a=i.lineStart!==void 0?i.lineStart+1:void 0,l=i.lineEnd!==void 0?i.lineEnd+1:void 0;r.current({filePath:i.filePath,lineStart:a,lineEnd:l}),Ie("ide_at_mention")}catch(i){De(i),Oe("ide_at_mention","ide_at_mention_failed")}})},[e])}
-var YWt,Bxm="at_mentioned",Fxm;
-var A4l=b(()=>{Rn();Xr();ln();ab();YWt=M(Te(),1),Fxm=we(()=>E.object({method:E.literal(Bxm),params:E.object({filePath:E.string(),lineStart:E.number().optional(),lineEnd:E.number().optional()})}))});
-export {f4l,YWt,Bxm,Fxm,A4l};
+import {saveCurrentProjectConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function dNo(e,t){let n=t/100*(e.length-1),r=Math.floor(n),o=Math.ceil(n);if(r===o)return e[r];return e[r]+(e[o]-e[r])*(n-r)}
+function pNo(){let e=new Map,t=new Map,n=new Map;return{increment(r,o=1){e.set(r,(e.get(r)??0)+o)},set(r,o){e.set(r,o)},observe(r,o){let s=t.get(r);if(!s)s={reservoir:[],count:0,sum:0,min:o,max:o},t.set(r,s);if(s.count++,s.sum+=o,o<s.min)s.min=o;if(o>s.max)s.max=o;if(s.reservoir.length<HVl)s.reservoir.push(o);else{let i=Math.floor(Math.random()*s.count);if(i<HVl)s.reservoir[i]=o}},add(r,o){let s=n.get(r);if(!s)s=new Set,n.set(r,s);s.add(o)},getAll(){let r=Object.fromEntries(e);for(let[o,s]of t){if(s.count===0)continue;r[`${o}_count`]=s.count,r[`${o}_min`]=s.min,r[`${o}_max`]=s.max,r[`${o}_avg`]=s.sum/s.count;let i=[...s.reservoir].sort((a,l)=>a-l);r[`${o}_p50`]=dNo(i,50),r[`${o}_p95`]=dNo(i,95),r[`${o}_p99`]=dNo(i,99)}for(let[o,s]of n)r[o]=s.size;return r}}}
+function xVl(e){let t=IVl.c(7),{store:n,children:r}=e,o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o=pNo(),t[0]=o;else o=t[0];let i=n??o,a,l;if(t[1]!==i)a=()=>{let u=()=>{let d=i.getAll();if(Object.keys(d).length>0)saveCurrentProjectConfig((p)=>({...p,lastSessionMetrics:d}))};return process.on("exit",u),()=>{process.off("exit",u)}},l=[i],t[1]=i,t[2]=a,t[3]=l;else a=t[2],l=t[3];i7t.useEffect(a,l);let c;if(t[4]!==r||t[5]!==i)c=DVl.jsx(HLm.Provider,{value:i,children:r}),t[4]=r,t[5]=i,t[6]=c;else c=t[6];return c}
+var IVl,i7t,DVl,HVl=1024,HLm;
+var mNo=b(()=>{tr();IVl=x(tt(),1),i7t=x(et(),1),DVl=x(oe(),1);HLm=i7t.createContext(null)});
+export {dNo,pNo,xVl,IVl,i7t,DVl,HVl,HLm,mNo};

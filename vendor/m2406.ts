@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JCi} from "./m2405.ts";
-var QCi=X((Kih,s$r)=>{var XCi=JCi();s$r.exports=XCi;s$r.exports.default=XCi});
-export {QCi};
+import {b} from "../runtime.ts";
+import {Event} from "./m2264.ts";
+var ClickEvent;
+var kqr=b(()=>{ClickEvent=class ClickEvent extends Event{col;row;localCol=0;localRow=0;cellIsBlank;hyperlinkUrl;defaultAllowed=!1;allowDefault(){this.defaultAllowed=!0}constructor(e,t,n,r){super();this.col=e,this.row=t,this.cellIsBlank=n,this.hyperlinkUrl=r}}});
+export {ClickEvent,kqr};

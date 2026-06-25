@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var hba=X((cFt)=>{Object.defineProperty(cFt,"__esModule",{value:!0});cFt.ExportResultCode=void 0;var Rip;(function(e){e[e.SUCCESS=0]="SUCCESS",e[e.FAILED=1]="FAILED"})(Rip=cFt.ExportResultCode||(cFt.ExportResultCode={}))});
-export {hba};
+import {Q} from "../runtime.ts";
+var xio=Q((yB)=>{Object.defineProperty(yB,"__esModule",{value:!0});yB.BAGGAGE_MAX_TOTAL_LENGTH=yB.BAGGAGE_MAX_PER_NAME_VALUE_PAIRS=yB.BAGGAGE_MAX_NAME_VALUE_PAIRS=yB.BAGGAGE_HEADER=yB.BAGGAGE_ITEMS_SEPARATOR=yB.BAGGAGE_PROPERTIES_SEPARATOR=yB.BAGGAGE_KEY_PAIR_SEPARATOR=void 0;yB.BAGGAGE_KEY_PAIR_SEPARATOR="=";yB.BAGGAGE_PROPERTIES_SEPARATOR=";";yB.BAGGAGE_ITEMS_SEPARATOR=",";yB.BAGGAGE_HEADER="baggage";yB.BAGGAGE_MAX_NAME_VALUE_PAIRS=180;yB.BAGGAGE_MAX_PER_NAME_VALUE_PAIRS=4096;yB.BAGGAGE_MAX_TOTAL_LENGTH=8192});
+export {xio};

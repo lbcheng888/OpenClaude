@@ -1,4 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Tri=X((Zkt)=>{Object.defineProperty(Zkt,"__esModule",{value:!0});Zkt.SamplingDecision=void 0;var S7u;(function(e){e[e.NOT_RECORD=0]="NOT_RECORD",e[e.RECORD=1]="RECORD",e[e.RECORD_AND_SAMPLED=2]="RECORD_AND_SAMPLED"})(S7u=Zkt.SamplingDecision||(Zkt.SamplingDecision={}))});
-export {Tri};
+import {Q} from "../runtime.ts";
+import {ITn} from "./m2071.ts";
+import {DTn} from "./m2072.ts";
+var PTn=Q((Nse)=>{Object.defineProperty(Nse,"__esModule",{value:!0});Nse.wrapSpanContext=Nse.isSpanContextValid=Nse.isValidSpanId=Nse.isValidTraceId=void 0;var ici=ITn(),vnd=DTn(),wnd=/^([0-9a-f]{32})$/i,knd=/^[0-9a-f]{16}$/i;function aci(e){return wnd.test(e)&&e!==ici.INVALID_TRACEID}Nse.isValidTraceId=aci;function lci(e){return knd.test(e)&&e!==ici.INVALID_SPANID}Nse.isValidSpanId=lci;function Hnd(e){return aci(e.traceId)&&lci(e.spanId)}Nse.isSpanContextValid=Hnd;function Ind(e){return new vnd.NonRecordingSpan(e)}Nse.wrapSpanContext=Ind});
+export {PTn};

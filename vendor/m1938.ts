@@ -1,12 +1,15 @@
 // @ts-nocheck
-import {p0,kw,XD} from "./m1634.ts";
-import {XB,nfe} from "./m1918.ts";
-import {isKeybindingCustomizationEnabled,S1} from "./m1712.ts";
-import {Av} from "./m1633.ts";
-import {K8,bse} from "./m1923.ts";
+import {rhn,H0,Oh,VS,Lp} from "./m1636.ts";
+import {I0,uD} from "./m1639.ts";
+import {ClientSecretCredential,nNr} from "./m1936.ts";
+import {ClientCertificateCredential,tNr} from "./m1935.ts";
+import {UsernamePasswordCredential,rNr} from "./m1937.ts";
+import {jg,LM} from "./m1717.ts";
+import {AuthenticationError,CredentialUnavailableError,cD} from "./m1637.ts";
 import {b} from "../runtime.ts";
-import {GS,hm} from "./m1631.ts";
-class AuthorizationCodeCredential{constructor(e,t,n,r,o,s){if(p0(AQs,e),this.clientSecret=n,typeof o==="string")this.authorizationCode=r,this.redirectUri=o;else this.authorizationCode=n,this.redirectUri=r,this.clientSecret=void 0,s=o;this.tenantId=e,this.additionallyAllowedTenantIds=kw(s===null||s===void 0?void 0:s.additionallyAllowedTenants),this.msalClient=XB(t,e,Object.assign(Object.assign({},s),{logger:AQs,tokenCredentialOptions:s!==null&&s!==void 0?s:{}}))}async getToken(e,t={}){return isKeybindingCustomizationEnabled.withSpan(`${this.constructor.name}.getToken`,t,async(n)=>{let r=Av(this.tenantId,n,this.additionallyAllowedTenantIds);n.tenantId=r;let o=K8(e);return this.msalClient.getTokenByAuthorizationCode(o,this.redirectUri,this.authorizationCode,this.clientSecret,Object.assign(Object.assign({},n),{disableAutomaticAuthentication:this.disableAutomaticAuthentication}))})}}
-var AQs;
-var hQs=b(()=>{XD();XD();GS();bse();S1();nfe();AQs=hm("AuthorizationCodeCredential")});
-export {AuthorizationCodeCredential,AQs,hQs};
+function FYu(){var e;return((e=process.env.AZURE_ADDITIONALLY_ALLOWED_TENANTS)!==null&&e!==void 0?e:"").split(";")}
+function BYu(){var e;let t=((e=process.env.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN)!==null&&e!==void 0?e:"").toLowerCase(),n=t==="true"||t==="1";return ffe.verbose(`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN: ${process.env.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN}; sendCertificateChain: ${n}`),n}
+class EnvironmentCredential{constructor(e){this._credential=void 0;let t=rhn(NYu).assigned.join(", ");ffe.info(`Found the following environment variables: ${t}`);let n=process.env.AZURE_TENANT_ID,r=process.env.AZURE_CLIENT_ID,o=process.env.AZURE_CLIENT_SECRET,s=FYu(),i=BYu(),a=Object.assign(Object.assign({},e),{additionallyAllowedTenantIds:s,sendCertificateChain:i});if(n)I0(ffe,n);if(n&&r&&o){ffe.info(`Invoking ClientSecretCredential with tenant ID: ${n}, clientId: ${r} and clientSecret: [REDACTED]`),this._credential=new ClientSecretCredential(n,r,o,a);return}let l=process.env.AZURE_CLIENT_CERTIFICATE_PATH,c=process.env.AZURE_CLIENT_CERTIFICATE_PASSWORD;if(n&&r&&l){ffe.info(`Invoking ClientCertificateCredential with tenant ID: ${n}, clientId: ${r} and certificatePath: ${l}`),this._credential=new ClientCertificateCredential(n,r,{certificatePath:l,certificatePassword:c},a);return}let u=process.env.AZURE_USERNAME,d=process.env.AZURE_PASSWORD;if(n&&r&&u&&d)ffe.info(`Invoking UsernamePasswordCredential with tenant ID: ${n}, clientId: ${r} and username: ${u}`),ffe.warning("Environment is configured to use username and password authentication. This authentication method is deprecated, as it doesn't support multifactor authentication (MFA). Use a more secure credential. For more details, see https://aka.ms/azsdk/identity/mfa."),this._credential=new UsernamePasswordCredential(n,r,u,d,a)}async getToken(e,t={}){return jg.withSpan(`${I_n}.getToken`,t,async(n)=>{if(this._credential)try{let r=await this._credential.getToken(e,n);return ffe.getToken.info(H0(e)),r}catch(r){let o=new AuthenticationError(400,{error:`${I_n} authentication failed. To troubleshoot, visit https://aka.ms/azsdk/js/identity/environmentcredential/troubleshoot.`,error_description:r.message.toString().split("More details:").join("")});throw ffe.getToken.info(Oh(e,o)),o}throw new CredentialUnavailableError(`${I_n} is unavailable. No underlying credential could be used. To troubleshoot, visit https://aka.ms/azsdk/js/identity/environmentcredential/troubleshoot.`)})}}
+var NYu,I_n="EnvironmentCredential",ffe;
+var oNr=b(()=>{cD();VS();tNr();nNr();rNr();uD();LM();NYu=["AZURE_TENANT_ID","AZURE_CLIENT_ID","AZURE_CLIENT_SECRET","AZURE_CLIENT_CERTIFICATE_PATH","AZURE_CLIENT_CERTIFICATE_PASSWORD","AZURE_USERNAME","AZURE_PASSWORD","AZURE_ADDITIONALLY_ALLOWED_TENANTS","AZURE_CLIENT_SEND_CERTIFICATE_CHAIN"];ffe=Lp(I_n)});
+export {FYu,BYu,EnvironmentCredential,NYu,I_n,ffe,oNr};

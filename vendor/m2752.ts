@@ -1,29 +1,17 @@
 // @ts-nocheck
-import {isSdkDialogHostActive,getSdkSupportedDialogKinds,getMainLoopModelOverride,lt} from "../src/session/0131_sent.ts";
-import {mv,parseUserSpecifiedModel,Mo} from "../src/permissions/1453_swapShrinksContextWindow.ts";
-import {Hwn,kwn,YRe,R8r,eW} from "../src/telemetry/2730_raw.ts";
-import {je} from "./m577.ts";
-import {getEffectiveSettingSource,getSettingsForSource,updateSettingsForSource,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {bae,dnt} from "./m2751.ts";
-import {getGlobalConfig,saveGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {sRn,unt} from "./m2750.ts";
+import {isKeybindingCustomizationEnabled,Ve} from "./m5.ts";
 import {b} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-import {Lr} from "./m578.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-function zg(e){return e}
-function m2i(e){return async function(n,r,o){if(cxd(r))return dxd(e,n,r,o);return uxd(e,n,r,o)}}
-function cxd(e){return typeof e==="object"&&e!==null&&Symbol.asyncIterator in e}
-async function uxd(e,t,n,r){let o=t.payload().safeParse(n);if(!o.success)return t.default;let s;try{let{replied:a}=e.request({kind:t.kind,payload:o.data},r);s=await a}catch{return t.default}if("cancelled"in s)return t.default;let i=t.result().safeParse(s.result);return i.success?i.data:t.default}
-async function dxd(e,t,n,r){let o=n[Symbol.asyncIterator](),s=await o.next();if(s.done)return t.default;let i=t.payload().safeParse(s.value);if(!i.success)return o.return?.(void 0),t.default;let a=new AbortController,l=()=>a.abort();if(r?.signal)if(r.signal.aborted)a.abort();else r.signal.addEventListener("abort",l,{once:!0});let{replied:c,update:u}=e.request({kind:t.kind,payload:i.data},{signal:a.signal}),d;(async()=>{try{while(!a.signal.aborted){let A=await o.next();if(A.done)return;if(a.signal.aborted)return;let h=t.payload().safeParse(A.value);if(!h.success)continue;u(h.data)}}catch(A){d=A,a.abort()}})().catch(()=>{});let m;try{m=await c}finally{r?.signal?.removeEventListener("abort",l),o.return?.(void 0)}if(d!==void 0)throw d;if("cancelled"in m)return t.default;let f=t.result().safeParse(m.result);return f.success?f.data:t.default}
-function f2i(e){if(e===void 0)return!1;if(isSdkDialogHostActive()&&!(getSdkSupportedDialogKinds()??[]).includes(ihe.kind))return!1;return!0}
-function pnt(e,t){return mv(e)&&Hwn()&&f2i(t)}
-function A2i(e){return e.isMainThread&&f2i(e.requestDialog)}
-function h2i(e){if(getMainLoopModelOverride()!==void 0)return!1;if(je.ANTHROPIC_MODEL)return!1;if(getEffectiveSettingSource("model")!=="userSettings")return!1;let t=getSettingsForSource("userSettings")?.model;if(t===void 0||!mv(parseUserSpecifiedModel(t)))return!1;return updateSettingsForSource("userSettings",{model:e}),!0}
-async function lRn(){let e=!1;try{e=(await bae())?.extra_usage?.is_enabled===!0}catch{}if(e&&getGlobalConfig().cachedExtraUsageDisabledReason!==null)saveGlobalConfig((t)=>({...t,cachedExtraUsageDisabledReason:null}));return e}
-async function g2i({skipLiveCheck:e=!1}={}){if(!e&&await lRn())return!0;let t=await sRn();if(t&&getGlobalConfig().cachedExtraUsageDisabledReason!==null)saveGlobalConfig((n)=>({...n,cachedExtraUsageDisabledReason:null}));return t}
-async function _2i(){if(kwn(),!YRe())await lRn();return R8r()}
-var ihe;
-var mnt=b(()=>{Xr();lt();unt();dnt();Qn();Lr();eW();Mo();yr();ihe=zg({kind:"fable_overage_consent_prompt",payload:we(()=>E.object({overagesEnabled:E.boolean()})),result:we(()=>E.enum(["consent","switch_default","cancelled"])),default:"cancelled"})});
-export {zg,m2i,cxd,uxd,dxd,f2i,pnt,A2i,h2i,lRn,g2i,_2i,ihe,mnt};
+function C7r(e){return Bke.has(e)?isKeybindingCustomizationEnabled(e):Ve("other")}
+function P4(e){if(!e||typeof e!=="object")return null;let t=e,n=5,r=0;while(t&&r<n){if(t instanceof Error){if("code"in t&&typeof t.code==="string"){let o=t.code,s=g1d.has(o);return{code:o,message:t.message,isSSLError:s}}if(t.message.startsWith(_1d))return{code:"ConnectionClosed",message:t.message,isSSLError:!1}}if(t instanceof Error&&"cause"in t&&t.cause!==t)t=t.cause,r++;else break}return null}
+function y1d(e){let t=P4(e);return t!==null&&xHn.has(t.code)}
+function Uke(e){let t=P4(e);if(!t?.isSSLError)return null;return`SSL certificate error (${t.code}). If you are behind a corporate proxy or TLS-intercepting firewall, set NODE_EXTRA_CA_CERTS to your CA bundle path, or ask IT to allowlist *.anthropic.com. Run /doctor for details.`}
+function E7r(e){if(e.includes("<!DOCTYPE html")||e.includes("<html")){let t=e.match(/<title>([^<]+)<\/title>/);if(t&&t[1])return t[1].trim();return""}return e}
+function T1d(e){let t=e.message;if(!t)return"";return E7r(t)}
+function S1d(e){return typeof e==="object"&&e!==null&&"error"in e&&typeof e.error==="object"&&e.error!==null}
+function b6i(e){if(!S1d(e))return null;let n=e.error,r=n?.error?.message;if(typeof r==="string"&&r.length>0){let s=E7r(r);if(s.length>0)return s}let o=n?.message;if(typeof o==="string"&&o.length>0){let s=E7r(o);if(s.length>0)return s}return null}
+function dot(e){let t=P4(e);if(t){let{code:r,isSSLError:o}=t;if(r==="ETIMEDOUT")return"Request timed out. Check your internet connection and proxy settings";if(o)switch(r){case"UNABLE_TO_VERIFY_LEAF_SIGNATURE":case"UNABLE_TO_GET_ISSUER_CERT":case"UNABLE_TO_GET_ISSUER_CERT_LOCALLY":return"Unable to connect to API: SSL certificate verification failed. Check your proxy or corporate SSL certificates";case"CERT_HAS_EXPIRED":return"Unable to connect to API: SSL certificate has expired";case"CERT_REVOKED":return"Unable to connect to API: SSL certificate has been revoked";case"DEPTH_ZERO_SELF_SIGNED_CERT":case"SELF_SIGNED_CERT_IN_CHAIN":return"Unable to connect to API: Self-signed certificate detected. Check your proxy or corporate SSL certificates";case"ERR_TLS_CERT_ALTNAME_INVALID":case"HOSTNAME_MISMATCH":return"Unable to connect to API: SSL certificate hostname mismatch";case"CERT_NOT_YET_VALID":return"Unable to connect to API: SSL certificate is not yet valid";default:return`Unable to connect to API: SSL error (${r})`}}if(e.message==="Connection error."){if(t?.code)return`Unable to connect to API (${t.code})`;return"Unable to connect to API. Check your internet connection"}if(!e.message)return b6i(e)??`API error (status ${e.status??"unknown"})`;if(e.message.includes('{"')){let r=b6i(e);if(r)return e.status?`${e.status} ${r}`:r}let n=T1d(e);return n!==e.message&&n.length>0?n:e.message}
+function A7r(e){let t=(s)=>e.headers?.get?.(s)??void 0,n=t("anthropic-ratelimit-unified-representative-claim"),r=t("anthropic-ratelimit-unified-reset"),o=t("anthropic-ratelimit-unified-overage-status");return{message:e.message,status:e.status,requestId:e.requestID??void 0,formatted:dot(e),connection:P4(e),isNetworkDown:y1d(e),rateLimits:n||o?{...n&&{rateLimitType:n},...r&&{resetsAt:Number(r)}}:null}}
+function E6i({connDetails:e,isStaleConnection:t,isContextHintSse:n,streamIdleAborted:r}){if(e?.code==="StreamSuspended")return"stream_suspended";if(t)return"stale_connection";if(n)return"context_hint_sse";if(r)return"watchdog";return"other"}
+var g1d,xHn,Bke,_1d="The socket connection was closed unexpectedly";
+var $ke=b(()=>{g1d=new Set(["UNABLE_TO_VERIFY_LEAF_SIGNATURE","UNABLE_TO_GET_ISSUER_CERT","UNABLE_TO_GET_ISSUER_CERT_LOCALLY","CERT_SIGNATURE_FAILURE","CERT_NOT_YET_VALID","CERT_HAS_EXPIRED","CERT_REVOKED","CERT_REJECTED","CERT_UNTRUSTED","DEPTH_ZERO_SELF_SIGNED_CERT","SELF_SIGNED_CERT_IN_CHAIN","CERT_CHAIN_TOO_LONG","PATH_LENGTH_EXCEEDED","ERR_TLS_CERT_ALTNAME_INVALID","HOSTNAME_MISMATCH","ERR_TLS_HANDSHAKE_TIMEOUT","ERR_SSL_WRONG_VERSION_NUMBER","ERR_SSL_DECRYPTION_FAILED_OR_BAD_RECORD_MAC"]),xHn=new Set(["ECONNREFUSED","ConnectionRefused","ENOTFOUND","ENETUNREACH","ENETDOWN","EHOSTUNREACH","EHOSTDOWN","EAI_AGAIN","FailedToOpenSocket"]),Bke=new Set(["ECONNRESET","EPIPE","ConnectionClosed","StreamSuspended"])});
+export {C7r,P4,y1d,Uke,E7r,T1d,S1d,b6i,dot,A7r,E6i,g1d,xHn,Bke,_1d,$ke};

@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Eri} from "./m2077.ts";
-var xri=X((sgn)=>{Object.defineProperty(sgn,"__esModule",{value:!0});sgn.TraceStateImpl=void 0;var Cri=Eri(),vri=32,I7u=512,wri=",",Rri="=";class n1r{constructor(e){if(this._internalState=new Map,e)this._parse(e)}set(e,t){let n=this._clone();if(n._internalState.has(e))n._internalState.delete(e);return n._internalState.set(e,t),n}unset(e){let t=this._clone();return t._internalState.delete(e),t}get(e){return this._internalState.get(e)}serialize(){return this._keys().reduce((e,t)=>(e.push(t+Rri+this.get(t)),e),[]).join(wri)}_parse(e){if(e.length>I7u)return;if(this._internalState=e.split(wri).reverse().reduce((t,n)=>{let r=n.trim(),o=r.indexOf(Rri);if(o!==-1){let s=r.slice(0,o),i=r.slice(o+1,n.length);if((0,Cri.validateKey)(s)&&(0,Cri.validateValue)(i))t.set(s,i)}return t},new Map),this._internalState.size>vri)this._internalState=new Map(Array.from(this._internalState.entries()).reverse().slice(0,vri))}_keys(){return Array.from(this._internalState.keys()).reverse()}_clone(){let e=new n1r;return e._internalState=new Map(this._internalState),e}}sgn.TraceStateImpl=n1r});
-export {xri};
+import {Q} from "../runtime.ts";
+import {vUr} from "./m2076.ts";
+import {mci} from "./m2077.ts";
+var wUr=Q((NTn)=>{Object.defineProperty(NTn,"__esModule",{value:!0});NTn.ProxyTracerProvider=void 0;var Nnd=vUr(),Fnd=mci(),Bnd=new Fnd.NoopTracerProvider;class fci{getTracer(e,t,n){var r;return(r=this.getDelegateTracer(e,t,n))!==null&&r!==void 0?r:new Nnd.ProxyTracer(this,e,t,n)}getDelegate(){var e;return(e=this._delegate)!==null&&e!==void 0?e:Bnd}setDelegate(e){this._delegate=e}getDelegateTracer(e,t,n){var r;return(r=this._delegate)===null||r===void 0?void 0:r.getTracer(e,t,n)}}NTn.ProxyTracerProvider=fci});
+export {wUr};

@@ -1,8 +1,11 @@
 // @ts-nocheck
-import {Nkr,Mwt} from "./m1607.ts";
+import {GXe,VXe,Szs} from "./m1609.ts";
+import {qXe,dzs} from "./m1602.ts";
+import {PNe,ModelStreamErrorException,ONe,LNe} from "./m1266.ts";
+import {WXe} from "./m1604.ts";
+import {lzs} from "./m1600.ts";
 import {b} from "../runtime.ts";
-var Dme=(e)=>{if(typeof globalThis.process<"u")return globalThis.process.env?.[e]?.trim()||void 0;if(typeof globalThis.Deno<"u")return globalThis.Deno.env?.get?.(e)?.trim()||void 0;return};
-function*zMu(e){if(!e)return;if(L8s in e){let{values:r,nulls:o}=e;yield*r.entries();for(let s of o)yield[s,null];return}let t=!1,n;if(e instanceof Headers)n=e.entries();else if(Nkr(e))n=e;else t=!0,n=Object.entries(e??{});for(let r of n){let o=r[0];if(typeof o!=="string")throw TypeError("expected header name to be a string");let s=Nkr(r[1])?r[1]:[r[1]],i=!1;for(let a of s){if(a===void 0)continue;if(t&&!i)i=!0,yield[o,null];yield[o,a]}}}
-var L8s,zYe=(e)=>{let t=new Headers,n=new Set;for(let r of e){let o=new Set;for(let[s,i]of zMu(r)){let a=s.toLowerCase();if(!o.has(a))t.delete(s),o.add(a);if(i===null)t.delete(s),n.add(a);else t.append(s,i),n.delete(a)}}return{[L8s]:!0,values:t,nulls:n}};
-var Ukr=b(()=>{Mwt();L8s=Symbol.for("brand.privateNullableHeaders")});
-export {Dme,zMu,L8s,zYe,Ukr};
+import {Odn} from "./m1283.ts";
+var Q4u=async(e,t)=>{let n=GXe({}),r=e.body,o=VXe(r,{message:qXe});Object.assign(n,o);let s=new PNe({$metadata:$fn(e),...n});return WXe(s,e.body)},Z4u=async(e,t)=>{let n=GXe({}),r=e.body,o=VXe(r,{message:qXe,originalMessage:qXe,originalStatusCode:dzs});Object.assign(n,o);let s=new ModelStreamErrorException({$metadata:$fn(e),...n});return WXe(s,e.body)},equ=async(e,t)=>{let n=GXe({}),r=e.body,o=VXe(r,{message:qXe});Object.assign(n,o);let s=new ONe({$metadata:$fn(e),...n});return WXe(s,e.body)},tqu=async(e,t)=>{let n=GXe({}),r=e.body,o=VXe(r,{message:qXe});Object.assign(n,o);let s=new LNe({$metadata:$fn(e),...n});return WXe(s,e.body)},bzs=(e,t)=>t.eventStreamMarshaller.deserialize(e,async(n)=>{if(n.chunk!=null)return{chunk:await oqu(n.chunk,t)};if(n.internalServerException!=null)return{internalServerException:await nqu(n.internalServerException,t)};if(n.modelStreamErrorException!=null)return{modelStreamErrorException:await rqu(n.modelStreamErrorException,t)};if(n.validationException!=null)return{validationException:await iqu(n.validationException,t)};if(n.throttlingException!=null)return{throttlingException:await squ(n.throttlingException,t)};return{$unknown:e}}),nqu=async(e,t)=>{let n={...e,body:await lHt(e.body,t)};return Q4u(n,t)},rqu=async(e,t)=>{let n={...e,body:await lHt(e.body,t)};return Z4u(n,t)},oqu=async(e,t)=>{let n={},r=await lHt(e.body,t);return Object.assign(n,aqu(r,t)),n},squ=async(e,t)=>{let n={...e,body:await lHt(e.body,t)};return equ(n,t)},iqu=async(e,t)=>{let n={...e,body:await lHt(e.body,t)};return tqu(n,t)},aqu=(e,t)=>VXe(e,{bytes:t.base64Decoder}),$fn=(e)=>({httpStatusCode:e.statusCode,requestId:e.headers["x-amzn-requestid"]??e.headers["x-amzn-request-id"]??e.headers["x-amz-request-id"]??"",extendedRequestId:e.headers["x-amz-id-2"]??"",cfId:e.headers["x-amz-cf-id"]??""}),lqu=(e,t)=>lzs(e,t).then((n)=>t.utf8Encoder(n)),lHt=(e,t)=>lqu(e,t).then((n)=>{if(n.length)return JSON.parse(n);return{}});
+var Ezs=b(()=>{Szs();Odn()});
+export {Q4u,Z4u,equ,tqu,bzs,nqu,rqu,oqu,squ,iqu,aqu,$fn,lqu,lHt,Ezs};

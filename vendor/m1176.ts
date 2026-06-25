@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {Yan,ListProvisionedModelThroughputsCommand} from "./m1140.ts";
-import {Sd} from "./m850.ts";
-var tHs,paginateListProvisionedModelThroughputs;
-var nHs=b(()=>{s0();Yan();tHs=M(Sd(),1),paginateListProvisionedModelThroughputs=tHs.createPaginator(BedrockClient,ListProvisionedModelThroughputsCommand,"nextToken","nextToken","maxResults")});
-export {tHs,paginateListProvisionedModelThroughputs,nHs};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {wun,ListModelCopyJobsCommand} from "./m1140.ts";
+import {Zu} from "./m855.ts";
+var BOs,paginateListModelCopyJobs;
+var UOs=b(()=>{C0();wun();BOs=x(Zu(),1),paginateListModelCopyJobs=BOs.createPaginator(BedrockClient,ListModelCopyJobsCommand,"nextToken","nextToken","maxResults")});
+export {BOs,paginateListModelCopyJobs,UOs};

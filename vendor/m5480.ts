@@ -1,12 +1,14 @@
 // @ts-nocheck
-import {ap,BE} from "./m5006.ts";
-import {isClaudeInChromeWiredThisSession,rye} from "../src/permissions/4648_shouldSuppressChromeOffer.ts";
-import {fgo,V6n} from "./m4422.ts";
-import {b} from "../runtime.ts";
-function C7l(){ap({name:"claude-in-chrome",menuDescription:"Let Claude browse and interact with pages in your Chrome",description:"Automates your Chrome browser to interact with web pages - clicking elements, filling forms, capturing screenshots, reading console logs, and navigating sites. Opens pages in new tabs within your existing Chrome session. Requires site-level permissions before executing (configured in the extension).",whenToUse:"When the user wants to interact with web pages, automate browser tasks, capture screenshots, read console logs, or perform any browser-based actions. Always invoke BEFORE attempting to use any mcp__claude-in-chrome__* tools.",allowedTools:[],userInvocable:!0,isEnabled:()=>isClaudeInChromeWiredThisSession(),async getPromptForCommand(e){let t=fgo;if(e)t+=`
-
-## Task
-
-${e}`;return[{type:"text",text:t}]}})}
-var v7l=b(()=>{V6n();rye();BE()});
-export {C7l,v7l};
+import {Text} from "./m2433.ts";
+import {os} from "../src/api/0465_getOauthConfig.ts";
+import {getOriginalCwd,lt} from "../src/session/0132_sent.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {oe} from "./m2275.ts";
+function n9m(e){switch(e.length){case 0:return"";case 1:return Ib.jsx(Text,{bold:!0,children:e[0]});case 2:return Ib.jsxs(Text,{children:[Ib.jsx(Text,{bold:!0,children:e[0]})," and ",Ib.jsx(Text,{bold:!0,children:e[1]})]});default:return Ib.jsxs(Text,{children:[Ib.jsx(Text,{bold:!0,children:e.slice(0,-1).join(", ")}),", and"," ",Ib.jsx(Text,{bold:!0,children:e.slice(-1)[0]})]})}}
+function $Bo(e){if(e.join(", ").length>50)return"similar";return n9m(e)}
+function czt(e){if(e.length===0)return"";let t=e.map((n)=>KJ.basename(n)||n);if(t.length===1)return Ib.jsxs(Text,{children:[Ib.jsx(Text,{bold:!0,children:t[0]}),KJ.sep]});if(t.length===2)return Ib.jsxs(Text,{children:[Ib.jsx(Text,{bold:!0,children:t[0]}),KJ.sep," and ",Ib.jsx(Text,{bold:!0,children:t[1]}),KJ.sep]});return Ib.jsxs(Text,{children:[Ib.jsx(Text,{bold:!0,children:t[0]}),KJ.sep,", ",Ib.jsx(Text,{bold:!0,children:t[1]}),KJ.sep," and ",e.length-2," more"]})}
+function Rtr(e,t,n){let r=e.filter((p)=>p.type==="addRules").flatMap((p)=>p.rules||[]),o=r.filter((p)=>p.toolName==="Read"),s=r.filter((p)=>p.toolName===t),i=e.filter((p)=>p.type==="addDirectories").flatMap((p)=>p.directories||[]),a=o.map((p)=>p.ruleContent?.replace("/**","")||"").filter((p)=>p),l=os(s.flatMap((p)=>{if(!p.ruleContent)return[];let m=p.ruleContent.endsWith(":*")||p.ruleContent.endsWith(" *")?p.ruleContent.slice(0,-2):p.ruleContent;return n?n(m):m})),c=i.length>0,u=a.length>0,d=l.length>0;if(u&&!c&&!d){if(a.length===1){let p=a[0],m=KJ.basename(p)||p;return Ib.jsxs(Text,{children:["Yes, allow reading from ",Ib.jsx(Text,{bold:!0,children:m}),KJ.sep," from this project"]})}return Ib.jsxs(Text,{children:["Yes, allow reading from ",czt(a)," from this project"]})}if(c&&!u&&!d){if(i.length===1){let p=i[0],m=KJ.basename(p)||p;return Ib.jsxs(Text,{children:["Yes, and always allow access to ",Ib.jsx(Text,{bold:!0,children:m}),KJ.sep," from this project"]})}return Ib.jsxs(Text,{children:["Yes, and always allow access to ",czt(i)," from this project"]})}if(d&&!c&&!u)return Ib.jsxs(Text,{children:["Yes, and don't ask again for ",$Bo(l)," commands in"," ",Ib.jsx(Text,{bold:!0,children:getOriginalCwd()})]});if((c||u)&&!d){let p=[...i,...a];if(c&&u)return Ib.jsxs(Text,{children:["Yes, and always allow access to ",czt(p)," from this project"]})}if((c||u)&&d){let p=[...i,...a];if(p.length===1&&l.length===1)return Ib.jsxs(Text,{children:["Yes, and allow access to ",czt(p)," and"," ",$Bo(l)," commands"]});return Ib.jsxs(Text,{children:["Yes, and allow ",czt(p)," access and"," ",$Bo(l)," commands"]})}return null}
+var KJ,Ib;
+var qBo=b(()=>{lt();je();KJ=require("path"),Ib=x(oe(),1)});
+export {n9m,$Bo,czt,Rtr,KJ,Ib,qBo};

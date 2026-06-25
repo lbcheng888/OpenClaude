@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {gVi} from "./m3032.ts";
-var yVi=X((Nqh,_Vi)=>{var n1d=gVi();_Vi.exports=(e)=>typeof e==="string"?e.replace(n1d(),""):e});
-export {yVi};
+import {Q} from "../runtime.ts";
+var T0n=Q((sXg,XXi)=>{var wqd=require("tty"),kqd=wqd?.WriteStream?.prototype?.hasColors?.()??!1,Fm=(e,t)=>{if(!kqd)return(o)=>o;let n=`\x1B[${e}m`,r=`\x1B[${t}m`;return(o)=>{let s=o+"",i=s.indexOf(r);if(i===-1)return n+s+r;let a=n,l=0;while(i!==-1)a+=s.slice(l,i)+n,l=i+r.length,i=s.indexOf(r,l);return a+=s.slice(l)+r,a}},mm={};mm.reset=Fm(0,0);mm.bold=Fm(1,22);mm.dim=Fm(2,22);mm.italic=Fm(3,23);mm.underline=Fm(4,24);mm.overline=Fm(53,55);mm.inverse=Fm(7,27);mm.hidden=Fm(8,28);mm.strikethrough=Fm(9,29);mm.black=Fm(30,39);mm.red=Fm(31,39);mm.green=Fm(32,39);mm.yellow=Fm(33,39);mm.blue=Fm(34,39);mm.magenta=Fm(35,39);mm.cyan=Fm(36,39);mm.white=Fm(37,39);mm.gray=Fm(90,39);mm.bgBlack=Fm(40,49);mm.bgRed=Fm(41,49);mm.bgGreen=Fm(42,49);mm.bgYellow=Fm(43,49);mm.bgBlue=Fm(44,49);mm.bgMagenta=Fm(45,49);mm.bgCyan=Fm(46,49);mm.bgWhite=Fm(47,49);mm.bgGray=Fm(100,49);mm.redBright=Fm(91,39);mm.greenBright=Fm(92,39);mm.yellowBright=Fm(93,39);mm.blueBright=Fm(94,39);mm.magentaBright=Fm(95,39);mm.cyanBright=Fm(96,39);mm.whiteBright=Fm(97,39);mm.bgRedBright=Fm(101,49);mm.bgGreenBright=Fm(102,49);mm.bgYellowBright=Fm(103,49);mm.bgBlueBright=Fm(104,49);mm.bgMagentaBright=Fm(105,49);mm.bgCyanBright=Fm(106,49);mm.bgWhiteBright=Fm(107,49);XXi.exports=mm});
+export {T0n};

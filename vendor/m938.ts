@@ -1,19 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var Ehs=()=>{};
-var Chs=()=>{};
-var vhs=()=>{};
-var whs=()=>{};
-var Rhs=()=>{};
-var xhs=()=>{};
-var khs=()=>{};
-var Hhs=()=>{};
-var Ihs=()=>{};
-var Dhs=()=>{};
-var Phs=()=>{};
-var Ohs=()=>{};
-var Lhs=()=>{};
-var Mhs=()=>{};
-var Nhs;
-var Bhs=b(()=>{(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(Nhs||(Nhs={}))});
-export {Ehs,Chs,vhs,whs,Rhs,xhs,khs,Hhs,Ihs,Dhs,Phs,Ohs,Lhs,Mhs,Nhs,Bhs};
+var Qbs=()=>{};
+var KYe;
+var Zbs=b(()=>{(function(e){e.MD5="md5",e.CRC32="crc32",e.CRC32C="crc32c",e.SHA1="sha1",e.SHA256="sha256"})(KYe||(KYe={}))});
+export {Qbs,KYe,Zbs};

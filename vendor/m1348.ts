@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {AssumeRoleCommand,Dcn} from "./m1335.ts";
-import {AssumeRoleWithWebIdentityCommand,Ocn} from "./m1337.ts";
-import {b,M} from "../runtime.ts";
-import {r0} from "./m751.ts";
-import {cQ} from "./m916.ts";
-var jcn,fNs,ANs=(e)=>{if(typeof e?.Arn==="string"){let t=e.Arn.split(":");if(t.length>4&&t[4]!=="")return t[4]}return},hNs=async(e,t,n,r={})=>{let o=typeof e==="function"?await e():e,s=typeof t==="function"?await t():t,i=await fNs.stsRegionDefaultResolver(r)();return n?.debug?.("@aws-sdk/client-sts::resolveRegion","accepting first of:",`${o} (credential provider clientConfig)`,`${s} (contextual client)`,`${i} (STS default: AWS_REGION, profile region, or us-east-1)`),o??s??i},gNs=(e,t)=>{let n,r;return async(o,s)=>{if(r=o,!n){let{logger:u=e?.parentClientConfig?.logger,profile:d=e?.parentClientConfig?.profile,region:p,requestHandler:m=e?.parentClientConfig?.requestHandler,credentialProviderLogger:f,userAgentAppId:A=e?.parentClientConfig?.userAgentAppId}=e,h=await hNs(p,e?.parentClientConfig?.region,f,{logger:u,profile:d}),g=!yNs(m);n=new t({...e,userAgentAppId:A,profile:d,credentialDefaultProvider:()=>async()=>r,region:h,requestHandler:g?m:void 0,logger:u})}let{Credentials:i,AssumedRoleUser:a}=await n.send(new AssumeRoleCommand(s));if(!i||!i.AccessKeyId||!i.SecretAccessKey)throw Error(`Invalid response from STS.assumeRole call with role ${s.RoleArn}`);let l=ANs(a),c={accessKeyId:i.AccessKeyId,secretAccessKey:i.SecretAccessKey,sessionToken:i.SessionToken,expiration:i.Expiration,...i.CredentialScope&&{credentialScope:i.CredentialScope},...l&&{accountId:l}};return jcn.setCredentialFeature(c,"CREDENTIALS_STS_ASSUME_ROLE","i"),c}},_Ns=(e,t)=>{let n;return async(r)=>{if(!n){let{logger:l=e?.parentClientConfig?.logger,profile:c=e?.parentClientConfig?.profile,region:u,requestHandler:d=e?.parentClientConfig?.requestHandler,credentialProviderLogger:p,userAgentAppId:m=e?.parentClientConfig?.userAgentAppId}=e,f=await hNs(u,e?.parentClientConfig?.region,p,{logger:l,profile:c}),A=!yNs(d);n=new t({...e,userAgentAppId:m,profile:c,region:f,requestHandler:A?d:void 0,logger:l})}let{Credentials:o,AssumedRoleUser:s}=await n.send(new AssumeRoleWithWebIdentityCommand(r));if(!o||!o.AccessKeyId||!o.SecretAccessKey)throw Error(`Invalid response from STS.assumeRoleWithWebIdentity call with role ${r.RoleArn}`);let i=ANs(s),a={accessKeyId:o.AccessKeyId,secretAccessKey:o.SecretAccessKey,sessionToken:o.SessionToken,expiration:o.Expiration,...o.CredentialScope&&{credentialScope:o.CredentialScope},...i&&{accountId:i}};if(i)jcn.setCredentialFeature(a,"RESOLVED_ACCOUNT_ID","T");return jcn.setCredentialFeature(a,"CREDENTIALS_STS_ASSUME_ROLE_WEB_ID","k"),a}},yNs=(e)=>e?.metadata?.handlerProtocol==="h2";
-var TNs=b(()=>{Dcn();Ocn();jcn=M(r0(),1),fNs=M(cQ(),1)});
-export {jcn,fNs,ANs,hNs,gNs,_Ns,yNs,TNs};
+import {b,x} from "../runtime.ts";
+import {rD} from "./m1322.ts";
+import {V5,getTeamByName} from "./m1324.ts";
+import {p7,z$s} from "./m1339.ts";
+import {yo} from "./m892.ts";
+import {lC} from "./m1314.ts";
+var o9s,GetFederationTokenCommand;
+var vIr=b(()=>{rD();V5();p7();o9s=x(yo(),1);GetFederationTokenCommand=class GetFederationTokenCommand extends lC.classBuilder().ep(getTeamByName).m(function(e,t,n,r){return[o9s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","GetFederationToken",{}).n("STSClient","GetFederationTokenCommand").sc(z$s).build(){}});
+export {o9s,GetFederationTokenCommand,vIr};

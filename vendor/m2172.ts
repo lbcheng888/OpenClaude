@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ag} from "./m2133.ts";
-class z1r{forceFlush(){return Promise.resolve()}onEmit(e,t){}shutdown(){return Promise.resolve()}}
-class Y1r{processors;forceFlushTimeoutMillis;constructor(e,t){this.processors=e,this.forceFlushTimeoutMillis=t}async forceFlush(){let e=this.forceFlushTimeoutMillis;await Promise.all(this.processors.map((t)=>wmi.callWithTimeout(t.forceFlush(),e)))}onEmit(e,t){this.processors.forEach((n)=>n.onEmit(e,t))}async shutdown(){await Promise.all(this.processors.map((e)=>e.shutdown()))}}
-var wmi;
-var Rmi=b(()=>{wmi=M(ag(),1)});
-export {z1r,Y1r,wmi,Rmi};
+import {VSn,lTi} from "./m2167.ts";
+import {jZe,$xt,pTi,_2r,mTi} from "./m2171.ts";
+import {GSn,h2r} from "./m2165.ts";
+import {b} from "../runtime.ts";
+class zSn{constructor(){this._proxyLoggerProvider=new VSn}static getInstance(){if(!this._instance)this._instance=new zSn;return this._instance}setGlobalLoggerProvider(e){if(jZe[$xt])return this.getLoggerProvider();return jZe[$xt]=pTi(_2r,e,GSn),this._proxyLoggerProvider._setDelegate(e),e}getLoggerProvider(){var e,t;return(t=(e=jZe[$xt])===null||e===void 0?void 0:e.call(jZe,_2r))!==null&&t!==void 0?t:this._proxyLoggerProvider}getLogger(e,t,n){return this.getLoggerProvider().getLogger(e,t,n)}disable(){delete jZe[$xt],this._proxyLoggerProvider=new VSn}}
+var fTi=b(()=>{mTi();h2r();lTi()});
+export {zSn,fTi};

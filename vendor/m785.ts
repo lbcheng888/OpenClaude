@@ -1,5 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {srn} from "./m784.ts";
-var iis=X((irn)=>{Object.defineProperty(irn,"__esModule",{value:!0});irn.fromBase64=void 0;var meu=srn(),feu=/^[A-Za-z0-9+/]*={0,2}$/,Aeu=(e)=>{if(e.length*3%4!==0)throw TypeError("Incorrect padding on base64 string.");if(!feu.exec(e))throw TypeError("Invalid base64 string.");let t=(0,meu.fromString)(e,"base64");return new Uint8Array(t.buffer,t.byteOffset,t.byteLength)};irn.fromBase64=Aeu});
-export {iis};
+import {b} from "../runtime.ts";
+import {Rus} from "./m772.ts";
+var qds=()=>{};
+var Wds=()=>{};
+class Evt{method;protocol;hostname;port;path;query;headers;username;password;fragment;body;constructor(e){this.method=e.method||"GET",this.hostname=e.hostname||"localhost",this.port=e.port,this.query=e.query||{},this.headers=e.headers||{},this.body=e.body,this.protocol=e.protocol?e.protocol.slice(-1)!==":"?`${e.protocol}:`:e.protocol:"https:",this.path=e.path?e.path.charAt(0)!=="/"?`/${e.path}`:e.path:"/",this.username=e.username,this.password=e.password,this.fragment=e.fragment}static clone(e){let t=new Evt({...e,headers:{...e.headers}});if(t.query)t.query=Auu(t.query);return t}static isInstance(e){if(!e)return!1;let t=e;return"method"in t&&"protocol"in t&&"hostname"in t&&"path"in t&&typeof t.query==="object"&&typeof t.headers==="object"}clone(){return Evt.clone(this)}}
+function Auu(e){return Object.keys(e).reduce((t,n)=>{let r=e[n];return{...t,[n]:Array.isArray(r)?[...r]:r}},{})}
+var Gds=()=>{};
+var Vds=b(()=>{Rus();qds();Wds();Gds()});
+export {qds,Wds,Evt,Auu,Gds,Vds};

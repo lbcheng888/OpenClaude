@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Rfa} from "./m3465.ts";
-import {Nfa} from "./m3469.ts";
-import {Wfa} from "./m3472.ts";
-import {Vfa} from "./m3474.ts";
-import {zfa} from "./m3476.ts";
-import {Jfa} from "./m3478.ts";
-var gle=X((r6)=>{Object.defineProperty(r6,"__esModule",{value:!0});r6.JsonTraceSerializer=r6.JsonMetricsSerializer=r6.JsonLogsSerializer=r6.ProtobufTraceSerializer=r6.ProtobufMetricsSerializer=r6.ProtobufLogsSerializer=void 0;var hzd=Rfa();Object.defineProperty(r6,"ProtobufLogsSerializer",{enumerable:!0,get:function(){return hzd.ProtobufLogsSerializer}});var gzd=Nfa();Object.defineProperty(r6,"ProtobufMetricsSerializer",{enumerable:!0,get:function(){return gzd.ProtobufMetricsSerializer}});var _zd=Wfa();Object.defineProperty(r6,"ProtobufTraceSerializer",{enumerable:!0,get:function(){return _zd.ProtobufTraceSerializer}});var yzd=Vfa();Object.defineProperty(r6,"JsonLogsSerializer",{enumerable:!0,get:function(){return yzd.JsonLogsSerializer}});var Tzd=zfa();Object.defineProperty(r6,"JsonMetricsSerializer",{enumerable:!0,get:function(){return Tzd.JsonMetricsSerializer}});var Szd=Jfa();Object.defineProperty(r6,"JsonTraceSerializer",{enumerable:!0,get:function(){return Szd.JsonTraceSerializer}})});
-export {gle};
+import {Q} from "../runtime.ts";
+import {DMn} from "./m3477.ts";
+import {PMn} from "./m3478.ts";
+var Lro=Q((jat)=>{Object.defineProperty(jat,"__esModule",{value:!0});jat.toLogAttributes=jat.createExportLogsServiceRequest=void 0;var Sop=DMn(),OMn=PMn();function bop(e,t){let n=(0,Sop.getOtlpEncoder)(t);return{resourceLogs:Cop(e,n)}}jat.createExportLogsServiceRequest=bop;function Eop(e){let t=new Map;for(let n of e){let{resource:r,instrumentationScope:{name:o,version:s="",schemaUrl:i=""}}=n,a=t.get(r);if(!a)a=new Map,t.set(r,a);let l=`${o}@${s}:${i}`,c=a.get(l);if(!c)c=[],a.set(l,c);c.push(n)}return t}function Cop(e,t){let n=Eop(e);return Array.from(n,([r,o])=>{let s=(0,OMn.createResource)(r);return{resource:s,scopeLogs:Array.from(o,([,i])=>({scope:(0,OMn.createInstrumentationScope)(i[0].instrumentationScope),logRecords:i.map((a)=>Aop(a,t)),schemaUrl:i[0].instrumentationScope.schemaUrl})),schemaUrl:s.schemaUrl}})}function Aop(e,t){return{timeUnixNano:t.encodeHrTime(e.hrTime),observedTimeUnixNano:t.encodeHrTime(e.hrTimeObserved),severityNumber:Rop(e.severityNumber),severityText:e.severityText,body:(0,OMn.toAnyValue)(e.body),eventName:e.eventName,attributes:Bba(e.attributes),droppedAttributesCount:e.droppedAttributesCount,flags:e.spanContext?.traceFlags,traceId:t.encodeOptionalSpanContext(e.spanContext?.traceId),spanId:t.encodeOptionalSpanContext(e.spanContext?.spanId)}}function Rop(e){return e}function Bba(e){return Object.keys(e).map((t)=>(0,OMn.toKeyValue)(t,e[t]))}jat.toLogAttributes=Bba});
+export {Lro};

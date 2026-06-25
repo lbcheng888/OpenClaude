@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var Nbe;
-var sgr=b(()=>{(function(e){e.IPv4="IPv4",e.IPv6="IPv6"})(Nbe||(Nbe={}))});
-export {Nbe,sgr};
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+var rus,Usn;
+var ous=b(()=>{rus=x(Vg(),1);Usn=class Usn extends rus.CredentialsProviderError{tryNextLink;name="InstanceMetadataV1FallbackError";constructor(e,t=!0){super(e,t);this.tryNextLink=t,Object.setPrototypeOf(this,Usn.prototype)}}});
+export {rus,Usn,ous};

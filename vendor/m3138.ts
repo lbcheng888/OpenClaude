@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {zt,qs} from "./m635.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {b} from "../runtime.ts";
-function QXi(e){let t=e?.platform??zt(),n=e?.homedir??XXi.homedir(),r=e?.env??process.env,o={HOME:n,DESKTOP:I$e.join(n,"Desktop"),DOCUMENTS:I$e.join(n,"Documents"),DOWNLOADS:I$e.join(n,"Downloads")};switch(t){case"windows":{let s=r.USERPROFILE||n;return{HOME:n,DESKTOP:I$e.join(s,"Desktop"),DOCUMENTS:I$e.join(s,"Documents"),DOWNLOADS:I$e.join(s,"Downloads")}}case"linux":case"wsl":return{HOME:n,DESKTOP:r.XDG_DESKTOP_DIR||o.DESKTOP,DOCUMENTS:r.XDG_DOCUMENTS_DIR||o.DOCUMENTS,DOWNLOADS:r.XDG_DOWNLOAD_DIR||o.DOWNLOADS};case"macos":default:{if(t==="unknown")logForDebugging("Unknown platform detected, using default paths");return o}}}
-var XXi,I$e;
-var ZXi=b(()=>{qe();qs();XXi=require("os"),I$e=require("path")});
-export {QXi,XXi,I$e,ZXi};
+import {Q} from "../runtime.ts";
+import {Toa} from "./m3137.ts";
+import {PJr} from "./m3136.ts";
+var boa=Q((wHe)=>{var OGd=wHe&&wHe.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),Soa=wHe&&wHe.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))OGd(t,e,n)};Object.defineProperty(wHe,"__esModule",{value:!0});Soa(Toa(),wHe);Soa(PJr(),wHe)});
+export {boa};

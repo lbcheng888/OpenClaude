@@ -1,14 +1,20 @@
 // @ts-nocheck
-import {useStdin,Uyn} from "./m2258.ts";
-import {onAttacherCapsChange,getAttacherCaps,lt} from "../src/session/0131_sent.ts";
-import {je} from "./m577.ts";
-import {Ms,Pp} from "../src/config/2273_loggedTmuxCcDisable.ts";
-import {qu,bk} from "./m2291.ts";
-import {sleep} from "../src/telemetry/1483_withTimeout.ts";
-import {b,M} from "../runtime.ts";
-import {Lr} from "./m578.ts";
-import {Te} from "./m2253.ts";
-function jjl(e){let t=zAt.useRef(e);t.current=e;let{internal_querier:n}=useStdin(),r=zAt.useSyncExternalStore(onAttacherCapsChange,()=>getAttacherCaps()?.terminal??je.terminal);zAt.useEffect(()=>{if(!Ms()||!n)return;if(r!=="iTerm.app"&&r!=="Apple_Terminal")return;let o=qu.get(process.stdout);if(!o)return;let s=new AbortController;return(async()=>{while(!s.signal.aborted){let i=await o.probeExternalClear(n);if(s.signal.aborted)return;if(i)t.current();await sleep(200,s.signal,{unref:!0})}})(),()=>s.abort()},[n,r])}
-var zAt;
-var Wjl=b(()=>{lt();Uyn();bk();Lr();Pp();zAt=M(Te(),1)});
-export {jjl,zAt,Wjl};
+import {truncateToWidth} from "./m239.ts";
+import {j_e,ix} from "./m3842.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {generateFileSuggestions,Oft} from "../src/telemetry/4503_startBackgroundCacheRefresh.ts";
+import {tpo,C9a,E9a,A9a,fdt} from "./m3990.ts";
+import {gJ,Mzn} from "./m4802.ts";
+import {ac} from "../src/mcp/0733_serverName.ts";
+import {xua,ReactRuntime} from "../src/tools/3238_name.ts";
+import {b} from "../runtime.ts";
+import {Xo} from "./m240.ts";
+function $zl(e){switch(e.type){case"file":return{id:`file-${e.path}`,displayText:e.displayText,description:e.description};case"mcp_resource":return{id:`mcp-resource-${e.server}__${e.uri}`,displayText:e.displayText,description:e.description};case"mcp_resource_template":return{id:`mcp-template::${e.server}__${e.uriTemplate}`,displayText:e.displayText,description:e.description,metadata:{replacement:pFo("@",e.displayText,!0),partial:!0}};case"agent":return{id:`agent-${e.agentType}`,displayText:e.displayText,description:e.description,color:e.color}}}
+function O7t(e){return truncateToWidth(e,xNm)}
+function DNm(e,t,n=!1){if(!t&&!n)return[];try{let r=e.map((s)=>({type:"agent",displayText:`${s.agentType} (agent)`,description:O7t(s.whenToUse),agentType:s.agentType,color:j_e(s.agentType)}));if(!t)return r;let o=t.toLowerCase();return r.filter((s)=>s.agentType.toLowerCase().includes(o)||s.displayText.toLowerCase().includes(o))}catch(r){return Ie(r),[]}}
+async function mFo(e,t,n,r,o=!1,s={}){if(!t&&!o)return[];let[i,a]=await Promise.all([generateFileSuggestions(e,t,o),Promise.resolve(DNm(r,t,o))]),l=i.map((m)=>({type:"file",displayText:m.displayText,description:m.description,path:m.displayText,filename:qzl.basename(m.displayText),score:m.metadata?.score})),c=Object.values(n).flat().map((m)=>({type:"mcp_resource",displayText:`${m.server}:${m.uri}`,description:O7t(m.description||m.name||m.uri),server:m.server,uri:m.uri,name:m.name||m.uri})),u=Object.values(s).flat().map((m)=>({type:"mcp_resource_template",displayText:`${m.server}:${tpo(m.uriTemplate)}`,description:O7t(m.description||m.name||m.uriTemplate),server:m.server,uriTemplate:m.uriTemplate,name:m.name||m.uriTemplate}));if(!t)return[...l,...c,...u,...a].slice(0,P7t).map($zl);let d=[...c,...u,...a],p=[];for(let m of l)p.push({source:m,score:m.score??0.5});if(d.length>0){let f=new gJ(d,{includeScore:!0,threshold:0.6,keys:[{name:"displayText",weight:2},{name:"name",weight:3},{name:"server",weight:1},{name:"description",weight:1},{name:"agentType",weight:3},{name:"uriTemplate",weight:2}]}).search(t,{limit:P7t});for(let h of f){let g=h.item.type==="mcp_resource"?0.15:0;p.push({source:h.item,score:(h.score??0.5)+g})}}return p.sort((m,f)=>m.score-f.score),p.slice(0,P7t).map((m)=>m.source).map($zl)}
+async function Eer(e,t,n,r){let o=e.indexOf(":");if(o===-1)return null;let s=e.slice(0,o),i=e.slice(o+1),a=t[s];if(!a||a.length===0)return null;let l=C9a(i,a);if(!l){if(!i)return null;let g=a.filter((_)=>_.uriTemplate.startsWith(i)&&_.uriTemplate.length>i.length);if(g.length===0)return null;return g.slice(0,P7t).map((_)=>{let T=tpo(_.uriTemplate);return{id:`mcp-template::${s}__${_.uriTemplate}`,displayText:`${s}:${T}`,description:O7t(_.description||_.name||_.uriTemplate),metadata:{replacement:pFo(r,`${s}:${T}`,!0),partial:!0}}})}let c=ac(s),u=n.find((g)=>ac(g.name)===c&&g.type==="connected");if(!u)return[];let d={};for(let[g,_]of Object.entries(l.resolvedArgs))try{d[g]=decodeURIComponent(_)}catch{d[g]=_}let p=(()=>{try{return decodeURIComponent(l.argValue)}catch{return l.argValue}})(),m=await xua(u,l.template.uriTemplate,l.argName,p,d);if(m.length===0)return[];let f=O7t(l.template.description||l.template.name||""),h=E9a(l);return m.slice(0,P7t).map((g)=>{let _=A9a(i,l,g);return{id:`mcp-template-value::${s}__${_}`,displayText:_.slice(l.valueStartIndex),description:f,metadata:{replacement:pFo(r,`${s}:${_}`,h),partial:h}}})}
+function pFo(e,t,n){if(e==="@"&&t.includes(" "))return n?`@"${t}`:`@"${t}"`;if(e==="/")return`/${t.replace(/ /g,"%20")}`;return`${e}${t}`}
+var qzl,P7t=15,xNm=60;
+var Wzl=b(()=>{Mzn();Oft();ReactRuntime();fdt();ix();Xo();vn();qzl=require("path")});
+export {$zl,O7t,DNm,mFo,Eer,pFo,qzl,P7t,xNm,Wzl};

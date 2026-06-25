@@ -1,9 +1,8 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {SSOClient} from "./m963.ts";
-import {GetRoleCredentialsCommand} from "./m967.ts";
-import {B_s} from "./m976.ts";
-var F_s={};
-isFullscreenWithTTY(F_s,{SSOClient:()=>SSOClient,GetRoleCredentialsCommand:()=>GetRoleCredentialsCommand});
-var U_s=b(()=>{B_s()});
-export {F_s,U_s};
+import {b} from "../runtime.ts";
+import {pRr} from "./m972.ts";
+import {eln} from "./m973.ts";
+import {tln} from "./m974.ts";
+import {fRr} from "./m975.ts";
+var RAs=b(()=>{pRr();eln();tln();fRr()});
+export {RAs};

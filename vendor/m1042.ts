@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {dze} from "./m1030.ts";
-import {b} from "../runtime.ts";
-import {WSr} from "./m1036.ts";
-var NEs=(e)=>{let t=[];for(let n in dze){let r=dze[n];if(e[r]===void 0)continue;t.push({algorithmId:()=>r,checksumConstructor:()=>e[r]})}return{addChecksumAlgorithm(n){t.push(n)},checksumAlgorithms(){return t}}},BEs=(e)=>{let t={};return e.checksumAlgorithms().forEach((n)=>{t[n.algorithmId()]=n.checksumConstructor()}),t};
-var FEs=b(()=>{WSr()});
-export {NEs,BEs,FEs};
+import {b,x} from "../runtime.ts";
+import {US} from "./m823.ts";
+function Mln(e,t){if(t==null)return t;let n=bHs.NormalizedSchema.of(e);if(n.getMergedTraits().sensitive)return Svr;if(n.isListSchema()){if(!!n.getValueSchema().getMergedTraits().sensitive)return Svr}else if(n.isMapSchema()){if(!!n.getKeySchema().getMergedTraits().sensitive||!!n.getValueSchema().getMergedTraits().sensitive)return Svr}else if(n.isStructSchema()&&typeof t==="object"){let r=t,o={};for(let[s,i]of n.structIterator())if(r[s]!=null)o[s]=Mln(i,r[s]);return o}return t}
+var bHs,Svr="***SensitiveInformation***";
+var EHs=b(()=>{bHs=x(US(),1)});
+export {Mln,bHs,Svr,EHs};

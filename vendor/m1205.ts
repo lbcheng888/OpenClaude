@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var $Hs=()=>{};
-var qHs=()=>(e)=>async(t)=>{let n={...t.input},r=await e(t),o=r.output;if(n.SessionId&&o.SessionId==null)o.SessionId=n.SessionId;return r},jHs;
-var WHs=b(()=>{jHs={step:"initialize",name:"injectSessionIdMiddleware",tags:["WEBSOCKET","EVENT_STREAM"],override:!0}});
-export {$Hs,qHs,jHs,WHs};
+var ILs=()=>{};
+var Mkr;
+var xLs=b(()=>{Mkr=class Mkr{options;constructor(e){this.options=e}[Symbol.asyncIterator](){return this.asyncIterator()}async*asyncIterator(){for await(let e of this.options.inputStream)yield this.options.decoder.decode(e)}}});
+export {ILs,Mkr,xLs};

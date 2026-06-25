@@ -1,4 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var pAa=X((oOn)=>{Object.defineProperty(oOn,"__esModule",{value:!0});oOn.createRetryingTransport=void 0;var qzd=5,jzd=1000,Wzd=5000,Gzd=1.5,uAa=0.2;function Vzd(){return Math.random()*(2*uAa)-uAa}class dAa{_transport;constructor(e){this._transport=e}retry(e,t,n){return new Promise((r,o)=>{setTimeout(()=>{this._transport.send(e,t).then(r,o)},n)})}async send(e,t){let n=Date.now()+t,r=await this._transport.send(e,t),o=qzd,s=jzd;while(r.status==="retryable"&&o>0){o--;let i=Math.max(Math.min(s,Wzd)+Vzd(),0);s=s*Gzd;let a=r.retryInMillis??i,l=n-Date.now();if(a>l)return r;r=await this.retry(e,l,a)}return r}shutdown(){return this._transport.shutdown()}}function Kzd(e){return new dAa(e.transport)}oOn.createRetryingTransport=Kzd});
-export {pAa};
+import {Q} from "../runtime.ts";
+import {IMn} from "./m3475.ts";
+import {Nro} from "./m3486.ts";
+var oEa=Q((BMn)=>{Object.defineProperty(BMn,"__esModule",{value:!0});BMn.ProtobufTraceSerializer=void 0;var rEa=IMn(),zop=Nro(),jop=rEa.opentelemetry.proto.collector.trace.v1.ExportTraceServiceResponse,Yop=rEa.opentelemetry.proto.collector.trace.v1.ExportTraceServiceRequest;BMn.ProtobufTraceSerializer={serializeRequest:(e)=>{let t=(0,zop.createExportTraceServiceRequest)(e);return Yop.encode(t).finish()},deserializeResponse:(e)=>jop.decode(e)}});
+export {oEa};

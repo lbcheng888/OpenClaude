@@ -1,9 +1,18 @@
 // @ts-nocheck
-import {lvt} from "./m1199.ts";
-import {vCr,rDs} from "./m1240.ts";
-import {b} from "../runtime.ts";
-import {dCr} from "./m1204.ts";
-class wCr{messageSigner;eventStreamCodec;systemClockOffsetProvider;constructor(e){this.messageSigner=e.messageSigner,this.eventStreamCodec=new lvt(e.utf8Encoder,e.utf8Decoder),this.systemClockOffsetProvider=async()=>e.systemClockOffset??0}async handle(e,t,n={}){let r=t.request,{body:o,query:s}=r;if(!(o instanceof Bze.Readable))throw Error("Eventstream payload must be a Readable stream.");let i=o;r.body=new Bze.PassThrough({objectMode:!0});let l=r.headers?.authorization?.match(/Signature=([\w]+)$/)?.[1]??s?.["X-Amz-Signature"]??"",c=new vCr({priorSignature:l,eventStreamCodec:this.eventStreamCodec,messageSigner:await this.messageSigner(),systemClockOffsetProvider:this.systemClockOffsetProvider});Bze.pipeline(i,c,r.body,(d)=>{if(d)throw d});let u;try{u=await e(t)}catch(d){throw r.body.end(),d}return u}}
-var Bze;
-var oDs=b(()=>{dCr();rDs();Bze=require("stream")});
-export {wCr,Bze,oDs};
+import {ft,b,autofixError,x} from "../runtime.ts";
+import {OMu,v1s,w1s} from "./m1235.ts";
+import {UMu,$1s,B1s,FMu,F1s,NMu,BMu,ndn,q1s} from "./m1240.ts";
+import {Xkr,tdn,MMu} from "./m1238.ts";
+import {Ykr,H1s,Jkr,I1s} from "./m1236.ts";
+import {zkr,Kkr,fAe,PMu,jkr} from "./m1234.ts";
+import {rMs,oMs} from "./m1218.ts";
+import {HR,R1s} from "./m1233.ts";
+import {Mwt,nMs} from "./m1217.ts";
+import {N1s} from "./m1239.ts";
+import {b3} from "./m827.ts";
+var GMu=(e)=>{if(e!==e)return"NaN";switch(e){case 1/0:return"Infinity";case-1/0:return"-Infinity";default:return e}},VMu=(e)=>e.toISOString().replace(".000Z","Z");
+var Qkr=(e)=>{if(e==null)return{};if(Array.isArray(e))return e.filter((t)=>t!=null).map(Qkr);if(typeof e==="object"){let t={};for(let n of Object.keys(e)){if(e[n]==null)continue;t[n]=Qkr(e[n])}return t}return e};
+var Wv={};
+ft(Wv,{withBaseException:()=>OMu,throwDefaultError:()=>v1s,take:()=>UMu,serializeFloat:()=>GMu,serializeDateTime:()=>VMu,resolvedPath:()=>$1s.resolvedPath,resolveDefaultRuntimeConfig:()=>Xkr,map:()=>B1s,loadConfigsForDefaultMode:()=>Ykr,isSerializableHeaderValue:()=>FMu,getValueFromTextNode:()=>F1s,getDefaultExtensionConfiguration:()=>tdn,getDefaultClientConfiguration:()=>MMu,getArrayIfSingleItem:()=>NMu,extendedEncodeURIComponent:()=>H1s.extendedEncodeURIComponent,emitWarningIfUnsupportedVersion:()=>Jkr,decorateServiceException:()=>zkr,createAggregatedClient:()=>Kkr,convertMap:()=>BMu,collectBody:()=>rMs.collectBody,_json:()=>Qkr,ServiceException:()=>fAe,SENSITIVE_STRING:()=>PMu,NoOpLogger:()=>ndn,Command:()=>HR,Client:()=>Mwt});
+var QP=b(()=>{nMs();oMs();R1s();w1s();jkr();I1s();N1s();q1s();autofixError(Wv,x(b3(),1),module.exports)});
+export {GMu,VMu,Qkr,Wv,QP};

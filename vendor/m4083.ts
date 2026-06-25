@@ -1,14 +1,10 @@
 // @ts-nocheck
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {wB,eC} from "./m717.ts";
-import {fc,sl} from "./m715.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-function X2a(){return null}
-function Q2a(e,t,n){return PP.createElement(Box,{flexDirection:"column",marginTop:1},PP.createElement(Box,{flexDirection:"row"},PP.createElement(Text,{color:wB("plan")},fc),PP.createElement(Text,null," Entered plan mode")),PP.createElement(Box,{paddingLeft:2},PP.createElement(Text,{dimColor:!0},"Claude is now exploring and designing an implementation approach.")))}
-function Z2a(){return PP.createElement(Box,{flexDirection:"row",marginTop:1},PP.createElement(Text,{color:wB("default")},fc),PP.createElement(Text,null," User declined to enter plan mode"))}
-var PP;
-var e$a=b(()=>{sl();eC();ze();PP=M(Te(),1)});
-export {X2a,Q2a,Z2a,PP,e$a};
+import {Yn,Pl} from "./m2465.ts";
+import {dce,hdt} from "./m3994.ts";
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function c6a(){let e=l6a.c(1),t;if(e[0]===Symbol.for("react.memo_cache_sentinel"))t=Imo.jsx(Yn,{height:1,children:Imo.jsx(dce,{})}),e[0]=t;else t=e[0];return t}
+var l6a,Imo;
+var u6a=b(()=>{hdt();Pl();l6a=x(tt(),1),Imo=x(oe(),1)});
+export {c6a,l6a,Imo,u6a};

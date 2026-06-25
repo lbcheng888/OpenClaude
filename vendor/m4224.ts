@@ -1,16 +1,17 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {isFirstPartyProvider,li} from "../src/api/1282_usesFirstPartyModelIds.ts";
-import {isClaudeAISubscriber,getClaudeAIOAuthTokens,Ao} from "../src/config/2031_withOAuthRefreshLock.ts";
-import {getOauthConfig,Dc} from "../src/api/0459_getOauthConfig.ts";
-var upo={};
-isFullscreenWithTTY(upo,{sanitizeSessionNamePrefix:()=>sanitizeSessionNamePrefix,getBridgeTokenOverride:()=>getBridgeTokenOverride,getBridgeSessionNamePrefix:()=>getBridgeSessionNamePrefix,getBridgeBaseUrlOverride:()=>getBridgeBaseUrlOverride,getBridgeBaseUrl:()=>getBridgeBaseUrl,getBridgeAccessToken:()=>getBridgeAccessToken});
-function getBridgeTokenOverride(){return}
-function getBridgeBaseUrlOverride(){return}
-function getBridgeAccessToken(){let e=getBridgeTokenOverride();if(e!==void 0)return e;if(!isFirstPartyProvider()||!isClaudeAISubscriber())return;return getClaudeAIOAuthTokens()?.accessToken}
-function getBridgeBaseUrl(){return getBridgeBaseUrlOverride()??getOauthConfig().BASE_API_URL}
-function getBridgeSessionNamePrefix(){let e=process.env.CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX||e5a.hostname();return sanitizeSessionNamePrefix(e)||"remote-control"}
-function sanitizeSessionNamePrefix(e){return e.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
-var e5a;
-var tJ=b(()=>{Dc();Ao();li();e5a=require("os")});
-export {upo,getBridgeTokenOverride,getBridgeBaseUrlOverride,getBridgeAccessToken,getBridgeBaseUrl,getBridgeSessionNamePrefix,sanitizeSessionNamePrefix,e5a,tJ};
+import {bQ,$kt} from "./m1459.ts";
+import {isStructuredProtocolMessage,PROTOCOL_FRAME_PROMPT_ERROR,writeToMailbox,Pw} from "../src/permissions/3902_writeToMailbox.ts";
+import {xe,He,mn} from "../src/telemetry/0600_feature_name.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {isInsideTmux,hte} from "./m3895.ts";
+import {fza,hza,hqt,Ogo} from "../src/permissions/4224_planModeRequired.ts";
+import {Ma} from "./m2519.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {Mr,xl} from "./m4427.ts";
+import {Si,ud} from "./m134.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {b} from "../runtime.ts";
+class gza{type;backend;context=null;spawnedTeammates;cleanupRegistered=!1;constructor(e){this.backend=e,this.type=e.type,this.spawnedTeammates=new Map}setContext(e){this.context=e}async isAvailable(){return this.backend.isAvailable()}async spawn(e){let t=bQ(e.name,e.teamName);if(isStructuredProtocolMessage(e.prompt))return xe("swarm_pane_spawn","protocol_frame_prompt"),{success:!1,agentId:t,error:PROTOCOL_FRAME_PROMPT_ERROR};if(!this.context)return logForDebugging(`[PaneBackendExecutor] spawn() called without context for ${e.name}`),xe("swarm_pane_spawn","no_context"),{success:!1,agentId:t,error:"PaneBackendExecutor not initialized. Call setContext() before spawn()."};let n="pane_create";try{let r=e.color??this.context.teammateColors.assign(t),{paneId:o,isFirstTeammate:s}=await this.backend.createTeammatePaneInSwarmView(e.name,r),i=await isInsideTmux();if(s&&i)await this.backend.enablePaneBorderStatus();let a=fza(),l=[`--agent-id ${Ma([t])}`,`--agent-name ${Ma([e.name])}`,`--team-name ${Ma([e.teamName])}`,`--agent-color ${Ma([r])}`,`--parent-session-id ${Ma([e.parentSessionId||getSessionId()])}`,e.planModeRequired?"--plan-mode-required":""].filter(Boolean).join(" "),c=hza({planModeRequired:e.planModeRequired,permissionMode:Mr(this.context).mode,effortValue:this.context.getAppState().effortValue,skipModel:!!e.model});if(e.model)c=c?`${c} --model ${Ma([e.model])}`:`--model ${Ma([e.model])}`;let u=c?` ${c}`:"",d=e.cwd,p=hqt(),m=`cd ${Ma([d])} && env ${p} ${Ma([a])} ${l}${u}`;if(n="send_command",await this.backend.sendCommandToPane(o,m,!i),this.spawnedTeammates.set(t,{paneId:o,insideTmux:i}),!this.cleanupRegistered)this.cleanupRegistered=!0,Si(async()=>{for(let[f,h]of this.spawnedTeammates)logForDebugging(`[PaneBackendExecutor] Cleanup: killing pane for ${f}`),await this.backend.killPane(h.paneId,!h.insideTmux);this.spawnedTeammates.clear()});return await writeToMailbox(e.name,{from:"team-lead",text:e.prompt,timestamp:new Date().toISOString()},e.teamName),logForDebugging(`[PaneBackendExecutor] Spawned teammate ${t} in pane ${o}`),He("swarm_pane_spawn"),{success:!0,agentId:t,paneId:o}}catch(r){let o=r instanceof Error?r.message:String(r);return logForDebugging(`[PaneBackendExecutor] Failed to spawn ${t}: ${o}`),xe("swarm_pane_spawn",n==="pane_create"?"pane_create_failed":"send_command_failed"),{success:!1,agentId:t,error:o}}}async sendMessage(e,t){logForDebugging(`[PaneBackendExecutor] sendMessage() to ${e}: ${t.text.substring(0,50)}...`);let n=$kt(e);if(!n)throw Error(`Invalid agentId format: ${e}. Expected format: agentName@teamName`);let{agentName:r,teamName:o}=n;await writeToMailbox(r,{text:t.text,from:t.from,color:t.color,timestamp:t.timestamp??new Date().toISOString()},o),logForDebugging(`[PaneBackendExecutor] sendMessage() completed for ${e}`)}async terminate(e,t){logForDebugging(`[PaneBackendExecutor] terminate() called for ${e}: ${t}`);let n=$kt(e);if(!n)return logForDebugging("[PaneBackendExecutor] terminate() failed: invalid agentId format"),!1;let{agentName:r,teamName:o}=n,s={type:"shutdown_request",requestId:`shutdown-${e}-${Date.now()}`,from:"team-lead",reason:t};return await writeToMailbox(r,{from:"team-lead",text:TeamDeleteToolName(s),timestamp:new Date().toISOString()},o),logForDebugging(`[PaneBackendExecutor] terminate() sent shutdown request to ${e}`),!0}async kill(e){logForDebugging(`[PaneBackendExecutor] kill() called for ${e}`);let t=this.spawnedTeammates.get(e);if(!t)return logForDebugging(`[PaneBackendExecutor] kill() failed: teammate ${e} not found in spawned map`),!1;let{paneId:n,insideTmux:r}=t,o=await this.backend.killPane(n,!r);if(o)this.spawnedTeammates.delete(e),logForDebugging(`[PaneBackendExecutor] kill() succeeded for ${e}`);else logForDebugging(`[PaneBackendExecutor] kill() failed for ${e}`);return o}async isActive(e){if(logForDebugging(`[PaneBackendExecutor] isActive() called for ${e}`),!this.spawnedTeammates.get(e))return logForDebugging(`[PaneBackendExecutor] isActive(): teammate ${e} not found`),!1;return!0}}
+function _za(e){return new gza(e)}
+var yza=b(()=>{lt();mn();ud();qe();tn();Pw();xl();Ogo();hte()});
+export {gza,_za,yza};

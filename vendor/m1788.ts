@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {dI,kQe} from "./m1787.ts";
+import {yRe,uBe} from "./m1786.ts";
+import {ew,mQs,RA} from "./m1783.ts";
 import {b} from "../runtime.ts";
-function F7s(e,t=0){return(C1[e[t+0]]+C1[e[t+1]]+C1[e[t+2]]+C1[e[t+3]]+"-"+C1[e[t+4]]+C1[e[t+5]]+"-"+C1[e[t+6]]+C1[e[t+7]]+"-"+C1[e[t+8]]+C1[e[t+9]]+"-"+C1[e[t+10]]+C1[e[t+11]]+C1[e[t+12]]+C1[e[t+13]]+C1[e[t+14]]+C1[e[t+15]]).toLowerCase()}
-var C1;
-var U7s=b(()=>{C1=[];for(let e=0;e<256;++e)C1.push((e+256).toString(16).slice(1))});
-export {F7s,C1,U7s};
+class fMr{get id(){return this._id}set id(e){this._id=e}get idType(){return this._idType}set idType(e){this._idType=e}constructor(e){let t=e?.userAssignedClientId,n=e?.userAssignedResourceId,r=e?.userAssignedObjectId;if(t){if(n||r)throw dI(yRe);this.id=t,this.idType=ew.USER_ASSIGNED_CLIENT_ID}else if(n){if(t||r)throw dI(yRe);this.id=n,this.idType=ew.USER_ASSIGNED_RESOURCE_ID}else if(r){if(t||n)throw dI(yRe);this.id=r,this.idType=ew.USER_ASSIGNED_OBJECT_ID}else this.id=mQs,this.idType=ew.SYSTEM_ASSIGNED}}
+var wQs=b(()=>{kQe();RA();uBe();/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {fMr,wQs};

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {sK} from "./m1830.ts";
-var Tfn=X((FNA,Fzs)=>{var o$u=sK(),s$u=(e,t,n)=>o$u(e,t,n)<0;Fzs.exports=s$u});
-export {Tfn};
+import {Q} from "../runtime.ts";
+import {I7} from "./m1835.ts";
+var vei=Q((nWh,Rei)=>{var fVu=I7(),hVu=(e,t)=>fVu(e,t,!0);Rei.exports=hVu});
+export {vei};

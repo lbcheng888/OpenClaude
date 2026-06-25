@@ -1,28 +1,16 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {lt} from "../src/session/0131_sent.ts";
-import {Ld} from "./m2459.ts";
-import {yTo} from "./m4561.ts";
-import {ki} from "./m2453.ts";
-import {X0e} from "./m4460.ts";
-import {ze} from "./m2452.ts";
-import {Ts} from "./m2542.ts";
-import {ln} from "../src/telemetry/0594_feature_name.ts";
-import {configProtoStore} from "./m2458.ts";
-import {Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {ps} from "./m238.ts";
-import {Pp} from "../src/config/2273_loggedTmuxCcDisable.ts";
-import {dJr} from "./m3299.ts";
-import {dr} from "./m231.ts";
-import {Qxe} from "./m3175.ts";
-import {J4} from "./m2570.ts";
-import {Ny} from "./m2574.ts";
-import {vE} from "./m3837.ts";
-import {_xe} from "./m2807.ts";
-import {Cjl} from "./m5355.ts";
-import {CTo} from "./m4568.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var QIm,gOo,vjl=110;
-var _Oo=b(()=>{lt();Ld();yTo();ki();X0e();ze();Ts();ln();configProtoStore();Qn();ps();Pp();dJr();dr();Qxe();J4();Ny();vE();_xe();Cjl();CTo();QIm=M(rt(),1),gOo=M(Te(),1)});
-export {QIm,gOo,vjl,_Oo};
+import {jRn,BLi,J2} from "../src/session/2532_id.ts";
+import {React} from "./m2525.ts";
+import {Ci,fd} from "./m2469.ts";
+import {Text} from "./m2433.ts";
+import {dr,uc} from "./m2558.ts";
+import {mer,her} from "../src/tui/5356_apiKeyStatus.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+async function sNm(e,t){let n=Math.ceil(e/pzl)*pzl;if(qGe&&ger>=n&&tFo===t)return qGe;if(qGe)await qGe;ger=n,tFo=t,qGe=(async()=>{let r=[],o=0;for await(let s of jRn()){if(t){if(React(s.display)!==t)continue}if(r.push(s),o++,o>=ger)break}return r})();try{return await qGe}finally{qGe=null,ger=0,tFo=void 0}}
+function mzl(e,t,n,r,o,s){let[i,a]=HT.useState(0),[l,c]=HT.useState(null),u=HT.useRef(0),d=HT.useRef(!1),[p,m]=HT.useState(void 0),f=HT.useRef(!1),{addNotification:h,removeNotification:g}=Ci(),_=HT.useRef([]),T=HT.useRef(void 0),y=HT.useRef(0),S=HT.useRef(null),E=HT.useRef(void 0),R=HT.useRef(new Map),w=HT.useRef(0),H=HT.useRef(!1),k=HT.useRef(0),I=HT.useRef(t),D=HT.useRef(n),O=HT.useRef(o),L=HT.useRef(s);I.current=t,D.current=n,O.current=o,L.current=s;let P=HT.useCallback((J,K,j,X)=>{S.current=J,e(J,K,j),r(X==="end"?J.length:0),I.current=J,D.current=j,O.current=K},[e,r]),M=HT.useCallback((J,K)=>{if(!J||!J.display)return!1;let j=React(J.display),X=j==="bash"?J.display.slice(1):J.display;return P(X,j,J.pastedContents??{},K),!0},[P]),B=HT.useCallback((J,K)=>{let j=R.current.get(J);if(j)return P(j.display,j.mode,j.pastedContents,K),!0;return M(_.current[J],K)},[P,M]),N=HT.useCallback(()=>{h({key:"search-history-hint",kind:"contextual",jsx:nFo.jsx(Text,{dimColor:!0,children:nFo.jsx(dr,{action:"history:search",context:"Global",fallback:"ctrl+r",description:"search history"})}),priority:"immediate",timeoutMs:mer})},[h]),F=HT.useCallback(()=>{let J=y.current,K=I.current,j=D.current,X=O.current,ee=w.current===0;if(J===0)E.current=X==="bash"?X:void 0;let te=E.current;if(T.current!==te)_.current=[],T.current=te,R.current.clear(),u.current++,d.current=!1,c(null);let ne=L.current;if(ne){let ue=te?ne.filter((ce)=>React(ce.display)===te):ne,le=_.current;if(ue.length>le.length){let ce=ue.length-le.length;if(le.length===0||ue[ce]?.display===le[0]?.display){if(y.current>0)y.current+=ce,a(y.current);if(w.current>0)w.current+=ce;if(R.current.size>0)R.current=new Map([...R.current].map(([Se,ie])=>[Se+ce,ie]))}else y.current=0,a(0),w.current=0,R.current.clear();_.current=ue,J=y.current}c(_.current.length)}if(J===0&&!ne&&!d.current){d.current=!0;let ue=u.current;BLi(te?(le)=>React(le)===te:void 0).then((le)=>{if(u.current!==ue)return;d.current=!1,c(le)})}let se=()=>{if(y.current!==J)return;if(J>=_.current.length)return;if(J===0){if(ee){let le=K.trim()!=="";m(le?{display:K,pastedContents:j,mode:X}:void 0)}}else if(J===w.current)R.current.set(J-1,{display:K,pastedContents:j,mode:X});let ue=J+1;if(y.current=ue,a(ue),B(J,"end"))w.current=ue;if(ue>=2&&!ne&&!f.current)f.current=!0,N()};if(J<_.current.length||ne){se();return}H.current=!0;let re=++k.current;(async()=>{try{let ue=await sNm(J+1,te);if(k.current!==re)return;if(ue.length>_.current.length&&T.current===te)_.current=ue;se()}catch{}finally{if(k.current===re)H.current=!1}})()},[B,N]),V=HT.useCallback(()=>{let J=H.current;if(J)k.current++,H.current=!1;let K=y.current;if(K>0&&K===w.current)R.current.set(K-1,{display:I.current,pastedContents:D.current,mode:O.current});if(K>1){if(y.current--,a(K-1),B(K-2,"start"))w.current=K-1}else if(K===1){if(y.current=0,a(0),p)P(p.display,p.mode,p.pastedContents??{},"start");else P("",E.current??"prompt",{},"start");w.current=0}return K<=0&&!J},[p,B,P]),G=HT.useCallback(()=>{m(void 0),a(0),c(null),u.current++,d.current=!1,y.current=0,w.current=0,k.current++,H.current=!1,S.current=null,E.current=void 0,g("search-history-hint"),_.current=[],T.current=void 0,R.current.clear()},[g]),z=HT.useCallback(()=>{g("search-history-hint")},[g]);return{historyIndex:i,historyTotal:l,historyEdited:i>0&&t!==S.current,setHistoryIndex:a,onHistoryUp:F,onHistoryDown:V,resetHistory:G,dismissSearchHint:z}}
+var HT,nFo,pzl=10,qGe=null,ger=0,tFo=void 0;
+var fzl=b(()=>{fd();uc();her();J2();je();HT=x(et(),1),nFo=x(oe(),1)});
+export {sNm,mzl,HT,nFo,pzl,qGe,ger,tFo,fzl};

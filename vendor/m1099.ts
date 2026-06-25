@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Hws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Axs,GetAutomatedReasoningPolicyBuildWorkflowCommand;
-var tEr=b(()=>{ri();wi();xi();Axs=M(yo(),1);GetAutomatedReasoningPolicyBuildWorkflowCommand=class GetAutomatedReasoningPolicyBuildWorkflowCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Axs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetAutomatedReasoningPolicyBuildWorkflow",{}).n("BedrockClient","GetAutomatedReasoningPolicyBuildWorkflowCommand").sc(Hws).build(){}});
-export {Axs,GetAutomatedReasoningPolicyBuildWorkflowCommand,tEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,yxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var oPs,DeletePromptRouterCommand;
+var Rwr=b(()=>{$s();ai();ci();oPs=x(yo(),1);DeletePromptRouterCommand=class DeletePromptRouterCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[oPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeletePromptRouter",{}).n("BedrockClient","DeletePromptRouterCommand").sc(yxs).build(){}});
+export {oPs,DeletePromptRouterCommand,Rwr};

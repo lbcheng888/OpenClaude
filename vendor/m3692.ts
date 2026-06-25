@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {y1n} from "./m3688.ts";
-import {Xi} from "./m2091.ts";
-var ZEa=X((E1n)=>{Object.defineProperty(E1n,"__esModule",{value:!0});E1n.getMachineId=void 0;var QEa=require("process"),$lp=y1n(),qlp=Xi();async function jlp(){let t="%windir%\\System32\\REG.exe";if(QEa.arch==="ia32"&&"PROCESSOR_ARCHITEW6432"in QEa.env)t="%windir%\\sysnative\\cmd.exe /c "+t;try{let r=(await(0,$lp.execAsync)(`${t} QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography /v MachineGuid`)).stdout.split("REG_SZ");if(r.length===2)return r[1].trim()}catch(n){qlp.diag.debug(`error reading machine id: ${n}`)}return}E1n.getMachineId=jlp});
-export {ZEa};
+import {Q} from "../runtime.ts";
+import {WIa} from "./m3691.ts";
+var Y2t=Q((q4e)=>{Object.defineProperty(q4e,"__esModule",{value:!0});q4e.toAggregation=q4e.AggregationType=void 0;var U4e=WIa(),$4e;(function(e){e[e.DEFAULT=0]="DEFAULT",e[e.DROP=1]="DROP",e[e.SUM=2]="SUM",e[e.LAST_VALUE=3]="LAST_VALUE",e[e.EXPLICIT_BUCKET_HISTOGRAM=4]="EXPLICIT_BUCKET_HISTOGRAM",e[e.EXPONENTIAL_HISTOGRAM=5]="EXPONENTIAL_HISTOGRAM"})($4e=q4e.AggregationType||(q4e.AggregationType={}));function Qyp(e){switch(e.type){case $4e.DEFAULT:return U4e.DEFAULT_AGGREGATION;case $4e.DROP:return U4e.DROP_AGGREGATION;case $4e.SUM:return U4e.SUM_AGGREGATION;case $4e.LAST_VALUE:return U4e.LAST_VALUE_AGGREGATION;case $4e.EXPONENTIAL_HISTOGRAM:{let t=e;return new U4e.ExponentialHistogramAggregation(t.options?.maxSize,t.options?.recordMinMax)}case $4e.EXPLICIT_BUCKET_HISTOGRAM:{let t=e;if(t.options==null)return U4e.HISTOGRAM_AGGREGATION;else return new U4e.ExplicitBucketHistogramAggregation(t.options?.boundaries,t.options?.recordMinMax)}default:throw Error("Unsupported Aggregation")}}q4e.toAggregation=Qyp});
+export {Y2t};

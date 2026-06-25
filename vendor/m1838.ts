@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {sK} from "./m1830.ts";
-var _Dr=X((UNA,Uzs)=>{var i$u=sK(),a$u=(e,t,n)=>i$u(e,t,n)===0;Uzs.exports=a$u});
-export {_Dr};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+var t_n=Q((rWh,kei)=>{var wei=TF(),gVu=(e,t,n)=>{let r=new wei(e,n),o=new wei(t,n);return r.compare(o)||r.compareBuild(o)};kei.exports=gVu});
+export {t_n};

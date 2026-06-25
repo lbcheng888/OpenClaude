@@ -1,5 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Zto} from "./m3632.ts";
-var tba=X((jit)=>{Object.defineProperty(jit,"__esModule",{value:!0});jit.globalErrorHandler=jit.setGlobalErrorHandler=void 0;var iip=Zto(),eba=(0,iip.loggingErrorHandler)();function aip(e){eba=e}jit.setGlobalErrorHandler=aip;function lip(e){try{eba(e)}catch{}}jit.globalErrorHandler=lip});
-export {tba};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {Bka} from "./m3631.ts";
+import {P2t} from "./m3630.ts";
+import {Gka} from "./m3632.ts";
+var Kka=Q((cFn)=>{Object.defineProperty(cFn,"__esModule",{value:!0});cFn.convertLegacyOtlpGrpcOptions=void 0;var bgp=xi(),Vka=Bka(),Egp=P2t(),Cgp=Gka();function Agp(e,t){if(e.headers)bgp.diag.warn("Headers cannot be set when using grpc");let n=e.credentials;return(0,Vka.mergeOtlpGrpcConfigurationWithDefaults)({url:e.url,metadata:()=>e.metadata??(0,Egp.createEmptyMetadata)(),compression:e.compression,timeoutMillis:e.timeoutMillis,concurrencyLimit:e.concurrencyLimit,credentials:n!=null?()=>n:void 0,userAgent:e.userAgent},(0,Cgp.getOtlpGrpcConfigurationFromEnv)(t),(0,Vka.getOtlpGrpcDefaultConfiguration)())}cFn.convertLegacyOtlpGrpcOptions=Agp});
+export {Kka};

@@ -1,12 +1,8 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {H7} from "./m949.ts";
-import {NTr,GetRoleCredentialsCommand} from "./m967.ts";
-import {gsn,DCt} from "./m968.ts";
-import {_sn,PCt} from "./m969.ts";
-import {FTr,BTr} from "./m970.ts";
-import {kCt,SSOClient} from "./m963.ts";
-import {wTr} from "./m942.ts";
-var Xpu,k_s;
-var H_s=b(()=>{H7();NTr();gsn();_sn();FTr();kCt();Xpu={GetRoleCredentialsCommand:GetRoleCredentialsCommand,ListAccountRolesCommand:DCt,ListAccountsCommand:PCt,LogoutCommand:BTr};k_s=class k_s extends SSOClient{};wTr(Xpu,k_s)});
-export {Xpu,k_s,H_s};
+import {b,x} from "../runtime.ts";
+import {dRr,Yan,Jan,Xan,Qan} from "./m970.ts";
+import {uRr,Eme} from "./m969.ts";
+import {US} from "./m823.ts";
+var JYe,Zan,zEu,jEu,YEu,JEu,XEu,QEu,ZEu,eCu,tCu,nCu,rCu,oCu,sCu,iCu,aCu,lCu,cCu="unit",uCu,dCu,pCu,hAs,gAs,_As,yAs;
+var rwt=b(()=>{dRr();uRr();JYe=x(US(),1),Zan=[0,"com.amazonaws.sso","AccessTokenType",8,0],zEu=[0,"com.amazonaws.sso","SecretAccessKeyType",8,0],jEu=[0,"com.amazonaws.sso","SessionTokenType",8,0],YEu=[3,"com.amazonaws.sso","AccountInfo",0,["accountId","accountName","emailAddress"],[0,0,0]],JEu=[3,"com.amazonaws.sso","GetRoleCredentialsRequest",0,["roleName","accountId","accessToken"],[[0,{["httpQuery"]:"role_name"}],[0,{["httpQuery"]:"account_id"}],[()=>Zan,{["httpHeader"]:"x-amz-sso_bearer_token"}]]],XEu=[3,"com.amazonaws.sso","GetRoleCredentialsResponse",0,["roleCredentials"],[[()=>sCu,0]]],QEu=[-3,"com.amazonaws.sso","InvalidRequestException",{["error"]:"client",["httpError"]:400},["message"],[0]];JYe.TypeRegistry.for("com.amazonaws.sso").registerError(QEu,Yan);ZEu=[3,"com.amazonaws.sso","ListAccountRolesRequest",0,["nextToken","maxResults","accessToken","accountId"],[[0,{["httpQuery"]:"next_token"}],[1,{["httpQuery"]:"max_result"}],[()=>Zan,{["httpHeader"]:"x-amz-sso_bearer_token"}],[0,{["httpQuery"]:"account_id"}]]],eCu=[3,"com.amazonaws.sso","ListAccountRolesResponse",0,["nextToken","roleList"],[0,()=>pCu]],tCu=[3,"com.amazonaws.sso","ListAccountsRequest",0,["nextToken","maxResults","accessToken"],[[0,{["httpQuery"]:"next_token"}],[1,{["httpQuery"]:"max_result"}],[()=>Zan,{["httpHeader"]:"x-amz-sso_bearer_token"}]]],nCu=[3,"com.amazonaws.sso","ListAccountsResponse",0,["nextToken","accountList"],[0,()=>dCu]],rCu=[3,"com.amazonaws.sso","LogoutRequest",0,["accessToken"],[[()=>Zan,{["httpHeader"]:"x-amz-sso_bearer_token"}]]],oCu=[-3,"com.amazonaws.sso","ResourceNotFoundException",{["error"]:"client",["httpError"]:404},["message"],[0]];JYe.TypeRegistry.for("com.amazonaws.sso").registerError(oCu,Jan);sCu=[3,"com.amazonaws.sso","RoleCredentials",0,["accessKeyId","secretAccessKey","sessionToken","expiration"],[0,[()=>zEu,0],[()=>jEu,0],1]],iCu=[3,"com.amazonaws.sso","RoleInfo",0,["roleName","accountId"],[0,0]],aCu=[-3,"com.amazonaws.sso","TooManyRequestsException",{["error"]:"client",["httpError"]:429},["message"],[0]];JYe.TypeRegistry.for("com.amazonaws.sso").registerError(aCu,Xan);lCu=[-3,"com.amazonaws.sso","UnauthorizedException",{["error"]:"client",["httpError"]:401},["message"],[0]];JYe.TypeRegistry.for("com.amazonaws.sso").registerError(lCu,Qan);uCu=[-3,"smithy.ts.sdk.synthetic.com.amazonaws.sso","SSOServiceException",0,[],[]];JYe.TypeRegistry.for("smithy.ts.sdk.synthetic.com.amazonaws.sso").registerError(uCu,Eme);dCu=[1,"com.amazonaws.sso","AccountListType",0,()=>YEu],pCu=[1,"com.amazonaws.sso","RoleListType",0,()=>iCu],hAs=[9,"com.amazonaws.sso","GetRoleCredentials",{["http"]:["GET","/federation/credentials",200]},()=>JEu,()=>XEu],gAs=[9,"com.amazonaws.sso","ListAccountRoles",{["http"]:["GET","/assignment/roles",200]},()=>ZEu,()=>eCu],_As=[9,"com.amazonaws.sso","ListAccounts",{["http"]:["GET","/assignment/accounts",200]},()=>tCu,()=>nCu],yAs=[9,"com.amazonaws.sso","Logout",{["http"]:["POST","/logout",200]},()=>rCu,()=>cCu]});
+export {JYe,Zan,zEu,jEu,YEu,JEu,XEu,QEu,ZEu,eCu,tCu,nCu,rCu,oCu,sCu,iCu,aCu,lCu,cCu,uCu,dCu,pCu,hAs,gAs,_As,yAs,rwt};

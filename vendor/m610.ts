@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-function OMe(e){return e.sort((t,n)=>{let r=n.modified.getTime()-t.modified.getTime();if(r!==0)return r;return n.created.getTime()-t.created.getTime()})}
-function Vmr(e,{suffix:t="nodejs"}={}){if(typeof e!=="string")throw TypeError(`Expected a string, got ${typeof e}`);if(t)e+=`-${t}`;if(Uen.default.platform==="darwin")return LKc(e);if(Uen.default.platform==="win32")return MKc(e);return NKc(e)}
-var yw,Wmr,Uen,ibe,Gmr,p7e,LKc=(e)=>{let t=yw.default.join(ibe,"Library");return{data:yw.default.join(t,"Application Support",e),config:yw.default.join(t,"Preferences",e),cache:yw.default.join(t,"Caches",e),log:yw.default.join(t,"Logs",e),temp:yw.default.join(Gmr,e)}},MKc=(e)=>{let t=p7e.APPDATA||yw.default.join(ibe,"AppData","Roaming"),n=p7e.LOCALAPPDATA||yw.default.join(ibe,"AppData","Local");return{data:yw.default.join(n,e,"Data"),config:yw.default.join(t,e,"Config"),cache:yw.default.join(n,e,"Cache"),log:yw.default.join(n,e,"Log"),temp:yw.default.join(Gmr,e)}},NKc=(e)=>{let t=yw.default.basename(ibe);return{data:yw.default.join(p7e.XDG_DATA_HOME||yw.default.join(ibe,".local","share"),e),config:yw.default.join(p7e.XDG_CONFIG_HOME||yw.default.join(ibe,".config"),e),cache:yw.default.join(p7e.XDG_CACHE_HOME||yw.default.join(ibe,".cache"),e),log:yw.default.join(p7e.XDG_STATE_HOME||yw.default.join(ibe,".local","state"),e),temp:yw.default.join(Gmr,t,e)}};
-var KJo=b(()=>{yw=M(require("path")),Wmr=M(require("os")),Uen=M(require("process")),ibe=Wmr.default.homedir(),Gmr=Wmr.default.tmpdir(),{env:p7e}=Uen.default});
-export {OMe,Vmr,yw,Wmr,Uen,ibe,Gmr,p7e,LKc,MKc,NKc,KJo};
+import {Q} from "../runtime.ts";
+import {yns} from "./m609.ts";
+var qN=Q((ayr)=>{var Tns=yns(),lru=(e)=>e[Tns.SMITHY_CONTEXT_KEY]||(e[Tns.SMITHY_CONTEXT_KEY]={}),cru=(e)=>{if(typeof e==="function")return e;let t=Promise.resolve(e);return()=>t};ayr.getSmithyContext=lru;ayr.normalizeProvider=cru});
+export {qN};

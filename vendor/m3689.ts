@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {y1n} from "./m3688.ts";
-import {Xi} from "./m2091.ts";
-var zEa=X((T1n)=>{Object.defineProperty(T1n,"__esModule",{value:!0});T1n.getMachineId=void 0;var Dlp=y1n(),Plp=Xi();async function Olp(){try{let t=(await(0,Dlp.execAsync)('ioreg -rd1 -c "IOPlatformExpertDevice"')).stdout.split(`
-`).find((r)=>r.includes("IOPlatformUUID"));if(!t)return;let n=t.split('" = "');if(n.length===2)return n[1].slice(0,-1)}catch(e){Plp.diag.debug(`error reading machine id: ${e}`)}return}T1n.getMachineId=Olp});
-export {zEa};
+import {Q} from "../runtime.ts";
+import {Glt} from "./m3677.ts";
+import {M_e} from "./m3675.ts";
+var NIa=Q((Qlt)=>{Object.defineProperty(Qlt,"__esModule",{value:!0});Qlt.SumAggregator=Qlt.SumAccumulation=void 0;var jyp=Glt(),Yyp=M_e();class F4e{startTime;monotonic;_current;reset;constructor(e,t,n=0,r=!1){this.startTime=e,this.monotonic=t,this._current=n,this.reset=r}record(e){if(this.monotonic&&e<0)return;this._current+=e}setStartTime(e){this.startTime=e}toPointValue(){return this._current}}Qlt.SumAccumulation=F4e;class MIa{kind=jyp.AggregatorKind.SUM;monotonic;constructor(e){this.monotonic=e}createAccumulation(e){return new F4e(e,this.monotonic)}merge(e,t){let n=e.toPointValue(),r=t.toPointValue();if(t.reset)return new F4e(t.startTime,this.monotonic,r,t.reset);return new F4e(e.startTime,this.monotonic,n+r)}diff(e,t){let n=e.toPointValue(),r=t.toPointValue();if(this.monotonic&&n>r)return new F4e(t.startTime,this.monotonic,r,!0);return new F4e(t.startTime,this.monotonic,r-n)}toMetricData(e,t,n,r){return{descriptor:e,aggregationTemporality:t,dataPointType:Yyp.DataPointType.SUM,dataPoints:n.map(([o,s])=>({attributes:o,startTime:s.startTime,endTime:r,value:s.toPointValue()})),isMonotonic:this.monotonic}}}Qlt.SumAggregator=MIa});
+export {NIa};

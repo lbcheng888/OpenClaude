@@ -1,6 +1,12 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EC} from "./m3064.ts";
-import {mT} from "./m1464.ts";
-var w$e=X((Rxe)=>{var PKi=EC().fromCallback,vq=mT(),sNd=["access","appendFile","chmod","chown","close","copyFile","fchmod","fchown","fdatasync","fstat","fsync","ftruncate","futimes","lchmod","lchown","link","lstat","mkdir","mkdtemp","open","opendir","readdir","readFile","readlink","realpath","rename","rm","rmdir","stat","symlink","truncate","unlink","utimes","writeFile"].filter((e)=>typeof vq[e]==="function");Object.assign(Rxe,vq);sNd.forEach((e)=>{Rxe[e]=PKi(vq[e])});Rxe.exists=function(e,t){if(typeof t==="function")return vq.exists(e,t);return new Promise((n)=>vq.exists(e,n))};Rxe.read=function(e,t,n,r,o,s){if(typeof s==="function")return vq.read(e,t,n,r,o,s);return new Promise((i,a)=>{vq.read(e,t,n,r,o,(l,c,u)=>{if(l)return a(l);i({bytesRead:c,buffer:u})})})};Rxe.write=function(e,t,...n){if(typeof n[n.length-1]==="function")return vq.write(e,t,...n);return new Promise((r,o)=>{vq.write(e,t,...n,(s,i,a)=>{if(s)return o(s);r({bytesWritten:i,buffer:a})})})};if(typeof vq.writev==="function")Rxe.writev=function(e,t,...n){if(typeof n[n.length-1]==="function")return vq.writev(e,t,...n);return new Promise((r,o)=>{vq.writev(e,t,...n,(s,i,a)=>{if(s)return o(s);r({bytesWritten:i,buffers:a})})})};if(typeof vq.realpath.native==="function")Rxe.realpath.native=PKi(vq.realpath.native);else process.emitWarning("fs.realpath.native is not a function. Is fs being monkey-patched?","Warning","fs-extra-WARN0003")});
-export {w$e};
+import {b} from "../runtime.ts";
+import {k0n} from "./m3064.ts";
+import {E9e} from "./m3062.ts";
+import {b1} from "./m3031.ts";
+import {Ige} from "./m3036.ts";
+import {S9e} from "./m3037.ts";
+import {b9e} from "./m3040.ts";
+import {Xot} from "./m3029.ts";
+var lS;
+var lZi=b(()=>{k0n();lS=E9e((e,t)=>{let{transformer:n=(p)=>p?"yes":"no"}=e,[r,o]=b1("idle"),[s,i]=b1(""),a=Ige(e.theme),l=S9e({status:r,theme:a});b9e((p,m)=>{if(Xot(p)){let f=e.default!==!1;if(/^(y|yes)/i.test(s))f=!0;else if(/^(n|no)/i.test(s))f=!1;i(n(f)),o("done"),t(f)}else i(m.line)});let c=s,u="";if(r==="done")c=a.style.answer(s);else u=` ${a.style.defaultAnswer(e.default===!1?"y/N":"Y/n")}`;let d=a.style.message(e.message,r);return`${l} ${d}${u} ${c}`})});
+export {lS,lZi};

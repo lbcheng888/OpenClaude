@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {xri} from "./m2078.ts";
-var kri=X((ign)=>{Object.defineProperty(ign,"__esModule",{value:!0});ign.createTraceState=void 0;var D7u=xri();function P7u(e){return new D7u.TraceStateImpl(e)}ign.createTraceState=P7u});
-export {kri};
+import {Q} from "../runtime.ts";
+var hci=Q((vxt)=>{Object.defineProperty(vxt,"__esModule",{value:!0});vxt.SamplingDecision=void 0;var Und;(function(e){e[e.NOT_RECORD=0]="NOT_RECORD",e[e.RECORD=1]="RECORD",e[e.RECORD_AND_SAMPLED=2]="RECORD_AND_SAMPLED"})(Und=vxt.SamplingDecision||(vxt.SamplingDecision={}))});
+export {hci};

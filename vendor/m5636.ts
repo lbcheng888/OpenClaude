@@ -1,19 +1,16 @@
 // @ts-nocheck
-import {detectCurrentRepository,parseGitHubRepository,ZI} from "./m692.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {getOriginalCwd,lt} from "../src/session/0131_sent.ts";
-import {findGitRoot,Ba} from "./m693.ts";
-import {A_,ng} from "./m132.ts";
-import {getGlobalConfig,saveGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {ud,mc} from "../src/config/0645_maxBytes.ts";
-import {getRemoteUrlForDir,vO} from "./m691.ts";
+import {J_,$X} from "./m446.ts";
+import {l9,$m,FDe,ocl,dS} from "../src/config/4460_source.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
+import {getOriginalCwd,lt} from "../src/session/0132_sent.ts";
+import {P5,bk} from "../src/agent/0731_level.ts";
+import {Gu,Xl} from "../src/config/0651_maxBytes.ts";
+import {findCanonicalGitRoot,ia} from "./m698.ts";
 import {b} from "../runtime.ts";
-class T1o{frameDurations=[];totalFrames=0;firstRenderTime;lastRenderTime;record(e){let t=performance.now();if(this.firstRenderTime===void 0)this.firstRenderTime=t;if(this.lastRenderTime=t,this.totalFrames++,this.frameDurations.push(e),this.frameDurations.length>3600)this.frameDurations.splice(0,this.frameDurations.length>>1)}getMetrics(){if(this.totalFrames===0||this.firstRenderTime===void 0||this.lastRenderTime===void 0)return;let e=this.lastRenderTime-this.firstRenderTime;if(e<=0)return;let t=this.totalFrames/(e/1000),n=this.frameDurations.slice().sort((i,a)=>a-i),r=Math.max(0,Math.ceil(n.length*0.01)-1),o=n[r],s=o>0?1000/o:0;return{averageFps:Math.round(t*100)/100,low1PctFps:Math.round(s*100)/100}}}
-async function Nrc(){try{let e=await detectCurrentRepository();if(!e){logForDebugging("Not in a GitHub repository, skipping path mapping update");return}let t=getOriginalCwd(),r=findGitRoot(t)??t,o;try{o=A_(await Mrc.realpath(r))}catch{o=r}let s=e.toLowerCase(),a=getGlobalConfig().githubRepoPaths?.[s]??[];if(a[0]===o){logForDebugging(`Path ${o} already tracked for repo ${s}`);return}let l=a.filter((u)=>u!==o),c=[o,...l];saveGlobalConfig((u)=>({...u,githubRepoPaths:{...u.githubRepoPaths,[s]:c}})),logForDebugging(`Added ${o} to tracked paths for repo ${s}`)}catch(e){logForDebugging(`Error updating repo path mapping: ${e}`)}}
-function QQn(e){let t=getGlobalConfig(),n=e.toLowerCase();return t.githubRepoPaths?.[n]??[]}
-async function ZQn(e){let t=await Promise.all(e.map(ud));return e.filter((n,r)=>t[r])}
-async function Brc(e,t){try{let n=await getRemoteUrlForDir(e);if(!n)return!1;let r=parseGitHubRepository(n);if(!r)return!1;return r.toLowerCase()===t.toLowerCase()}catch{return!1}}
-function Frc(e,t){let n=getGlobalConfig(),r=e.toLowerCase(),o=n.githubRepoPaths?.[r]??[],s=o.filter((a)=>a!==t);if(s.length===o.length)return;let i={...n.githubRepoPaths};if(s.length===0)delete i[r];else i[r]=s;saveGlobalConfig((a)=>({...a,githubRepoPaths:i})),logForDebugging(`Removed ${t} from tracked paths for repo ${r}`)}
-var Mrc;
-var gVt=b(()=>{lt();ng();Qn();qe();ZI();mc();vO();Ba();Mrc=require("fs/promises")});
-export {T1o,Nrc,QQn,ZQn,Brc,Frc,Mrc,gVt};
+function C2o(e,t,n){let r=[],o=[],s=[];for(let[i,a]of Object.entries(e)){let l=t[i],c=wuc(a.source,n?.projectRoot);if(!l)r.push(i);else if(a.sourceIsFallback)s.push(i);else if(!J_(c,l.source))o.push({name:i,declaredSource:c,materializedSource:l.source});else s.push(i)}return{missing:r,sourceChanged:o,upToDate:s}}
+async function Gnr(e){let t=l9();if(Object.keys(t).length===0)return{installed:[],updated:[],failed:[],upToDate:[],skipped:[]};let n;try{n=await $m()}catch(u){logForDebugging(`reconciler: failed to load known_marketplaces.json, treating as empty: ${Ce(u)}`,{level:"error"}),n={}}let r=C2o(t,n,{projectRoot:getOriginalCwd()}),o=[...r.missing.map((u)=>({name:u,source:wuc(t[u].source),action:"install"})),...r.sourceChanged.map(({name:u,declaredSource:d})=>({name:u,source:d,action:"update"}))],s=[],i=[];for(let u of o){if(e?.skip?.(u.name,u.source)){s.push(u.name);continue}if(u.action==="update"&&P5(u.source)&&!await Gu(u.source.path)){logForDebugging(`[reconcile] '${u.name}' declared path does not exist; keeping materialized entry`),s.push(u.name);continue}i.push(u)}let a=[],l=[],c=[];if(i.length>0){logForDebugging(`[reconcile] ${i.length} marketplace(s): ${i.map((u)=>`${u.name}(${u.action})`).join(", ")}`);for(let u=0;u<i.length;u++){let{name:d,source:p,action:m}=i[u];e?.onProgress?.({type:"installing",name:d,action:m,index:u+1,total:i.length});try{let f=await FDe(p);if(m==="install")a.push(d);else l.push(d);e?.onProgress?.({type:"installed",name:d,alreadyMaterialized:f.alreadyMaterialized})}catch(f){let h=Ce(f);c.push({name:d,error:h}),e?.onProgress?.({type:"failed",name:d,error:h}),logForDebugging(`[reconcile] failed to ${m} marketplace '${d}': ${h}`,{level:"error"})}}}try{await ocl(i.length===0?n:void 0)}catch(u){logForDebugging(`reconciler: syncDeclaredAutoUpdateToJson failed: ${Ce(u)}`,{level:"error"})}return{installed:a,updated:l,failed:c,upToDate:r.upToDate,skipped:s}}
+function wuc(e,t){if((e.source==="directory"||e.source==="file")&&!Wnr.isAbsolute(e.path)){let n=t??getOriginalCwd(),r=findCanonicalGitRoot(n);return{...e,path:Wnr.resolve(r??n,e.path)}}return e}
+var Wnr;
+var A2o=b(()=>{$X();lt();qe();Ct();Xl();ia();dS();bk();Wnr=require("path")});
+export {C2o,Gnr,wuc,Wnr,A2o};

@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var KZt=X((odf,PVo)=>{PVo.exports=TypeError});
-export {KZt};
+import {Q} from "../runtime.ts";
+var xgr=Q((TCf,TXo)=>{TXo.exports=Object});
+export {xgr};

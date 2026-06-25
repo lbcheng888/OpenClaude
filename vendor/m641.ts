@@ -1,9 +1,11 @@
 // @ts-nocheck
-import {E7e,C7e} from "./m638.ts";
-import {A_,ng} from "./m132.ts";
+import {Wt,ps} from "./m230.ts";
 import {b} from "../runtime.ts";
-async function d8(e){let t=E7e("git");if(t===null)return[];try{let{stdout:n}=await Ezc(t,["worktree","list","--porcelain"],{cwd:e,timeout:5000,windowsHide:!0});if(!n)return[];return n.split(`
-`).filter((r)=>r.startsWith("worktree ")).map((r)=>A_(r.slice(9)))}catch{return[]}}
-var qXo,jXo,Ezc;
-var WMe=b(()=>{ng();C7e();qXo=require("child_process"),jXo=require("util"),Ezc=jXo.promisify(qXo.execFile)});
-export {d8,qXo,jXo,Ezc,WMe};
+import {Wi,Hn} from "./m100.ts";
+import {qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {vn,Ie} from "../src/session/0621_length.ts";
+function Nrn(e){switch(e){case"darwin":return"macOS";case"win32":return"Windows";case"linux":return"Linux";default:return e}}
+async function Irs(e){let t=new Set;if(process.env.P4PORT)t.add("perforce");try{let n=e??Wt().cwd(),r=new Set(await Mrn.readdir(n));for(let[o,s]of Hou)if(r.has(o))t.add(s)}catch{}return[...t]}
+var Mrn,Hyr,Iyr,Yt,O1e,krs,Hou,Hrs;
+var Es=b(()=>{Wi();qe();ps();vn();Mrn=require("fs/promises"),Hyr=require("os"),Iyr=["macos","wsl"],Yt=Hn(()=>{try{return"macos"}catch(e){return Ie(e),"unknown"}});O1e=Hn(()=>{return}),krs=Hn(async()=>{return}),Hou=[[".git","git"],[".hg","mercurial"],[".svn","svn"],[".p4config","perforce"],["$tf","tfs"],[".tfvc","tfs"],[".jj","jujutsu"],[".sl","sapling"]],Hrs=Hn(()=>{let t=Hyr.release().match(/^(\d+)\./);if(!t||!t[1])return;return parseInt(t[1],10)-9})});
+export {Nrn,Irs,Mrn,Hyr,Iyr,Yt,O1e,krs,Hou,Hrs,Es};

@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {bE} from "./m3511.ts";
-import {aA} from "./m3509.ts";
-import {TOn} from "./m3512.ts";
-var DL=X((EOn)=>{Object.defineProperty(EOn,"__esModule",{value:!0});EOn.Metadata=void 0;var sJd=bE(),iJd=aA(),aJd=TOn(),lJd=/^[:0-9a-z_.-]+$/,cJd=/^[ -~]*$/;function uJd(e){return lJd.test(e)}function dJd(e){return cJd.test(e)}function VAa(e){return e.endsWith("-bin")}function pJd(e){return!e.startsWith("grpc-")}function SOn(e){return e.toLowerCase()}function GAa(e,t){if(!uJd(e))throw Error('Metadata key "'+e+'" contains illegal characters');if(t!==null&&t!==void 0)if(VAa(e)){if(!Buffer.isBuffer(t))throw Error("keys that end with '-bin' must have Buffer values")}else{if(Buffer.isBuffer(t))throw Error("keys that don't end with '-bin' must have String values");if(!dJd(t))throw Error('Metadata string value "'+t+'" contains illegal characters')}}class bOn{constructor(e={}){this.internalRepr=new Map,this.opaqueData=new Map,this.options=e}set(e,t){e=SOn(e),GAa(e,t),this.internalRepr.set(e,[t])}add(e,t){e=SOn(e),GAa(e,t);let n=this.internalRepr.get(e);if(n===void 0)this.internalRepr.set(e,[t]);else n.push(t)}remove(e){e=SOn(e),this.internalRepr.delete(e)}get(e){return e=SOn(e),this.internalRepr.get(e)||[]}getMap(){let e={};for(let[t,n]of this.internalRepr)if(n.length>0){let r=n[0];e[t]=Buffer.isBuffer(r)?Buffer.from(r):r}return e}clone(){let e=new bOn(this.options),t=e.internalRepr;for(let[n,r]of this.internalRepr){let o=r.map((s)=>{if(Buffer.isBuffer(s))return Buffer.from(s);else return s});t.set(n,o)}return e}merge(e){for(let[t,n]of e.internalRepr){let r=(this.internalRepr.get(t)||[]).concat(n);this.internalRepr.set(t,r)}}setOptions(e){this.options=e}getOptions(){return this.options}toHttp2Headers(){let e={};for(let[t,n]of this.internalRepr){if(t.startsWith(":"))continue;e[t]=n.map(mJd)}return e}toJSON(){let e={};for(let[t,n]of this.internalRepr)e[t]=n;return e}setOpaque(e,t){this.opaqueData.set(e,t)}getOpaque(e){return this.opaqueData.get(e)}static fromHttp2Headers(e){let t=new bOn;for(let n of Object.keys(e)){if(n.charAt(0)===":")continue;let r=e[n];try{if(VAa(n)){if(Array.isArray(r))r.forEach((o)=>{t.add(n,Buffer.from(o,"base64"))});else if(r!==void 0)if(pJd(n))r.split(",").forEach((o)=>{t.add(n,Buffer.from(o.trim(),"base64"))});else t.add(n,Buffer.from(r,"base64"))}else if(Array.isArray(r))r.forEach((o)=>{t.add(n,o)});else if(r!==void 0)t.add(n,r)}catch(o){let s=`Failed to add metadata entry ${n}: ${r}. ${(0,aJd.getErrorMessage)(o)}. For more information see https://github.com/grpc/grpc-node/issues/1173`;(0,sJd.log)(iJd.LogVerbosity.ERROR,s)}}return t}}EOn.Metadata=bOn;var mJd=(e)=>Buffer.isBuffer(e)?e.toString("base64"):e});
-export {DL};
+import {ft,b} from "../runtime.ts";
+import {OTLPTraceExporter} from "./m3510.ts";
+import {$Ea} from "./m3512.ts";
+var Uro={};
+ft(Uro,{OTLPTraceExporter:()=>OTLPTraceExporter});
+var $ro=b(()=>{$Ea()});
+export {Uro,$ro};

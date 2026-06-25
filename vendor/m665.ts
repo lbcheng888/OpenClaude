@@ -1,5 +1,7 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var Ttn,kYc=(e)=>Ttn.some((t)=>e[t]!==void 0),cZo=(e)=>{if(!e)return;let{stdio:t}=e;if(t===void 0)return Ttn.map((r)=>e[r]);if(kYc(e))throw Error(`It's not possible to provide \`stdio\` in combination with one of ${Ttn.map((r)=>`\`${r}\``).join(", ")}`);if(typeof t==="string")return t;if(!Array.isArray(t))throw TypeError(`Expected \`stdio\` to be of type \`string\` or \`Array\`, got \`${typeof t}\``);let n=Math.max(t.length,Ttn.length);return Array.from({length:n},(r,o)=>t[o])};
-var uZo=b(()=>{Ttn=["stdin","stdout","stderr"]});
-export {Ttn,kYc,cZo,uZo};
+function Jyr(e,t,{ignoreNonConfigurable:n=!1}={}){let{name:r}=e;for(let o of Reflect.ownKeys(t))xsu(e,t,o,n);return Psu(e,t),Nsu(e,t,r),e}
+var xsu=(e,t,n,r)=>{if(n==="length"||n==="prototype")return;if(n==="arguments"||n==="caller")return;let o=Object.getOwnPropertyDescriptor(e,n),s=Object.getOwnPropertyDescriptor(t,n);if(!Dsu(o,s)&&r)return;Object.defineProperty(e,n,s)},Dsu=function(e,t){return e===void 0||e.configurable||e.writable===t.writable&&e.enumerable===t.enumerable&&e.configurable===t.configurable&&(e.writable||e.value===t.value)},Psu=(e,t)=>{let n=Object.getPrototypeOf(t);if(n===Object.getPrototypeOf(e))return;Object.setPrototypeOf(e,n)},Osu=(e,t)=>`/* Wrapped ${e}*/
+${t}`,Lsu,Msu,Nsu=(e,t,n)=>{let r=n===""?"":`with ${n.trim()}() `,o=Osu.bind(null,r,t.toString());Object.defineProperty(o,"name",Msu),Object.defineProperty(e,"toString",{...Lsu,value:o})};
+var Vos=b(()=>{Lsu=Object.getOwnPropertyDescriptor(Function.prototype,"toString"),Msu=Object.getOwnPropertyDescriptor(Function.prototype.toString,"name")});
+export {Jyr,xsu,Dsu,Psu,Osu,Lsu,Msu,Nsu,Vos};

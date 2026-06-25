@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {X,M} from "../runtime.ts";
-import {qpi} from "./m2143.ts";
-import {jpi} from "./m2144.ts";
-import {Gpi} from "./m2145.ts";
-import {Kpi} from "./m2146.ts";
-import {zpi} from "./m2147.ts";
-var Ypi=X((r_n)=>{Object.defineProperty(r_n,"__esModule",{value:!0});r_n.getMachineId=void 0;var xYu=require("process"),uFe;async function kYu(){if(!uFe)switch(xYu.platform){case"darwin":uFe=(await Promise.resolve().then(() => M(qpi()))).getMachineId;break;case"linux":uFe=(await Promise.resolve().then(() => M(jpi()))).getMachineId;break;case"freebsd":uFe=(await Promise.resolve().then(() => M(Gpi()))).getMachineId;break;case"win32":uFe=(await Promise.resolve().then(() => M(Kpi()))).getMachineId;break;default:uFe=(await Promise.resolve().then(() => M(zpi()))).getMachineId;break}return uFe()}r_n.getMachineId=kYu});
-export {Ypi};
+import {Q} from "../runtime.ts";
+import {ISn} from "./m2147.ts";
+import {xi} from "./m2096.ts";
+var Nyi=Q((xSn)=>{Object.defineProperty(xSn,"__esModule",{value:!0});xSn.getMachineId=void 0;var Osd=ISn(),Lsd=xi();async function Msd(){try{let t=(await(0,Osd.execAsync)('ioreg -rd1 -c "IOPlatformExpertDevice"')).stdout.split(`
+`).find((r)=>r.includes("IOPlatformUUID"));if(!t)return;let n=t.split('" = "');if(n.length===2)return n[1].slice(0,-1)}catch(e){Lsd.diag.debug(`error reading machine id: ${e}`)}return}xSn.getMachineId=Msd});
+export {Nyi};

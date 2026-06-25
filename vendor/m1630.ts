@@ -1,9 +1,7 @@
 // @ts-nocheck
+import {Qzs,Xzs,Jzs,sse} from "./m1629.ts";
 import {b} from "../runtime.ts";
-import {S5s} from "./m1629.ts";
-import {gpn} from "./m1628.ts";
-function Tpn(){return rHr.getLogLevel()}
-function pCe(e){return rHr.createClientLogger(e)}
-var rHr,jwA;
-var ENe=b(()=>{S5s();rHr=gpn({logLevelEnvVarName:"AZURE_LOG_LEVEL",namespace:"azure"}),jwA=rHr.logger});
-export {Tpn,pCe,rHr,jwA,ENe};
+function vqu(e){var t,n,r,o,s,i,a;let l={cache:{},broker:{isEnabled:(n=(t=e.brokerOptions)===null||t===void 0?void 0:t.enabled)!==null&&n!==void 0?n:!1,enableMsaPassthrough:(o=(r=e.brokerOptions)===null||r===void 0?void 0:r.legacyEnableMsaPassthrough)!==null&&o!==void 0?o:!1,parentWindowHandle:(s=e.brokerOptions)===null||s===void 0?void 0:s.parentWindowHandle}};if((i=e.tokenCachePersistenceOptions)===null||i===void 0?void 0:i.enabled){if(Xfn===void 0)throw Error(["Persistent token caching was requested, but no persistence provider was configured.","You must install the identity-cache-persistence plugin package (`npm install --save @azure/identity-cache-persistence`)","and enable it by importing `useIdentityPlugin` from `@azure/identity` and calling","`useIdentityPlugin(cachePersistencePlugin)` before using `tokenCachePersistenceOptions`."].join(" "));let c=e.tokenCachePersistenceOptions.name||Qzs;l.cache.cachePlugin=Xfn(Object.assign({name:`${c}.${Xzs}`},e.tokenCachePersistenceOptions)),l.cache.cachePluginCae=Xfn(Object.assign({name:`${c}.${Jzs}`},e.tokenCachePersistenceOptions))}if((a=e.brokerOptions)===null||a===void 0?void 0:a.enabled){if(vPr===void 0)throw Error(["Broker for WAM was requested to be enabled, but no native broker was configured.","You must install the identity-broker plugin package (`npm install --save @azure/identity-broker`)","and enable it by importing `useIdentityPlugin` from `@azure/identity` and calling","`useIdentityPlugin(createNativeBrokerPlugin())` before using `enableBroker`."].join(" "));l.broker.nativeBrokerPlugin=vPr.broker}return l}
+var Xfn=void 0,Zzs,vPr=void 0,ejs,tjs;
+var wPr=b(()=>{sse();Zzs={setPersistence(e){Xfn=e}},ejs={setNativeBroker(e){vPr={broker:e}}};tjs={generatePluginConfiguration:vqu}});
+export {vqu,Xfn,Zzs,vPr,ejs,tjs,wPr};

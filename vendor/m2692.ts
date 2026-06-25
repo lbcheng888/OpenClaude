@@ -1,19 +1,18 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-var zAe="EnterWorktree";
-var TOOL_SEARCH_TOOL_NAME="ToolSearch";
-var HRe={};
-isFullscreenWithTTY(HRe,{PEWTER_OWL_TOOL_PROMPT:()=>PEWTER_OWL_TOOL_PROMPT,LEGACY_BRIEF_TOOL_NAME:()=>LEGACY_BRIEF_TOOL_NAME,DESCRIPTION:()=>DESCRIPTION,BRIEF_TOOL_PROMPT:()=>BRIEF_TOOL_PROMPT,BRIEF_TOOL_NAME:()=>BRIEF_TOOL_NAME,BRIEF_PROACTIVE_SECTION:()=>BRIEF_PROACTIVE_SECTION,BRIEF_ENFORCE_SENTINEL:()=>BRIEF_ENFORCE_SENTINEL});
-var BRIEF_TOOL_NAME="SendUserMessage",LEGACY_BRIEF_TOOL_NAME="Brief",BRIEF_ENFORCE_SENTINEL="You ended the turn without calling SendUserMessage.",DESCRIPTION="Send a message to the user",BRIEF_TOOL_PROMPT="Send a message the user will read. Text outside this tool is visible in the detail view, but most won't open it \u2014 the answer lives here.\n\n`message` supports markdown. `attachments` accepts two forms per entry: a file path string (absolute or cwd-relative) for a file you can read here \u2014 images, diffs, logs \u2014 or the exact {file_uuid, file_name, size, is_image} object a device tool like `attach_file` returned to you. Use the path form when the file is on your working filesystem; use the object form when the user's device already uploaded the file and handed you a reference \u2014 pass that object through verbatim, don't try to path it.\n\n`status` labels intent: 'normal' when replying to what they just asked; 'proactive' when you're initiating \u2014 a scheduled task finished, a blocker surfaced during background work, you need input on something they haven't asked about. Set it honestly; downstream routing uses it.",PEWTER_OWL_TOOL_PROMPT="Send a message the user will read verbatim. Use this for content they need to see exactly as written between tool calls \u2014 a generated code snippet, a specific value, a direct reply to something they asked mid-task. Don't use it for routine narration of what you're about to do, or for your final answer \u2014 normal text reaches them for those.",BRIEF_PROACTIVE_SECTION;
-var j$=b(()=>{BRIEF_PROACTIVE_SECTION=`## Talking to the user
-
-${"SendUserMessage"} is where your replies go. Text outside it is visible if the user expands the detail view, but most won't \u2014 assume unread. Anything you want them to actually see goes through ${"SendUserMessage"}. The failure mode: the real answer lives in plain text while ${"SendUserMessage"} just says "done!" \u2014 they see "done!" and miss everything.
-
-So: every time the user says something, the reply they actually read comes through ${"SendUserMessage"}. Even for "hi". Even for "thanks".
-
-If you can answer right away, send the answer. If you need to go look \u2014 run a command, read files, check something \u2014 ack first in one line ("On it \u2014 checking the test output"), then work, then send the result. Without the ack they're staring at a spinner.
-
-For longer work: ack \u2192 work \u2192 result. Between those, send a checkpoint when something useful happened \u2014 a decision you made, a surprise you hit, a phase boundary. Skip the filler ("running tests...") \u2014 a checkpoint earns its place by carrying information.
-
-Keep messages tight \u2014 the decision, the file:line, the PR number. Second person always ("your config"), never third.`});
-export {zAe,TOOL_SEARCH_TOOL_NAME,HRe,BRIEF_TOOL_NAME,LEGACY_BRIEF_TOOL_NAME,BRIEF_ENFORCE_SENTINEL,DESCRIPTION,BRIEF_TOOL_PROMPT,PEWTER_OWL_TOOL_PROMPT,BRIEF_PROACTIVE_SECTION,j$};
+import {Zfe,cO} from "../src/telemetry/2249_cO.ts";
+import {Y7,mE,Jm} from "../src/config/2207_Jm.ts";
+import {Vfe,HA} from "./m2219.ts";
+import {nEn,xUe,bEi,SEi,vDt} from "./m2246.ts";
+import {Irt,v$e} from "./m2691.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {b} from "../runtime.ts";
+function v9i(e){if(!e.endsWith(".md"))return!1;if(Zfe(e))return!1;return Y7(e)}
+function mPd(e){return mE()&&v9i(e)}
+function w9i(e,{defaults:t={},overrides:n={}}){if(!Vfe.test(e))return e;let{frontmatter:r,body:o}=nEn(e),s=([l,c])=>xUe(r,l)!==c,i=Object.entries(t).filter(([l])=>xUe(r,l)===null),a=Object.entries(n).filter(s);if(i.length+a.length===0)return e;return bEi(SEi(r,Object.fromEntries([...i,...a])),o)}
+function Lkn(e,t){if(!v9i(e))return t;return w9i(t,{defaults:{...mE()&&{created:Irt()},originSessionId:getSessionId()}})}
+function H9i(){let e=new Map;k9i=async(t)=>{if(!mPd(t))return;let n=Irt();if(e.get(t)===n)return;e.set(t,n);let r,o;try{r=(await ake.stat(t)).mtime,o=await ake.readFile(t,"utf-8")}catch{e.delete(t);return}let s=w9i(o,{overrides:{last_read:n}});if(s===o)return;try{await ake.writeFile(t,s,"utf-8"),await ake.utimes(t,new Date,r)}catch(i){logForDebugging(`tinyMemoryStamps: stamp failed for ${t}: ${String(i)}`,{level:"debug"}),e.delete(t)}}}
+async function Mkn(e){await k9i(e)}
+var ake,k9i=async()=>{};
+var xrt=b(()=>{lt();v$e();qe();HA();vDt();Jm();cO();ake=require("fs/promises")});
+export {v9i,mPd,w9i,Lkn,H9i,Mkn,ake,k9i,xrt};

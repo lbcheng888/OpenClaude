@@ -1,6 +1,11 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function uJr(e){let t=Jhe.posix.sep+e.split(Jhe.sep).join(Jhe.posix.sep).replace(/^\/+/,""),n=Jhe.basename(e).toLowerCase(),r=Jhe.extname(e).toLowerCase();if(L8d.has(n))return!0;if(Eaa.has(r))return!0;let o=n.split(".");if(o.length>2){let s="."+o.slice(-2).join(".");if(Eaa.has(s))return!0}for(let s of M8d)if(t.includes(s))return!0;for(let s of N8d)if(s.test(n))return!0;return!1}
-var Jhe,L8d,Eaa,M8d,N8d;
-var dJr=b(()=>{Jhe=require("path"),L8d=new Set(["package-lock.json","yarn.lock","pnpm-lock.yaml","bun.lockb","bun.lock","composer.lock","gemfile.lock","cargo.lock","poetry.lock","pipfile.lock","shrinkwrap.json","npm-shrinkwrap.json"]),Eaa=new Set([".lock",".min.js",".min.css",".min.html",".bundle.js",".bundle.css",".generated.ts",".generated.js",".d.ts"]),M8d=["/dist/","/build/","/out/","/output/","/node_modules/","/vendor/","/vendored/","/third_party/","/third-party/","/external/","/.next/","/.nuxt/","/.svelte-kit/","/coverage/","/__pycache__/","/.tox/","/venv/","/.venv/","/target/release/","/target/debug/",".generated/"],N8d=[/^.*\.min\.[a-z]+$/i,/^.*-min\.[a-z]+$/i,/^.*\.bundle\.[a-z]+$/i,/^.*\.generated\.[a-z]+$/i,/^.*\.gen\.[a-z]+$/i,/^.*\.auto\.[a-z]+$/i,/^.*_generated\.[a-z]+$/i,/^.*_gen\.[a-z]+$/i,/^.*\.pb\.(go|js|ts|py|rb)$/i,/^.*_pb2?\.py$/i,/^.*\.pb\.h$/i,/^.*\.grpc\.[a-z]+$/i,/^.*\.swagger\.[a-z]+$/i,/^.*\.openapi\.[a-z]+$/i]});
-export {uJr,Jhe,L8d,Eaa,M8d,N8d,dJr};
+import {formatDuration,Xo} from "./m240.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function C3e(e){let t=Qma.c(10),{elapsedTimeSeconds:n,timeoutMs:r}=e;if(n===void 0&&!r)return null;let o;if(t[0]!==r)o=r?formatDuration(r,{hideTrailingZeros:!0}):void 0,t[0]=r,t[1]=o;else o=t[1];let s=o;if(n===void 0){let d=`(timeout ${s})`,p;if(t[2]!==d)p=tOn.jsx(Text,{dimColor:!0,children:d}),t[2]=d,t[3]=p;else p=t[3];return p}let i=n*1000,a;if(t[4]!==i)a=formatDuration(i),t[4]=i,t[5]=a;else a=t[5];let l=a;if(s){let d=`(${l} \xB7 timeout ${s})`,p;if(t[6]!==d)p=tOn.jsx(Text,{dimColor:!0,children:d}),t[6]=d,t[7]=p;else p=t[7];return p}let c=`(${l})`,u;if(t[8]!==c)u=tOn.jsx(Text,{dimColor:!0,children:c}),t[8]=c,t[9]=u;else u=t[9];return u}
+var Qma,tOn;
+var nOn=b(()=>{je();Xo();Qma=x(tt(),1),tOn=x(oe(),1)});
+export {C3e,Qma,tOn,nOn};

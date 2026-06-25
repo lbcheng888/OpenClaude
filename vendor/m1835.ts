@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {yfn} from "./m1833.ts";
-var Nzs=X((NNA,Mzs)=>{var e$u=yfn(),t$u=(e,t)=>e.sort((n,r)=>e$u(r,n,t));Mzs.exports=t$u});
-export {Nzs};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+var I7=Q((eWh,Eei)=>{var bei=TF(),dVu=(e,t,n)=>new bei(e,n).compare(new bei(t,n));Eei.exports=dVu});
+export {I7};

@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {Kan,ListModelInvocationJobsCommand} from "./m1138.ts";
-import {Sd} from "./m850.ts";
-var Xks,paginateListModelInvocationJobs;
-var Qks=b(()=>{s0();Kan();Xks=M(Sd(),1),paginateListModelInvocationJobs=Xks.createPaginator(BedrockClient,ListModelInvocationJobsCommand,"nextToken","nextToken","maxResults")});
-export {Xks,paginateListModelInvocationJobs,Qks};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {Run,ListInferenceProfilesCommand} from "./m1138.ts";
+import {Zu} from "./m855.ts";
+var LOs,paginateListInferenceProfiles;
+var MOs=b(()=>{C0();Run();LOs=x(Zu(),1),paginateListInferenceProfiles=LOs.createPaginator(BedrockClient,ListInferenceProfilesCommand,"nextToken","nextToken","maxResults")});
+export {LOs,paginateListInferenceProfiles,MOs};

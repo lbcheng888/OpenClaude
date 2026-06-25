@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {_Be} from "./m1821.ts";
-var vzs=X((INA,Czs)=>{var W2u=_Be(),G2u=(e,t)=>{let n=W2u(e,t);return n&&n.prerelease.length?n.prerelease:null};Czs.exports=G2u});
-export {vzs};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+var cei=Q((j8h,lei)=>{var aei=TF(),tVu=(e,t,n,r,o)=>{if(typeof n==="string")o=r,r=n,n=void 0;try{return new aei(e instanceof aei?e.version:e,n).inc(t,r,o).version}catch(s){return null}};lei.exports=tVu});
+export {cei};

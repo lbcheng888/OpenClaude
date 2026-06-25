@@ -1,21 +1,6 @@
 // @ts-nocheck
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {ci,pT} from "./m1289.ts";
-import {qt,Le,Xt} from "../src/config/0228_encoding.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Se,bt} from "./m195.ts";
 import {b} from "../runtime.ts";
-async function xal(e){while(N8n)await N8n;let t;N8n=new Promise((n)=>{t=n});try{return await e()}finally{N8n=null,t?.()}}
-function kal(){return Ral.join(tr(),kWp)}
-function tTo(){return{version:Sje,lastComputedDate:null,dailyActivity:[],dailyModelTokens:[],modelUsage:{},totalSessions:0,totalMessages:0,longestSession:null,firstSessionDate:null,hourCounts:{},totalSpeculationTimeSavedMs:0,shotDistribution:{}}}
-function HWp(e){if(typeof e.version!=="number"||e.version<xWp||e.version>Sje)return null;if(!Array.isArray(e.dailyActivity)||!Array.isArray(e.dailyModelTokens)||typeof e.totalSessions!=="number"||typeof e.totalMessages!=="number")return null;return{version:Sje,lastComputedDate:e.lastComputedDate??null,dailyActivity:e.dailyActivity,dailyModelTokens:e.dailyModelTokens,modelUsage:e.modelUsage??{},totalSessions:e.totalSessions,totalMessages:e.totalMessages,longestSession:e.longestSession??null,firstSessionDate:e.firstSessionDate??null,hourCounts:e.hourCounts??{},totalSpeculationTimeSavedMs:e.totalSpeculationTimeSavedMs??0,shotDistribution:e.shotDistribution}}
-async function Hal(){let e=kal();try{let t=await ci().read(e),n=qt(t);if(n.version!==Sje){let r=HWp(n);if(!r)return logForDebugging(`Stats cache version ${n.version} not migratable (expected ${Sje}), returning empty cache`),tTo();return logForDebugging(`Migrated stats cache from v${n.version} to v${Sje}`),await _6t(r),r}if(!Array.isArray(n.dailyActivity)||!Array.isArray(n.dailyModelTokens)||typeof n.totalSessions!=="number"||typeof n.totalMessages!=="number")return logForDebugging("Stats cache has invalid structure, returning empty cache"),tTo();return n}catch(t){return logForDebugging(`Failed to load stats cache: ${Se(t)}`),tTo()}}
-async function _6t(e){let t=kal();try{let n=tr();await ci().mkdir(n);let r=Le(e,null,2);await ci().atomicWrite(t,r,384),logForDebugging(`Stats cache saved successfully (lastComputedDate: ${e.lastComputedDate})`)}catch(n){logForDebugging(`Failed to save stats cache: ${Se(n)}`,{level:"error"})}}
-function nTo(e,t,n){let r=new Map;for(let p of e.dailyActivity)r.set(p.date,{...p});for(let p of t.dailyActivity){let m=r.get(p.date);if(m)m.messageCount+=p.messageCount,m.sessionCount+=p.sessionCount,m.toolCallCount+=p.toolCallCount;else r.set(p.date,{...p})}let o=new Map;for(let p of e.dailyModelTokens)o.set(p.date,{...p.tokensByModel});for(let p of t.dailyModelTokens){let m=o.get(p.date);if(m)for(let[f,A]of Object.entries(p.tokensByModel))m[f]=(m[f]||0)+A;else o.set(p.date,{...p.tokensByModel})}let s={...e.modelUsage};for(let[p,m]of Object.entries(t.modelUsage))if(s[p])s[p]={inputTokens:s[p].inputTokens+m.inputTokens,outputTokens:s[p].outputTokens+m.outputTokens,cacheReadInputTokens:s[p].cacheReadInputTokens+m.cacheReadInputTokens,cacheCreationInputTokens:s[p].cacheCreationInputTokens+m.cacheCreationInputTokens,webSearchRequests:s[p].webSearchRequests+m.webSearchRequests,costUSD:s[p].costUSD+m.costUSD,contextWindow:Math.max(s[p].contextWindow,m.contextWindow),maxOutputTokens:Math.max(s[p].maxOutputTokens,m.maxOutputTokens)};else s[p]={...m};let i={...e.hourCounts};for(let[p,m]of Object.entries(t.hourCounts)){let f=parseInt(p,10);i[f]=(i[f]||0)+m}let a=e.totalSessions+t.sessionStats.length,l=e.totalMessages+t.totalMessages,c=e.longestSession;for(let p of t.sessionStats)if(!c||p.duration>c.duration)c=p;let u=e.firstSessionDate;for(let p of t.sessionStats)if(!u||p.timestamp<u)u=p.timestamp;return{version:Sje,lastComputedDate:n,dailyActivity:Array.from(r.values()).sort((p,m)=>p.date.localeCompare(m.date)),dailyModelTokens:Array.from(o.entries()).map(([p,m])=>({date:p,tokensByModel:m})).sort((p,m)=>p.date.localeCompare(m.date)),modelUsage:s,totalSessions:a,totalMessages:l,longestSession:c,firstSessionDate:u,hourCounts:i,totalSpeculationTimeSavedMs:e.totalSpeculationTimeSavedMs+t.totalSpeculationTimeSavedMs}}
-function _ne(e){let n=e.toISOString().split("T")[0];if(!n)throw Error("Invalid ISO date string");return n}
-function rTo(){return _ne(new Date)}
-function Ial(){let e=new Date;return e.setDate(e.getDate()-1),_ne(e)}
-function bje(e,t){return e<t}
-var Ral,Sje=4,xWp=1,kWp="stats-cache.json",N8n=null;
-var oTo=b(()=>{pT();qe();sn();bt();Xt();Ral=require("path")});
-export {xal,kal,tTo,HWp,Hal,_6t,nTo,_ne,rTo,Ial,bje,Ral,Sje,xWp,kWp,N8n,oTo};
+import {N8t} from "./m4540.ts";
+import {Ol} from "./m2573.ts";
+var TS=b(()=>{N8t();Ol()});
+export {TS};

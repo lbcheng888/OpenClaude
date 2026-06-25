@@ -1,18 +1,34 @@
 // @ts-nocheck
-import {Wpt,sY,Vq} from "./m5187.ts";
-import {Pt,Go} from "./m632.ts";
-import {hc,Iy} from "../src/agent/2230_explicitlyRequested.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {KE,sn} from "../src/config/0047_namespace.ts";
-import {pr,Yl} from "./m2562.ts";
-import {Kn,Li} from "./m2572.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Bil(e){return Object.entries(e).map(([t,n])=>({label:n?.name??T5p,value:t,description:n?.description??S5p}))}
-function Uil(e){let t=Fil.c(26),{initialStyle:n,onComplete:r,onCancel:o,isStandaloneCommand:s}=e,i;if(t[0]===Symbol.for("react.memo_cache_sentinel"))i=[],t[0]=i;else i=t[0];let[a,l]=f6t.useState(i),[c,u]=f6t.useState(!0),d,p;if(t[1]===Symbol.for("react.memo_cache_sentinel"))d=()=>{Wpt(Pt()).then((k)=>{let x=Bil(k);l(x),u(!1)}).catch(()=>{let k=Bil(sY);l(k),u(!1)})},p=[],t[1]=d,t[2]=p;else d=t[1],p=t[2];f6t.useEffect(d,p);let m;if(t[3]!==r)m=(k)=>{r(k)},t[3]=r,t[4]=m;else m=t[4];let f=m,A;if(t[5]!==n||t[6]!==c||t[7]!==a)A=!c&&hc("outputStyles")&&!a.some((k)=>k.value===n),t[5]=n,t[6]=c,t[7]=a,t[8]=A;else A=t[8];let h=A,g=!s,_=!s,y;if(t[9]===Symbol.for("react.memo_cache_sentinel"))y=$9.createElement(Box,{marginTop:1},$9.createElement(Text,{dimColor:!0},"This changes how Claude Code communicates with you")),t[9]=y;else y=t[9];let T;if(t[10]!==n||t[11]!==h)T=h&&$9.createElement(Text,{dimColor:!0},`Your saved output style "${n}" is a custom style disabled in safe mode \u2014 ${KE()} to use it; selecting a style here replaces it`),t[10]=n,t[11]=h,t[12]=T;else T=t[12];let S;if(t[13]!==f||t[14]!==n||t[15]!==c||t[16]!==a)S=c?$9.createElement(Text,{dimColor:!0},"Loading output styles\u2026"):$9.createElement(pr,{options:a,onChange:f,visibleOptionCount:10,defaultValue:n}),t[13]=f,t[14]=n,t[15]=c,t[16]=a,t[17]=S;else S=t[17];let v;if(t[18]!==S||t[19]!==T)v=$9.createElement(Box,{flexDirection:"column",gap:1},y,T,S),t[18]=S,t[19]=T,t[20]=v;else v=t[20];let R;if(t[21]!==o||t[22]!==v||t[23]!==g||t[24]!==_)R=$9.createElement(Kn,{title:"Preferred output style",onCancel:o,hideInputGuide:g,hideBorder:_},v),t[21]=o,t[22]=v,t[23]=g,t[24]=_,t[25]=R;else R=t[25];return R}
-var Fil,$9,f6t,T5p="Default",S5p="Claude completes coding tasks efficiently and provides concise responses";
-var $il=b(()=>{Vq();ze();Iy();Go();sn();Yl();Li();Fil=M(rt(),1),$9=M(Te(),1),f6t=M(Te(),1)});
-export {Bil,Uil,Fil,$9,f6t,T5p,S5p,$il};
+import {XNe,Hme,Oa,eO} from "./m1456.ts";
+import {xe,He,mn} from "../src/telemetry/0600_feature_name.ts";
+import {getModelUnavailabilityReason,parseUserSpecifiedModel,isOpus1mMergeEnabled,renderModelSetting,renderDefaultModelSetting,getDefaultMainLoopModelSetting,isFableFamilyOrPinnedModel,Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {L3t,t3n} from "./m4009.ts";
+import {fetchBootstrapData,pct} from "../src/api/3764_fetchBootstrapData.ts";
+import {Ce,Ct} from "./m197.ts";
+import {clearRefusalFallbackModelLatch,getTotalOutputTokens,lt} from "../src/session/0132_sent.ts";
+import {bt,Gc} from "./m588.ts";
+import {$l,xAe,Hf,WS} from "../src/api/1453_month.ts";
+import {JDe,w8t} from "./m4527.ts";
+import {ao,getEffectiveSettingSource,getSettingsForSource,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {getRelativeSettingsFilePathForSource} from "../src/config/0740_settings.ts";
+import {iD,T2} from "./m1455.ts";
+import {cee,mge,hHn} from "./m2741.ts";
+import {Tqi,zMt,ej} from "../src/telemetry/2743_raw.ts";
+import {b} from "../runtime.ts";
+async function k8t(e){let t=e==="default"?null:e;if(t&&XNe(t,Hme()))return xe("model_switch","denied_by_entitlement"),{ok:!1,message:`Model '${t}' is restricted by your organization's settings. Run /model to choose a different model.`};if(t&&!Oa(t))return xe("model_switch","not_allowed"),{ok:!1,message:`Model '${t}' is not available. Your organization restricts model selection.`};if(t&&pAo(t))return xe("model_switch","opus_1m_unavailable"),{ok:!1,message:"Opus with 1M context is not available for your account. Learn more: https://code.claude.com/docs/en/model-config#extended-context-with-1m"};if(t&&mAo(t))return xe("model_switch","sonnet_1m_unavailable"),{ok:!1,message:"Sonnet 4.6 with 1M context is not available for your account. Learn more: https://code.claude.com/docs/en/model-config#extended-context-with-1m"};if(t){let n=getModelUnavailabilityReason(t);if(n)switch(n.reason){case"disabled":return xe("model_switch","disabled_by_org"),{ok:!1,message:`Model '${t}' is not currently available for your account${n.description?`. ${n.description}`:"."}`};case"absent":{let r=await L3t($pl(t)?parseUserSpecifiedModel(t):t,{forceServerProbe:!0});if(!r.valid)return xe("model_switch",r.notFound?"fable_unavailable":"fable_probe_failed"),{ok:!1,message:r.notFound?`${n.displayName} isn't available for your account yet. Run /model to pick another model.`:r.error};return fetchBootstrapData(),{ok:!0,model:t}}}}if(!t||$pl(t))return{ok:!0,model:t};try{let n=await L3t(t);if(!n.valid)return xe("model_switch","invalid_model"),{ok:!1,message:n.error};return{ok:!0,model:t}}catch(n){return xe("model_switch","validate_exception"),{ok:!1,message:`Failed to validate model: ${Ce(n)}`}}}
+function IVn(e,t,n,r){let o=t().fastMode;if(clearRefusalFallbackModelLatch(),n((a)=>({...a,mainLoopModel:e,mainLoopModelForSession:null})),r)H8t(e);He("model_switch");let s=`Set model to ${bt.bold(oP(e))}${r?" and saved as your default for new sessions":" for this session only"}`,i=void 0;if($l()){if(xAe(),!Hf(e)&&o)n((a)=>({...a,fastMode:!1})),i=!1;else if(Hf(e)&&o)s+=" \xB7 Fast mode ON",i=!0}if(JDe(e,i===!0,isOpus1mMergeEnabled()))s+=" \xB7 Draws from usage credits";if(i===!1)s+=" \xB7 Fast mode OFF";return s+=dAo(e),s}
+function H8t(e){ao("userSettings",{model:e??void 0}),He("model_set_default")}
+function dAo(e){let t=getEffectiveSettingSource("model");if(t!=="projectSettings"&&t!=="localSettings"&&t!=="policySettings")return"";let n=getSettingsForSource(t)?.model;if(n===void 0||e===n)return"";let r=t==="policySettings"?"Managed settings":getRelativeSettingsFilePathForSource(t);return bt.dim(`
+     ${r} pins ${bt.bold(renderModelSetting(n))} \u2014 that applies on restart`)}
+function $pl(e){return iD(e.toLowerCase().trim())}
+function pAo(e){let t=e.toLowerCase();return!cee()&&!isOpus1mMergeEnabled()&&t.includes("opus")&&t.includes("[1m]")}
+function mAo(e){let t=e.toLowerCase();return!mge()&&(t.includes("sonnet[1m]")||t.includes("sonnet-4-6[1m]"))}
+function oP(e){let t=renderDefaultModelSetting(e??getDefaultMainLoopModelSetting());return e===null?`${t} (default)`:t}
+function HVn(e){return parseUserSpecifiedModel(e??getDefaultMainLoopModelSetting())}
+function fAo(e,t,n,r){let o=getTotalOutputTokens();if(o===0||o===r)return!1;return HVn(e)!==HVn(n??t)}
+function xVn(e,t=(n)=>n){let n=oP(e.mainLoopModel),r=e.effortValue!==void 0?` (effort: ${e.effortValue})`:"";if(e.mainLoopModelForSession)return`Current model: ${t(oP(e.mainLoopModelForSession))} (session override from plan mode)
+Base model: ${n}${r}`;return`Current model: ${n}${r}`}
+function hAo(e){let t=e??getDefaultMainLoopModelSetting();if(!isFableFamilyOrPinnedModel(parseUserSpecifiedModel(t)))return!1;return Tqi()}
+function ZY(e){if(e===null)return!1;return isFableFamilyOrPinnedModel(parseUserSpecifiedModel(e))&&zMt()}
+var gTe=b(()=>{Gc();lt();mn();pct();Ct();w8t();WS();T2();hHn();ej();Ro();eO();t3n();br()});
+export {k8t,IVn,H8t,dAo,$pl,pAo,mAo,oP,HVn,fAo,xVn,hAo,ZY,gTe};

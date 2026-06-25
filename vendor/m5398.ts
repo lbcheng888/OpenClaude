@@ -1,11 +1,14 @@
 // @ts-nocheck
-import {isAnthropicAuthEnabled,isClaudeAISubscriber,getAnthropicApiKeyWithSource,getApiKeyFromApiKeyHelper,Ao} from "../src/config/2031_withOAuthRefreshLock.ts";
-import {Ie,Oe,isTmuxControlMode,ln} from "../src/telemetry/0594_feature_name.ts";
-import {getIsNonInteractiveSession,lt} from "../src/session/0131_sent.ts";
-import {NNl,rb} from "../src/permissions/5178_level.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function L5l(){let[e,t]=lXn.useState(()=>{if(!isAnthropicAuthEnabled()||isClaudeAISubscriber())return"valid";let{key:r,source:o}=getAnthropicApiKeyWithSource({skipRetrievingKeyFromApiKeyHelper:!0});if(r||o==="apiKeyHelper")return"loading";return"missing"}),n=lXn.useCallback(async()=>{if(!isAnthropicAuthEnabled()||isClaudeAISubscriber()){t("valid"),Ie("auth_api_key_verify");return}await getApiKeyFromApiKeyHelper(getIsNonInteractiveSession());let{key:r,source:o}=getAnthropicApiKeyWithSource();if(!r){if(o==="apiKeyHelper"){t("error"),Oe("auth_api_key_verify","apikeyhelper_failed");return}t("missing"),isTmuxControlMode("auth_api_key_verify","missing");return}try{let s=await NNl(r,!1);if(t(s?"valid":"invalid"),s)Ie("auth_api_key_verify");else Oe("auth_api_key_verify","invalid");return}catch{t("error"),Oe("auth_api_key_verify","network_error");return}},[]);return{status:e,reverify:n}}
-var lXn;
-var M5l=b(()=>{lt();ln();rb();Ao();lXn=M(Te(),1)});
-export {L5l,lXn,M5l};
+import {useStdin,CEn} from "./m2266.ts";
+import {onAttacherCapsChange,getAttacherCaps,lt} from "../src/session/0132_sent.ts";
+import {Ne} from "./m583.ts";
+import {Cs,tp} from "../src/config/2284_loggedTmuxCcDisable.ts";
+import {du,iw} from "./m2302.ts";
+import {sleep} from "../src/telemetry/1488_withTimeout.ts";
+import {b,x} from "../runtime.ts";
+import {Ir} from "./m584.ts";
+import {et} from "./m2261.ts";
+function vYl(e){let t=pyt.useRef(e);t.current=e;let{internal_querier:n}=useStdin(),r=pyt.useSyncExternalStore(onAttacherCapsChange,()=>getAttacherCaps()?.terminal??Ne.terminal);pyt.useEffect(()=>{if(!Cs()||!n)return;if(r!=="iTerm.app"&&r!=="Apple_Terminal")return;let o=du.get(process.stdout);if(!o)return;let s=new AbortController;return(async()=>{while(!s.signal.aborted){let i=await o.probeExternalClear(n);if(s.signal.aborted)return;if(i)t.current();await sleep(200,s.signal,{unref:!0})}})(),()=>s.abort()},[n,r])}
+var pyt;
+var wYl=b(()=>{lt();CEn();iw();Ir();tp();pyt=x(et(),1)});
+export {vYl,pyt,wYl};

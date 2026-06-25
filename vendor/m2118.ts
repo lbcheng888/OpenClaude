@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var zdi=X((Hgn)=>{Object.defineProperty(Hgn,"__esModule",{value:!0});Hgn.unrefTimer=void 0;function XKu(e){if(typeof e!=="number")e.unref()}Hgn.unrefTimer=XKu});
-export {zdi};
+import {Q} from "../runtime.ts";
+var M_i=Q((oSn)=>{Object.defineProperty(oSn,"__esModule",{value:!0});oSn.ATTR_PROCESS_RUNTIME_NAME=void 0;oSn.ATTR_PROCESS_RUNTIME_NAME="process.runtime.name"});
+export {M_i};

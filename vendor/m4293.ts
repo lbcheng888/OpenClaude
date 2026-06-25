@@ -1,8 +1,0 @@
-// @ts-nocheck
-import {b} from "../runtime.ts";
-import {Wtt,Awn} from "./m2708.ts";
-function b7a(e){return vMp+wMp.parse(e,{async:!1})}
-var vMp=`<style>:root{color-scheme:light}body{background:#faf9f5;color:#141413;max-width:760px;margin:0 auto;padding:20px 32px;font:14px/1.5 ui-rounded,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}h1,h2,h3,h4,h5,h6{margin:1em 0 .3em;line-height:1.2;font-weight:600}h1{font-size:1.5em}h2{font-size:1.2em}h3{font-size:1.05em}p,ul,ol{margin:.5em 0}a{color:#c6613f;text-decoration:none}a:hover{text-decoration:underline}code{background:#f0ede4;padding:.1em .3em;border-radius:4px;font:.92em ui-monospace,Menlo,monospace;color:#141413}pre{background:#f0ede4;padding:10px;border-radius:8px;overflow-x:auto;line-height:1.4}pre code{background:none;padding:0}blockquote{border-left:3px solid #d97757;margin:.6em 0;padding:.1em .8em;color:#5c5b57}table{border-collapse:collapse;margin:.6em 0}th,td{border:1px solid #e5e1d8;padding:4px 10px}th{background:#f0ede4}hr{border:0;border-top:1px solid #e5e1d8;margin:1em 0}</style>
-`,wMp;
-var E7a=b(()=>{Wtt();wMp=new Awn({gfm:!0})});
-export {b7a,vMp,wMp,E7a};

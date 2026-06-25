@@ -1,12 +1,10 @@
 // @ts-nocheck
-import {zEr,L1e,THs,mln} from "./m1185.ts";
+import {JAe,ihn} from "./m1647.ts";
+import {Bjs,XPr} from "./m1654.ts";
 import {b} from "../runtime.ts";
-function kpn(e){return typeof e.stream==="function"}
-function sWs(){return zEr(this,arguments,function*(){let t=this.getReader();try{while(!0){let{done:n,value:r}=yield L1e(t.read());if(n)return yield L1e(void 0);yield yield L1e(r)}}finally{t.releaseLock()}})}
-function B1u(e){if(!e[Symbol.asyncIterator])e[Symbol.asyncIterator]=sWs.bind(e);if(!e.values)e.values=sWs.bind(e)}
-function iWs(e){if(e instanceof ReadableStream)return B1u(e),Hpn.Readable.fromWeb(e);else return e}
-function F1u(e){if(e instanceof Uint8Array)return Hpn.Readable.from(Buffer.from(e));else if(kpn(e))return iWs(e.stream());else return iWs(e)}
-async function aWs(e){return function(){let t=e.map((n)=>typeof n==="function"?n():n).map(F1u);return Hpn.Readable.from(function(){return zEr(this,arguments,function*(){var n,r,o,s;for(let c of t)try{for(var i=!0,a=(r=void 0,THs(c)),l;l=yield L1e(a.next()),n=l.done,!n;i=!0)s=l.value,i=!1,yield yield L1e(s)}catch(u){r={error:u}}finally{try{if(!i&&!n&&(o=a.return))yield L1e(o.call(a))}finally{if(r)throw r.error}}})}())}}
-var Hpn;
-var lWs=b(()=>{mln();Hpn=require("stream")});
-export {kpn,sWs,B1u,iWs,F1u,aWs,Hpn,lWs};
+import {thn,ehn} from "./m1633.ts";
+var bHt=3;
+function EHt(e,t={maxRetries:bHt}){let n=t.logger||Qqu;return{name:Zqu,async sendRequest(r,o){var s,i;let a,l,c=-1;e:while(!0){c+=1,a=void 0,l=void 0;try{n.info(`Retry ${c}: Attempting to send request`,r.requestId),a=await o(r),n.info(`Retry ${c}: Received a response from request`,r.requestId)}catch(u){if(n.error(`Retry ${c}: Received an error from request`,r.requestId),l=u,!u||l.name!=="RestError")throw u;a=l.response}if((s=r.abortSignal)===null||s===void 0?void 0:s.aborted)throw n.error(`Retry ${c}: Request aborted.`),new JAe;if(c>=((i=t.maxRetries)!==null&&i!==void 0?i:bHt))if(n.info(`Retry ${c}: Maximum retries reached. Returning the last received response, or throwing the last received error.`),l)throw l;else if(a)return a;else throw Error("Maximum retries reached with no response or error to throw");n.info(`Retry ${c}: Processing ${e.length} retry strategies.`);t:for(let u of e){let d=u.logger||n;d.info(`Retry ${c}: Processing retry strategy ${u.name}.`);let p=u.retry({retryCount:c,response:a,responseError:l});if(p.skipStrategy){d.info(`Retry ${c}: Skipped.`);continue t}let{errorToThrow:m,retryAfterInMs:f,redirectTo:h}=p;if(m)throw d.error(`Retry ${c}: Retry strategy ${u.name} throws error:`,m),m;if(f||f===0){d.info(`Retry ${c}: Retry strategy ${u.name} retries after ${f}`),await Bjs(f,void 0,{abortSignal:r.abortSignal});continue e}if(h){d.info(`Retry ${c}: Retry strategy ${u.name} redirects to ${h}`),r.url=h;continue e}}if(l)throw n.info("None of the retry strategies could work with the received error. Throwing it."),l;if(a)return n.info("None of the retry strategies could work with the received response. Returning it."),a}}}}
+var Qqu,Zqu="retryPolicy";
+var eOr=b(()=>{XPr();ihn();thn();Qqu=ehn("ts-http-runtime retryPolicy")});
+export {bHt,EHt,Qqu,Zqu,eOr};

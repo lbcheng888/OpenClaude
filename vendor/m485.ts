@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var $Vo=X((ldf,UVo)=>{UVo.exports=Math.max});
-export {$Vo};
+import {Q} from "../runtime.ts";
+var wXo=Q((CCf,vXo)=>{vXo.exports=ReferenceError});
+export {wXo};

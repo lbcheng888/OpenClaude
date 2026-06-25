@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {nT,d2} from "./m64.ts";
-import {EWe,Y7t} from "./m63.ts";
 import {b} from "../runtime.ts";
-function Tmc(e,t,n){var r=t(e);return nT(e)?r:EWe(r,n(e))}
-var J7t;
-var qer=b(()=>{Y7t();d2();J7t=Tmc});
-export {Tmc,J7t,qer};
+function kCc(e,t){var n=-1,r=Array(e);while(++n<e)r[n]=t(n);return r}
+var R4o;
+var v4o=b(()=>{R4o=kCc});
+export {kCc,R4o,v4o};

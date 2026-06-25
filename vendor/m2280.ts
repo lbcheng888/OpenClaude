@@ -1,9 +1,39 @@
 // @ts-nocheck
-import {NFr,K_i} from "./m2279.ts";
-import {tT,c2} from "./m13.ts";
-import {uTn,$_i} from "./m2276.ts";
+import {getAttacherCaps,lt} from "../src/session/0132_sent.ts";
+import {Ne} from "./m583.ts";
+import {Yt,Es} from "./m641.ts";
+import {uO,gve,P8,fsModule,Q3} from "./m2277.ts";
+import {Rm,tI} from "./m465.ts";
+import {YM,Tve} from "./m2279.ts";
+import {execFileNoThrow,Ii} from "./m690.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
 import {b} from "../runtime.ts";
-function Ked(e,t,n){var r,o,s,i,a,l,c=0,u=!1,d=!1,p=!0;if(typeof e!="function")throw TypeError(Wed);if(t=NFr(t)||0,tT(n))u=!!n.leading,d="maxWait"in n,s=d?Ged(NFr(n.maxWait)||0,t):s,p="trailing"in n?!!n.trailing:p;function m(v){var R=r,k=o;return r=o=void 0,c=v,i=e.apply(k,R),i}function f(v){return c=v,a=setTimeout(g,t),u?m(v):i}function A(v){var R=v-l,k=v-c,x=t-R;return d?Ved(x,s-k):x}function h(v){var R=v-l,k=v-c;return l===void 0||R>=t||R<0||d&&k>=s}function g(){var v=uTn();if(h(v))return _(v);a=setTimeout(g,A(v))}function _(v){if(a=void 0,p&&r)return m(v);return r=o=void 0,i}function y(){if(a!==void 0)clearTimeout(a);c=0,r=l=o=a=void 0}function T(){return a===void 0?i:_(uTn())}function S(){var v=uTn(),R=h(v);if(r=arguments,o=this,l=v,R){if(a===void 0)return f(l);if(d)return clearTimeout(a),a=setTimeout(g,t),m(l)}if(a===void 0)a=setTimeout(g,t);return i}return S.cancel=y,S.flush=T,S}
-var Wed="Expected a function",Ged,Ved,z_i;
-var Y_i=b(()=>{c2();$_i();K_i();Ged=Math.max,Ved=Math.min;z_i=Ked});
-export {Ked,Wed,Ged,Ved,z_i,Y_i};
+import {Ir} from "./m584.ts";
+import {C5} from "../src/config/0577_externalHttp.ts";
+function HAi(){return getAttacherCaps()?.terminal??Ne.terminal}
+function o3r(){let e=getAttacherCaps();if(e)return e.mux;if(process.env.TMUX)return"tmux";if(process.env.STY)return"screen";return null}
+function FDt(){return getAttacherCaps()?.ssh??!!process.env.SSH_CONNECTION}
+function $En(){let e=HAi();if(e==="Apple_Terminal")return"Fn";if(e==="iTerm.app")return"Option";if(getAttacherCaps()?.isVscodeTerm||e&&$ud.has(e))return Yt()==="macos"?"Option":"Shift";if(e&&Uud.has(e))return"Shift";if(process.env.LC_TERMINAL==="iTerm2")return"Option";return FDt()||o3r()!==null||Yt()==="macos"?"Shift (Option in iTerm2, Fn in Terminal.app)":"Shift"}
+function tS(...e){let t=HAi()==="kitty"?Bud:uO;return`${r3r}${e.join(gve)}${t}`}
+function Nk(e){let t=o3r();if(t==="tmux")return`\x1BPtmux;${e.replaceAll("\x1B","\x1B\x1B")}\x1B\\`;if(t==="screen")return`\x1BP${e.replaceAll("\x1B","\x1B\x1B")}\x1B\\`;return e}
+function BDt(){if(!FDt())switch(Yt()){case"macos":case"windows":case"wsl":return"native";case"linux":if(typeof pZ==="string")return"native";break}if(process.env.TMUX)return"tmux-buffer";return"osc52"}
+async function s3r(){if(Yt()!=="linux"||typeof pZ==="string")return;if(process.env.WAYLAND_DISPLAY&&await Rm("wl-copy")){pZ="wl-copy";return}if(process.env.DISPLAY){if(await Rm("xclip")){pZ="xclip";return}if(await Rm("xsel")){pZ="xsel";return}}pZ=null}
+function qud(e){return/[^\x00-\x7f]/.test(e)}
+function qEn(e){if(!YM.hasOsc52ClipboardUtf8Bug()||!qud(e))return null;return"VS Code 1.123/1.124 will mojibake this paste \u2014 update to \u22651.125"}
+async function Wud(e){if(!process.env.TMUX)return!1;let t={input:e,useCwd:!1,timeout:2000},n=process.env.LC_TERMINAL??"unset",{code:r}=await execFileNoThrow("tmux",["load-buffer","-w","-"],t);if(logForDebugging(`clipboard: tmux load-buffer -w - \u2192 exit ${r} (LC_TERMINAL=${n})`),r===0)return!0;let o=await execFileNoThrow("tmux",["load-buffer","-"],t);return logForDebugging(`clipboard: retry tmux load-buffer - \u2192 exit ${o.code} (LC_TERMINAL=${n})`),o.code===0}
+async function sw(e){let t=n3r.Buffer.from(e,"utf8").toString("base64");if(!FDt())IAi(e);await Wud(e);let n=o3r(),r=FDt(),o=`${P8}]52;c;${t}${uO}`,s=n==="tmux"?"raw+dcs":n==="screen"?"dcs":"raw";if(logForDebugging(`clipboard: setClipboard mux=${n??"none"} ssh=${r} native=${!r} predicted=${BDt()} emit=${s} bytes=${e.length}`),n==="tmux")return o+Nk(o);if(n==="screen")return Nk(o);return tS(Qg.CLIPBOARD,"c",t)}
+function IAi(e){let t={input:e,useCwd:!1,timeout:2000};switch(Yt()){case"macos":execFileNoThrow("pbcopy",[],t);return;case"linux":if(typeof pZ!=="string")s3r().then(()=>{if(typeof pZ==="string")IAi(e)});else if(pZ==="wl-copy")execFileNoThrow("wl-copy",[],t),execFileNoThrow("wl-copy",["--primary"],t);else if(pZ==="xclip")execFileNoThrow("xclip",["-selection","clipboard"],t),execFileNoThrow("xclip",["-selection","primary"],t);else if(pZ==="xsel")execFileNoThrow("xsel",["--clipboard","--input"],t),execFileNoThrow("xsel",["--primary","--input"],t);return;case"wsl":{execFileNoThrow("powershell.exe",["-NoProfile","-NonInteractive","-Command",wAi],t);return}case"windows":{execFileNoThrow("powershell",["-NoProfile","-NonInteractive","-Command",wAi],t);return}}}
+async function UDt(e="clipboard"){if(FDt())return"";let t={useCwd:!1,timeout:2000};switch(Yt()){case"macos":{let n=await execFileNoThrow("pbpaste",[],t);return n.code===0?n.stdout:""}case"windows":case"wsl":{let n=await execFileNoThrow(Yt()==="wsl"?"powershell.exe":"powershell",["-NoProfile","-NonInteractive","-Command",Gud],t);return n.code===0?n.stdout.replace(/\r\n/g,`
+`).replace(/\n$/,""):""}case"linux":{let n=e==="primary",r=[["wl-paste",n?["--primary","--no-newline"]:["--no-newline"]],["xclip",["-selection",n?"primary":"clipboard","-o"]],["xsel",[n?"--primary":"--clipboard","--output"]]];for(let[o,s]of r){let i=await execFileNoThrow(o,[...s],t);if(i.code===0)return i.stdout}return""}default:return""}}
+function xAi(e){let t=e.indexOf(";"),n=t>=0?e.slice(0,t):e,r=t>=0?e.slice(t+1):"",o=parseInt(n,10);if(o===Qg.SET_TITLE_AND_ICON)return{type:"title",action:{type:"both",title:r}};if(o===Qg.SET_ICON)return{type:"title",action:{type:"iconName",name:r}};if(o===Qg.SET_TITLE)return{type:"title",action:{type:"windowTitle",title:r}};if(o===Qg.HYPERLINK){let s=r.split(";"),i=s[0]??"",a=s.slice(1).join(";");if(a==="")return{type:"link",action:{type:"end"}};let l={};if(i)for(let c of i.split(":")){let u=c.indexOf("=");if(u>=0)l[c.slice(0,u)]=c.slice(u+1)}return{type:"link",action:{type:"start",url:a,params:Object.keys(l).length>0?l:void 0}}}if(o===Qg.TAB_STATUS)return{type:"tabStatus",action:Vud(r)};return{type:"unknown",sequence:`\x1B]${e}`}}
+function kAi(e){let t=e.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);if(t)return{type:"rgb",r:parseInt(t[1],16),g:parseInt(t[2],16),b:parseInt(t[3],16)};let n=e.match(/^rgb:([0-9a-f]{1,4})\/([0-9a-f]{1,4})\/([0-9a-f]{1,4})$/i);if(n){let r=(o)=>Math.round(parseInt(o,16)/(16**o.length-1)*255);return{type:"rgb",r:r(n[1]),g:r(n[2]),b:r(n[3])}}return null}
+function Vud(e){let t={};for(let[n,r]of Kud(e))switch(n){case"indicator":t.indicator=r===""?null:kAi(r);break;case"status":t.status=r===""?null:r;break;case"status-color":t.statusColor=r===""?null:kAi(r);break}return t}
+function*Kud(e){let t="",n="",r=!1,o=!1;for(let s of e)if(o){if(r)n+=s;else t+=s;o=!1}else if(s==="\\")o=!0;else if(s===";")yield[t,n],t="",n="",r=!1;else if(s==="="&&!r)r=!0;else if(r)n+=s;else t+=s;if(t||r)yield[t,n]}
+function Ket(e,t){if(!e)return KUe;let n={id:zud(e),...t},r=Object.entries(n).map(([o,s])=>`${o}=${s}`).join(":");return tS(Qg.HYPERLINK,r,e)}
+function zud(e){let t=0;for(let n=0;n<e.length;n++)t=(t<<5)-t+e.charCodeAt(n)|0;return(t>>>0).toString(36)}
+function supportsTabStatus(){return!1}
+function PAi(e){let t=[],n=(r)=>r.type==="rgb"?`#${[r.r,r.g,r.b].map((o)=>o.toString(16).padStart(2,"0")).join("")}`:"";if("indicator"in e)t.push(`indicator=${e.indicator?n(e.indicator):""}`);if("status"in e)t.push(`status=${e.status?.replaceAll("\\","\\\\").replaceAll(";","\\;")??""}`);if("statusColor"in e)t.push(`status-color=${e.statusColor?n(e.statusColor):""}`);return tS(Qg.TAB_STATUS,t.join(";"))}
+function OAi(e){let t=n3r.Buffer.from(JSON.stringify(e)).toString("base64");return tS(Qg.ITERM2_PROPRIETARY,`SetProfileProperty=Initial Text=${t}`)}
+var n3r,r3r,Bud,Uud,$ud,pZ,wAi="[Console]::InputEncoding = [Text.Encoding]::UTF8; Set-Clipboard -Value ([Console]::In.ReadToEnd())",Gud="[Console]::OutputEncoding = [Text.Encoding]::UTF8; Get-Clipboard -Raw",Qg,KUe,zUe,jUe,WEn,DAi,GEn,jud;
+var hg=b(()=>{lt();qe();Ir();Ii();Es();tI();Tve();fsModule();n3r=require("buffer"),r3r=P8+String.fromCharCode(Q3.OSC),Bud=P8+"\\";Uud=new Set(["ghostty","kitty","WezTerm","alacritty","xterm","gnome-terminal","vte-based","konsole","windows-terminal","mintty",...C5]),$ud=new Set(["vscode","cursor","windsurf","antigravity","codium"]);Qg={SET_TITLE_AND_ICON:0,SET_ICON:1,SET_TITLE:2,SET_COLOR:4,SET_CWD:7,HYPERLINK:8,ITERM2:9,SET_FG_COLOR:10,SET_BG_COLOR:11,SET_CURSOR_COLOR:12,CLIPBOARD:52,KITTY:99,RESET_COLOR:104,RESET_FG_COLOR:110,RESET_BG_COLOR:111,RESET_CURSOR_COLOR:112,SEMANTIC_PROMPT:133,GHOSTTY:777,ITERM2_PROPRIETARY:1337,TAB_STATUS:21337};KUe=tS(Qg.HYPERLINK,"",""),zUe={NOTIFY:0,BADGE:2,PROGRESS:4},jUe={CLEAR:0,SET:1,ERROR:2,INDETERMINATE:3},WEn=`${r3r}${Qg.ITERM2};${zUe.PROGRESS};${jUe.CLEAR};${uO}`,DAi=`${r3r}${Qg.SET_TITLE_AND_ICON};${uO}`,GEn=tS(Qg.TAB_STATUS,"indicator=;status=;status-color=");jud=OAi("")});
+export {HAi,o3r,FDt,$En,tS,Nk,BDt,s3r,qud,qEn,Wud,sw,IAi,UDt,xAi,kAi,Vud,Kud,Ket,zud,supportsTabStatus,PAi,OAi,n3r,r3r,Bud,Uud,$ud,pZ,wAi,Gud,Qg,KUe,zUe,jUe,WEn,DAi,GEn,jud,hg};

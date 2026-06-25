@@ -1,16 +1,19 @@
 // @ts-nocheck
-import {Zse,Iy} from "../src/agent/2230_explicitlyRequested.ts";
-import {getLargeMemoryFiles,getMemoryFiles,getMaxMemoryCharacterCount,zw} from "../src/config/2717_stripHtmlComments.ts";
-import {F6t,Ije,S5n} from "./m4595.ts";
-import {$f,HF} from "../src/core/2683_HF.ts";
-import {SandboxManager,Ag} from "./m2671.ts";
-import {y5n,XTo} from "./m4594.ts";
-import {Qm,Sw} from "../src/mcp/0728_serverName.ts";
-import {Cn,dr} from "./m231.ts";
-import {b} from "../runtime.ts";
-async function z7p(){if(Zse())return null;let e=getLargeMemoryFiles(await getMemoryFiles());if(e.length===0)return null;let t=getMaxMemoryCharacterCount(),n=e.sort((o,s)=>s.content.length-o.content.length).map((o)=>`${o.path}: ${o.content.length.toLocaleString()} chars`);return{type:"claudemd_files",severity:"warning",message:e.length===1?`Large CLAUDE.md file detected (${e[0].content.length.toLocaleString()} chars > ${t.toLocaleString()})`:`${e.length} large CLAUDE.md files detected (each > ${t.toLocaleString()} chars)`,details:n,currentValue:e.length,threshold:t}}
-async function Y7p(e){if(!e)return null;let t=F6t(e);if(t<=Ije)return null;let n=e.activeAgents.filter((o)=>o.source!=="built-in").map((o)=>{let s=`${o.agentType}: ${o.whenToUse}`;return{name:o.agentType,tokens:$f(s)}}).sort((o,s)=>s.tokens-o.tokens),r=n.slice(0,5).map((o)=>`${o.name}: ~${o.tokens.toLocaleString()} tokens`);if(n.length>5)r.push(`(${n.length-5} more custom agents)`);return{type:"agent_descriptions",severity:"warning",message:`Large agent descriptions (~${t.toLocaleString()} tokens > ${Ije.toLocaleString()})`,details:r,currentValue:t,threshold:Ije}}
-async function J7p(e){let t=await e(),n=SandboxManager.isSandboxingEnabled()&&SandboxManager.isAutoAllowBashIfSandboxedEnabled(),r=y5n(t,{sandboxAutoAllowEnabled:n});if(r.length===0)return null;let o=r.flatMap((s)=>[`${Qm(s.rule.ruleValue)}: ${s.reason}`,`  Fix: ${s.fix}`]);return{type:"unreachable_rules",severity:"warning",message:`${r.length} ${Cn(r.length,"unreachable permission rule")} detected`,details:o,currentValue:r.length,threshold:0}}
-async function Jcl(e,t){let[n,r,o]=await Promise.all([z7p(),Y7p(e),J7p(t)]);return{claudeMdWarning:n,agentWarning:r,unreachableRulesWarning:o}}
-var Xcl=b(()=>{HF();zw();Iy();Sw();XTo();Ag();S5n();dr()});
-export {z7p,Y7p,J7p,Jcl,Xcl};
+import {_r,ui} from "./m2463.ts";
+import {Rje,Xl} from "../src/config/0651_maxBytes.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {Cd,lr} from "./m233.ts";
+import {Text} from "./m2433.ts";
+import {getConfigFilePath,eWe} from "./m4595.ts";
+import {Box} from "./m2432.ts";
+import {yg,_4} from "./m2581.ts";
+import {wl,sy} from "./m2585.ts";
+import {wae,Jot} from "./m3021.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function NRo(e){let t=Dgl.c(61),{filePath:n,hunks:r,isLargeFile:o,isBinary:s,isTruncated:i,isUntracked:a,width:l}=e,{columns:c}=_r(),u=l??c-4,d;if(t[0]!==n||t[1]!==s||t[2]!==o||t[3]!==a){e:{if(!n||s||o||a){let H;if(t[5]===Symbol.for("react.memo_cache_sentinel"))H={firstLine:null,fileContent:void 0},t[5]=H;else H=t[5];d=H;break e}let w;try{w=Rje(Pgl.resolve(isTmuxControlMode(),n),{maxBytes:Zem})}catch{let H;if(t[6]===Symbol.for("react.memo_cache_sentinel"))H={firstLine:null,fileContent:void 0},t[6]=H;else H=t[6];d=H;break e}d={firstLine:Cd(w),fileContent:w}}t[0]=n,t[1]=s,t[2]=o,t[3]=a,t[4]=d}else d=t[4];let{firstLine:p,fileContent:m}=d;if(a){let w;if(t[7]!==n)w=qy.jsx(Text,{bold:!0,children:n}),t[7]=n,t[8]=w;else w=t[8];let H;if(t[9]===Symbol.for("react.memo_cache_sentinel"))H=qy.jsx(getConfigFilePath,{children:"untracked"}),t[9]=H;else H=t[9];let k;if(t[10]!==w)k=qy.jsxs(Box,{children:[w,H]}),t[10]=w,t[11]=k;else k=t[11];let I;if(t[12]!==u)I=qy.jsx(yg,{width:u}),t[12]=u,t[13]=I;else I=t[13];let D;if(t[14]===Symbol.for("react.memo_cache_sentinel"))D=qy.jsx(Text,{dimColor:!0,italic:!0,children:"New file not yet staged."}),t[14]=D;else D=t[14];let O;if(t[15]!==n)O=qy.jsxs(Box,{flexDirection:"column",children:[D,qy.jsxs(Text,{dimColor:!0,italic:!0,children:["Run `git add :/",n,"` to see line counts."]})]}),t[15]=n,t[16]=O;else O=t[16];let L;if(t[17]!==k||t[18]!==I||t[19]!==O)L=qy.jsxs(Box,{flexDirection:"column",width:"100%",children:[k,I,O]}),t[17]=k,t[18]=I,t[19]=O,t[20]=L;else L=t[20];return L}if(s){let w;if(t[21]!==n)w=qy.jsx(Box,{children:qy.jsx(Text,{bold:!0,children:n})}),t[21]=n,t[22]=w;else w=t[22];let H;if(t[23]!==u)H=qy.jsx(yg,{width:u}),t[23]=u,t[24]=H;else H=t[24];let k;if(t[25]===Symbol.for("react.memo_cache_sentinel"))k=qy.jsx(Box,{flexDirection:"column",children:qy.jsx(Text,{dimColor:!0,italic:!0,children:"Binary file - cannot display diff"})}),t[25]=k;else k=t[25];let I;if(t[26]!==w||t[27]!==H)I=qy.jsxs(Box,{flexDirection:"column",width:"100%",children:[w,H,k]}),t[26]=w,t[27]=H,t[28]=I;else I=t[28];return I}if(o){let w;if(t[29]!==n)w=qy.jsx(Box,{children:qy.jsx(Text,{bold:!0,children:n})}),t[29]=n,t[30]=w;else w=t[30];let H;if(t[31]!==u)H=qy.jsx(yg,{width:u}),t[31]=u,t[32]=H;else H=t[32];let k;if(t[33]===Symbol.for("react.memo_cache_sentinel"))k=qy.jsx(Box,{flexDirection:"column",children:qy.jsx(Text,{dimColor:!0,italic:!0,children:"Large file - diff exceeds 1 MB limit"})}),t[33]=k;else k=t[33];let I;if(t[34]!==w||t[35]!==H)I=qy.jsxs(Box,{flexDirection:"column",width:"100%",children:[w,H,k]}),t[34]=w,t[35]=H,t[36]=I;else I=t[36];return I}let f;if(t[37]!==n)f=qy.jsx(Text,{bold:!0,children:n}),t[37]=n,t[38]=f;else f=t[38];let h=i??!1,g;if(t[39]!==h)g=qy.jsx(getConfigFilePath,{when:h,children:"truncated"}),t[39]=h,t[40]=g;else g=t[40];let _;if(t[41]!==f||t[42]!==g)_=qy.jsxs(Box,{children:[f,g]}),t[41]=f,t[42]=g,t[43]=_;else _=t[43];let T;if(t[44]!==u)T=qy.jsx(yg,{width:u}),t[44]=u,t[45]=T;else T=t[45];let y;if(t[46]!==u||t[47]!==m||t[48]!==n||t[49]!==p||t[50]!==r)y=r.length===0?qy.jsx(wl,{children:"No diff content"}):r.map((w,H)=>qy.jsx(wae,{patch:w,filePath:n,firstLine:p,fileContent:m,dim:!1,width:u},H)),t[46]=u,t[47]=m,t[48]=n,t[49]=p,t[50]=r,t[51]=y;else y=t[51];let S;if(t[52]!==y)S=qy.jsx(Box,{flexDirection:"column",children:y}),t[52]=y,t[53]=S;else S=t[53];let E;if(t[54]!==i)E=i&&qy.jsx(Text,{dimColor:!0,italic:!0,children:"\u2026 diff truncated (exceeded 400 line limit)"}),t[54]=i,t[55]=E;else E=t[55];let R;if(t[56]!==_||t[57]!==T||t[58]!==S||t[59]!==E)R=qy.jsxs(Box,{flexDirection:"column",width:"100%",children:[_,T,S,E]}),t[56]=_,t[57]=T,t[58]=S,t[59]=E,t[60]=R;else R=t[60];return R}
+var Dgl,Pgl,qy,Zem=1e6;
+var FRo=b(()=>{ui();je();Po();Xl();lr();eWe();_4();sy();Jot();Dgl=x(tt(),1),Pgl=require("path"),qy=x(oe(),1)});
+export {NRo,Dgl,Pgl,qy,Zem,FRo};

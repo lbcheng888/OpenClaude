@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {getProxyUrl,getProxyFetchOptions,Z_} from "../src/config/1021_shouldBypassProxyWithCidr.ts";
-import {agentProxyEnv,P1} from "../src/agent/2223_subprocessEnv.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
+import {Wt,ps} from "./m230.ts";
 import {b} from "../runtime.ts";
-async function xHn(e){if(!getProxyUrl()){let t=agentProxyEnv();if(t.HTTPS_PROXY&&URL.parse(e)?.protocol==="https:"){let n;if(t.SSL_CERT_FILE)try{n=await sta.readFile(t.SSL_CERT_FILE,"utf8")}catch(r){logForDebugging(`MCP agent-proxy fallback: failed to read CA bundle: ${r instanceof Error?r.message:String(r)}`,{level:"warn"})}return getProxyFetchOptions({url:e,fallbackProxy:{url:t.HTTPS_PROXY,noProxy:t.NO_PROXY,ca:n}})}}return getProxyFetchOptions({url:e})}
-var sta;
-var ita=b(()=>{qe();Z_();P1();sta=require("fs/promises")});
-export {xHn,sta,ita};
+function a7d(e){let t=eFt.homedir(),n=[],r=Nia[e.toLowerCase()];if(!r)return n;let o=process.env.APPDATA||C1.join(t,"AppData","Roaming"),s=process.env.LOCALAPPDATA||C1.join(t,"AppData","Local");switch(eFt.platform()){case"darwin":if(n.push(C1.join(t,"Library","Application Support","JetBrains"),C1.join(t,"Library","Application Support")),e.toLowerCase()==="androidstudio")n.push(C1.join(t,"Library","Application Support","Google"));break;case"win32":if(n.push(C1.join(o,"JetBrains"),C1.join(s,"JetBrains"),C1.join(o)),e.toLowerCase()==="androidstudio")n.push(C1.join(s,"Google"));break;case"linux":n.push(C1.join(t,".config","JetBrains"),C1.join(t,".local","share","JetBrains"));for(let i of r)n.push(C1.join(t,"."+i));if(e.toLowerCase()==="androidstudio")n.push(C1.join(t,".config","Google"));break;default:break}return n}
+async function l7d(e){let t=[],n=Wt(),r=a7d(e),o=Nia[e.toLowerCase()];if(!o)return t;let s=o.map((i)=>new RegExp("^"+i));for(let i of r)try{let a=await n.readdir(i);for(let l of s)for(let c of a){if(!l.test(c.name))continue;if(!c.isDirectory()&&!c.isSymbolicLink())continue;let u=C1.join(i,c.name);if(eFt.platform()==="linux"){t.push(u);continue}let d=C1.join(u,"plugins");try{await n.stat(d),t.push(d)}catch{}}}catch{continue}return t.filter((i,a)=>t.indexOf(i)===a)}
+async function c7d(e){let t=await l7d(e);for(let n of t){let r=C1.join(n,i7d);try{return await Wt().stat(r),!0}catch{}}return!1}
+async function Fia(e,t=!1){if(t)HXr.delete(e);let n=HXr.get(e);if(n)return n;let r=c7d(e);return HXr.set(e,r),r}
+var eFt,C1,i7d="claude-code-jetbrains-plugin",Nia,HXr;
+var Bia=b(()=>{ps();eFt=require("os"),C1=require("path"),Nia={pycharm:["PyCharm"],intellij:["IntelliJIdea","IdeaIC"],webstorm:["WebStorm"],phpstorm:["PhpStorm"],rubymine:["RubyMine"],clion:["CLion"],goland:["GoLand"],rider:["Rider"],datagrip:["DataGrip"],appcode:["AppCode"],dataspell:["DataSpell"],aqua:["Aqua"],gateway:["Gateway"],fleet:["Fleet"],androidstudio:["AndroidStudio"]};HXr=new Map});
+export {a7d,l7d,c7d,Fia,eFt,C1,i7d,Nia,HXr,Bia};

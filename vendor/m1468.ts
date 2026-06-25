@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var m9s=X((MfA,sxr)=>{sxr.exports=["SIGABRT","SIGALRM","SIGHUP","SIGINT","SIGTERM"];sxr.exports.push("SIGVTALRM","SIGXCPU","SIGXFSZ","SIGUSR2","SIGTRAP","SIGSYS","SIGQUIT","SIGIOT")});
-export {m9s};
+import {Q} from "../runtime.ts";
+var e8s=Q((Zvh,Z5s)=>{Z5s.exports=K9u;var V9u=Object.getPrototypeOf||function(e){return e.__proto__};function K9u(e){if(e===null||typeof e!=="object")return e;if(e instanceof Object)var t={__proto__:V9u(e)};else var t=Object.create(null);return Object.getOwnPropertyNames(e).forEach(function(n){Object.defineProperty(t,n,Object.getOwnPropertyDescriptor(e,n))}),t}});
+export {e8s};

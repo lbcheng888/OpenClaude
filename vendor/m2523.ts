@@ -1,13 +1,29 @@
 // @ts-nocheck
-import {e3r,Z9r} from "./m2522.ts";
-import {ro,b,M} from "../runtime.ts";
-import {useClock} from "./m2432.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-function RHi(){if(wHi)return;wHi=!0;try{let{prewarm:e}=(e3r(),ro(Z9r));e()}catch{}}
-function xHi(e){let{isModifierPressed:t}=(e3r(),ro(Z9r));return t(e)}
-var wHi=!1;
-function logFeatureBadAsync(e,t,n,r=Afd){let o=useClock(),s=xwe.useRef(0),i=xwe.useRef(void 0),a=xwe.useCallback(()=>{if(i.current)i.current(),i.current=void 0},[]);return xwe.useEffect(()=>()=>{a()},[a]),xwe.useCallback(()=>{let l=Date.now();if(l-s.current<=r&&i.current!==void 0)a(),e(!1),t();else n?.(),e(!0),a(),i.current=o.setTimeout(()=>{e(!1),i.current=void 0},r);s.current=l},[e,t,n,a,o,r])}
-var xwe,Afd=800;
-var get=b(()=>{ze();xwe=M(Te(),1)});
-export {RHi,xHi,wHi,logFeatureBadAsync,xwe,Afd,get};
+import {hE,resolveToolAlias} from "../src/config/2229_observed_uid.ts";
+import {Ma,Rhe,awe,TRn,SRn} from "./m2519.ts";
+import {Nv,Kb,zN} from "./m688.ts";
+import {nRn,tRn} from "./m2478.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {execFileNoThrowWithCwd,Ii} from "./m690.ts";
+import {vhe,isLocalAgentTask,f4} from "../src/telemetry/2522_error_name.ts";
+import {He,xe,mn} from "../src/telemetry/0600_feature_name.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Wt,ps} from "./m230.ts";
+import {bRn,vz} from "./m2520.ts";
+import {Yt,Es} from "./m641.ts";
+import {b} from "../runtime.ts";
+import {iOt} from "./m2522.ts";
+function nAd(){let t=hE(),n="claude_cli_latest_screenshot.png",r={darwin:wie.join(t,"claude_cli_latest_screenshot.png"),linux:wie.join(t,"claude_cli_latest_screenshot.png"),win32:wie.join(t,"claude_cli_latest_screenshot.png")},o=r.darwin||r.linux,s=Ma([o]),a=`set fp to open for access POSIX file ${`"${o.replace(/\\/g,"\\\\").replace(/"/g,"\\\"")}"`} with write permission`,l="",c=!1,u='"$(command -v powershell.exe 2>/dev/null || echo /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe)"',d="",p="",m={darwin:{checkImage:"osascript -e 'the clipboard as \xABclass PNGf\xBB'",saveImage:`osascript -e 'set png_data to (the clipboard as \xABclass PNGf\xBB)' -e ${Ma([a])} -e 'write png_data to fp' -e 'close access fp'`,getPath:aOt.darwin,deleteFile:`rm -f -- ${s}`},linux:{checkImage:'xclip -selection clipboard -t TARGETS -o 2>/dev/null | grep -E "image/(png|jpeg|jpg|gif|webp|bmp)" || wl-paste -l 2>/dev/null | grep -E "image/(png|jpeg|jpg|gif|webp|bmp)"',saveImage:`xclip -selection clipboard -t image/png -o > ${s} 2>/dev/null || wl-paste --type image/png > ${s} 2>/dev/null || xclip -selection clipboard -t image/bmp -o > ${s} 2>/dev/null || wl-paste --type image/bmp > ${s}`,getPath:aOt.linux,deleteFile:`rm -f -- ${s}`},win32:{checkImage:["powershell","-NoProfile","-NonInteractive","-Sta","-Command","Add-Type -AssemblyName System.Windows.Forms; if (-not [System.Windows.Forms.Clipboard]::ContainsImage()) { exit 1 }"],saveImage:["powershell","-NoProfile","-NonInteractive","-Sta","-Command","Add-Type -AssemblyName System.Windows.Forms; $img = [System.Windows.Forms.Clipboard]::GetImage(); if ($null -eq $img) { exit 1 }; $img.Save(, [System.Drawing.Imaging.ImageFormat]::Png)"],getPath:aOt.win32,deleteFile:["powershell","-NoProfile","-Command","Remove-Item -Force -LiteralPath "]}};return{commands:m.darwin||m.linux,screenshotPath:o}}
+async function CRn(e){if(typeof e==="string")return Nv(e,{reject:!1});let[t,...n]=e;return Kb(t,n,{reject:!1})}
+async function oLi(){try{let{getNativeModule:t}=await Promise.resolve().then(() => (nRn(),tRn)),n=t()?.hasClipboardImage;if(n)return n()}catch(t){Ie(t)}return(await execFileNoThrowWithCwd("osascript",["-e","the clipboard as \xABclass PNGf\xBB"])).code===0}
+async function lwe(e){try{let{getNativeModule:o}=await Promise.resolve().then(() => (nRn(),tRn)),s=o()?.readClipboardImage;if(!s)throw Error("native clipboard reader unavailable");let i=s(e.maxWidth,e.maxHeight);if(!i)return null;let a=i.png;if(a.length>e.targetRawSize){let l=await vhe(a,a.length,"png",e);return He("clipboard_read"),{base64:l.buffer.toString("base64"),mediaType:`image/${l.mediaType}`,dimensions:{originalWidth:i.originalWidth,originalHeight:i.originalHeight,displayWidth:l.dimensions?.displayWidth??i.width,displayHeight:l.dimensions?.displayHeight??i.height}}}return He("clipboard_read"),{base64:a.toString("base64"),mediaType:"image/png",dimensions:{originalWidth:i.originalWidth,originalHeight:i.originalHeight,displayWidth:i.width,displayHeight:i.height}}}catch(o){if(o instanceof isLocalAgentTask)logForDebugging(`Native clipboard resize failed: ${o.message}`,{level:"error"});else Ie(o)}let t;try{t=nAd()}catch(o){return Ie(o),xe("clipboard_read","construct_failed"),null}let{commands:n,screenshotPath:r}=t;try{if((await CRn(n.checkImage)).exitCode!==0)return null;if(await Wt().mkdir(wie.dirname(r),{mode:448}),(await CRn(n.saveImage)).exitCode!==0)return xe("clipboard_read","save_failed"),null;let i=Wt().readFileBytesSync(r);if(i.length>=2&&i[0]===66&&i[1]===77)i=await(await Rhe())(i).png().toBuffer();let a=await vhe(i,i.length,"png",e),l=a.buffer.toString("base64"),c=bRn(l);return CRn(n.deleteFile),He("clipboard_read"),{base64:l,mediaType:c,dimensions:a.dimensions}}catch{return xe("clipboard_read","read_failed"),null}}
+async function rAd(){try{let t=aOt.darwin||aOt.linux,n=await CRn(t);if(n.exitCode!==0||!n.stdout)return null;return n.stdout.trim()}catch(e){return logForDebugging(`Failed to read image path from clipboard: ${e instanceof Error?e.message:String(e)}`,{level:"error"}),null}}
+function sLi(e){if(e.startsWith('"')&&e.endsWith('"')||e.startsWith("'")&&e.endsWith("'"))return e.slice(1,-1);return e}
+function aLi(e){if(Yt()==="wsl"&&iLi.test(e))return e;let r=`__DOUBLE_BACKSLASH_${rLi.randomBytes(8).toString("hex")}__`;return e.replaceAll("\\\\",r).replace(/\\(.)/g,"$1").replace(new RegExp(r,"g"),"\\")}
+function l5r(e){let t=sLi(e.trim()),n=aLi(t);return ARn.test(n)}
+function oAd(e){let t=sLi(e.trim()),n=aLi(t);if(ARn.test(n))return n;return null}
+async function lLi(e,t){let n=oAd(e);if(!n)return null;let r=n;if(Yt()==="wsl"&&iLi.test(r))r=await new awe(process.env.WSL_DISTRO_NAME).toLocalPath(r);let o;try{if(wie.isAbsolute(r))o=Wt().readFileBytesSync(r);else{let c=await rAd();if(c&&r===wie.basename(c))o=Wt().readFileBytesSync(c)}}catch(c){return logForDebugging(`Failed to read pasted image file ${r}: ${c instanceof Error?c.message:String(c)}`,{level:"error"}),null}if(!o)return null;if(o.length===0)return logForDebugging(`Image file is empty: ${r}`,{level:"warn"}),null;if(o.length>=2&&o[0]===66&&o[1]===77)o=await(await Rhe())(o).png().toBuffer();let s=vz(o);if(s===null)return logForDebugging(`Pasted path has image extension but content is not a supported image: ${r}`,{level:"warn"}),null;let i=s.split("/")[1]||"png",a=await vhe(o,o.length,i,t),l=a.buffer.toString("base64");return{path:r,base64:l,mediaType:s,dimensions:a.dimensions}}
+function cLi(e){if(e.includes("\x00"))return!0;let t=e.slice(0,4096);if(t.length<32)return!1;let n=0;for(let r of t)if(r==="\uFFFD")n++;return n/t.length>0.05}
+var rLi,wie,w2e=800,aOt,ARn,iLi;
+var k2e=b(()=>{mn();TRn();qe();Ii();ps();SRn();f4();vn();Es();zN();iOt();resolveToolAlias();rLi=require("crypto"),wie=require("path"),aOt={darwin:"osascript -e 'get POSIX path of (the clipboard as \xABclass furl\xBB)'",linux:"xclip -selection clipboard -t text/plain -o 2>/dev/null || wl-paste 2>/dev/null",win32:["powershell","-NoProfile","-Command","Get-Clipboard"]};ARn=/\.(png|jpe?g|gif|webp)$/i;iLi=/^(?:[A-Za-z]:\\|\\\\)/});
+export {nAd,CRn,oLi,lwe,rAd,sLi,aLi,l5r,oAd,lLi,cLi,rLi,wie,w2e,aOt,ARn,iLi,k2e};

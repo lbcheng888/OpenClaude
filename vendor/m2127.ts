@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var _pi=X((jXe)=>{Object.defineProperty(jXe,"__esModule",{value:!0});jXe.callWithTimeout=jXe.TimeoutError=void 0;class Bgn extends Error{constructor(e){super(e);Object.setPrototypeOf(this,Bgn.prototype)}}jXe.TimeoutError=Bgn;function Ozu(e,t){let n,r=new Promise(function(s,i){n=setTimeout(function(){i(new Bgn("Operation timed out."))},t)});return Promise.race([e,r]).then((o)=>(clearTimeout(n),o),(o)=>{throw clearTimeout(n),o})}jXe.callWithTimeout=Ozu});
-export {_pi};
+import {Q} from "../runtime.ts";
+import {j_i} from "./m2126.ts";
+var n2r=Q((dSn)=>{Object.defineProperty(dSn,"__esModule",{value:!0});dSn.TraceState=void 0;var Y_i=j_i(),J_i=32,vod=512,X_i=",",Q_i="=";class t2r{_internalState=new Map;constructor(e){if(e)this._parse(e)}set(e,t){let n=this._clone();if(n._internalState.has(e))n._internalState.delete(e);return n._internalState.set(e,t),n}unset(e){let t=this._clone();return t._internalState.delete(e),t}get(e){return this._internalState.get(e)}serialize(){return this._keys().reduce((e,t)=>(e.push(t+Q_i+this.get(t)),e),[]).join(X_i)}_parse(e){if(e.length>vod)return;if(this._internalState=e.split(X_i).reverse().reduce((t,n)=>{let r=n.trim(),o=r.indexOf(Q_i);if(o!==-1){let s=r.slice(0,o),i=r.slice(o+1,n.length);if((0,Y_i.validateKey)(s)&&(0,Y_i.validateValue)(i))t.set(s,i)}return t},new Map),this._internalState.size>J_i)this._internalState=new Map(Array.from(this._internalState.entries()).reverse().slice(0,J_i))}_keys(){return Array.from(this._internalState.keys()).reverse()}_clone(){let e=new t2r;return e._internalState=new Map(this._internalState),e}}dSn.TraceState=t2r});
+export {n2r};

@@ -1,15 +1,12 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function d1u(e){return e&&typeof e.error==="string"&&typeof e.error_description==="string"}
-function E5s(e){return{error:e.error,errorDescription:e.error_description,correlationId:e.correlation_id,errorCodes:e.error_codes,timestamp:e.timestamp,traceId:e.trace_id}}
-var CredentialUnavailableErrorName="CredentialUnavailableError",CredentialUnavailableError,AuthenticationErrorName="AuthenticationError",AuthenticationError,AggregateAuthenticationErrorName="AggregateAuthenticationError",AggregateAuthenticationError,AuthenticationRequiredError;
-var JD=b(()=>{CredentialUnavailableError=class CredentialUnavailableError extends Error{constructor(e,t){super(e,t);this.name=CredentialUnavailableErrorName}};AuthenticationError=class AuthenticationError extends Error{constructor(e,t,n){let r={error:"unknown",errorDescription:"An unknown error occurred and no additional details are available."};if(d1u(t))r=E5s(t);else if(typeof t==="string")try{let o=JSON.parse(t);r=E5s(o)}catch(o){if(e===400)r={error:"invalid_request",errorDescription:`The service indicated that the request was invalid.
-
-${t}`};else r={error:"unknown_error",errorDescription:`An unknown error has occurred. Response body:
-
-${t}`}}else r={error:"unknown_error",errorDescription:"An unknown error occurred and no additional details are available."};super(`${r.error} Status code: ${e}
-More details:
-${r.errorDescription},`,n);this.statusCode=e,this.errorResponse=r,this.name=AuthenticationErrorName}};AggregateAuthenticationError=class AggregateAuthenticationError extends Error{constructor(e,t){let n=e.join(`
-`);super(`${t}
-${n}`);this.errors=e,this.name=AggregateAuthenticationErrorName}};AuthenticationRequiredError=class AuthenticationRequiredError extends Error{constructor(e){super(e.message,e.cause?{cause:e.cause}:void 0);this.scopes=e.scopes,this.getTokenOptions=e.getTokenOptions,this.name="AuthenticationRequiredError"}}});
-export {d1u,E5s,CredentialUnavailableErrorName,CredentialUnavailableError,AuthenticationErrorName,AuthenticationError,AggregateAuthenticationErrorName,AggregateAuthenticationError,AuthenticationRequiredError,JD};
+import {ijs,sjs} from "./m1631.ts";
+function IPr(e){ljs=e,kPr=[],HPr=[];let t=/\*/g,n=e.split(",").map((r)=>r.trim().replace(t,".*?"));for(let r of n)if(r.startsWith("-"))HPr.push(new RegExp(`^${r.substr(1)}$`));else kPr.push(new RegExp(`^${r}$`));for(let r of Qfn)r.enabled=xPr(r.namespace)}
+function xPr(e){if(e.endsWith("*"))return!0;for(let t of HPr)if(t.test(e))return!1;for(let t of kPr)if(t.test(e))return!0;return!1}
+function wqu(){let e=ljs||"";return IPr(""),e}
+function ujs(e){let t=Object.assign(n,{enabled:xPr(e),destroy:kqu,log:cjs.log,namespace:e,extend:Hqu});function n(...r){if(!t.enabled)return;if(r.length>0)r[0]=`${e} ${r[0]}`;t.log(...r)}return Qfn.push(t),t}
+function kqu(){let e=Qfn.indexOf(this);if(e>=0)return Qfn.splice(e,1),!0;return!1}
+function Hqu(e){let t=ujs(`${this.namespace}:${e}`);return t.log=this.log,t}
+var ajs,ljs,kPr,HPr,Qfn,cjs,YXe;
+var djs=b(()=>{ijs();ajs=typeof process<"u"&&process.env&&process.env.DEBUG||void 0,kPr=[],HPr=[],Qfn=[];if(ajs)IPr(ajs);cjs=Object.assign((e)=>ujs(e),{enable:IPr,enabled:xPr,disable:wqu,log:sjs});YXe=cjs});
+export {IPr,xPr,wqu,ujs,kqu,Hqu,ajs,ljs,kPr,HPr,Qfn,cjs,YXe,djs};

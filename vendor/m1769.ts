@@ -1,5 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-async function o$(e,t,n){if(typeof e==="string")return e;else return e({clientId:t,tokenEndpoint:n})}
-var Lmn=b(()=>{/*! @azure/msal-common v15.13.1 2025-10-29 */});
-export {o$,Lmn};
+import {dC,Co} from "./m1722.ts";
+import {R7,AuthError} from "./m1724.ts";
+import {dgn,interactionRequired,consentRequired,loginRequired,badToken,uxNotAllowed,noTokensFound,nativeAccountUnavailable,refreshTokenExpired} from "./m1768.ts";
+function mgn(e,t,n){let r=!!e&&XXs.indexOf(e)>-1,o=!!n&&w8u.indexOf(n)>-1,s=!!t&&XXs.some((i)=>t.indexOf(i)>-1);return r||s||o}
+function fgn(e){return new InteractionRequiredAuthError(e,pgn[e])}
+var XXs,w8u,pgn,InteractionRequiredAuthErrorMessage,InteractionRequiredAuthError;
+var LIt=b(()=>{dC();R7();dgn();/*! @azure/msal-common v15.13.1 2025-10-29 */XXs=[interactionRequired,consentRequired,loginRequired,badToken,uxNotAllowed],w8u=["message_only","additional_action","basic_action","user_password_expired","consent_required","bad_token"],pgn={[noTokensFound]:"No refresh token found in the cache. Please sign-in.",[nativeAccountUnavailable]:"The requested account is not available in the native broker. It may have been deleted or logged out. Please sign-in again using an interactive API.",[refreshTokenExpired]:"Refresh token has expired.",[badToken]:"Identity provider returned bad_token due to an expired or invalid refresh token. Please invoke an interactive API to resolve.",[uxNotAllowed]:"`canShowUI` flag in Edge was set to false. User interaction required on web page. Please invoke an interactive API to resolve."},InteractionRequiredAuthErrorMessage={noTokensFoundError:{code:noTokensFound,desc:pgn[noTokensFound]},native_account_unavailable:{code:nativeAccountUnavailable,desc:pgn[nativeAccountUnavailable]},bad_token:{code:badToken,desc:pgn[badToken]}};InteractionRequiredAuthError=class InteractionRequiredAuthError extends AuthError{constructor(e,t,n,r,o,s,i,a){super(e,t,n);Object.setPrototypeOf(this,InteractionRequiredAuthError.prototype),this.timestamp=r||Co.EMPTY_STRING,this.traceId=o||Co.EMPTY_STRING,this.correlationId=s||Co.EMPTY_STRING,this.claims=i||Co.EMPTY_STRING,this.name="InteractionRequiredAuthError",this.errorNo=a}}});
+export {mgn,fgn,XXs,w8u,pgn,InteractionRequiredAuthErrorMessage,InteractionRequiredAuthError,LIt};

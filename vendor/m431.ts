@@ -1,7 +1,11 @@
 // @ts-nocheck
-import {MSt,dZt,pZt} from "./m430.ts";
-import {b,M} from "../runtime.ts";
-class lMe{constructor(e=Edr.default.stdin,t=Edr.default.stdout){this._stdin=e,this._stdout=t,this._readBuffer=new MSt,this._started=!1,this._ondata=(n)=>{this._readBuffer.append(n),this.processReadBuffer()},this._onerror=(n)=>{this.onerror?.(n)}}async start(){if(this._started)throw Error("StdioServerTransport already started! If using Server class, note that connect() calls start() automatically.");this._started=!0,this._stdin.on("data",this._ondata),this._stdin.on("error",this._onerror)}processReadBuffer(){while(!0)try{let e=this._readBuffer.readMessage();if(e===null)break;this.onmessage?.(e)}catch(e){this.onerror?.(e)}}async close(){if(this._stdin.off("data",this._ondata),this._stdin.off("error",this._onerror),this._stdin.listenerCount("data")===0)this._stdin.pause();this._readBuffer.clear(),this.onclose?.()}send(e){return new Promise((t)=>{let n=dZt(e);if(this._stdout.write(n))t();else this._stdout.once("drain",t)})}}
-var Edr;
-var mZt=b(()=>{pZt();Edr=M(require("process"))});
-export {lMe,Edr,mZt};
+import {ft,b} from "../runtime.ts";
+import {localPlatformLabel,createBridgeClient,WAIT_MAX_DURATION_S,PEER_WAIT_TIMEOUT_MS,DISCOVERY_TIMEOUT_MS,DEFAULT_TOOL_CALL_TIMEOUT_MS,BridgeClient,Qcr} from "../src/permissions/0245_deviceId.ts";
+import {createClaudeForChromeMcpServer,createChromeSocketClient,bYo} from "./m430.ts";
+import {clearBrowserResolution,qtn} from "./m429.ts";
+import {ToolCallTimeoutError,SocketConnectionError,NoExtensionConnectedError,ExtensionDisconnectedMidCallError,E7e} from "./m243.ts";
+import {BROWSER_TOOLS,A7e} from "../src/tools/0246_name.ts";
+var EYo={};
+ft(EYo,{localPlatformLabel:()=>localPlatformLabel,createClaudeForChromeMcpServer:()=>createClaudeForChromeMcpServer,createChromeSocketClient:()=>createChromeSocketClient,createBridgeClient:()=>createBridgeClient,clearBrowserResolution:()=>clearBrowserResolution,WAIT_MAX_DURATION_S:()=>WAIT_MAX_DURATION_S,ToolCallTimeoutError:()=>ToolCallTimeoutError,SocketConnectionError:()=>SocketConnectionError,PEER_WAIT_TIMEOUT_MS:()=>PEER_WAIT_TIMEOUT_MS,NoExtensionConnectedError:()=>NoExtensionConnectedError,ExtensionDisconnectedMidCallError:()=>ExtensionDisconnectedMidCallError,DISCOVERY_TIMEOUT_MS:()=>DISCOVERY_TIMEOUT_MS,DEFAULT_TOOL_CALL_TIMEOUT_MS:()=>DEFAULT_TOOL_CALL_TIMEOUT_MS,BridgeClient:()=>BridgeClient,BROWSER_TOOLS:()=>BROWSER_TOOLS});
+var jhr=b(()=>{Qcr();A7e();bYo();qtn();E7e()});
+export {EYo,jhr};

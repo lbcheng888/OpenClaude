@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {GD} from "./m1317.ts";
-import {H8,uk} from "./m1319.ts";
-import {U7,J1s} from "./m1334.ts";
-import {yo} from "./m887.ts";
-import {oC} from "./m1309.ts";
-var aNs,GetCallerIdentityCommand;
-var Yvr=b(()=>{GD();H8();U7();aNs=M(yo(),1);GetCallerIdentityCommand=class GetCallerIdentityCommand extends oC.classBuilder().ep(uk).m(function(e,t,n,r){return[aNs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","GetCallerIdentity",{}).n("STSClient","GetCallerIdentityCommand").sc(J1s).build(){}});
-export {aNs,GetCallerIdentityCommand,Yvr};
+import {b,x} from "../runtime.ts";
+import {rD} from "./m1322.ts";
+import {V5,getTeamByName} from "./m1324.ts";
+import {p7,U$s} from "./m1339.ts";
+import {yo} from "./m892.ts";
+import {lC} from "./m1314.ts";
+var X$s,AssumeRoleWithSAMLCommand;
+var SIr=b(()=>{rD();V5();p7();X$s=x(yo(),1);AssumeRoleWithSAMLCommand=class AssumeRoleWithSAMLCommand extends lC.classBuilder().ep(getTeamByName).m(function(e,t,n,r){return[X$s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSSecurityTokenServiceV20110615","AssumeRoleWithSAML",{}).n("STSClient","AssumeRoleWithSAMLCommand").sc(U$s).build(){}});
+export {X$s,AssumeRoleWithSAMLCommand,SIr};

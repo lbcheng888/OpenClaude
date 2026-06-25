@@ -1,11 +1,46 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var p8,bAr,zes;
-var Yes=b(()=>{p8=Array(20).fill(0).map((e,t)=>" ".repeat(t)),bAr={" ":{"\n":Array(200).fill(0).map((e,t)=>`
-`+" ".repeat(t)),"\r":Array(200).fill(0).map((e,t)=>"\r"+" ".repeat(t)),"\r\n":Array(200).fill(0).map((e,t)=>`\r
-`+" ".repeat(t))},"\t":{"\n":Array(200).fill(0).map((e,t)=>`
-`+"\t".repeat(t)),"\r":Array(200).fill(0).map((e,t)=>"\r"+"\t".repeat(t)),"\r\n":Array(200).fill(0).map((e,t)=>`\r
-`+"\t".repeat(t))}},zes=[`
-`,"\r",`\r
-`]});
-export {p8,bAr,zes,Yes};
+import {ft,b} from "../runtime.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {findGitRoot,ia} from "./m698.ts";
+import {Sre} from "./m127.ts";
+import {Eis,Cis} from "./m695.ts";
+import {pl,Wu} from "./m438.ts";
+import {Si,ud} from "./m134.ts";
+import {fRt,vTr} from "./m694.ts";
+import {waitForScrollIdle,lt} from "../src/session/0132_sent.ts";
+import {mRt,pon} from "./m693.ts";
+import {bre} from "./m129.ts";
+var kis={};
+ft(kis,{resolveRef:()=>resolveRef,resolveGitDir:()=>resolveGitDir,resetGitFileWatcher:()=>resetGitFileWatcher,removeWatchedRepo:()=>removeWatchedRepo,reanchorGitFileWatcher:()=>reanchorGitFileWatcher,readWorktreeHeadSha:()=>readWorktreeHeadSha,readRawSymref:()=>readRawSymref,readGitHead:()=>readGitHead,onRepoBranchChange:()=>onRepoBranchChange,isValidGitSha:()=>isValidGitSha,isShallowClone:()=>isShallowClone,getWorktreeCountFromFs:()=>getWorktreeCountFromFs,getRemoteUrlForDir:()=>getRemoteUrlForDir,getHeadForDir:()=>getHeadForDir,getCommonDir:()=>getCommonDir,getCachedRemoteUrl:()=>getCachedRemoteUrl,getCachedHead:()=>getCachedHead,getCachedDefaultBranch:()=>getCachedDefaultBranch,getCachedBranchForRepo:()=>getCachedBranchForRepo,getCachedBranch:()=>getCachedBranch,clearResolveGitDirCache:()=>clearResolveGitDirCache,addWatchedRepo:()=>addWatchedRepo});
+function clearResolveGitDirCache(){Mje.clear()}
+async function resolveGitDir(e){let t=GP.resolve(e??isTmuxControlMode()),n=Mje.get(t);if(n!==void 0)return n;let r=findGitRoot(t);if(!r)return Mje.set(t,null),null;let o=GP.join(r,".git");try{if((await BK.stat(o)).isFile()){let i=(await BK.readFile(o,"utf-8")).trim();if(i.startsWith("gitdir:")){let a=i.slice(7).trim(),l=GP.resolve(r,a);return Mje.set(t,l),l}}return Mje.set(t,o),o}catch{return Mje.set(t,null),null}}
+function isValidGitSha(e){return/^[0-9a-f]{40}$/.test(e)||/^[0-9a-f]{64}$/.test(e)}
+async function readGitHead(e){try{let t=(await BK.readFile(GP.join(e,"HEAD"),"utf-8")).trim();if(t.startsWith("ref:")){let n=t.slice(4).trim();if(n.startsWith("refs/heads/")){let o=n.slice(11);if(!Sre(o))return null;return{type:"branch",name:o}}if(!Sre(n))return null;let r=await resolveRef(e,n);return r?{type:"detached",sha:r}:{type:"detached",sha:""}}if(!isValidGitSha(t))return null;return{type:"detached",sha:t}}catch{return null}}
+async function resolveRef(e,t){let n=await Ais(e,t);if(n)return n;let r=await getCommonDir(e);if(r&&r!==e)return Ais(r,t);return null}
+async function Ais(e,t){try{let n=(await BK.readFile(GP.join(e,t),"utf-8")).trim();if(n.startsWith("ref:")){let r=n.slice(4).trim();if(!Sre(r))return null;return resolveRef(e,r)}if(!isValidGitSha(n))return null;return n}catch{}return Eis(e,t)}
+async function getCommonDir(e){try{let t=(await BK.readFile(GP.join(e,"commondir"),"utf-8")).trim();return GP.resolve(e,t)}catch{return null}}
+async function readRawSymref(e,t,n){try{let r=(await BK.readFile(GP.join(e,t),"utf-8")).trim();if(r.startsWith("ref:")){let o=r.slice(4).trim();if(o.startsWith(n)){let s=o.slice(n.length);if(!Sre(s))return null;return s}}}catch{}return null}
+class wis{gitDir=null;commonDir=null;initialized=!1;initPromise=null;watchedFiles=[];branchRefPath=null;generation=0;cache=new Map;repoBranches=new Map;repoWatchers=new Map;repoBranchListeners=[];async ensureStarted(){if(this.initialized)return;if(this.initPromise)return this.initPromise;return this.initPromise=this.start(),this.initPromise}cleanupRegistered=!1;async start(){let e=this.generation;if(pl()){this.gitDir=null,this.initialized=!0;return}let t=await resolveGitDir();if(e!==this.generation)return;if(this.gitDir=t,this.initialized=!0,!this.cleanupRegistered)this.cleanupRegistered=!0,Si(async()=>{this.stopWatching()});if(!this.gitDir)return;let n=await getCommonDir(this.gitDir);if(e!==this.generation)return;this.commonDir=n,this.watchPath(GP.join(this.gitDir,"HEAD"),()=>{this.onHeadChanged()}),this.watchPath(GP.join(this.commonDir??this.gitDir,"config"),()=>{this.invalidate()}),await this.watchCurrentBranchRef()}watchPath(e,t){let n=fRt(e,{interval:Ris},t);this.watchedFiles.push({path:e,listener:n})}async watchCurrentBranchRef(){if(!this.gitDir)return;let e=this.generation,t=await readGitHead(this.gitDir);if(e!==this.generation)return;let n=this.commonDir??this.gitDir,r=t?.type==="branch"?GP.join(n,"refs","heads",t.name):null;if(r===this.branchRefPath)return;if(this.branchRefPath){for(let{path:o,listener:s}of this.watchedFiles)if(o===this.branchRefPath)Lje.unwatchFile(o,s);this.watchedFiles=this.watchedFiles.filter((o)=>o.path!==this.branchRefPath)}if(this.branchRefPath=r,!r)return;this.watchPath(r,()=>{this.invalidate()})}async onHeadChanged(){this.invalidate(),await waitForScrollIdle(),await this.watchCurrentBranchRef()}invalidate(){for(let e of this.cache.values())e.dirty=!0}stopWatching(){for(let{path:e,listener:t}of this.watchedFiles)Lje.unwatchFile(e,t);for(let{headPath:e,listener:t}of this.repoWatchers.values())Lje.unwatchFile(e,t);this.watchedFiles=[],this.branchRefPath=null}async get(e,t){for(;;){let n=this.generation;await this.ensureStarted();let r=this.cache.get(e);if(r&&!r.dirty)return r.value;if(r)r.dirty=!1;let o=await t();if(n!==this.generation)continue;let s=this.cache.get(e);if(s&&!s.dirty)s.value=o;if(!s)this.cache.set(e,{value:o,dirty:!1,compute:t});return o}}async addRepo(e){if(this.repoWatchers.has(e))return;let t=await resolveGitDir(e);if(!t)return;if(this.repoWatchers.has(e))return;let n=GP.join(t,"HEAD"),r=fRt(n,{interval:Ris},()=>{this.repoBranches.delete(e);for(let o of this.repoBranchListeners)o()});this.repoWatchers.set(e,{gitDir:t,headPath:n,listener:r})}removeRepo(e){let t=this.repoWatchers.get(e);if(!t)return;Lje.unwatchFile(t.headPath,t.listener),this.repoWatchers.delete(e),this.repoBranches.delete(e)}onRepoBranchChange(e){return this.repoBranchListeners.push(e),()=>{let t=this.repoBranchListeners.indexOf(e);if(t!==-1)this.repoBranchListeners.splice(t,1)}}async getBranchForRepo(e){if(this.repoBranches.has(e))return this.repoBranches.get(e);let t=this.repoWatchers.get(e)?.gitDir;if(!t)return;let n=await readGitHead(t),r=n?.type==="branch"?n.name:null;return this.repoBranches.set(e,r),r}reset(){this.generation++,this.stopWatching(),this.cache.clear(),this.repoBranches.clear(),this.repoWatchers.clear(),this.repoBranchListeners=[],this.initialized=!1,this.initPromise=null,this.gitDir=null,this.commonDir=null}reanchor(){this.generation++;for(let{path:e,listener:t}of this.watchedFiles)Lje.unwatchFile(e,t);this.watchedFiles=[],this.branchRefPath=null,this.cache.clear(),this.initialized=!1,this.initPromise=null,this.gitDir=null,this.commonDir=null}}
+async function jiu(){let e=await resolveGitDir();if(!e)return"HEAD";let t=await readGitHead(e);if(!t)return"HEAD";return t.type==="branch"?t.name:"HEAD"}
+async function Yiu(){let e=await resolveGitDir();if(!e)return"";let t=await readGitHead(e);if(!t)return"";if(t.type==="branch")return await resolveRef(e,`refs/heads/${t.name}`)??"";return t.sha}
+async function mon(e){return await mRt(e,"remote","origin","pushurl")||await mRt(e,"remote","origin","url")}
+async function Jiu(){let e=await resolveGitDir();if(!e)return null;let t=await mon(e);if(t)return t;let n=await getCommonDir(e);if(n&&n!==e)return mon(n);return null}
+async function Xiu(){let e=await resolveGitDir();if(!e)return"main";let t=await getCommonDir(e)??e,n=await readRawSymref(t,"refs/remotes/origin/HEAD","refs/remotes/origin/");if(n&&await resolveRef(t,`refs/remotes/origin/${n}`))return n;for(let r of["main","master"])if(await resolveRef(t,`refs/remotes/origin/${r}`))return r;return"main"}
+function getCachedBranch(){return foe.get("branch",jiu)}
+function getCachedHead(){return foe.get("head",Yiu)}
+function getCachedRemoteUrl(){return foe.get("remoteUrl",Jiu)}
+function getCachedDefaultBranch(){return foe.get("defaultBranch",Xiu)}
+function addWatchedRepo(e){return foe.addRepo(e)}
+function removeWatchedRepo(e){foe.removeRepo(e)}
+function onRepoBranchChange(e){return foe.onRepoBranchChange(e)}
+function getCachedBranchForRepo(e){return foe.getBranchForRepo(e)}
+function resetGitFileWatcher(){foe.reset()}
+function reanchorGitFileWatcher(){foe.reanchor()}
+async function getHeadForDir(e){let t=await resolveGitDir(e);if(!t)return null;let n=await readGitHead(t);if(!n)return null;if(n.type==="branch")return resolveRef(t,`refs/heads/${n.name}`);return n.sha}
+async function readWorktreeHeadSha(e){let t;try{let r=(await BK.readFile(GP.join(e,".git"),"utf-8")).trim();if(!r.startsWith("gitdir:"))return null;t=GP.resolve(e,r.slice(7).trim())}catch{return null}let n=await readGitHead(t);if(!n)return null;if(n.type==="branch")return resolveRef(t,`refs/heads/${n.name}`);return n.sha}
+async function getRemoteUrlForDir(e){let t=await resolveGitDir(e);if(!t)return null;let n=await mon(t);if(n)return n;let r=await getCommonDir(t);if(r&&r!==t)return mon(r);return null}
+async function isShallowClone(){let e=await resolveGitDir();if(!e)return!1;let t=await getCommonDir(e)??e;try{return await BK.stat(GP.join(t,"shallow")),!0}catch{return!1}}
+async function getWorktreeCountFromFs(){try{let e=await resolveGitDir();if(!e)return 0;let t=await getCommonDir(e)??e;return(await BK.readdir(GP.join(t,"worktrees"))).length+1}catch{return 1}}
+var Lje,BK,GP,Mje,Ris=1000,foe;
+var VP=b(()=>{bre();lt();Wu();ud();Po();ia();vTr();pon();Cis();Lje=require("fs"),BK=require("fs/promises"),GP=require("path"),Mje=new Map;foe=new wis});
+export {kis,clearResolveGitDirCache,resolveGitDir,isValidGitSha,readGitHead,resolveRef,Ais,getCommonDir,readRawSymref,wis,jiu,Yiu,mon,Jiu,Xiu,getCachedBranch,getCachedHead,getCachedRemoteUrl,getCachedDefaultBranch,addWatchedRepo,removeWatchedRepo,onRepoBranchChange,getCachedBranchForRepo,resetGitFileWatcher,reanchorGitFileWatcher,getHeadForDir,readWorktreeHeadSha,getRemoteUrlForDir,isShallowClone,getWorktreeCountFromFs,Lje,BK,GP,Mje,Ris,foe,VP};

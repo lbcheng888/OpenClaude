@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var d7o=X((Sdf,u7o)=>{var vFc="Function.prototype.bind called on incompatible ",wFc=Object.prototype.toString,RFc=Math.max,xFc="[object Function]",c7o=function(t,n){var r=[];for(var o=0;o<t.length;o+=1)r[o]=t[o];for(var s=0;s<n.length;s+=1)r[s+t.length]=n[s];return r},kFc=function(t,n){var r=[];for(var o=n||0,s=0;o<t.length;o+=1,s+=1)r[s]=t[o];return r},HFc=function(e,t){var n="";for(var r=0;r<e.length;r+=1)if(n+=e[r],r+1<e.length)n+=t;return n};u7o.exports=function(t){var n=this;if(typeof n!=="function"||wFc.apply(n)!==xFc)throw TypeError(vFc+n);var r=kFc(arguments,1),o,s=function(){if(this instanceof o){var u=n.apply(this,c7o(r,arguments));if(Object(u)===u)return u;return this}return n.apply(t,c7o(r,arguments))},i=RFc(0,n.length-r.length),a=[];for(var l=0;l<i;l++)a[l]="$"+l;if(o=Function("binder","return function ("+HFc(a,",")+"){ return binder.apply(this,arguments); }")(s),n.prototype){var c=function(){};c.prototype=n.prototype,o.prototype=new c,c.prototype=null}return o}});
-export {d7o};
+import {Q} from "../runtime.ts";
+import {JXo} from "./m497.ts";
+var Dgr=Q((MCf,XXo)=>{var Hnn=JXo();if(Hnn)try{Hnn([],"length")}catch(e){Hnn=null}XXo.exports=Hnn});
+export {Dgr};

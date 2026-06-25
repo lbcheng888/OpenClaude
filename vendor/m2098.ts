@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-var S1r=X((ygn)=>{Object.defineProperty(ygn,"__esModule",{value:!0});ygn.loggingErrorHandler=void 0;var _Ku=Xi();function yKu(){return(e)=>{_Ku.diag.error(TKu(e))}}ygn.loggingErrorHandler=yKu;function TKu(e){if(typeof e==="string")return e;else return JSON.stringify(SKu(e))}function SKu(e){let t={},n=e;while(n!==null)Object.getOwnPropertyNames(n).forEach((r)=>{if(t[r])return;let o=n[r];if(o)t[r]=String(o)}),n=Object.getPrototypeOf(n);return t}});
-export {S1r};
+import {Q} from "../runtime.ts";
+var GUr=Q((EF)=>{Object.defineProperty(EF,"__esModule",{value:!0});EF.BAGGAGE_MAX_TOTAL_LENGTH=EF.BAGGAGE_MAX_PER_NAME_VALUE_PAIRS=EF.BAGGAGE_MAX_NAME_VALUE_PAIRS=EF.BAGGAGE_HEADER=EF.BAGGAGE_ITEMS_SEPARATOR=EF.BAGGAGE_PROPERTIES_SEPARATOR=EF.BAGGAGE_KEY_PAIR_SEPARATOR=void 0;EF.BAGGAGE_KEY_PAIR_SEPARATOR="=";EF.BAGGAGE_PROPERTIES_SEPARATOR=";";EF.BAGGAGE_ITEMS_SEPARATOR=",";EF.BAGGAGE_HEADER="baggage";EF.BAGGAGE_MAX_NAME_VALUE_PAIRS=180;EF.BAGGAGE_MAX_PER_NAME_VALUE_PAIRS=4096;EF.BAGGAGE_MAX_TOTAL_LENGTH=8192});
+export {GUr};

@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-var rKo,oKo;
-var sKo=b(()=>{rKo=M(require("url")),oKo=rKo.default.URLSearchParams});
-export {rKo,oKo,sKo};
+import {b,x} from "../runtime.ts";
+import {GQo} from "./m518.ts";
+var VQo,Mnn;
+var Vgr=b(()=>{VQo=x(GQo(),1),Mnn=VQo.default});
+export {VQo,Mnn,Vgr};

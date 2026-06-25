@@ -1,5 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var Aos;
-var hos=b(()=>{Aos={environmentVariableSelector:(e)=>e.AWS_EC2_METADATA_SERVICE_ENDPOINT,configFileSelector:(e)=>e.ec2_metadata_service_endpoint,default:void 0}});
-export {Aos,hos};
+import {httpRequest,Lsn} from "./m759.ts";
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+var Msn=(e)=>Boolean(e)&&typeof e==="object"&&typeof e.AccessKeyId==="string"&&typeof e.SecretAccessKey==="string"&&typeof e.Token==="string"&&typeof e.Expiration==="string",Nsn=(e)=>({accessKeyId:e.AccessKeyId,secretAccessKey:e.SecretAccessKey,sessionToken:e.Token,expiration:new Date(e.Expiration),...e.AccountId&&{accountId:e.AccountId}});
+var DEFAULT_TIMEOUT=1000,DEFAULT_MAX_RETRIES=0,providerConfigFromInit=({maxRetries:e=0,timeout:t=1000})=>({maxRetries:e,timeout:t});
+var Tvt=(e,t)=>{let n=e();for(let r=0;r<t;r++)n=n.catch(e);return n};
+var Svt,tus,ENV_CMDS_FULL_URI="AWS_CONTAINER_CREDENTIALS_FULL_URI",ENV_CMDS_RELATIVE_URI="AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",ENV_CMDS_AUTH_TOKEN="AWS_CONTAINER_AUTHORIZATION_TOKEN",fromContainerMetadata=(e={})=>{let{timeout:t,maxRetries:n}=providerConfigFromInit(e);return()=>Tvt(async()=>{let r=await cuu({logger:e.logger}),o=JSON.parse(await suu(t,r));if(!Msn(o))throw new Svt.CredentialsProviderError("Invalid response received from instance metadata service.",{logger:e.logger});return Nsn(o)},n)},suu=async(e,t)=>{if(process.env[ENV_CMDS_AUTH_TOKEN])t.headers={...t.headers,Authorization:process.env[ENV_CMDS_AUTH_TOKEN]};return(await httpRequest({...t,timeout:e})).toString()},iuu="169.254.170.2",auu,luu,cuu=async({logger:e})=>{if(process.env[ENV_CMDS_RELATIVE_URI])return{hostname:iuu,path:process.env[ENV_CMDS_RELATIVE_URI]};if(process.env[ENV_CMDS_FULL_URI]){let t=tus.parse(process.env[ENV_CMDS_FULL_URI]);if(!t.hostname||!(t.hostname in auu))throw new Svt.CredentialsProviderError(`${t.hostname} is not a valid container metadata service hostname`,{tryNextLink:!1,logger:e});if(!t.protocol||!(t.protocol in luu))throw new Svt.CredentialsProviderError(`${t.protocol} is not a valid container metadata service protocol`,{tryNextLink:!1,logger:e});return{...t,port:t.port?parseInt(t.port,10):void 0}}throw new Svt.CredentialsProviderError(`The container metadata credential provider cannot be used unless the ${ENV_CMDS_RELATIVE_URI} or ${ENV_CMDS_FULL_URI} environment variable is set`,{tryNextLink:!1,logger:e})};
+var nus=b(()=>{Lsn();Svt=x(Vg(),1),tus=require("url"),auu={localhost:!0,"127.0.0.1":!0},luu={"http:":!0,"https:":!0}});
+export {Msn,Nsn,DEFAULT_TIMEOUT,DEFAULT_MAX_RETRIES,providerConfigFromInit,Tvt,Svt,tus,ENV_CMDS_FULL_URI,ENV_CMDS_RELATIVE_URI,ENV_CMDS_AUTH_TOKEN,fromContainerMetadata,suu,iuu,auu,luu,cuu,nus};

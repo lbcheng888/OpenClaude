@@ -1,9 +1,5 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {BWn,_Eo} from "../src/tui/4760_onExit.ts";
-import {Te} from "./m2253.ts";
-var Tgl={};
-isFullscreenWithTTY(Tgl,{call:()=>HZp});
-var yEo,HZp=async(e)=>yEo.createElement(BWn,{onExit:(t)=>e(t,{display:"system"})});
-var Sgl=b(()=>{_Eo();yEo=M(Te(),1)});
-export {Tgl,yEo,HZp,Sgl};
+import {Q} from "../runtime.ts";
+import {uko} from "./m4753.ts";
+var _ko=Q((zCl)=>{var KCl=uko(),oam=[function(){},function(e,t,n,r){if(r===t.length)throw Error("Ran out of data");let o=t[r];e[n]=o,e[n+1]=o,e[n+2]=o,e[n+3]=255},function(e,t,n,r){if(r+1>=t.length)throw Error("Ran out of data");let o=t[r];e[n]=o,e[n+1]=o,e[n+2]=o,e[n+3]=t[r+1]},function(e,t,n,r){if(r+2>=t.length)throw Error("Ran out of data");e[n]=t[r],e[n+1]=t[r+1],e[n+2]=t[r+2],e[n+3]=255},function(e,t,n,r){if(r+3>=t.length)throw Error("Ran out of data");e[n]=t[r],e[n+1]=t[r+1],e[n+2]=t[r+2],e[n+3]=t[r+3]}],sam=[function(){},function(e,t,n,r){let o=t[0];e[n]=o,e[n+1]=o,e[n+2]=o,e[n+3]=r},function(e,t,n){let r=t[0];e[n]=r,e[n+1]=r,e[n+2]=r,e[n+3]=t[1]},function(e,t,n,r){e[n]=t[0],e[n+1]=t[1],e[n+2]=t[2],e[n+3]=r},function(e,t,n){e[n]=t[0],e[n+1]=t[1],e[n+2]=t[2],e[n+3]=t[3]}];function iam(e,t){let n=[],r=0;function o(){if(r===e.length)throw Error("Ran out of data");let s=e[r];r++;let i,a,l,c,u,d,p,m;switch(t){default:throw Error("unrecognised depth");case 16:p=e[r],r++,n.push((s<<8)+p);break;case 4:p=s&15,m=s>>4,n.push(m,p);break;case 2:u=s&3,d=s>>2&3,p=s>>4&3,m=s>>6&3,n.push(m,p,d,u);break;case 1:i=s&1,a=s>>1&1,l=s>>2&1,c=s>>3&1,u=s>>4&1,d=s>>5&1,p=s>>6&1,m=s>>7&1,n.push(m,p,d,u,c,l,a,i);break}}return{get:function(s){while(n.length<s)o();let i=n.slice(0,s);return n=n.slice(s),i},resetAfterLine:function(){n.length=0},end:function(){if(r!==e.length)throw Error("extra data found")}}}function aam(e,t,n,r,o,s){let{width:i,height:a,index:l}=e;for(let c=0;c<a;c++)for(let u=0;u<i;u++){let d=n(u,c,l);oam[r](t,o,d,s),s+=r}return s}function lam(e,t,n,r,o,s){let{width:i,height:a,index:l}=e;for(let c=0;c<a;c++){for(let u=0;u<i;u++){let d=o.get(r),p=n(u,c,l);sam[r](t,d,p,s)}o.resetAfterLine()}}zCl.dataToBitMap=function(e,t){let{width:n,height:r,depth:o,bpp:s,interlace:i}=t,a;if(o!==8)a=iam(e,o);let l;if(o<=8)l=Buffer.alloc(n*r*4);else l=new Uint16Array(n*r*4);let c=Math.pow(2,o)-1,u=0,d,p;if(i)d=KCl.getImagePasses(n,r),p=KCl.getInterlaceIterator(n,r);else{let m=0;p=function(){let f=m;return m+=4,f},d=[{width:n,height:r}]}for(let m=0;m<d.length;m++)if(o===8)u=aam(d[m],l,p,s,e,u);else lam(d[m],l,p,s,a,c);if(o===8){if(u!==e.length)throw Error("extra data found")}else a.end();return l}});
+export {_ko};

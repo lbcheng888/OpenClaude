@@ -1,13 +1,17 @@
 // @ts-nocheck
-import {hja,e3n,K9t} from "./m4195.ts";
-import {apo,K8a} from "./m4220.ts";
-import {oI} from "./m3350.ts";
-import {Bh,bC} from "../src/session/2784_uuid.ts";
-import {Tja,s3n} from "./m4196.ts";
-import {enforcementWarnDedup,Zle} from "../src/tui/3835_mode.ts";
+import {execFileNoThrow,execFileNoThrowWithCwd,Ii} from "./m690.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {xe,He,Pt,mn} from "../src/telemetry/0600_feature_name.ts";
+import {getGlobalConfig,saveGlobalConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
 import {b} from "../runtime.ts";
-async function a3t(e,t){let{taskRegistry:n,setAppState:r,callerAgentId:o}=t,s=n.get(e);if(!s)throw new s6e(`No task found with ID: ${e}`,"not_found");if(s.status!=="running")throw new s6e(`Task ${e} is not running (status: ${s.status})`,"not_running");if(!hja(o,s.agentId))throw new s6e(`Task ${e} is owned by ${e3n(s.agentId)}; agent ${o} cannot stop it.`,"not_owner");let i=apo(s.type);if(!i)throw new s6e(`Unsupported task type: ${s.type}`,"unsupported_type");if(await i.kill(e,n,r),oI(s)){let l=!1;if(n.update(e,(c)=>{if(c.notified)return c;return l=!0,{...c,notified:!0}}),l)Bh(e,"stopped",{toolUseId:s.toolUseId,summary:s.description})}if(oI(s)&&s.agentId!==void 0&&o!==s.agentId)Tja({taskId:e,toolUseId:s.toolUseId,description:s.description,ownerAgentId:s.agentId});let a=oI(s)?s.command:s.description;return{taskId:e,taskType:s.type,command:a}}
-function z8a(e){let{taskRegistry:t,setAppState:n}=e;for(let r of Object.values(t.all())){if(r.status!=="running"||!enforcementWarnDedup(r)||!Zle(r))continue;if(apo(r.type)?.kill(r.id,t,n),r.type==="local_agent")t.update(r.id,(o)=>o.notified?o:{...o,notified:!0}),Bh(r.id,"stopped",{toolUseId:r.toolUseId,summary:r.description})}}
-var s6e;
-var k3n=b(()=>{K8a();s3n();K9t();bC();s6e=class s6e extends Error{code;constructor(e,t){super(e);this.code=t;this.name="StopTaskError"}}});
-export {a3t,z8a,s6e,k3n};
+async function aza(){if((await execFileNoThrow("which",["uv"])).code===0)return logForDebugging("[it2Setup] Found uv (will use uv tool install)"),"uvx";if((await execFileNoThrow("which",["pipx"])).code===0)return logForDebugging("[it2Setup] Found pipx package manager"),"pipx";if((await execFileNoThrow("which",["pip"])).code===0)return logForDebugging("[it2Setup] Found pip package manager"),"pip";if((await execFileNoThrow("which",["pip3"])).code===0)return logForDebugging("[it2Setup] Found pip3 package manager"),"pip";return logForDebugging("[it2Setup] No Python package manager found"),null}
+async function MBp(){return(await execFileNoThrow("which",["it2"])).code===0}
+async function lza(e){logForDebugging(`[it2Setup] Installing it2 using ${e}`);let t;switch(e){case"uvx":t=await execFileNoThrowWithCwd("uv",["tool","install","it2"],{cwd:mqt.homedir()});break;case"pipx":t=await execFileNoThrowWithCwd("pipx",["install","it2"],{cwd:mqt.homedir()});break;case"pip":if(t=await execFileNoThrowWithCwd("pip",["install","--user","it2"],{cwd:mqt.homedir()}),t.code!==0)t=await execFileNoThrowWithCwd("pip3",["install","--user","it2"],{cwd:mqt.homedir()});break}if(t.code!==0){let n=t.stderr||"Unknown installation error";return logForDebugging(`[it2Setup] Failed to install it2: ${n}`,{level:"error"}),xe("swarm_iterm2_it2_install",`${e}_install_failed`),{success:!1,error:n,packageManager:e}}return logForDebugging("[it2Setup] it2 installed successfully"),He("swarm_iterm2_it2_install"),{success:!0,packageManager:e}}
+async function cza(){if(logForDebugging("[it2Setup] Verifying it2 setup..."),!await MBp())return xe("swarm_iterm2_it2_verify","not_installed"),{success:!1,error:"it2 CLI is not installed or not in PATH"};let t=await execFileNoThrow("it2",["session","list"]);if(t.code!==0){let n=t.stderr.toLowerCase();if(n.includes("api")||n.includes("python")||n.includes("connection refused")||n.includes("not enabled"))return logForDebugging("[it2Setup] Python API not enabled in iTerm2"),Pt("swarm_iterm2_it2_verify","python_api_not_enabled"),{success:!1,error:"Python API not enabled in iTerm2 preferences",needsPythonApiEnabled:!0};return xe("swarm_iterm2_it2_verify","communication_failed"),{success:!1,error:t.stderr||"Failed to communicate with iTerm2"}}return logForDebugging("[it2Setup] it2 setup verified successfully"),He("swarm_iterm2_it2_verify"),{success:!0}}
+function uza(){return["Almost done! Enable the Python API in iTerm2:","","  iTerm2 \u2192 Settings \u2192 General \u2192 Magic \u2192 Enable Python API","","After enabling, you may need to restart iTerm2."]}
+function dza(){if(getGlobalConfig().iterm2It2SetupComplete!==!0)saveGlobalConfig((t)=>({...t,iterm2It2SetupComplete:!0})),logForDebugging("[it2Setup] Marked it2 setup as complete")}
+function pza(e){if(getGlobalConfig().preferTmuxOverIterm2!==e)saveGlobalConfig((n)=>({...n,preferTmuxOverIterm2:e})),logForDebugging(`[it2Setup] Set preferTmuxOverIterm2 = ${e}`)}
+function mza(){return getGlobalConfig().preferTmuxOverIterm2===!0}
+var mqt;
+var Igo=b(()=>{mn();tr();qe();Ii();mqt=require("os")});
+export {aza,MBp,lza,cza,uza,dza,pza,mza,mqt,Igo};

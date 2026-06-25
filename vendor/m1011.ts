@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {r0} from "./m751.ts";
-var LSs,RSr=(e)=>Boolean(e)&&typeof e==="object"&&typeof e.aws_access_key_id==="string"&&typeof e.aws_secret_access_key==="string"&&["undefined","string"].indexOf(typeof e.aws_session_token)>-1&&["undefined","string"].indexOf(typeof e.aws_account_id)>-1,xSr=async(e,t)=>{t?.logger?.debug("@aws-sdk/credential-provider-ini - resolveStaticCredentials");let n={accessKeyId:e.aws_access_key_id,secretAccessKey:e.aws_secret_access_key,sessionToken:e.aws_session_token,...e.aws_credential_scope&&{credentialScope:e.aws_credential_scope},...e.aws_account_id&&{accountId:e.aws_account_id}};return LSs.setCredentialFeature(n,"CREDENTIALS_PROFILE","n")};
-var MSs=b(()=>{LSs=M(r0(),1)});
-export {LSs,RSr,xSr,MSs};
+import {fws,hws} from "./m1010.ts";
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+import {ZU} from "./m606.ts";
+var wln,gws,_ws,yws,Tws=async(e,t,n)=>{let r=t[e];if(t[e]){let o=r.credential_process;if(o!==void 0){let s=yws.promisify(gws.externalDataInterceptor?.getTokenRecord?.().exec??_ws.exec);try{let{stdout:i}=await s(o),a;try{a=JSON.parse(i.trim())}catch{throw Error(`Profile ${e} credential_process returned invalid JSON.`)}return fws(e,a,t)}catch(i){throw new wln.CredentialsProviderError(i.message,{logger:n})}}else throw new wln.CredentialsProviderError(`Profile ${e} did not contain credential_process.`,{logger:n})}else throw new wln.CredentialsProviderError(`Profile ${e} could not be found in shared credentials file.`,{logger:n})};
+var Sws=b(()=>{hws();wln=x(Vg(),1),gws=x(ZU(),1),_ws=require("child_process"),yws=require("util")});
+export {wln,gws,_ws,yws,Tws,Sws};

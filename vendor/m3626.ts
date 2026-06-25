@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-var aFt=X((mHe)=>{Object.defineProperty(mHe,"__esModule",{value:!0});mHe.isTracingSuppressed=mHe.unsuppressTracing=mHe.suppressTracing=void 0;var Gsp=Xi(),zto=(0,Gsp.createContextKey)("OpenTelemetry SDK Context Key SUPPRESS_TRACING");function Vsp(e){return e.setValue(zto,!0)}mHe.suppressTracing=Vsp;function Ksp(e){return e.deleteValue(zto)}mHe.unsuppressTracing=Ksp;function zsp(e){return e.getValue(zto)===!0}mHe.isTracingSuppressed=zsp});
-export {aFt};
+import {Q} from "../runtime.ts";
+var Eka=Q((nFn)=>{Object.defineProperty(nFn,"__esModule",{value:!0});nFn.PriorityQueue=void 0;var Mlt=0,bio=(e)=>Math.floor(e/2),tFn=(e)=>e*2+1,H2t=(e)=>e*2+2;class bka{constructor(e=(t,n)=>t>n){this.comparator=e,this.heap=[]}size(){return this.heap.length}isEmpty(){return this.size()==0}peek(){return this.heap[Mlt]}push(...e){return e.forEach((t)=>{this.heap.push(t),this.siftUp()}),this.size()}pop(){let e=this.peek(),t=this.size()-1;if(t>Mlt)this.swap(Mlt,t);return this.heap.pop(),this.siftDown(),e}replace(e){let t=this.peek();return this.heap[Mlt]=e,this.siftDown(),t}greater(e,t){return this.comparator(this.heap[e],this.heap[t])}swap(e,t){[this.heap[e],this.heap[t]]=[this.heap[t],this.heap[e]]}siftUp(){let e=this.size()-1;while(e>Mlt&&this.greater(e,bio(e)))this.swap(e,bio(e)),e=bio(e)}siftDown(){let e=Mlt;while(tFn(e)<this.size()&&this.greater(tFn(e),e)||H2t(e)<this.size()&&this.greater(H2t(e),e)){let t=H2t(e)<this.size()&&this.greater(H2t(e),tFn(e))?H2t(e):tFn(e);this.swap(e,t),e=t}}}nFn.PriorityQueue=bka});
+export {Eka};

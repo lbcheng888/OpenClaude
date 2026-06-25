@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EC} from "./m3064.ts";
-import {mT} from "./m1464.ts";
-import {See} from "./m3068.ts";
-import {xxe} from "./m3069.ts";
-var ckn=X((_jh,lYi)=>{var PBd=EC().fromCallback,VLt=mT(),iYi=require("path"),aYi=See(),OBd=xxe().pathExists;function LBd(e,t,n,r){if(typeof n==="function")r=n,n="utf8";let o=iYi.dirname(e);OBd(o,(s,i)=>{if(s)return r(s);if(i)return VLt.writeFile(e,t,n,r);aYi.mkdirs(o,(a)=>{if(a)return r(a);VLt.writeFile(e,t,n,r)})})}function MBd(e,...t){let n=iYi.dirname(e);if(VLt.existsSync(n))return VLt.writeFileSync(e,...t);aYi.mkdirsSync(n),VLt.writeFileSync(e,...t)}lYi.exports={outputFile:PBd(LBd),outputFileSync:MBd}});
-export {ckn};
+import {Q} from "../runtime.ts";
+import {AC} from "./m3074.ts";
+import {H9e} from "./m3075.ts";
+import {_ee} from "./m3078.ts";
+import {yNt} from "./m3086.ts";
+var gta=Q((XQg,hta)=>{var M5d=AC().fromPromise,dta=H9e(),pta=require("path"),mta=_ee(),fta=yNt(),cta=M5d(async function(t){let n;try{n=await dta.readdir(t)}catch{return mta.mkdirs(t)}return Promise.all(n.map((r)=>fta.remove(pta.join(t,r))))});function uta(e){let t;try{t=dta.readdirSync(e)}catch{return mta.mkdirsSync(e)}t.forEach((n)=>{n=pta.join(e,n),fta.removeSync(n)})}hta.exports={emptyDirSync:uta,emptydirSync:uta,emptyDir:cta,emptydir:cta}});
+export {gta};

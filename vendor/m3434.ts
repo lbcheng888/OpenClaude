@@ -1,4 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var fma=X((zNt)=>{Object.defineProperty(zNt,"__esModule",{value:!0});zNt.CompressionAlgorithm=void 0;var tKd;(function(e){e.NONE="none",e.GZIP="gzip"})(tKd=zNt.CompressionAlgorithm||(zNt.CompressionAlgorithm={}))});
-export {fma};
+import {b} from "../runtime.ts";
+import {eSa,ero} from "./m3433.ts";
+var c4e;
+var tSa=b(()=>{eSa();c4e=class c4e extends ero{onShutdown(){}}});
+export {c4e,tSa};

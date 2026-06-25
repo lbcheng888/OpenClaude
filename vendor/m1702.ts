@@ -1,10 +1,15 @@
 // @ts-nocheck
-import {tIr,JGs} from "./m1701.ts";
+import {wHt,Chn} from "./m1694.ts";
+import {qme,uhn} from "./m1653.ts";
+import {TJs,SJs} from "./m1701.ts";
 import {b} from "../runtime.ts";
-function ACe(e,t,n){let{parameterPath:r,mapper:o}=t,s;if(typeof r==="string")r=[r];if(Array.isArray(r)){if(r.length>0)if(o.isConstant)s=o.defaultValue;else{let i=XGs(e,r);if(!i.propertyFound&&n)i=XGs(n,r);let a=!1;if(!i.propertyFound)a=o.required||r[0]==="options"&&r.length===2;s=a?o.defaultValue:i.propertyValue}}else{if(o.required)s={};for(let i in r){let a=o.type.modelProperties[i],l=r[i],c=ACe(e,{parameterPath:l,mapper:a},n);if(c!==void 0){if(!s)s={};s[i]=c}}}return s}
-function XGs(e,t){let n={propertyFound:!1},r=0;for(;r<t.length;++r){let o=t[r];if(e&&o in e)e=e[o];else break}if(r===t.length)n.propertyValue=e,n.propertyFound=!0;return n}
-function FNu(e){return QGs in e}
-function Mme(e){if(FNu(e))return Mme(e[QGs]);let t=tIr.operationRequestMap.get(e);if(!t)t={},tIr.operationRequestMap.set(e,t);return t}
-var QGs;
-var nRt=b(()=>{JGs();QGs=Symbol.for("@azure/core-client original request")});
-export {ACe,XGs,FNu,Mme,QGs,nRt};
+async function Rhn(e,t){try{return[await t(e),void 0]}catch(n){if(wHt(n)&&n.response)return[n.response,n];else throw n}}
+async function Z6u(e){let{scopes:t,getAccessToken:n,request:r}=e,o={abortSignal:r.abortSignal,tracingOptions:r.tracingOptions,enableCae:!0},s=await n(t,o);if(s)e.request.headers.set("Authorization",`Bearer ${s.token}`)}
+function bJs(e){return e.status===401&&e.headers.has("WWW-Authenticate")}
+async function EJs(e,t){var n;let{scopes:r}=e,o=await e.getAccessToken(r,{enableCae:!0,claims:t});if(!o)return!1;return e.request.headers.set("Authorization",`${(n=o.tokenType)!==null&&n!==void 0?n:"Bearer"} ${o.token}`),!0}
+function kHt(e){var t,n,r;let{credential:o,scopes:s,challengeCallbacks:i}=e,a=e.logger||qme,l={authorizeRequest:(n=(t=i===null||i===void 0?void 0:i.authorizeRequest)===null||t===void 0?void 0:t.bind(i))!==null&&n!==void 0?n:Z6u,authorizeRequestOnChallenge:(r=i===null||i===void 0?void 0:i.authorizeRequestOnChallenge)===null||r===void 0?void 0:r.bind(i)},c=o?TJs(o):()=>Promise.resolve(null);return{name:AJs,async sendRequest(u,d){if(!u.url.toLowerCase().startsWith("https://"))throw Error("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.");await l.authorizeRequest({scopes:Array.isArray(s)?s:[s],request:u,getAccessToken:c,logger:a});let p,m,f;if([p,m]=await Rhn(u,d),bJs(p)){let h=CJs(p.headers.get("WWW-Authenticate"));if(h){let g;try{g=atob(h)}catch(_){return a.warning(`The WWW-Authenticate header contains "claims" that cannot be parsed. Unable to perform the Continuous Access Evaluation authentication flow. Unparsable claims: ${h}`),p}if(f=await EJs({scopes:Array.isArray(s)?s:[s],response:p,request:u,getAccessToken:c,logger:a},g),f)[p,m]=await Rhn(u,d)}else if(l.authorizeRequestOnChallenge){if(f=await l.authorizeRequestOnChallenge({scopes:Array.isArray(s)?s:[s],request:u,response:p,getAccessToken:c,logger:a}),f)[p,m]=await Rhn(u,d);if(bJs(p)){if(h=CJs(p.headers.get("WWW-Authenticate")),h){let g;try{g=atob(h)}catch(_){return a.warning(`The WWW-Authenticate header contains "claims" that cannot be parsed. Unable to perform the Continuous Access Evaluation authentication flow. Unparsable claims: ${h}`),p}if(f=await EJs({scopes:Array.isArray(s)?s:[s],response:p,request:u,getAccessToken:c,logger:a},g),f)[p,m]=await Rhn(u,d)}}}}if(m)throw m;else return p}}}
+function e5u(e){let t=/(\w+)\s+((?:\w+=(?:"[^"]*"|[^,]*),?\s*)+)/g,n=/(\w+)="([^"]*)"/g,r=[],o;while((o=t.exec(e))!==null){let s=o[1],i=o[2],a={},l;while((l=n.exec(i))!==null)a[l[1]]=l[2];r.push({scheme:s,params:a})}return r}
+function CJs(e){var t;if(!e)return;return(t=e5u(e).find((r)=>r.scheme==="Bearer"&&r.params.claims&&r.params.error==="insufficient_claims"))===null||t===void 0?void 0:t.params.claims}
+var AJs="bearerTokenAuthenticationPolicy";
+var RJs=b(()=>{SJs();uhn();Chn()});
+export {Rhn,Z6u,bJs,EJs,kHt,e5u,CJs,AJs,RJs};

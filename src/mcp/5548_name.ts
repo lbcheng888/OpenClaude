@@ -1,0 +1,55 @@
+// @ts-nocheck
+import {Td,Cb} from "../../vendor/m5036.ts";
+import {b} from "../../runtime.ts";
+/*
+ * mcp/5548_name.ts - "fewer-permission-prompts" skill registration restoration.
+ *
+ * 1:1 restoration notes:
+ * - Cross-module bundle symbols and exported names are kept as-is.
+ * - Internal names are restored where verified from local property usage.
+ * - Short names are retained when not verified.
+ * - Type annotations and comments are compile-time only; runtime logic is unchanged.
+ *
+ * v190 vs v185 diff: the long prompt body, which was the top-level string `z0T`
+ * in v185, is now produced by the function `pqm()` (called inline from
+ * getPromptForCommand). Registration moved into `Tnc()`; module init wrapper is `Snc`.
+ */
+
+/** Returns the markdown prompt body for the "fewer-permission-prompts" skill. */
+function pqm(): string {
+  return '# Fewer Permission Prompts\n\nLook through my transcripts\' MCP and bash tool calls, and based on those, make a prioritized list of patterns that I should add to my permission allowlist to reduce permission prompts. Focus on read-only commands.\n\nThe format for permissions is: `Bash(foo*)`, `Bash(foo)`, `Bash(foo bar *)`, `mcp__slack__slack_read_thread`, etc.\n\nThen, add these to the project `.claude/settings.json` under `permissions.allow`.\n\n## Steps\n\n1. **Locate transcripts.** Session transcripts live at `~/.claude/projects/<sanitized-cwd>/*.jsonl`. Each line is a JSON object. Tool calls appear as `assistant` messages with `message.content[]` entries of `type: "tool_use"`. The `name` field identifies the tool (e.g. `"Bash"`, `"mcp__slack__slack_read_thread"`); for Bash, `input.command` is the shell string.\n\n   Scan the recent transcripts across the user\'s projects dir \u2014 not just the current project \u2014 so the allowlist reflects their actual usage. Cap the scan at a reasonable number of recent sessions (e.g. 50 most-recently-modified JSONL files) so this stays fast.\n\n2. **Extract tool-call frequencies.**\n   - For `Bash` calls: parse `input.command`, take the leading command token (handling `sudo`, `timeout`, pipes, `&&`, env-var prefixes). Record the command + first subcommand pair (e.g. `git status`, `gh pr view`, `ls`, `cat`).\n   - For MCP calls: record the full tool name (e.g. `mcp__slack__slack_read_thread`).\n   - Count occurrences across the scanned transcripts.\n\n3. **Filter to read-only.** Keep only commands that don\'t mutate state. Examples of read-only: `ls`, `cat`, `pwd`, `git status`, `git log`, `git diff`, `git show`, `git branch`, `rg`, `grep`, `find`, `head`, `tail`, `wc`, `file`, `which`, `echo`, `date`, `gh pr view`, `gh pr list`, `gh pr diff`, `gh issue view`, `gh issue list`, `gh run list`, `gh run view`, `gh api` (GET), `bun run typecheck`, `bun run lint`, `bun run test` (for tests that don\'t mutate), `docker ps`, `docker logs`, `kubectl get`, `kubectl describe`, `ps`, `top`, `df`, `du`, `env`, `printenv`, any MCP tool with `read`/`get`/`list`/`search`/`view` in its name.\n\n   Drop anything that writes, deletes, renames, pushes, merges, installs, or runs a build/test that has side effects. When in doubt, leave it out.\n\n   **Never allowlist a pattern that grants arbitrary code execution.** A wildcard rule for any of these (e.g. `Bash(python3:*)`) is equivalent to allowing arbitrary code execution. This list is not exhaustive \u2014 apply the same rule to anything in the same category:\n   - Interpreters: `python`/`python3`, `node`, `bun`, `deno`, `ruby`, `perl`, `php`, `lua`, etc.\n   - Shells: `bash`, `sh`, `zsh`, `fish`, `eval`, `exec`, `ssh`, etc.\n   - Package runners: `npx`, `bunx`, `uvx`, `uv run`, etc.\n   - Task-runner wildcards: `npm run *`, `yarn run *`, `pnpm run *`, `bun run *`, `make *`, `just *`, `cargo run *`, `go run *`, etc. \u2014 an exact `Bash(bun run typecheck)` is fine, `Bash(bun run *)` is not\n   - `gh api *`, `docker run`/`exec`, `kubectl exec`, `sudo`, and similar\n\n4. **Drop commands Claude Code already auto-allows.** These don\'t need an allowlist entry \u2014 they never prompt. If you see any of these in the transcripts, skip them; don\'t suggest them to the user.\n\n   - **Always auto-allowed (any args):** `cal`, `uptime`, `cat`, `head`, `tail`, `wc`, `stat`, `strings`, `hexdump`, `od`, `nl`, `id`, `uname`, `free`, `df`, `du`, `locale`, `groups`, `nproc`, `basename`, `dirname`, `realpath`, `cut`, `paste`, `tr`, `column`, `tac`, `rev`, `fold`, `expand`, `unexpand`, `fmt`, `comm`, `cmp`, `numfmt`, `readlink`, `diff`, `true`, `false`, `sleep`, `which`, `type`, `expr`, `seq`, `tsort`, `pr`, `echo`, `ls`, `cd`.\n   - **Auto-allowed with zero args only:** `pwd`, `whoami`, `alias`.\n   - **Auto-allowed exact forms:** `claude -h`, `claude --help`, `node -v`, `node --version`, `python --version`, `python3 --version`, `ip addr`.\n   - **Auto-allowed with safe flags only (validated):** `xargs`, `file`, `sed` (read-only expressions), `sort`, `man`, `help`, `netstat`, `ps`, `base64`, `grep`, `egrep`, `fgrep`, `sha256sum`, `sha1sum`, `md5sum`, `tree`, `date`, `hostname`, `lsof`, `pgrep`, `tput`, `ss`, `fd`, `fdfind`, `aki`, `rg`, `jq`, `uniq`, `history`, `arch`, `ifconfig`, `pyright`, `find` (blocks `-delete`/`-exec`/`-execdir`/`-ok`/`-okdir`/`-fprint*`/`-fls`/`-files0-from`), `printf` (blocks any `-flag`), `test` (blocks `-v`/`-R`/`-a`/`-o`).\n   - **All git read-only subcommands:** `git status`, `git log`, `git diff`, `git show`, `git blame`, `git branch`, `git tag`, `git remote`, `git ls-files`, `git ls-remote`, `git config --get`, `git rev-parse`, `git describe`, `git stash list`, `git reflog`, `git shortlog`, `git cat-file`, `git for-each-ref`, `git worktree list`, etc.\n   - **All gh read-only subcommands:** `gh pr view`, `gh pr list`, `gh pr diff`, `gh pr checks`, `gh pr status`, `gh issue view`, `gh issue list`, `gh issue status`, `gh run view`, `gh run list`, `gh workflow list`, `gh workflow view`, `gh repo view`, `gh release view`, `gh release list`, `gh api` (GET), `gh auth status`, etc.\n   - **Docker read-only subcommands:** `docker ps`, `docker images`, `docker logs`, `docker inspect`.\n\n   Source of truth: `src/tools/BashTool/readOnlyValidation.ts` (`READONLY_COMMANDS`, `READONLY_NOARGS`, `READONLY_EXACT`, `COMMAND_ALLOWLIST`) and `src/utils/shell/readOnlyCommandValidation.ts` (`GIT_READ_ONLY_COMMANDS`, `GH_READ_ONLY_COMMANDS`, `DOCKER_READ_ONLY_COMMANDS`, `RIPGREP_READ_ONLY_COMMANDS`, `PYRIGHT_READ_ONLY_COMMANDS`). If the user is in this repo and you\'re unsure whether a command is covered, grep these files rather than guessing.\n\n5. **Pick the pattern form.** Use the narrowest pattern that still covers the observed usage:\n   - If the user runs many variants (`git log`, `git log --oneline`, `git log main..HEAD`): use `Bash(git log *)` \u2014 note the space before `*`, which is required for prefix matching to work correctly.\n   - If a single exact invocation is common: use `Bash(foo)` with no wildcard.\n   - For MCP: use the full tool name verbatim (no wildcard needed; they\'re already specific).\n   - Never widen a pattern to the point that it conflicts with the rules above (no arbitrary code execution, no mutation/side effects).\n\n6. **Prioritize.** Rank by count descending. Drop anything that appeared fewer than ~3 times \u2014 not worth the allowlist entry. Cap the list at the top ~20 so the user can skim it.\n\n7. **Present the prioritized list to the user** as a markdown table with columns: rank, pattern, count, one-line description. Example:\n\n   | # | Pattern | Count | Notes |\n   |---|---------|-------|-------|\n   | 1 | `Bash(git status *)` | 142 | repo status checks |\n   | 2 | `Bash(gh pr view *)` | 87 | PR inspection |\n   | 3 | `mcp__slack__slack_read_thread` | 54 | Slack thread reads |\n\n8. **Merge into `.claude/settings.json`** in the current project (not `~/.claude/settings.json`, not `.claude/settings.local.json`). Create the file if it doesn\'t exist. Preserve existing keys and existing entries in `permissions.allow`; de-duplicate against what\'s already there; don\'t remove anything; don\'t reorder unrelated fields.\n\n9. **Report back.** Tell the user what you added (count + a few examples), what was already in the allowlist, and what you skipped and why (e.g. "dropped `rm` and `git push` \u2014 not read-only; dropped `cat`/`ls`/`git status` \u2014 already auto-allowed, no rule needed").\n\nDo not add anything to `permissions.deny` or `permissions.ask`. Do not touch any other settings field.\n';
+}
+
+/** Registers the "fewer-permission-prompts" slash-command / skill definition. */
+function Tnc(): void {
+  Td({
+    name: "fewer-permission-prompts",
+    menuDescription: "Pre-approve safe read-only commands based on your usage",
+    description: "Scan your transcripts for common read-only Bash and MCP tool calls, then add a prioritized allowlist to project .claude/settings.json to reduce permission prompts.",
+    userInvocable: !0,
+    /**
+     * Builds the prompt blocks for this command, optionally appending
+     * extra user-supplied instructions.
+     * @param userInstructions extra instructions provided by the user (may be empty)
+     */
+    async getPromptForCommand(userInstructions: string): Promise<Array<{ type: string; text: string }>> {
+      let promptText: string = pqm();
+      if (userInstructions) promptText += `
+
+## Additional instructions from the user
+
+${userInstructions}`;
+      return [{
+        type: "text",
+        text: promptText
+      }];
+    }
+  });
+}
+
+/** Lazily-initialized module wrapper that registers the skill on first call. */
+var Snc = b(() => {
+  Cb();
+});
+
+export {pqm,Tnc,Snc};

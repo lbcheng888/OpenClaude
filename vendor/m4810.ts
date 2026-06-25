@@ -1,11 +1,9 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {zTn} from "./m2342.ts";
-import {fUe} from "./m2408.ts";
-import {Gve} from "../src/config/2342_useDecayCurve.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var gnm,_nm,HTl,ynm=25,Tnm=80,tJy;
-var ITl=b(()=>{zTn();fUe();Gve();ze();gnm=M(rt(),1),_nm=M(Te(),1),HTl=M(Te(),1),tJy=ynm*Tnm});
-export {gnm,_nm,HTl,ynm,Tnm,tJy,ITl};
+import {Xe,Zs} from "./m2216.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {b} from "../runtime.ts";
+function Fvl(e){let t=e.map((r)=>({text:r})),n="Check the Claude Code changelog for updates";return{title:"What's new",lines:t,footer:t.length>0?"/release-notes for more":void 0,emptyMessage:"Check the Claude Code changelog for updates"}}
+function Bvl(e){let n=e.filter(({isEnabled:o})=>o).sort((o,s)=>Number(o.isComplete)-Number(s.isComplete)).map(({text:o,isComplete:s})=>({text:`${s?`${Xe.tick} `:""}${o}`})),r=isTmuxControlMode()===Nvl.homedir()?"Note: You have launched claude in your home directory. For the best experience, launch it in a project directory instead.":void 0;if(r)n.push({text:r});return{title:"Tips for getting started",lines:n}}
+var Nvl;
+var Uvl=b(()=>{Zs();Po();Nvl=require("os")});
+export {Fvl,Bvl,Nvl,Uvl};

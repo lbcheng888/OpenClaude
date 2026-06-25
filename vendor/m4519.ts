@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {OEn,y3r} from "./m2560.ts";
-import {ug,ZR} from "./m2551.ts";
-import {Bre,Fre,dr} from "./m231.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function bil({isDisabled:e=!1,visibleOptionCount:t=5,options:n,defaultValue:r=[],onChange:o,onCancel:s,onFocus:i,focusValue:a,submitButtonText:l,onSubmit:c,onDownFromLastItem:u,onUpFromFirstItem:d,initialFocusLast:p,hideIndexes:m=!1}){let[f,A]=oDe.useState(r),[h,g]=oDe.useState(!1),[_,y]=oDe.useState(n);if(n!==_&&!Sil.isDeepStrictEqual(n,_))A(r),y(n);let[T,S]=oDe.useState(()=>{let H=new Map;return n.forEach((I)=>{if(I.type==="input"&&I.initialValue)H.set(I.value,I.initialValue)}),H}),v=oDe.useCallback((H)=>{let I=typeof H==="function"?H(f):H;A(I),o?.(I)},[f,o]),R=OEn({visibleOptionCount:t,options:n,initialFocusValue:p?n[n.length-1]?.value:void 0,onFocus:i,focusValue:a});ug("multi-select");let k=oDe.useCallback((H,I)=>{S((L)=>{let D=new Map(L);return D.set(H,I),D});let P=n.find((L)=>L.value===H);if(P&&P.type==="input")P.onChange(I);v((L)=>{if(I){if(!L.includes(H))return[...L,H];return L}else return L.filter((D)=>D!==H)})},[n,v]);return{...R,selectedValues:f,inputValues:T,isSubmitFocused:h,updateInputValue:k,onCancel:s,handleKeyDown:(H)=>{if(e)return;let I=Bre(H.key),L=n.find((N)=>N.value===R.focusedValue)?.type==="input";if(L){if(!(H.key==="up"||H.key==="down"||H.key==="escape"||H.key==="tab"||H.key==="return"||H.ctrl&&(H.key==="n"||H.key==="p"||H.key==="return")))return}let D=n[n.length-1]?.value;if(H.key==="tab"&&!H.shift){if(H.preventDefault(),l&&c&&R.focusedValue===D&&!h)g(!0);else if(!h)R.focusNextOption();return}if(H.key==="tab"&&H.shift){if(H.preventDefault(),l&&c&&h)g(!1),R.focusOption(D);else R.focusPreviousOption();return}if(H.key==="down"||H.ctrl&&H.key==="n"||!H.ctrl&&!H.shift&&H.key==="j"){if(H.preventDefault(),h&&u)u();else if(l&&c&&R.focusedValue===D&&!h)g(!0);else if(!l&&u&&R.focusedValue===D)u();else if(!h)R.focusNextOption();return}if(H.key==="up"||H.ctrl&&H.key==="p"||!H.ctrl&&!H.shift&&H.key==="k"){if(H.preventDefault(),l&&c&&h)g(!1),R.focusOption(D);else if(d&&R.focusedValue===n[0]?.value)d();else R.focusPreviousOption();return}if(H.key==="pagedown"){H.preventDefault(),R.focusNextPage();return}if(H.key==="pageup"){H.preventDefault(),R.focusPreviousPage();return}if(H.key==="return"||Fre(H.key)===" "){if(H.preventDefault(),H.ctrl&&H.key==="return"&&L&&c){c(f);return}if(h&&c){c(f);return}if(H.key==="return"&&!l&&c){c(f);return}if(R.focusedValue!==void 0){let N=f.includes(R.focusedValue)?f.filter((O)=>O!==R.focusedValue):[...f,R.focusedValue];v(N)}return}if(!m&&/^[0-9]$/.test(I)){H.preventDefault();let N=parseInt(I)-1;if(N>=0&&N<n.length){let O=n[N].value,$=f.includes(O)?f.filter((U)=>U!==O):[...f,O];v($)}return}if(H.key==="escape")s(),H.stopImmediatePropagation()}}}
-var oDe,Sil;
-var Eil=b(()=>{ZR();dr();y3r();oDe=M(Te(),1),Sil=require("util")});
-export {bil,oDe,Sil,Eil};
+import {ft,b,x} from "../runtime.ts";
+import {gpl,_pl} from "../src/tui/4519_onDone.ts";
+import {oe} from "./m2275.ts";
+var ypl={};
+ft(ypl,{call:()=>FYp});
+async function FYp(e){return Tpl.jsx(gpl,{onDone:e})}
+var Tpl;
+var Spl=b(()=>{_pl();Tpl=x(oe(),1)});
+export {ypl,FYp,Tpl,Spl};

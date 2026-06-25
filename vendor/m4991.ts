@@ -1,18 +1,22 @@
 // @ts-nocheck
-import {SandboxManager,Ag} from "./m2671.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {useTheme} from "./m2274.ts";
-import {xx,$P} from "./m4515.ts";
-import {No} from "./m2421.ts";
-import {pr,Yl} from "./m2562.ts";
-import {aD,bne} from "./m4590.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Dxl(e){let t=vwo.c(5),{onComplete:n}=e,r=SandboxManager.isSandboxingEnabled(),o=SandboxManager.areSandboxSettingsLockedByPolicy(),s=SandboxManager.areUnsandboxedCommandsAllowed();if(!r){let a;if(t[0]===Symbol.for("react.memo_cache_sentinel"))a=fM.default.createElement(Box,{flexDirection:"column"},fM.default.createElement(Text,{color:"subtle"},"Sandbox is not enabled. Enable sandbox to configure override settings.")),t[0]=a;else a=t[0];return a}if(o){let a;if(t[1]===Symbol.for("react.memo_cache_sentinel"))a=fM.default.createElement(Text,{color:"subtle"},"Override settings are managed by a higher-priority configuration and cannot be changed locally."),t[1]=a;else a=t[1];let l;if(t[2]===Symbol.for("react.memo_cache_sentinel"))l=fM.default.createElement(Box,{flexDirection:"column"},a,fM.default.createElement(Box,{marginTop:1},fM.default.createElement(Text,{dimColor:!0},"Current setting:"," ",s?"Allow unsandboxed fallback":"Strict sandbox mode"))),t[2]=l;else l=t[2];return l}let i;if(t[3]!==n)i=fM.default.createElement(Flm,{onComplete:n,currentMode:s?"open":"closed"}),t[3]=n,t[4]=i;else i=t[4];return i}
-function Flm(e){let t=vwo.c(24),{onComplete:n,currentMode:r}=e,[o]=useTheme(),{headerFocused:s,focusHeader:i}=xx(),a;if(t[0]!==o)a=No("success",o)("(current)"),t[0]=o,t[1]=a;else a=t[1];let l=a,c=r==="open"?`Allow unsandboxed fallback ${l}`:"Allow unsandboxed fallback",u;if(t[2]!==c)u={label:c,value:"open"},t[2]=c,t[3]=u;else u=t[3];let d=r==="closed"?`Strict sandbox mode ${l}`:"Strict sandbox mode",p;if(t[4]!==d)p={label:d,value:"closed"},t[4]=d,t[5]=p;else p=t[5];let m;if(t[6]!==u||t[7]!==p)m=[u,p],t[6]=u,t[7]=p,t[8]=m;else m=t[8];let f=m,A;if(t[9]!==n)A=async function(k){let x=k;await SandboxManager.setSandboxSettings({allowUnsandboxedCommands:x==="open"}),n(x==="open"?"\u2713 Unsandboxed fallback allowed - commands can run outside sandbox when necessary":"\u2713 Strict sandbox mode - all commands must run in sandbox or be excluded via the `excludedCommands` option")},t[9]=n,t[10]=A;else A=t[10];let h=A,g;if(t[11]===Symbol.for("react.memo_cache_sentinel"))g=fM.default.createElement(Box,{marginBottom:1},fM.default.createElement(Text,{bold:!0},"Configure overrides")),t[11]=g;else g=t[11];let _;if(t[12]!==n)_=()=>n(void 0,{display:"skip"}),t[12]=n,t[13]=_;else _=t[13];let y;if(t[14]!==i||t[15]!==h||t[16]!==s||t[17]!==f||t[18]!==_)y=fM.default.createElement(pr,{options:f,onChange:h,onCancel:_,onUpFromFirstItem:i,isDisabled:s}),t[14]=i,t[15]=h,t[16]=s,t[17]=f,t[18]=_,t[19]=y;else y=t[19];let T;if(t[20]===Symbol.for("react.memo_cache_sentinel"))T=fM.default.createElement(Text,{dimColor:!0,wrap:"wrap-trim"},fM.default.createElement(Text,{bold:!0,dimColor:!0},"Allow unsandboxed fallback:")," ","When a command fails due to sandbox restrictions, Claude can retry with dangerouslyDisableSandbox to run outside the sandbox (falling back to default permissions)."),t[20]=T;else T=t[20];let S;if(t[21]===Symbol.for("react.memo_cache_sentinel"))S=fM.default.createElement(Box,{flexDirection:"column",marginTop:1,gap:1},T,fM.default.createElement(Text,{dimColor:!0,wrap:"wrap-trim"},fM.default.createElement(Text,{bold:!0,dimColor:!0},"Strict sandbox mode:")," ","All bash commands invoked by the model must run in the sandbox unless they are explicitly listed in excludedCommands."),fM.default.createElement(aD,{url:"https://code.claude.com/docs/en/sandboxing#configure-sandboxing"})),t[21]=S;else S=t[21];let v;if(t[22]!==y)v=fM.default.createElement(Box,{flexDirection:"column"},g,y,S),t[22]=y,t[23]=v;else v=t[23];return v}
-var vwo,fM;
-var Pxl=b(()=>{ze();Ag();Yl();bne();$P();vwo=M(rt(),1),fM=M(Te(),1)});
-export {Dxl,Flm,vwo,fM,Pxl};
+import {iu} from "./m3830.ts";
+import {Or,ss} from "./m2553.ts";
+import {R0o,v0o} from "../src/agent/4980_isValid.ts";
+import {bn,Is} from "./m2565.ts";
+import {Text} from "./m2433.ts";
+import {at,Wo} from "./m2557.ts";
+import {dr,uc} from "./m2558.ts";
+import {Box} from "./m2432.ts";
+import {ga,rh} from "./m2550.ts";
+import {Ba,I_} from "./m2584.ts";
+import {_c,PE} from "./m3831.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {Fy} from "./m3832.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function KOl(e){let t=VOl.c(15),{goNext:n,goBack:r,updateWizardData:o,wizardData:s}=iu(),[i,a]=_Yn.useState(s.agentType||""),[l,c]=_Yn.useState(null),[u,d]=_Yn.useState(i.length),p;if(t[0]===Symbol.for("react.memo_cache_sentinel"))p={context:"Settings"},t[0]=p;else p=t[0];Or("confirm:no",r,p);let m;if(t[1]!==n||t[2]!==o)m=(S)=>{let E=S.trim(),R=R0o(E);if(R){c(R);return}c(null),o({agentType:E}),n()},t[1]=n,t[2]=o,t[3]=m;else m=t[3];let f=m,h;if(t[4]===Symbol.for("react.memo_cache_sentinel"))h=ZG.jsxs(bn,{children:[ZG.jsx(Text,{children:"Type to enter text"}),ZG.jsx(at,{chord:"enter",action:"continue"}),ZG.jsx(dr,{action:"confirm:no",context:"Settings",fallback:"Esc",description:"go back"})]}),t[4]=h;else h=t[4];let g;if(t[5]===Symbol.for("react.memo_cache_sentinel"))g=ZG.jsx(Text,{children:"Enter a unique identifier for your agent:"}),t[5]=g;else g=t[5];let _;if(t[6]!==i||t[7]!==u||t[8]!==f)_=ZG.jsx(Box,{marginTop:1,children:ZG.jsx(ga,{value:i,onChange:a,onSubmit:f,placeholder:"e.g., test-runner, tech-lead, etc",columns:60,cursorOffset:u,onChangeCursorOffset:d,focus:!0,showCursor:!0})}),t[6]=i,t[7]=u,t[8]=f,t[9]=_;else _=t[9];let T;if(t[10]!==l)T=l&&ZG.jsx(Box,{marginTop:1,children:ZG.jsx(Ba,{error:l})}),t[10]=l,t[11]=T;else T=t[11];let y;if(t[12]!==_||t[13]!==T)y=ZG.jsx(_c,{subtitle:"Agent type (identifier)",footerText:h,children:ZG.jsxs(Box,{flexDirection:"column",children:[g,_,T]})}),t[12]=_,t[13]=T,t[14]=y;else y=t[14];return y}
+var VOl,_Yn,ZG;
+var zOl=b(()=>{je();ss();uc();Is();I_();Wo();rh();Fy();PE();v0o();VOl=x(tt(),1),_Yn=x(et(),1),ZG=x(oe(),1)});
+export {KOl,VOl,_Yn,ZG,zOl};

@@ -1,9 +1,9 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {ocl,rcl} from "./m4570.ts";
-import {Te} from "./m2253.ts";
-var scl={};
-isFullscreenWithTTY(scl,{call:()=>n7p});
-var vTo,n7p=async(e,t)=>{let{DiffDialog:n}=await Promise.resolve().then(() => (ocl(),rcl));return vTo.createElement(n,{messages:t.messages,onDone:e})};
-var icl=b(()=>{vTo=M(Te(),1)});
-export {scl,vTo,n7p,icl};
+import {b} from "../runtime.ts";
+import {Yk} from "./m2796.ts";
+function chl(e){let t=[],n=e.split(`
+`);for(let r of n){let o=[],s=Z8e,i=!1,a=0;while(a<r.length){if(r[a]==="\x1B"&&r[a+1]==="["){let u=a+2;while(u<r.length&&!/[A-Za-z]/.test(r[u]))u++;if(r[u]==="m"){let d=r.slice(a+2,u).split(";").map(Number),p=0;while(p<d.length){let m=d[p];if(m===0)s=Z8e,i=!1;else if(m===1)i=!0;else if(m>=30&&m<=37)s=ahl[m]||Z8e;else if(m>=90&&m<=97)s=ahl[m]||Z8e;else if(m===39)s=Z8e;else if(m===38){if(d[p+1]===5&&d[p+2]!==void 0){let f=d[p+2];s=UQp(f),p+=2}else if(d[p+1]===2&&d[p+2]!==void 0&&d[p+3]!==void 0&&d[p+4]!==void 0)s={r:d[p+2],g:d[p+3],b:d[p+4]},p+=4}p++}}a=u+1;continue}if(r[a]==="\x1B"){if(r[a+1]==="]"){let u=a+2;while(u<r.length&&r[u]!=="\x07"&&!(r[u]==="\x1B"&&r[u+1]==="\\"))u++;a=r[u]==="\x1B"?u+2:u+1}else a++;continue}let l=a;while(a<r.length&&r[a]!=="\x1B")a++;let c=r.slice(l,a);if(c)o.push({text:c,color:s,bold:i})}if(o.length===0)o.push({text:"",color:Z8e,bold:!1});t.push(o)}return t}
+function UQp(e){if(e<16)return[{r:0,g:0,b:0},{r:128,g:0,b:0},{r:0,g:128,b:0},{r:128,g:128,b:0},{r:0,g:0,b:128},{r:128,g:0,b:128},{r:0,g:128,b:128},{r:192,g:192,b:192},{r:128,g:128,b:128},{r:255,g:0,b:0},{r:0,g:255,b:0},{r:255,g:255,b:0},{r:0,g:0,b:255},{r:255,g:0,b:255},{r:0,g:255,b:255},{r:255,g:255,b:255}][e]||Z8e;if(e<232){let n=e-16,r=Math.floor(n/36),o=Math.floor(n%36/6),s=n%6;return{r:r===0?0:55+r*40,g:o===0?0:55+o*40,b:s===0?0:55+s*40}}let t=(e-232)*10+8;return{r:t,g:t,b:t}}
+var ahl,Z8e,lhl;
+var uhl=b(()=>{Yk();ahl={30:{r:0,g:0,b:0},31:{r:205,g:49,b:49},32:{r:13,g:188,b:121},33:{r:229,g:229,b:16},34:{r:36,g:114,b:200},35:{r:188,g:63,b:188},36:{r:17,g:168,b:205},37:{r:229,g:229,b:229},90:{r:102,g:102,b:102},91:{r:241,g:76,b:76},92:{r:35,g:209,b:139},93:{r:245,g:245,b:67},94:{r:59,g:142,b:234},95:{r:214,g:112,b:214},96:{r:41,g:184,b:219},97:{r:255,g:255,b:255}},Z8e={r:229,g:229,b:229},lhl={r:30,g:30,b:30}});
+export {chl,UQp,ahl,Z8e,lhl,uhl};

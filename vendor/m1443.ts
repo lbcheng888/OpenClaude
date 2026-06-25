@@ -1,12 +1,8 @@
 // @ts-nocheck
-import {nwr,twr} from "./m1350.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {dYe,uYe} from "./m1442.ts";
-import {b} from "../runtime.ts";
-function o$s(e){return e?.name==="CredentialsProviderError"}
-function r$s(e){if(!e||typeof e!=="object")return!1;let t=e;return typeof t.AccessKeyId==="string"&&typeof t.SecretAccessKey==="string"&&typeof t.SessionToken==="string"&&t.AccessKeyId.length>0&&t.SecretAccessKey.length>0&&t.SessionToken.length>0}
-function s$s(e){if(!e||typeof e!=="object")return null;let t=e;if(r$s(t.Credentials))return t.Credentials;if(r$s(t))return t;return null}
-async function i$s(){let{STSClient:e,GetCallerIdentityCommand:t}=await Promise.resolve().then(() => (nwr(),twr));await new e().send(new t({}))}
-async function a$s(){try{logForDebugging("Clearing AWS credential provider cache");let{fromIni:e}=await Promise.resolve().then(() => (dYe(),uYe));await e({ignoreCache:!0})(),logForDebugging("AWS credential provider cache refreshed")}catch(e){logForDebugging("Failed to clear AWS credential cache (this is expected if no credentials are configured)")}}
-var mRr=b(()=>{qe()});
-export {o$s,r$s,s$s,i$s,a$s,mRr};
+import {q6s,$6s} from "./m1442.ts";
+import {b,x} from "../runtime.ts";
+import {Zu} from "./m855.ts";
+import {Vg} from "./m600.ts";
+var G6s,$0r,X$u="us-east-1",V6s=(e,t,n)=>{let r;return async(o={})=>{let{callerClientConfig:s}=o,i=e.clientConfig?.profile??s?.profile,a=e.logger??s?.logger;a?.debug("@aws-sdk/credential-providers - fromTemporaryCredentials (STS)");let l={...e.params,RoleSessionName:e.params.RoleSessionName??"aws-sdk-js-"+Date.now()};if(l?.SerialNumber){if(!e.mfaCodeProvider)throw new $0r.CredentialsProviderError("Temporary credential requires multi-factor authentication, but no MFA code callback was provided.",{tryNextLink:!1,logger:a});l.TokenCode=await e.mfaCodeProvider(l?.SerialNumber)}let{AssumeRoleCommand:c,STSClient:u}=await Promise.resolve().then(() => (q6s(),$6s));if(!r){let p=typeof t==="function"?t():void 0,m=[e.masterCredentials,e.clientConfig?.credentials,void s?.credentials,s?.credentialDefaultProvider?.(),p],f="STS client default credentials";if(m[0])f="options.masterCredentials";else if(m[1])f="options.clientConfig.credentials";else if(m[2])throw f="caller client's credentials",Error("fromTemporaryCredentials recursion in callerClientConfig.credentials");else if(m[3])f="caller client's credentialDefaultProvider";else if(m[4])f="AWS SDK default credentials";let h=[e.clientConfig?.region,s?.region,await n?.({profile:i}),X$u],g="default partition's default region";if(h[0])g="options.clientConfig.region";else if(h[1])g="caller client's region";else if(h[2])g="file or env region";let _=[W6s(e.clientConfig?.requestHandler),W6s(s?.requestHandler)],T="STS default requestHandler";if(_[0])T="options.clientConfig.requestHandler";else if(_[1])T="caller client's requestHandler";a?.debug?.(`@aws-sdk/credential-providers - fromTemporaryCredentials STS client init with ${g}=${await G6s.normalizeProvider(lmn(h))()}, ${f}, ${T}.`),r=new u({userAgentAppId:s?.userAgentAppId,...e.clientConfig,credentials:lmn(m),logger:a,profile:i,region:lmn(h),requestHandler:lmn(_)})}if(e.clientPlugins)for(let p of e.clientPlugins)r.middlewareStack.use(p);let{Credentials:d}=await r.send(new c(l));if(!d||!d.AccessKeyId||!d.SecretAccessKey)throw new $0r.CredentialsProviderError(`Invalid response from STS.assumeRole call with role ${l.RoleArn}`,{logger:a});return{accessKeyId:d.AccessKeyId,secretAccessKey:d.SecretAccessKey,sessionToken:d.SessionToken,expiration:d.Expiration,credentialScope:d.CredentialScope}}},W6s=(e)=>e?.metadata?.handlerProtocol==="h2"?void 0:e,lmn=(e)=>{for(let t of e)if(t!==void 0)return t};
+var K6s=b(()=>{G6s=x(Zu(),1),$0r=x(Vg(),1)});
+export {G6s,$0r,X$u,V6s,W6s,lmn,K6s};

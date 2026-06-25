@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {fcs} from "./m848.ts";
-var A_r=X((kKe)=>{var eou=fcs(),Acs=(e,t)=>(n,r)=>async(o)=>{let{response:s}=await n(o);try{let i=await t(s,e);return{response:s,output:i}}catch(i){if(Object.defineProperty(i,"$response",{value:s,enumerable:!1,writable:!1,configurable:!1}),!("$metadata"in i)){try{i.message+=`
-  Deserialization error: to see the raw response, inspect the hidden field {error}.$response on this object.`}catch(l){if(!r.logger||r.logger?.constructor?.name==="NoOpLogger")console.warn("Deserialization error: to see the raw response, inspect the hidden field {error}.$response on this object.");else r.logger?.warn?.("Deserialization error: to see the raw response, inspect the hidden field {error}.$response on this object.")}if(typeof i.$responseBodyText<"u"){if(i.$response)i.$response.body=i.$responseBodyText}try{if(eou.HttpResponse.isInstance(s)){let{headers:l={}}=s,c=Object.entries(l);i.$metadata={httpStatusCode:s.statusCode,requestId:f_r(/^x-[\w-]+-request-?id$/,c),extendedRequestId:f_r(/^x-[\w-]+-id-2$/,c),cfId:f_r(/^x-[\w-]+-cf-id$/,c)}}}catch(l){}}throw i}},f_r=(e,t)=>(t.find(([n])=>n.match(e))||[void 0,void 0])[1],hcs=(e,t)=>(n,r)=>async(o)=>{let s=e,i=r.endpointV2?.url&&s.urlParser?async()=>s.urlParser(r.endpointV2.url):s.endpoint;if(!i)throw Error("No valid endpoint provider available.");let a=await t(o.input,{...e,endpoint:i});return n({...o,request:a})},gcs={name:"deserializerMiddleware",step:"deserialize",tags:["DESERIALIZER"],override:!0},_cs={name:"serializerMiddleware",step:"serialize",tags:["SERIALIZER"],override:!0};function tou(e,t,n){return{applyToStack:(r)=>{r.add(Acs(e,n),gcs),r.add(hcs(e,t),_cs)}}}kKe.deserializerMiddleware=Acs;kKe.deserializerMiddlewareOption=gcs;kKe.getSerdePlugin=tou;kKe.serializerMiddleware=hcs;kKe.serializerMiddlewareOption=_cs});
-export {A_r};
+import {sNe,bvt} from "./m770.ts";
+import {win,UEr} from "./m848.ts";
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+var kin,Xfs="AWS_EC2_METADATA_DISABLED",Qfs=async(e)=>{let{ENV_CMDS_FULL_URI:t,ENV_CMDS_RELATIVE_URI:n,fromContainerMetadata:r,fromInstanceMetadata:o}=await Promise.resolve().then(() => (sNe(),bvt));if(process.env[n]||process.env[t]){e.logger?.debug("@aws-sdk/credential-provider-node - remoteProvider::fromHttp/fromContainerMetadata");let{fromHttp:s}=await Promise.resolve().then(() => (win(),UEr));return kin.chain(s(e),r(e))}if(process.env[Xfs]&&process.env[Xfs]!=="false")return async()=>{throw new kin.CredentialsProviderError("EC2 Instance Metadata Service access disabled",{logger:e.logger})};return e.logger?.debug("@aws-sdk/credential-provider-node - remoteProvider::fromInstanceMetadata"),o(e)};
+var Zfs=b(()=>{kin=x(Vg(),1)});
+export {kin,Xfs,Qfs,Zfs};

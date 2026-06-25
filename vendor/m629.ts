@@ -1,10 +1,7 @@
 // @ts-nocheck
-import {tT,c2} from "./m13.ts";
-import {Cre,kWe} from "./m86.ts";
-import {VTe,fgt} from "./m75.ts";
-import {_re,AWe} from "./m29.ts";
+import {urs,drs} from "./m628.ts";
 import {b} from "../runtime.ts";
-function lzc(e,t,n){if(!tT(n))return!1;var r=typeof t;if(r=="number"?Cre(n)&&VTe(t,n.length):r=="string"&&(t in n))return _re(n[t],e);return!1}
-var CXo;
-var vXo=b(()=>{AWe();kWe();fgt();c2();CXo=lzc});
-export {lzc,CXo,vXo};
+function gou(e,t,n){return t=prs(t===void 0?e.length-1:t,0),function(){var r=arguments,o=-1,s=prs(r.length-t,0),i=Array(s);while(++o<s)i[o]=r[t+o];o=-1;var a=Array(t+1);while(++o<t)a[o]=r[o];return a[t]=n(i),urs(e,this,a)}}
+var prs,Irn;
+var Ayr=b(()=>{drs();prs=Math.max;Irn=gou});
+export {gou,prs,Irn,Ayr};

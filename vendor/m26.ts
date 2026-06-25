@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {kde,igt} from "./m21.ts";
 import {b} from "../runtime.ts";
-function Spc(e,t){var n=this.__data__;return this.size+=this.has(e)?0:1,n[e]=kde&&t===void 0?Tpc:t,this}
-var Tpc="__lodash_hash_undefined__",GBo;
-var VBo=b(()=>{igt();GBo=Spc});
-export {Spc,Tpc,GBo,VBo};
+import {O3o,hYt} from "./m25.ts";
+function mEc(e){return!!L3o&&L3o in e}
+var L3o,M3o;
+var N3o=b(()=>{O3o();L3o=function(){var e=/[^.]+$/.exec(hYt&&hYt.keys&&hYt.keys.IE_PROTO||"");return e?"Symbol(src)_1."+e:""}();M3o=mEc});
+export {mEc,L3o,M3o,N3o};

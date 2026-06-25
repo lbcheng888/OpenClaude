@@ -1,26 +1,11 @@
 // @ts-nocheck
-import {JR,U4} from "./m2426.ts";
-import {Ec} from "./m2449.ts";
-import {Ygi,Ive} from "./m2262.ts";
-import {_t,cu} from "./m582.ts";
+import {F0,B7,RZe,URe} from "./m2043.ts";
+import {Bot,lWi} from "./m2800.ts";
+import {zre,Qy} from "../src/tools/0325_ttl.ts";
 import {b} from "../runtime.ts";
-var vae="ListMcpResourcesTool",U9i=`
-Lists available resources from configured MCP servers.
-Each resource object includes a 'server' field indicating which server it's from.
-
-Usage examples:
-- List all resources from all servers: \`listMcpResources\`
-- List resources from a specific server: \`listMcpResources({ server: "myserver" })\`
-`,$9i=`
-List available resources from configured MCP servers.
-Each returned resource will include all standard MCP resource fields plus a 'server' field 
-indicating which server the resource belongs to.
-
-Parameters:
-- server (optional): The name of a specific MCP server to get resources from. If not provided,
-  resources from all servers will be returned.
-`;
-function MF(e,t,n){if(!(n?.supportsHyperlinks??JR())){if(t!==void 0){let c=Ec(t);if(c!==e&&e!==`http://${c}`&&e!==`https://${c}`)return`${t} (${e})`}return e}let l=(((n?.themeName)?Ygi(n.themeName):!1)?_t.blue:_t.blueBright)(t??e);return`${q9i}${e}${j9i}${l}${q9i}${j9i}`}
-var q9i="\x1B]8;;",j9i="\x07";
-var s$e=b(()=>{cu();U4();Ive()});
-export {vae,U9i,$9i,MF,q9i,j9i,s$e};
+function Uot(e){if(!e)return{};if(e instanceof Headers)return Object.fromEntries(e.entries());if(Array.isArray(e))return Object.fromEntries(e);return{...e}}
+function u9e(e=fetch,t){if(!t)return e;return async(n,r)=>{let o={...t,...r,headers:r?.headers?{...Uot(t.headers),...Uot(r.headers)}:t.headers};return e(n,o)}}
+class LIn{constructor(e,t){this._url=e,this._resourceMetadataUrl=void 0,this._scope=void 0,this._eventSourceInit=t?.eventSourceInit,this._requestInit=t?.requestInit,this._authProvider=t?.authProvider,this._fetch=t?.fetch,this._fetchWithInit=u9e(t?.fetch,t?.requestInit)}async _authThenStart(){if(!this._authProvider)throw new F0("No auth provider");let e;try{e=await B7(this._authProvider,{serverUrl:this._url,resourceMetadataUrl:this._resourceMetadataUrl,scope:this._scope,fetchFn:this._fetchWithInit})}catch(t){throw this.onerror?.(t),t}if(e!=="AUTHORIZED")throw new F0;return await this._startOrAuth()}async _commonHeaders(){let e={};if(this._authProvider){let n=await this._authProvider.tokens();if(n)e.Authorization=`Bearer ${n.access_token}`}if(this._protocolVersion)e["mcp-protocol-version"]=this._protocolVersion;let t=Uot(this._requestInit?.headers);return new Headers({...e,...t})}_startOrAuth(){let e=this?._eventSourceInit?.fetch??this._fetch??fetch;return new Promise((t,n)=>{this._eventSource=new Bot(this._url.href,{...this._eventSourceInit,fetch:async(r,o)=>{let s=await this._commonHeaders();s.set("Accept","text/event-stream");let i=await e(r,{...o,headers:s});if(i.status===401&&i.headers.has("www-authenticate")){let{resourceMetadataUrl:a,scope:l}=RZe(i);this._resourceMetadataUrl=a,this._scope=l}return i}}),this._abortController=new AbortController,this._eventSource.onerror=(r)=>{if(r.code===401&&this._authProvider){this._authThenStart().then(t,n);return}let o=new cWi(r.code,r.message,r);n(o),this.onerror?.(o)},this._eventSource.onopen=()=>{},this._eventSource.addEventListener("endpoint",(r)=>{let o=r;try{if(this._endpoint=new URL(o.data,this._url),this._endpoint.origin!==this._url.origin)throw Error(`Endpoint origin does not match connection origin: ${this._endpoint.origin}`)}catch(s){n(s),this.onerror?.(s),this.close();return}t()}),this._eventSource.onmessage=(r)=>{let o=r,s;try{s=zre.parse(JSON.parse(o.data))}catch(i){this.onerror?.(i);return}this.onmessage?.(s)}})}async start(){if(this._eventSource)throw Error("SSEClientTransport already started! If using Client class, note that connect() calls start() automatically.");return await this._startOrAuth()}async finishAuth(e){if(!this._authProvider)throw new F0("No auth provider");if(await B7(this._authProvider,{serverUrl:this._url,authorizationCode:e,resourceMetadataUrl:this._resourceMetadataUrl,scope:this._scope,fetchFn:this._fetchWithInit})!=="AUTHORIZED")throw new F0("Failed to authorize")}async close(){this._abortController?.abort(),this._eventSource?.close(),this.onclose?.()}async send(e){if(!this._endpoint)throw Error("Not connected");try{let t=await this._commonHeaders();t.set("content-type","application/json");let n={...this._requestInit,method:"POST",headers:t,body:JSON.stringify(e),signal:this._abortController?.signal},r=await(this._fetch??fetch)(this._endpoint,n);if(!r.ok){let o=await r.text().catch(()=>null);if(r.status===401&&this._authProvider){let{resourceMetadataUrl:s,scope:i}=RZe(r);if(this._resourceMetadataUrl=s,this._scope=i,await B7(this._authProvider,{serverUrl:this._url,resourceMetadataUrl:this._resourceMetadataUrl,scope:this._scope,fetchFn:this._fetchWithInit})!=="AUTHORIZED")throw new F0;return this.send(e)}throw Error(`Error POSTing to endpoint (HTTP ${r.status}): ${o}`)}await r.body?.cancel()}catch(t){throw this.onerror?.(t),t}}setProtocolVersion(e){this._protocolVersion=e}}
+var cWi;
+var uWi=b(()=>{lWi();Qy();URe();cWi=class cWi extends Error{constructor(e,t,n){super(`SSE error: ${t}`);this.code=e,this.event=n}}});
+export {Uot,u9e,LIn,cWi,uWi};

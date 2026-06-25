@@ -1,11 +1,10 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {allTools,lo} from "../src/tools/5190_userPromptCount.ts";
-import {k6n,H6n} from "../src/permissions/4412_level.ts";
-import {S6t,mTo} from "../src/core/4558_categories.ts";
-var fTo={};
-isFullscreenWithTTY(fTo,{collectContextData:()=>collectContextData,call:()=>fVp});
-async function collectContextData(e){let{messages:t,getAppState:n,options:{mainLoopModel:r,tools:o,agentDefinitions:s,customSystemPrompt:i,appendSystemPrompt:a,excludeDynamicSections:l}}=e,c=allTools(t),u=n();return k6n(c,r,async()=>u.toolPermissionContext,o,s,void 0,{options:{customSystemPrompt:i,appendSystemPrompt:a}},void 0,c,u.autoCompactWindow,l)}
-async function fVp(e,t){let n=await collectContextData(t);return{type:"text",value:S6t(n)}}
-var C6t=b(()=>{H6n();lo();mTo()});
-export {fTo,collectContextData,fVp,C6t};
+import {b} from "../runtime.ts";
+import {tr,DEFAULT_GLOBAL_CONFIG} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+function tRo(e){return xXp.has(e)}
+function Rfl(e,t){return e==="Advanced"?tRo(t)?"ADVANCED \u2014 MOVING TO SETTINGS.JSON":"ADVANCED":e.toUpperCase()}
+function nRo(e){return DXp.get(e)??"Advanced"}
+function wfl(e){return e.map((t,n)=>({item:t,i:n})).sort((t,n)=>{let r=(Efl.get(t.item.id)??Cfl)-(Efl.get(n.item.id)??Cfl);return r!==0?r:t.i-n.i}).map(({item:t})=>t)}
+var eRo,Afl,sKn,xXp,vfl,DXp,Efl,Cfl;
+var kfl=b(()=>{tr();eRo=["Appearance","Model & output","Display","Input & controls","Connections","Advanced","Experimental","Internal"],Afl=new Set(["Advanced","Experimental","Internal"]),sKn=[{id:"autoUpdatesChannel",isSet:({settingsData:e})=>e?.autoUpdatesChannel!==void 0},{id:"worktreeBaseRef",isSet:({settingsData:e})=>e?.worktree?.baseRef!==void 0},{id:"gitignore",isSet:({globalConfig:e})=>e.respectGitignore!==DEFAULT_GLOBAL_CONFIG.respectGitignore},{id:"copyFullResponse",isSet:({globalConfig:e})=>e.copyFullResponse!==DEFAULT_GLOBAL_CONFIG.copyFullResponse},{id:"recap",isSet:({settingsData:e})=>e?.awaySummaryEnabled!==void 0}],xXp=new Set(sKn.map((e)=>e.id));vfl={Appearance:["theme","language","reduceMotion"],"Model & output":["model","fast","switchModelsOnFlag","outputStyle","defaultView","verbose","autoCompact","thinking","permissionMode","useAutoModeDuringPlan"],Display:["autoScroll","progressBar","tips","turnDuration","prStatus","externalEditorContext"],"Input & controls":["editor","copyOnSelect","promptSuggestionEnabled","agentsView","checkpoints","workflows","workflowKeywordTriggerEnabled"],Connections:["notifChannel","inputNeededNotifEnabled","agentPushNotifEnabled","autoConnectIde","autoInstallIdeExtension","diffTool","chrome","remoteControl","showExternalIncludesDialog","apiKey"],Advanced:sKn.map((e)=>e.id),Experimental:["precomputeCompactionEnabled","timestamps","showStatusInTerminalTab","teammateMode","teammateDefaultModel"],Internal:["speculationEnabled",...[],"snipEnabled","snipDebug","doneMeansMerged","autoUploadSessions","autoAddRemoteControlDaemonWorker","autofixPrMode"]},DXp=new Map(eRo.flatMap((e)=>vfl[e].map((t)=>[t,e]))),Efl=new Map(eRo.flatMap((e,t)=>vfl[e].map((n,r)=>[n,t*1000+r])));Cfl=eRo.indexOf("Advanced")*1000+999});
+export {tRo,Rfl,nRo,wfl,eRo,Afl,sKn,xXp,vfl,DXp,Efl,Cfl,kfl};

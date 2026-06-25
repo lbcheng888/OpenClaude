@@ -1,6 +1,7 @@
 // @ts-nocheck
+import {Sbe,PTt} from "./m7.ts";
 import {b} from "../runtime.ts";
-function Fdc(e){return Bdc.call(e)}
-var Ndc,Bdc,wBo;
-var RBo=b(()=>{Ndc=Object.prototype,Bdc=Ndc.toString;wBo=Fdc});
-export {Fdc,Ndc,Bdc,wBo,RBo};
+function qbc(e,t){var n=this.__data__,r=Sbe(n,e);if(r<0)++this.size,n.push([e,t]);else n[r][1]=t;return this}
+var y3o;
+var T3o=b(()=>{PTt();y3o=qbc});
+export {qbc,y3o,T3o};

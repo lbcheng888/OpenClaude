@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {X,M} from "../runtime.ts";
-import {zEa} from "./m3689.ts";
-import {YEa} from "./m3690.ts";
-import {XEa} from "./m3691.ts";
-import {ZEa} from "./m3692.ts";
-import {eCa} from "./m3693.ts";
-var tCa=X((v1n)=>{Object.defineProperty(v1n,"__esModule",{value:!0});v1n.getMachineId=void 0;var Vlp=require("process"),I3e;async function Klp(){if(!I3e)switch(Vlp.platform){case"darwin":I3e=(await Promise.resolve().then(() => M(zEa()))).getMachineId;break;case"linux":I3e=(await Promise.resolve().then(() => M(YEa()))).getMachineId;break;case"freebsd":I3e=(await Promise.resolve().then(() => M(XEa()))).getMachineId;break;case"win32":I3e=(await Promise.resolve().then(() => M(ZEa()))).getMachineId;break;default:I3e=(await Promise.resolve().then(() => M(eCa()))).getMachineId;break}return I3e()}v1n.getMachineId=Klp});
-export {tCa};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {Lle} from "./m3676.ts";
+import {Qio} from "./m3693.ts";
+var Zio=Q((nBn)=>{Object.defineProperty(nBn,"__esModule",{value:!0});nBn.MetricReader=void 0;var GIa=xi(),VIa=Lle(),KIa=Qio();class zIa{_shutdown=!1;_metricProducers;_sdkMetricProducer;_aggregationTemporalitySelector;_aggregationSelector;_cardinalitySelector;constructor(e){this._aggregationSelector=e?.aggregationSelector??KIa.DEFAULT_AGGREGATION_SELECTOR,this._aggregationTemporalitySelector=e?.aggregationTemporalitySelector??KIa.DEFAULT_AGGREGATION_TEMPORALITY_SELECTOR,this._metricProducers=e?.metricProducers??[],this._cardinalitySelector=e?.cardinalitySelector}setMetricProducer(e){if(this._sdkMetricProducer)throw Error("MetricReader can not be bound to a MeterProvider again.");this._sdkMetricProducer=e,this.onInitialized()}selectAggregation(e){return this._aggregationSelector(e)}selectAggregationTemporality(e){return this._aggregationTemporalitySelector(e)}selectCardinalityLimit(e){return this._cardinalitySelector?this._cardinalitySelector(e):2000}onInitialized(){}async collect(e){if(this._sdkMetricProducer===void 0)throw Error("MetricReader is not bound to a MetricProducer");if(this._shutdown)throw Error("MetricReader is shutdown");let[t,...n]=await Promise.all([this._sdkMetricProducer.collect({timeoutMillis:e?.timeoutMillis}),...this._metricProducers.map((i)=>i.collect({timeoutMillis:e?.timeoutMillis}))]),r=t.errors.concat(n.flatMap((i)=>i.errors)),o=t.resourceMetrics.resource,s=t.resourceMetrics.scopeMetrics.concat(n.flatMap((i)=>i.resourceMetrics.scopeMetrics));return{resourceMetrics:{resource:o,scopeMetrics:s},errors:r}}async shutdown(e){if(this._shutdown){GIa.diag.error("Cannot call shutdown twice.");return}if(e?.timeoutMillis==null)await this.onShutdown();else await(0,VIa.callWithTimeout)(this.onShutdown(),e.timeoutMillis);this._shutdown=!0}async forceFlush(e){if(this._shutdown){GIa.diag.warn("Cannot forceFlush on already shutdown MetricReader.");return}if(e?.timeoutMillis==null){await this.onForceFlush();return}await(0,VIa.callWithTimeout)(this.onForceFlush(),e.timeoutMillis)}}nBn.MetricReader=zIa});
+export {Zio};

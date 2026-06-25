@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var gDr=X((SNA,tzs)=>{var ZKs=/^[0-9]+$/,ezs=(e,t)=>{let n=ZKs.test(e),r=ZKs.test(t);if(n&&r)e=+e,t=+t;return e===t?0:n&&!r?-1:r&&!n?1:e<t?-1:1},k2u=(e,t)=>ezs(t,e);tzs.exports={compareIdentifiers:ezs,rcompareIdentifiers:k2u}});
-export {gDr};
+import {Q} from "../runtime.ts";
+import {i_r} from "./m538.ts";
+var GMr=Q((B8h,WZs)=>{var DGu=i_r();WZs.exports=function(e,t){var n=t||Math.floor(Date.now()/1000);if(typeof e==="string"){var r=DGu(e);if(typeof r>"u")return;return Math.floor(n+r/1000)}else if(typeof e==="number")return n+e;else return}});
+export {GMr};

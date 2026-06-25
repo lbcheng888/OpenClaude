@@ -1,10 +1,8 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {AT} from "./m1775.ts";
-import {fBe,jmn,Wmn,LCe,Gmn,Vmn,k7s,mBe,H7s,Kmn,zmn,Ymn,mxt,I7s,Jmn,Xmn} from "./m1781.ts";
-import {_v,Qd} from "./m1778.ts";
-import {AuthError} from "./m1719.ts";
-function MH(e){return new N0r(e)}
-var LFu,N0r;
-var HJe=b(()=>{AT();fBe();_v();/*! @azure/msal-node v3.8.1 2025-10-29 */LFu={[jmn]:"The file path in the WWW-Authenticate header does not contain a .key file.",[Wmn]:"The file path in the WWW-Authenticate header is not in a valid Windows or Linux Format.",[LCe]:"More than one ManagedIdentityIdType was provided.",[Gmn]:"The secret in the file on the file path in the WWW-Authenticate header is greater than 4096 bytes.",[Vmn]:"The platform is not supported by Azure Arc. Azure Arc only supports Windows and Linux.",[k7s]:"A ManagedIdentityId id was not provided.",[mBe.AZURE_POD_IDENTITY_AUTHORITY_HOST]:`The Managed Identity's '${Qd.AZURE_POD_IDENTITY_AUTHORITY_HOST}' environment variable is malformed.`,[mBe.IDENTITY_ENDPOINT]:`The Managed Identity's '${Qd.IDENTITY_ENDPOINT}' environment variable is malformed.`,[mBe.IMDS_ENDPOINT]:`The Managed Identity's '${Qd.IMDS_ENDPOINT}' environment variable is malformed.`,[mBe.MSI_ENDPOINT]:`The Managed Identity's '${Qd.MSI_ENDPOINT}' environment variable is malformed.`,[H7s]:"Authentication unavailable. The request to the managed identity endpoint timed out.",[Kmn]:"Azure Arc Managed Identities can only be system assigned.",[zmn]:"Cloud Shell Managed Identities can only be system assigned.",[Ymn]:"Unable to create a Managed Identity source based on environment variables.",[mxt]:"Unable to read the secret file.",[I7s]:"Service Fabric user assigned managed identity ClientId or ResourceId is not configurable at runtime.",[Jmn]:"A 401 response was received form the Azure Arc Managed Identity, but the www-authenticate header is missing.",[Xmn]:"A 401 response was received form the Azure Arc Managed Identity, but the www-authenticate header is in an unsupported format."};N0r=class N0r extends AuthError{constructor(e){super(e,LFu[e]);this.name="ManagedIdentityError",Object.setPrototypeOf(this,N0r.prototype)}}});
-export {MH,LFu,N0r,HJe};
+import {ft,b} from "../runtime.ts";
+import {Serializer,xhn} from "./m1721.ts";
+import {Deserializer,Sgn} from "./m1781.ts";
+var internals={};
+ft(internals,{Serializer:()=>Serializer,Deserializer:()=>Deserializer});
+var pQs=b(()=>{xhn();Sgn();/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {internals,pQs};

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {DTn} from "./m2311.ts";
-var FTi=X((anh,BTi)=>{var wnd=DTn(),Rnd=(e,t)=>e.sort((n,r)=>wnd(n,r,t));BTi.exports=Rnd});
-export {FTi};
+import {Q} from "../runtime.ts";
+import {OF} from "./m2308.ts";
+var vvi=Q((xfg,Rvi)=>{var Avi=OF(),Npd=(e,t,n,r,o)=>{if(typeof n==="string")o=r,r=n,n=void 0;try{return new Avi(e instanceof Avi?e.version:e,n).inc(t,r,o).version}catch(s){return null}};Rvi.exports=Npd});
+export {vvi};

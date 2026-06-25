@@ -1,19 +1,6 @@
 // @ts-nocheck
-import {hc,Iy} from "../src/agent/2230_explicitlyRequested.ts";
-import {wbe,J3} from "../src/artifact/0731_allow.ts";
-import {iS,RK} from "./m2231.ts";
-import {Oot,nI} from "./m3252.ts";
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {xh,mf} from "./m702.ts";
-import {getOriginalCwd,lt} from "../src/session/0131_sent.ts";
-import {ci,pT} from "./m1289.ts";
-import {ds,bt} from "./m195.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {b} from "../runtime.ts";
-import {Ev} from "./m2211.ts";
-import {ik} from "../src/agent/0726_level.ts";
-function Psa(e,t){if(t)return!0;return!1}
-async function Osa(){if(hc("skills")||wbe.some((r)=>iS(r))||!Oot())return[];let e=[],t=Ake.join(tr(),"skills");if(xh("userSettings"))e.push({dir:t,scope:"user"});if(xh("projectSettings")){let r=Ake.join(getOriginalCwd(),".claude","skills"),o=(s)=>b1t.realpath(s).catch(()=>s);if(r!==t&&await o(r)!==await o(t))e.push({dir:r,scope:"project"})}let n=[];for(let{dir:r,scope:o}of e)try{if(o==="user"){let s=await ci().listEntries(r);for(let i of s)if(!i.isFile)n.push({dir:Ake.join(r,i.name),scope:o})}else{let s=await b1t.readdir(r,{withFileTypes:!0});for(let i of s)if(i.isDirectory()||i.isSymbolicLink())n.push({dir:Ake.join(r,i.name),scope:o})}}catch(s){if(!ds(s))logForDebugging(`[skill-as-plugin] readdir ${r} failed: ${s}`,{level:"warn"})}return n}
-var b1t,Ake;
-var _Yr=b(()=>{lt();pT();Iy();qe();sn();bt();Ev();mf();RK();J3();nI();ik();b1t=require("fs/promises"),Ake=require("path")});
-export {Psa,Osa,b1t,Ake,_Yr};
+import {Q} from "../runtime.ts";
+var qda=Q((dPn)=>{Object.defineProperty(dPn,"__esModule",{value:!0});dPn.AbstractMessageBuffer=void 0;var eJd=13,tJd=10,nJd=`\r
+`;class $da{constructor(e="utf-8"){this._encoding=e,this._chunks=[],this._totalLength=0}get encoding(){return this._encoding}append(e){let t=typeof e==="string"?this.fromString(e,this._encoding):e;this._chunks.push(t),this._totalLength+=t.byteLength}tryReadHeaders(e=!1){if(this._chunks.length===0)return;let t=0,n=0,r=0,o=0;e:while(n<this._chunks.length){let l=this._chunks[n];r=0;t:while(r<l.length){switch(l[r]){case eJd:switch(t){case 0:t=1;break;case 2:t=3;break;default:t=0}break;case tJd:switch(t){case 1:t=2;break;case 3:t=4,r++;break e;default:t=0}break;default:t=0}r++}o+=l.byteLength,n++}if(t!==4)return;let s=this._read(o+r),i=new Map,a=this.toString(s,"ascii").split(nJd);if(a.length<2)return i;for(let l=0;l<a.length-2;l++){let c=a[l],u=c.indexOf(":");if(u===-1)throw Error(`Message header must separate key and value using ':'
+${c}`);let d=c.substr(0,u),p=c.substr(u+1).trim();i.set(e?d.toLowerCase():d,p)}return i}tryReadBody(e){if(this._totalLength<e)return;return this._read(e)}get numberOfBytes(){return this._totalLength}_read(e){if(e===0)return this.emptyBuffer();if(e>this._totalLength)throw Error("Cannot read so many bytes!");if(this._chunks[0].byteLength===e){let o=this._chunks[0];return this._chunks.shift(),this._totalLength-=e,this.asNative(o)}if(this._chunks[0].byteLength>e){let o=this._chunks[0],s=this.asNative(o,e);return this._chunks[0]=o.slice(e),this._totalLength-=e,s}let t=this.allocNative(e),n=0,r=0;while(e>0){let o=this._chunks[r];if(o.byteLength>e){let s=o.slice(0,e);t.set(s,n),n+=e,this._chunks[r]=o.slice(e),this._totalLength-=e,e-=e}else t.set(o,n),n+=o.byteLength,this._chunks.shift(),this._totalLength-=o.byteLength,e-=o.byteLength}return t}}dPn.AbstractMessageBuffer=$da});
+export {qda};

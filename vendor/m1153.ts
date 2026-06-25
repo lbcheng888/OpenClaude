@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,xRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Aks,UpdateAutomatedReasoningPolicyCommand;
-var BEr=b(()=>{ri();wi();xi();Aks=M(yo(),1);UpdateAutomatedReasoningPolicyCommand=class UpdateAutomatedReasoningPolicyCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Aks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","UpdateAutomatedReasoningPolicy",{}).n("BedrockClient","UpdateAutomatedReasoningPolicyCommand").sc(xRs).build(){}});
-export {Aks,UpdateAutomatedReasoningPolicyCommand,BEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,yDs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var oOs,StopModelCustomizationJobCommand;
+var lkr=b(()=>{$s();ai();ci();oOs=x(yo(),1);StopModelCustomizationJobCommand=class StopModelCustomizationJobCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[oOs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","StopModelCustomizationJob",{}).n("BedrockClient","StopModelCustomizationJobCommand").sc(yDs).build(){}});
+export {oOs,StopModelCustomizationJobCommand,lkr};

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {UWs,$Ws} from "./m1671.ts";
+import {_hn,yOr,IYs} from "./m1671.ts";
 import {b} from "../runtime.ts";
-function WHr(e,t){let n,{abortSignal:r,abortErrorMsg:o}=t!==null&&t!==void 0?t:{};return UWs((s)=>{n=setTimeout(s,e)},{cleanupBeforeAbort:()=>clearTimeout(n),abortSignal:r,abortErrorMsg:o!==null&&o!==void 0?o:SNu})}
-var SNu="The delay was aborted.";
-var qWs=b(()=>{$Ws()});
-export {WHr,SNu,qWs};
+function DYs(e={}){let t=_hn(e.userAgentPrefix);return{name:N6u,async sendRequest(n,r){if(!n.headers.has(xYs))n.headers.set(xYs,await t);return r(n)}}}
+var xYs,N6u="userAgentPolicy";
+var PYs=b(()=>{yOr();xYs=IYs()});
+export {DYs,xYs,N6u,PYs};

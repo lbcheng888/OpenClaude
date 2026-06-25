@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-var Epr={};
-isFullscreenWithTTY(Epr,{origin:()=>origin,navigator:()=>navigator,hasStandardBrowserWebWorkerEnv:()=>hasStandardBrowserWebWorkerEnv,hasStandardBrowserEnv:()=>hasStandardBrowserEnv,hasBrowserEnv:()=>hasBrowserEnv});
-var hasBrowserEnv,navigator,hasStandardBrowserEnv,hasStandardBrowserWebWorkerEnv,origin;
-var dKo=b(()=>{hasBrowserEnv=typeof window<"u"&&typeof document<"u",navigator=typeof navigator==="object"&&navigator||void 0,hasStandardBrowserEnv=hasBrowserEnv&&(!navigator||["ReactNative","NativeScript","NS"].indexOf(navigator.product)<0),hasStandardBrowserWebWorkerEnv=(()=>typeof WorkerGlobalScope<"u"&&self instanceof WorkerGlobalScope&&typeof self.importScripts==="function")(),origin=hasBrowserEnv&&window.location.href||"http://localhost"});
-export {Epr,hasBrowserEnv,navigator,hasStandardBrowserEnv,hasStandardBrowserWebWorkerEnv,origin,dKo};
+import {LEe,vAt} from "./m520.ts";
+import {b} from "../runtime.ts";
+function zQo(e){let t={"!":"%21","'":"%27","(":"%28",")":"%29","~":"%7E","%20":"+"};return encodeURIComponent(e).replace(/[!'()~]|%20/g,function(r){return t[r]})}
+function jQo(e,t){this._pairs=[],e&&LEe(e,this,t)}
+var YQo,JQo;
+var XQo=b(()=>{vAt();YQo=jQo.prototype;YQo.append=function(t,n){this._pairs.push([t,n])};YQo.toString=function(t){let n=t?function(r){return t.call(this,r,zQo)}:zQo;return this._pairs.map(function(o){return n(o[0])+"="+n(o[1])},"").join("&")};JQo=jQo});
+export {zQo,jQo,YQo,JQo,XQo};

@@ -1,0 +1,15 @@
+// @ts-nocheck
+import {useTimeout} from "./m2460.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {hr,Ol} from "./m2573.ts";
+import {hm,DI} from "./m3357.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function puc(e){let t=duc.c(36),{pluginName:n,pluginDescription:r,fileExtension:o,onResponse:s}=e,i=Bnr.useRef(s),a;if(t[0]!==s)a=()=>{i.current=s},t[0]=s,t[1]=a;else a=t[1];Bnr.useEffect(a);let l;if(t[2]===Symbol.for("react.memo_cache_sentinel"))l=()=>i.current("no"),t[2]=l;else l=t[2];let c;if(t[3]===Symbol.for("react.memo_cache_sentinel"))c=[],t[3]=c;else c=t[3];useTimeout(l,KGm,c);let u;if(t[4]!==s)u=function(L){e:switch(L){case"yes":{s("yes");break e}case"no":{s("no");break e}case"never":{s("never");break e}case"disable":s("disable")}},t[4]=s,t[5]=u;else u=t[5];let d=u,p;if(t[6]!==n)p={label:LH.jsxs(Text,{children:["Yes, install ",LH.jsx(Text,{bold:!0,children:n})]}),value:"yes"},t[6]=n,t[7]=p;else p=t[7];let m;if(t[8]===Symbol.for("react.memo_cache_sentinel"))m={label:"No, not now",value:"no"},t[8]=m;else m=t[8];let f;if(t[9]!==n)f={label:LH.jsxs(Text,{children:["Never for ",LH.jsx(Text,{bold:!0,children:n})]}),value:"never"},t[9]=n,t[10]=f;else f=t[10];let h;if(t[11]===Symbol.for("react.memo_cache_sentinel"))h={label:"Disable all LSP recommendations",value:"disable"},t[11]=h;else h=t[11];let g;if(t[12]!==p||t[13]!==f)g=[p,m,f,h],t[12]=p,t[13]=f,t[14]=g;else g=t[14];let _=g,T;if(t[15]===Symbol.for("react.memo_cache_sentinel"))T=LH.jsx(Box,{marginBottom:1,children:LH.jsx(Text,{dimColor:!0,children:"LSP provides code intelligence like go-to-definition and error checking"})}),t[15]=T;else T=t[15];let y;if(t[16]===Symbol.for("react.memo_cache_sentinel"))y=LH.jsx(Text,{dimColor:!0,children:"Plugin:"}),t[16]=y;else y=t[16];let S;if(t[17]!==n)S=LH.jsxs(Box,{children:[y,LH.jsxs(Text,{children:[" ",n]})]}),t[17]=n,t[18]=S;else S=t[18];let E;if(t[19]!==r)E=r&&LH.jsx(Box,{children:LH.jsx(Text,{dimColor:!0,children:r})}),t[19]=r,t[20]=E;else E=t[20];let R;if(t[21]===Symbol.for("react.memo_cache_sentinel"))R=LH.jsx(Text,{dimColor:!0,children:"Triggered by:"}),t[21]=R;else R=t[21];let w;if(t[22]!==o)w=LH.jsxs(Box,{children:[R,LH.jsxs(Text,{children:[" ",o," files"]})]}),t[22]=o,t[23]=w;else w=t[23];let H;if(t[24]===Symbol.for("react.memo_cache_sentinel"))H=LH.jsx(Box,{marginTop:1,children:LH.jsx(Text,{children:"Would you like to install this LSP plugin?"})}),t[24]=H;else H=t[24];let k;if(t[25]!==s)k=()=>s("no"),t[25]=s,t[26]=k;else k=t[26];let I;if(t[27]!==d||t[28]!==_||t[29]!==k)I=LH.jsx(Box,{children:LH.jsx(hr,{options:_,onChange:d,onCancel:k})}),t[27]=d,t[28]=_,t[29]=k,t[30]=I;else I=t[30];let D;if(t[31]!==S||t[32]!==E||t[33]!==w||t[34]!==I)D=LH.jsx(hm,{title:"LSP plugin recommendation",children:LH.jsxs(Box,{flexDirection:"column",paddingX:2,paddingY:1,children:[T,S,E,w,H,I]})}),t[31]=S,t[32]=E,t[33]=w,t[34]=I,t[35]=D;else D=t[35];return D}
+var duc,Bnr,LH,KGm=30000;
+var muc=b(()=>{je();Ol();DI();duc=x(tt(),1),Bnr=x(et(),1),LH=x(oe(),1)});
+export {puc,duc,Bnr,LH,KGm,muc};

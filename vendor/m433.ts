@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {JTe,Sgt} from "./m111.ts";
-import {xWo,kWo} from "./m432.ts";
-import {kV,qOe} from "./m109.ts";
-import {b} from "../runtime.ts";
-function YHc(e,t,n){var r=-1,o=t.length,s={};while(++r<o){var i=t[r],a=JTe(e,i);if(n(a,i))xWo(s,kV(i,e),a)}return s}
-var fZt;
-var Cdr=b(()=>{Sgt();kWo();qOe();fZt=YHc});
-export {YHc,fZt,Cdr};
+import {lAt,Gtn,Vtn} from "./m432.ts";
+import {b,x} from "../runtime.ts";
+class t1e{constructor(e=Jhr.default.stdin,t=Jhr.default.stdout){this._stdin=e,this._stdout=t,this._readBuffer=new lAt,this._started=!1,this._ondata=(n)=>{this._readBuffer.append(n),this.processReadBuffer()},this._onerror=(n)=>{this.onerror?.(n)}}async start(){if(this._started)throw Error("StdioServerTransport already started! If using Server class, note that connect() calls start() automatically.");this._started=!0,this._stdin.on("data",this._ondata),this._stdin.on("error",this._onerror)}processReadBuffer(){while(!0)try{let e=this._readBuffer.readMessage();if(e===null)break;this.onmessage?.(e)}catch(e){this.onerror?.(e)}}async close(){if(this._stdin.off("data",this._ondata),this._stdin.off("error",this._onerror),this._stdin.listenerCount("data")===0)this._stdin.pause();this._readBuffer.clear(),this.onclose?.()}send(e){return new Promise((t)=>{let n=Gtn(e);if(this._stdout.write(n))t();else this._stdout.once("drain",t)})}}
+var Jhr;
+var Ktn=b(()=>{Vtn();Jhr=x(require("process"))});
+export {t1e,Jhr,Ktn};

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {lut} from "./m4097.ts";
-var w3a=X((ep_,v3a)=>{v3a.exports=luo;var C3a=lut();function luo(e,t){C3a.call(this,e,t)}luo.prototype=Object.create(C3a.prototype,{constructor:{value:luo}})});
-export {w3a};
+import {Q} from "../runtime.ts";
+import {agentMcpClients} from "./m4115.ts";
+var wfo=Q((gAy,V8a)=>{V8a.exports=G8a;var upt=agentMcpClients();function G8a(e){this.element=e}Object.defineProperties(G8a.prototype,{length:{get:upt.shouldOverride},item:{value:upt.shouldOverride},getNamedItem:{value:function(t){return this.element.getAttributeNode(t)}},getNamedItemNS:{value:function(t,n){return this.element.getAttributeNodeNS(t,n)}},setNamedItem:{value:upt.nyi},setNamedItemNS:{value:upt.nyi},removeNamedItem:{value:function(t){var n=this.element.getAttributeNode(t);if(n)return this.element.removeAttribute(t),n;upt.NotFoundError()}},removeNamedItemNS:{value:function(t,n){var r=this.element.getAttributeNodeNS(t,n);if(r)return this.element.removeAttributeNS(t,n),r;upt.NotFoundError()}}})});
+export {wfo};

@@ -1,9 +1,24 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {cke} from "./m3230.ts";
-import {Tot} from "./m3226.ts";
-import {Vzr} from "./m3234.ts";
-import {bot} from "./m3231.ts";
-var Ooa=X((dke)=>{Object.defineProperty(dke,"__esModule",{value:!0});dke.WriteableStreamMessageWriter=dke.AbstractMessageWriter=dke.MessageWriter=void 0;var koa=cke(),f1t=Tot(),d6d=Vzr(),Hoa=bot(),p6d="Content-Length: ",Ioa=`\r
-`,Doa;(function(e){function t(n){let r=n;return r&&f1t.func(r.dispose)&&f1t.func(r.onClose)&&f1t.func(r.onError)&&f1t.func(r.write)}e.is=t})(Doa||(dke.MessageWriter=Doa={}));class Qzr{constructor(){this.errorEmitter=new Hoa.Emitter,this.closeEmitter=new Hoa.Emitter}dispose(){this.errorEmitter.dispose(),this.closeEmitter.dispose()}get onError(){return this.errorEmitter.event}fireError(e,t,n){this.errorEmitter.fire([this.asError(e),t,n])}get onClose(){return this.closeEmitter.event}fireClose(){this.closeEmitter.fire(void 0)}asError(e){if(e instanceof Error)return e;else return Error(`Writer received error. Reason: ${f1t.string(e.message)?e.message:"unknown"}`)}}dke.AbstractMessageWriter=Qzr;var Xzr;(function(e){function t(n){if(n===void 0||typeof n==="string")return{charset:n??"utf-8",contentTypeEncoder:(0,koa.default)().applicationJson.encoder};else return{charset:n.charset??"utf-8",contentEncoder:n.contentEncoder,contentTypeEncoder:n.contentTypeEncoder??(0,koa.default)().applicationJson.encoder}}e.fromOptions=t})(Xzr||(Xzr={}));class Poa extends Qzr{constructor(e,t){super();this.writable=e,this.options=Xzr.fromOptions(t),this.errorCount=0,this.writeSemaphore=new d6d.Semaphore(1),this.writable.onError((n)=>this.fireError(n)),this.writable.onClose(()=>this.fireClose())}async write(e){return this.writeSemaphore.lock(async()=>this.options.contentTypeEncoder.encode(e,this.options).then((n)=>{if(this.options.contentEncoder!==void 0)return this.options.contentEncoder.encode(n);else return n}).then((n)=>{let r=[];return r.push(p6d,n.byteLength.toString(),Ioa),r.push(Ioa),this.doWrite(e,r,n)},(n)=>{throw this.fireError(n),n}))}async doWrite(e,t,n){try{return await this.writable.write(t.join(""),"ascii"),this.writable.write(n)}catch(r){return this.handleError(r,e),Promise.reject(r)}}handleError(e,t){this.errorCount++,this.fireError(e,t,this.errorCount)}end(){this.writable.end()}}dke.WriteableStreamMessageWriter=Poa});
-export {Ooa};
+import {ft,b} from "../runtime.ts";
+import {L$,Pee,qDn} from "../src/computer-use/3227_level.ts";
+import {uua,dua} from "./m3235.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {zDn,JQr} from "./m3231.ts";
+import {cit,uit} from "../src/telemetry/3229_enabled.ts";
+import {PQr} from "../src/computer-use/3222_apps.ts";
+import {i3e} from "../src/tools/3221_type.ts";
+import {EK,Qy} from "../src/tools/0325_ttl.ts";
+import {enableConfigs,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {initializeAnalyticsSink,Jge} from "../src/telemetry/3235_createLinkedTransportPair.ts";
+import {t1e,Ktn} from "./m433.ts";
+import {shutdown1PEventLogging,GM} from "../src/session/2203_shutdown1PEventLogging.ts";
+import {shutdownDatadog,Q7} from "../src/permissions/5229_trackDatadogEvent.ts";
+import {ait} from "./m3222.ts";
+var oZr={};
+ft(oZr,{runComputerUseMcpServer:()=>runComputerUseMcpServer,createComputerUseMcpServerForCli:()=>createComputerUseMcpServerForCli});
+async function aYd(){try{let e=L$(),t=await Pee(()=>e.apps.listInstalled(),pua);return uua(t,mua.homedir())}catch{logForDebugging(`[Computer Use MCP] app enumeration exceeded ${pua}ms or failed; tool description omits list`);return}}
+async function createComputerUseMcpServerForCli(){let e=zDn(),t=cit(),n=PQr(e,t),r=await aYd(),o=i3e(e.executor.capabilities,t,r);return n.setRequestHandler(EK,async()=>e.isDisabled()?{tools:[]}:{tools:o}),n}
+async function runComputerUseMcpServer(){enableConfigs(),initializeAnalyticsSink();let e=await createComputerUseMcpServerForCli(),t=new t1e,n=!1,r=async()=>{if(n)return;n=!0,await Promise.all([shutdown1PEventLogging(),shutdownDatadog()]),process.exit(0)};process.stdin.on("end",()=>void r()),process.stdin.on("error",()=>void r()),logForDebugging("[Computer Use MCP] Starting MCP server"),await e.connect(t),logForDebugging("[Computer Use MCP] MCP server started")}
+var mua,pua=1000;
+var sZr=b(()=>{ait();Ktn();Qy();Q7();GM();Jge();tr();qe();dua();qDn();uit();JQr();mua=require("os")});
+export {oZr,aYd,createComputerUseMcpServerForCli,runComputerUseMcpServer,mua,pua,sZr};

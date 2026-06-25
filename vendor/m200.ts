@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {hSe,pyt} from "./m198.ts";
-import {gSe,myt} from "./m199.ts";
+import {c7e,fcr} from "./m199.ts";
 import {b} from "../runtime.ts";
-function mgc(e,t,n,r){var o=!n;n||(n={});var s=-1,i=t.length;while(++s<i){var a=t[s],l=r?r(n[a],e[a],a,n,e):void 0;if(l===void 0)l=e[a];if(o)hSe(n,a,l);else gSe(n,a,l)}return n}
-var $V;
-var ELe=b(()=>{myt();pyt();$V=mgc});
-export {mgc,$V,ELe};
+function mwc(e,t,n){if(t=="__proto__"&&c7e)c7e(e,t,{configurable:!0,enumerable:!0,value:n,writable:!0});else e[t]=n}
+var Xbe;
+var Bbt=b(()=>{fcr();Xbe=mwc});
+export {mwc,Xbe,Bbt};

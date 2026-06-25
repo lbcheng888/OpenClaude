@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {fromWebToken} from "./m1012.ts";
+import {fromSSO} from "./m985.ts";
 import {b} from "../runtime.ts";
-import {UCt} from "./m1013.ts";
-var NPu=(e)=>fromWebToken({...e});
-var n$s=b(()=>{UCt()});
-export {NPu,n$s};
+import {nln} from "./m986.ts";
+var J$u=(e={})=>fromSSO({...e});
+var U6s=b(()=>{nln()});
+export {J$u,U6s};

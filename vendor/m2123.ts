@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-import {nHt} from "./m2092.ts";
-import {k1r} from "./m2122.ts";
-var ipi=X((nF)=>{Object.defineProperty(nF,"__esModule",{value:!0});nF.W3CTraceContextPropagator=nF.parseTraceParent=nF.TRACE_STATE_HEADER=nF.TRACE_PARENT_HEADER=void 0;var Pgn=Xi(),azu=nHt(),lzu=k1r();nF.TRACE_PARENT_HEADER="traceparent";nF.TRACE_STATE_HEADER="tracestate";var czu="00",uzu="(?!ff)[\\da-f]{2}",dzu="(?![0]{32})[\\da-f]{32}",pzu="(?![0]{16})[\\da-f]{16}",mzu="[\\da-f]{2}",fzu=new RegExp(`^\\s?(${uzu})-(${dzu})-(${pzu})-(${mzu})(-.*)?\\s?$`);function opi(e){let t=fzu.exec(e);if(!t)return null;if(t[1]==="00"&&t[5])return null;return{traceId:t[2],spanId:t[3],traceFlags:parseInt(t[4],16)}}nF.parseTraceParent=opi;class spi{inject(e,t,n){let r=Pgn.trace.getSpanContext(e);if(!r||(0,azu.isTracingSuppressed)(e)||!(0,Pgn.isSpanContextValid)(r))return;let o=`${czu}-${r.traceId}-${r.spanId}-0${Number(r.traceFlags||Pgn.TraceFlags.NONE).toString(16)}`;if(n.set(t,nF.TRACE_PARENT_HEADER,o),r.traceState)n.set(t,nF.TRACE_STATE_HEADER,r.traceState.serialize())}extract(e,t,n){let r=n.get(t,nF.TRACE_PARENT_HEADER);if(!r)return e;let o=Array.isArray(r)?r[0]:r;if(typeof o!=="string")return e;let s=opi(o);if(!s)return e;s.isRemote=!0;let i=n.get(t,nF.TRACE_STATE_HEADER);if(i){let a=Array.isArray(i)?i.join(","):i;s.traceState=new lzu.TraceState(typeof a==="string"?a:void 0)}return Pgn.trace.setSpanContext(e,s)}fields(){return[nF.TRACE_PARENT_HEADER,nF.TRACE_STATE_HEADER]}}nF.W3CTraceContextPropagator=spi});
-export {ipi};
+import {Q} from "../runtime.ts";
+var W_i=Q((cSn)=>{Object.defineProperty(cSn,"__esModule",{value:!0});cSn.unrefTimer=void 0;function _od(e){if(typeof e!=="number")e.unref()}cSn.unrefTimer=_od});
+export {W_i};

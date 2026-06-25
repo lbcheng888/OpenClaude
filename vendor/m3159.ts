@@ -1,21 +1,21 @@
 // @ts-nocheck
+import {getProxyFetchOptions,ey} from "../src/config/1026_shouldBypassProxyWithCidr.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {aTn,KBe,URe} from "./m2043.ts";
+import {ln,vn} from "../src/session/0621_length.ts";
+import {Ta,Ct} from "./m197.ts";
 import {b} from "../runtime.ts";
-import {oHn,Vrt} from "./m3154.ts";
-var Jrt="ReadMcpResourceTool",lZi=`
-Reads a specific resource from an MCP server.
-- server: The name of the MCP server to read from
-- uri: The URI of the resource to read
-
-Usage examples:
-- Read a resource from a server: \`readMcpResource({ server: "myserver", uri: "my-resource-uri" })\`
-`,cZi;
-var SMt=b(()=>{oHn();cZi=`
-Reads a specific resource from an MCP server, identified by server name and resource URI.
-
-Parameters:
-- server (required): The name of the MCP server from which to read the resource
-- uri (required): The URI of the resource to read
-
-When the URI names a directory resource on a server that supports directory listing, the result carries a "resources" array listing the directory's direct children. Subdirectories appear with mimeType "${Vrt}"; read them again to descend.
-`});
-export {Jrt,lZi,cZi,SMt};
+import {Qr} from "./m323.ts";
+import {ve} from "./m461.ts";
+import {C} from "./m321.ts";
+function Asa(e){return(t,n)=>{let r=AbortSignal.timeout(LVd),o=e?AbortSignal.any([r,e]):r;return fetch(t,{...n,...getProxyFetchOptions({url:String(t)}),signal:o})}}
+function Pxn(e){try{return new URL(e).href.replace(/\/$/,"")}catch{return e.replace(/\/$/,"")}}
+function $Nt(e){return(typeof e==="string"?e:TeamDeleteToolName(e)).replace(FVd,(n,r)=>`"${r}":"[REDACTED]"`)}
+async function $Vd(e,t){let n;try{n=await aTn(e,void 0,t?.fetchFn??Oxn)}catch(r){throw Error(`XAA: PRM discovery failed: ${r instanceof Error?r.message:String(r)}`)}if(!n.resource||!n.authorization_servers?.[0])throw Error("XAA: PRM discovery failed: PRM missing resource or authorization_servers");if(Pxn(n.resource)!==Pxn(e))throw Error(`XAA: PRM discovery failed: PRM resource mismatch: expected ${e}, got ${n.resource}`);return{resource:n.resource,authorization_servers:n.authorization_servers}}
+async function qVd(e,t){let n=await KBe(e,{fetchFn:t?.fetchFn??Oxn});if(!n?.issuer||!n.token_endpoint)throw Error(`XAA: AS metadata discovery failed: no valid metadata at ${e}`);if(Pxn(n.issuer)!==Pxn(e))throw Error(`XAA: AS metadata discovery failed: issuer mismatch: expected ${e}, got ${n.issuer}`);if(new URL(n.token_endpoint).protocol!=="https:")throw Error(`XAA: refusing non-HTTPS token endpoint: ${n.token_endpoint}`);return{issuer:n.issuer,token_endpoint:n.token_endpoint,grant_types_supported:n.grant_types_supported,token_endpoint_auth_methods_supported:n.token_endpoint_auth_methods_supported}}
+async function WVd(e){let t=e.fetchFn??Oxn,n=new URLSearchParams({grant_type:MVd,requested_token_type:Esa,audience:e.audience,resource:e.resource,subject_token:e.idToken,subject_token_type:NVd,client_id:e.clientId});if(e.clientSecret)n.set("client_secret",e.clientSecret);if(e.scope)n.set("scope",e.scope);let r=await t(e.tokenEndpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:n});if(!r.ok){let a=$Nt(await r.text()).slice(0,200),l=r.status<500;throw new Bge(`XAA: token exchange failed: HTTP ${r.status}: ${a}`,l)}let o;try{o=await r.json()}catch{throw new Bge(`XAA: token exchange returned non-JSON (captive portal?) at ${e.tokenEndpoint}`,!1)}let s=BVd().safeParse(o);if(!s.success)throw new Bge(`XAA: token exchange response did not match expected shape: ${$Nt(o)}`,!0);let i=s.data;if(!i.access_token)throw new Bge(`XAA: token exchange response missing access_token: ${$Nt(i)}`,!0);if(i.issued_token_type!==Esa)throw new Bge(`XAA: token exchange returned unexpected issued_token_type: ${i.issued_token_type}`,!0);return{jwtAuthGrant:i.access_token,expiresIn:i.expires_in,scope:i.scope}}
+async function GVd(e){let t=e.fetchFn??Oxn,n=e.authMethod??"client_secret_basic",r=new URLSearchParams({grant_type:Csa,assertion:e.assertion});if(e.scope)r.set("scope",e.scope);let o={"Content-Type":"application/x-www-form-urlencoded"};if(n==="client_secret_basic"){let l=Buffer.from(`${encodeURIComponent(e.clientId)}:${encodeURIComponent(e.clientSecret)}`).toString("base64");o.Authorization=`Basic ${l}`}else r.set("client_id",e.clientId),r.set("client_secret",e.clientSecret);let s=await t(e.tokenEndpoint,{method:"POST",headers:o,body:r});if(!s.ok){let l=$Nt(await s.text()).slice(0,200);throw Error(`XAA: jwt-bearer grant failed: HTTP ${s.status}: ${l}`)}let i;try{i=await s.json()}catch{throw Error(`XAA: jwt-bearer grant returned non-JSON (captive portal?) at ${e.tokenEndpoint}`)}let a=UVd().safeParse(i);if(!a.success)throw Error(`XAA: jwt-bearer response did not match expected shape: ${$Nt(i)}`);return a.data}
+async function mXr(e,t,n="xaa",r){let o=Asa(r);ln(n,`XAA: discovering PRM for ${e}`);let s=await $Vd(e,{fetchFn:o});ln(n,`XAA: discovered resource=${s.resource} ASes=[${s.authorization_servers.join(", ")}]`);let i,a=[];for(let p of s.authorization_servers){let m;try{m=await qVd(p,{fetchFn:o})}catch(f){if(r?.aborted)throw f;a.push(`${p}: ${f instanceof Error?f.message:String(f)}`);continue}if(m.grant_types_supported&&!m.grant_types_supported.includes(Csa)){a.push(`${p}: does not advertise jwt-bearer grant (supported: ${m.grant_types_supported.join(", ")})`);continue}i=m;break}if(!i)throw new Ta(`XAA: no authorization server supports jwt-bearer. Tried: ${a.join("; ")}`,`XAA: no authorization server supports jwt-bearer (tried ${s.authorization_servers.length})`);let l=i.token_endpoint_auth_methods_supported,c=l&&!l.includes("client_secret_basic")&&l.includes("client_secret_post")?"client_secret_post":"client_secret_basic";ln(n,`XAA: AS issuer=${i.issuer} token_endpoint=${i.token_endpoint} auth_method=${c}`),ln(n,"XAA: exchanging id_token for ID-JAG at IdP");let u=await WVd({tokenEndpoint:t.idpTokenEndpoint,audience:i.issuer,resource:s.resource,idToken:t.idpIdToken,clientId:t.idpClientId,clientSecret:t.idpClientSecret,fetchFn:o});ln(n,"XAA: ID-JAG obtained"),ln(n,"XAA: exchanging ID-JAG for access_token at AS");let d=await GVd({tokenEndpoint:i.token_endpoint,assertion:u.jwtAuthGrant,clientId:t.clientId,clientSecret:t.clientSecret,authMethod:c,fetchFn:o});return ln(n,"XAA: access_token obtained"),{...d,authorizationServerUrl:i.issuer}}
+var LVd=30000,MVd="urn:ietf:params:oauth:grant-type:token-exchange",Csa="urn:ietf:params:oauth:grant-type:jwt-bearer",Esa="urn:ietf:params:oauth:token-type:id-jag",NVd="urn:ietf:params:oauth:token-type:id_token",Oxn,Bge,FVd,BVd,UVd;
+var Rsa=b(()=>{URe();Qr();Ct();vn();ey();tn();Oxn=Asa();Bge=class Bge extends Error{shouldClearIdToken;constructor(e,t){super(e);this.name="XaaTokenExchangeError",this.shouldClearIdToken=t}};FVd=/"(access_token|refresh_token|id_token|assertion|subject_token|client_secret)"\s*:\s*"[^"]*"/g;BVd=ve(()=>C.object({access_token:C.string().optional(),issued_token_type:C.string().optional(),expires_in:C.coerce.number().optional(),scope:C.string().optional()})),UVd=ve(()=>C.object({access_token:C.string().min(1),token_type:C.string().default("Bearer"),expires_in:C.coerce.number().optional(),scope:C.string().optional(),refresh_token:C.string().optional()}))});
+export {Asa,Pxn,$Nt,$Vd,qVd,WVd,GVd,mXr,LVd,MVd,Csa,Esa,NVd,Oxn,Bge,FVd,BVd,UVd,Rsa};

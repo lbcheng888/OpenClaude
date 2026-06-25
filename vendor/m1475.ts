@@ -1,8 +1,4 @@
 // @ts-nocheck
-import {kme,sdn} from "./m1460.ts";
-import {hNe,Rwt} from "./m1474.ts";
-import {Ie,isTmuxControlMode,Oe,ln} from "../src/telemetry/0594_feature_name.ts";
-import {b} from "../runtime.ts";
-function D9s(e,t){let n={name:`${e.name}-with-${t.name}-fallback`,read(){let r=e.read();if(r!==null&&r!==void 0)return r;return t.read()||{}},async readAsync(){let r=await e.readAsync();if(r!==null&&r!==void 0)return r;return await t.readAsync()||{}},async readAsyncStrict(){let r=await(e.readAsyncStrict?.()??e.readAsync());if(r===kme)return kme;if(r!==null)return r;return await(t.readAsyncStrict?.()??t.readAsync())||{}},invalidateCache(){e.invalidateCache?.(),t.invalidateCache?.()},mutate(r){return hNe(n,r)},async update(r){let o=await e.readAsync(),s=await e.update(r);if(s.success){if(o===null)await t.delete();return Ie("secure_storage_credentials_write"),s}if(s.transient)return isTmuxControlMode("secure_storage_credentials_write","primary_transient_skip_fallback"),s;let i=await t.update(r);if(i.success){if(o!==null)await e.delete();return isTmuxControlMode("secure_storage_credentials_write","plaintext_fallback_used"),{success:!0,warning:i.warning}}return Oe("secure_storage_credentials_write","primary_and_fallback_failed"),{success:!1}},async delete(){let r=await t.readAsync()!==null,[o,s]=await Promise.all([e.delete(),t.delete()]);return o||r&&s}};return n}
-var P9s=b(()=>{ln();sdn();Rwt()});
-export {D9s,P9s};
+import {Q} from "../runtime.ts";
+var d8s=Q((iwh,Uxr)=>{var u8s=Symbol();function Q9u(e,t,n){let r=t[u8s];if(r)return t.stat(e,(s,i)=>{if(s)return n(s);n(null,i.mtime,r)});let o=new Date(Math.ceil(Date.now()/1000)*1000+5);t.utimes(e,o,o,(s)=>{if(s)return n(s);t.stat(e,(i,a)=>{if(i)return n(i);let l=a.mtime.getTime()%1000===0?"s":"ms";Object.defineProperty(t,u8s,{value:l}),n(null,a.mtime,l)})})}function Z9u(e){let t=Date.now();if(e==="s")t=Math.ceil(t/1000)*1000;return new Date(t)}Uxr.exports.probe=Q9u;Uxr.exports.getMtime=Z9u});
+export {d8s};

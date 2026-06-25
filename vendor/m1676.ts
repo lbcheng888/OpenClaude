@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {MHr,Ipn} from "./m1658.ts";
-import {GHr,VWs,KWs} from "./m1675.ts";
+import {rQe} from "./m1674.ts";
 import {b} from "../runtime.ts";
-import {DQ} from "./m1662.ts";
-function zWs(){let e=MHr();return{name:VHr,sendRequest:async(t,n)=>{if(t.multipartBody){for(let r of t.multipartBody.parts)if(GHr(r.body))r.body=VWs(r.body)}return e.sendRequest(t,n)}}}
-var VHr;
-var YWs=b(()=>{DQ();KWs();VHr=Ipn});
-export {zWs,VHr,YWs};
+import {TOr} from "./m1675.ts";
+function LYs(e,t){let{cleanupBeforeAbort:n,abortSignal:r,abortErrorMsg:o}=t!==null&&t!==void 0?t:{};return new Promise((s,i)=>{function a(){i(new rQe(o!==null&&o!==void 0?o:"The operation was aborted."))}function l(){r===null||r===void 0||r.removeEventListener("abort",c)}function c(){n===null||n===void 0||n(),l(),a()}if(r===null||r===void 0?void 0:r.aborted)return a();try{e((u)=>{l(),s(u)},(u)=>{l(),i(u)})}catch(u){i(u)}r===null||r===void 0||r.addEventListener("abort",c)})}
+var MYs=b(()=>{TOr()});
+export {LYs,MYs};

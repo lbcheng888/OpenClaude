@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function hjs(e){if(e.length%2!==0)throw Error("Hex encoded strings must have an even number length");let t=new Uint8Array(e.length/2);for(let n=0;n<e.length;n+=2){let r=e.slice(n,n+2).toLowerCase();if(r in dkr)t[n/2]=dkr[r];else throw Error(`Cannot decode unrecognized sequence ${r} as hexadecimal`)}return t}
-function uCe(e){let t="";for(let n=0;n<e.byteLength;n++)t+=Ajs[e[n]];return t}
-var Ajs,dkr;
-var pkr=b(()=>{Ajs={},dkr={};for(let e=0;e<256;e++){let t=e.toString(16).toLowerCase();if(t.length===1)t=`0${t}`;Ajs[e]=t,dkr[t]=e}});
-export {hjs,uCe,Ajs,dkr,pkr};
+import {Q} from "../runtime.ts";
+var o7s=Q((Pfn)=>{Object.defineProperty(Pfn,"__esModule",{value:!0});Pfn.numToUint8=void 0;function f4u(e){return new Uint8Array([(e&4278190080)>>24,(e&16711680)>>16,(e&65280)>>8,e&255])}Pfn.numToUint8=f4u});
+export {o7s};

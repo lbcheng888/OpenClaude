@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var dqi=X((t$h,uqi)=>{function QId(e){let t=e.COMMENT(/\(\*/,/\*\)/),n={className:"attribute",begin:/^[ ]*[a-zA-Z]+([\s_-]+[a-zA-Z]+)*/},o={begin:/=/,end:/[.;]/,contains:[t,{className:"meta",begin:/\?.*\?/},{className:"string",variants:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE,{begin:"`",end:"`"}]}]};return{name:"Extended Backus-Naur Form",illegal:/\S/,contains:[t,n,o]}}uqi.exports=QId});
-export {dqi};
+import {Q} from "../runtime.ts";
+var PVi=Q((F7g,DVi)=>{function gUd(e){return{name:"CSP",case_insensitive:!1,keywords:{$pattern:"[a-zA-Z][a-zA-Z0-9_-]*",keyword:"base-uri child-src connect-src default-src font-src form-action frame-ancestors frame-src img-src media-src object-src plugin-types report-uri sandbox script-src style-src"},contains:[{className:"string",begin:"'",end:"'"},{className:"attribute",begin:"^Content",end:":",excludeEnd:!0}]}}DVi.exports=gUd});
+export {PVi};

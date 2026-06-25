@@ -1,18 +1,19 @@
 // @ts-nocheck
-import {PERMISSION_MODES,U2,EXTERNAL_PERMISSION_MODES} from "./m716.ts";
+import {C_,lk} from "./m125.ts";
+import {or,dn} from "../src/config/0137_namespace.ts";
+import {Ov,GN} from "./m640.ts";
+import {qt,tn} from "../src/config/0230_encoding.ts";
+import {u3} from "./m706.ts";
 import {b} from "../runtime.ts";
-import {Xr,cl} from "./m321.ts";
-import {sl,onn} from "./m715.ts";
-import {we} from "./m455.ts";
-function eKe(e){return e!=="bubble"}
-function lnn(e){return Zts[e]??Zts.default}
-function xO(e){return lnn(e).external}
-function t1(e){return PERMISSION_MODES.includes(e)?e:"default"}
-function oQ(e){return lnn(e).title}
-function nns(e){return e==="default"||e===void 0}
-function tKe(e,t){if(e==="auto")return"classify";if(e==="bypassPermissions"||e==="plan"&&t)return"allow";if(e==="dontAsk")return"deny";return"ask"}
-function nKe(e){return lnn(e).symbol}
-function wB(e){return lnn(e).color}
-var ens,tns,Zts;
-var eC=b(()=>{Xr();sl();U2();ens=we(()=>cl.enum(PERMISSION_MODES)),tns=we(()=>cl.enum(EXTERNAL_PERMISSION_MODES)),Zts={default:{title:"Default",shortTitle:"Default",symbol:"",color:"text",external:"default"},plan:{title:"Plan Mode",shortTitle:"Plan",symbol:onn,color:"planMode",external:"plan"},acceptEdits:{title:"Accept edits",shortTitle:"Accept",symbol:"\u23F5\u23F5",color:"autoAccept",external:"acceptEdits"},bypassPermissions:{title:"Bypass Permissions",shortTitle:"Bypass",symbol:"\u23F5\u23F5",color:"error",external:"bypassPermissions"},dontAsk:{title:"Don't Ask",shortTitle:"DontAsk",symbol:"\u23F5\u23F5",color:"error",external:"dontAsk"},auto:{title:"Auto mode",shortTitle:"Auto",symbol:"\u23F5\u23F5",color:"warning",external:"auto"}}});
-export {eKe,lnn,xO,t1,oQ,nns,tKe,nKe,wB,ens,tns,Zts,eC};
+function jje(e){DRt=e,C_()}
+function vas(){DRt=null,uSr=void 0,dSr=!1}
+function was(){dSr=!0}
+function kas(){return dSr}
+function _oe(e){return uSr=e,e}
+function qpe(){return}
+function Don(){return qpe()??Ras.join(or(),xau)}
+function Dau(){try{let e=Ov(Don()),t=qt(u3(e));if(!t||typeof t!=="object"||Array.isArray(t))return null;return t}catch{return null}}
+function Wpe(){if(!qpe()&&uSr!==!0)return null;if(DRt)return DRt;let e=Dau();if(e)return DRt=e,C_(),e;return null}
+var Ras,xau="remote-settings.json",DRt=null,uSr,dSr=!1;
+var PRt=b(()=>{dn();GN();lk();tn();Ras=require("path")});
+export {jje,vas,was,kas,_oe,qpe,Don,Dau,Wpe,Ras,xau,DRt,uSr,dSr,PRt};

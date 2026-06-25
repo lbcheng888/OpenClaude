@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {parse,parseAsync,GYt} from "./m256.ts";
-import {$ZodTuple,$ZodArray,$ZodUnknown,eTt} from "./m260.ts";
-import {_tuple,_array,_unknown,War} from "./m302.ts";
 import {b} from "../runtime.ts";
-class $ZodFunction{constructor(e){this._def=e,this.def=e}implement(e){if(typeof e!=="function")throw Error("implement() must be called with a function");let t=(...n)=>{let r=this._def.input?parse(this._def.input,n,void 0,{callee:t}):n;if(!Array.isArray(r))throw Error("Invalid arguments schema: not an array or tuple schema.");let o=e(...r);return this._def.output?parse(this._def.output,o,void 0,{callee:t}):o};return t}implementAsync(e){if(typeof e!=="function")throw Error("implement() must be called with a function");let t=async(...n)=>{let r=this._def.input?await parseAsync(this._def.input,n,void 0,{callee:t}):n;if(!Array.isArray(r))throw Error("Invalid arguments schema: not an array or tuple schema.");let o=await e(...r);return this._def.output?parseAsync(this._def.output,o,void 0,{callee:t}):o};return t}input(...e){let t=this.constructor;if(Array.isArray(e[0]))return new t({type:"function",input:new $ZodTuple({type:"tuple",items:e[0],rest:e[1]}),output:this._def.output});return new t({type:"function",input:e[0],output:this._def.output})}output(e){return new this.constructor({type:"function",input:this._def.input,output:e})}}
-function CXt(e){return new $ZodFunction({type:"function",input:Array.isArray(e?.input)?_tuple($ZodTuple,e?.input):e?.input??_array($ZodArray,_unknown($ZodUnknown)),output:e?.output??_unknown($ZodUnknown)})}
-var Aqo=b(()=>{War();GYt();eTt();eTt()});
-export {$ZodFunction,CXt,Aqo};
+class $ZodRegistry{constructor(){this._map=new WeakMap,this._idmap=new Map}add(e,...t){let n=t[0];if(this._map.set(e,n),n&&typeof n==="object"&&"id"in n){if(this._idmap.has(n.id))throw Error(`ID ${n.id} already exists in the registry`);this._idmap.set(n.id,e)}return this}remove(e){return this._map.delete(e),this}get(e){let t=e._zod.parent;if(t){let n={...this.get(t)??{}};return delete n.id,{...n,...this._map.get(e)}}return this._map.get(e)}has(e){return this._map.has(e)}}
+function registry(){return new $ZodRegistry}
+var $output,$input,globalRegistry;
+var tpr=b(()=>{$output=Symbol("ZodOutput"),$input=Symbol("ZodInput");globalRegistry=registry()});
+export {$ZodRegistry,registry,$output,$input,globalRegistry,tpr};

@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {useIsScreenReaderEnabled,dwe} from "./m2434.ts";
-import {b} from "../runtime.ts";
-function Decorative(e){let{children:t,fallback:n}=e;return useIsScreenReaderEnabled()?n??null:t}
-var nwi=b(()=>{dwe()});
-export {Decorative,nwi};
+import {Q} from "../runtime.ts";
+import {X0i} from "./m2434.ts";
+import {Vnn} from "./m541.ts";
+var exi=Q((cEg,Z0i)=>{var Hyd=X0i(),Mtt=Vnn();function Q0i(e){if(/^\d{3,4}$/.test(e)){let n=/(\d{1,2})(\d{2})/.exec(e);return{major:0,minor:parseInt(n[1],10),patch:parseInt(n[2],10)}}let t=(e||"").split(".").map((n)=>parseInt(n,10));return{major:t[0],minor:t[1],patch:t[2]}}function n6r(e){let{env:t}=process;if("FORCE_HYPERLINK"in t)return!(t.FORCE_HYPERLINK.length>0&&parseInt(t.FORCE_HYPERLINK,10)===0);if(Mtt("no-hyperlink")||Mtt("no-hyperlinks")||Mtt("hyperlink=false")||Mtt("hyperlink=never"))return!1;if(Mtt("hyperlink=true")||Mtt("hyperlink=always"))return!0;if("NETLIFY"in t)return!0;if(!Hyd.supportsColor(e))return!1;if(e&&!e.isTTY)return!1;if("CI"in t)return!1;if("TEAMCITY_VERSION"in t)return!1;if("TERM_PROGRAM"in t){let n=Q0i(t.TERM_PROGRAM_VERSION);switch(t.TERM_PROGRAM){case"iTerm.app":if(n.major===3)return n.minor>=1;return n.major>3;case"WezTerm":return n.major>=20200620;case"vscode":return n.major>1||n.major===1&&n.minor>=72}}if("VTE_VERSION"in t){if(t.VTE_VERSION==="0.50.0")return!1;let n=Q0i(t.VTE_VERSION);return n.major>0||n.minor>=50}return!1}Z0i.exports={supportsHyperlink:n6r,stdout:n6r(process.stdout),stderr:n6r(process.stderr)}});
+export {exi};

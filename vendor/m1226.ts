@@ -1,22 +1,7 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {dIs} from "./m1214.ts";
-import {TIs} from "./m1216.ts";
-import {SIs,bIs,EIs,CIs,xIs} from "./m1217.ts";
-import {kIs,HIs,DIs} from "./m1218.ts";
-import {BIs} from "./m1219.ts";
-import {FIs} from "./m1220.ts";
-import {jIs} from "./m1221.ts";
-import {WIs,VIs} from "./m1222.ts";
-import {KIs,QIs} from "./m1223.ts";
-import {ZIs,t0s,r0s} from "./m1224.ts";
-import {o0s,s0s,i0s,a0s,l0s,c0s,u0s,d0s,p0s,m0s,f0s,A0s,h0s,g0s,y0s} from "./m1225.ts";
-var T0s=()=>{};
-var S0s=()=>{};
-var b0s=()=>{};
-var E0s=()=>{};
-var C0s=()=>{};
-var v0s=()=>{};
-var w0s=()=>{};
-var ACr=b(()=>{dIs();TIs();SIs();bIs();EIs();CIs();xIs();kIs();HIs();DIs();BIs();FIs();jIs();WIs();VIs();KIs();QIs();ZIs();t0s();r0s();o0s();s0s();i0s();a0s();l0s();c0s();u0s();d0s();p0s();m0s();f0s();A0s();h0s();g0s();y0s();T0s();S0s();b0s();E0s();C0s();v0s();w0s()});
-export {T0s,S0s,b0s,E0s,C0s,v0s,w0s,ACr};
+import {OMs} from "./m1225.ts";
+var LMs=()=>{};
+var MMs=()=>{};
+var NMs=b(()=>{OMs();LMs();MMs()});
+export {LMs,MMs,NMs};

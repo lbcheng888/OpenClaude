@@ -1,6 +1,20 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {zul,Kul} from "./m4614.ts";
-var $Kp,cSo;
-var Yul=b(()=>{$Kp={type:"local-jsx",name:"help",description:"Show help and available commands",requires:{ink:!0},load:()=>Promise.resolve().then(() => (zul(),Kul))},cSo=$Kp});
-export {$Kp,cSo,Yul};
+import {_t,uo} from "./m2468.ts";
+import {SVr,C$e,Hrt} from "./m2689.ts";
+import {Box} from "./m2432.ts";
+import {Ww,tht} from "./m4601.ts";
+import {cs,kte} from "./m3992.ts";
+import {Sn,lr} from "./m233.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function svo(e){let t=e.slice(0,ovo).join(", ");return e.length>ovo?`${t}, +${e.length-ovo} more`:t}
+function ivo(e){return e>=1000?`${Math.round(e/1000)}k`:String(e)}
+function avo(e){let t=Math.round(e*1000)/10;return t===0&&e>0?"<0.1%":`${t}%`}
+function T_l(){let e=y_l.c(57),t=_t(Otm);if(!t)return null;let n=t.cappedSkills.length,r=t.budgetMode!=="fits";if(n===0&&!r)return null;let o=t.budgetTruncatedSkills.length,s,i,a,l,c,u,d,p,m,f,h;if(e[0]!==o||e[1]!==n||e[2]!==r||e[3]!==t.budget||e[4]!==t.budgetFromEnv||e[5]!==t.budgetMode||e[6]!==t.budgetTruncatedSkills||e[7]!==t.bytesPerToken||e[8]!==t.cappedSkills||e[9]!==t.maxDescLen||e[10]!==t.rawTotalChars||e[11]!==t.totalChars){let y=Math.round(t.rawTotalChars/t.bytesPerToken);if(e[23]!==o||e[24]!==n||e[25]!==r||e[26]!==t.budget||e[27]!==t.budgetFromEnv||e[28]!==t.budgetMode||e[29]!==t.budgetTruncatedSkills||e[30]!==t.cappedSkills||e[31]!==t.maxDescLen||e[32]!==t.totalChars){let S=SVr(),E=t.budgetFromEnv?`${ivo(t.totalChars)}/${ivo(t.budget)} chars`:`${avo(t.totalChars/t.budget*S)}/${avo(S)} of context`;if(a=Box,m="column",f=1,e[40]===Symbol.for("react.memo_cache_sentinel"))h=XB.jsx(Ww,{title:"Skills",status:"warning"}),e[40]=h;else h=e[40];i=cs,d="tree",p=r?XB.jsxs(cs.Group,{children:[XB.jsx(cs.Node,{color:"warning",children:`${o} skill ${Sn(o,"description")} will be ${t.budgetMode==="truncate"?`shortened to ~${t.maxDescLen} chars`:t.budgetMode==="priority"?"dropped (full descriptions kept for most-used skills)":"dropped entirely"} (${E}): ${svo(t.budgetTruncatedSkills)}`}),XB.jsxs(cs.Node,{dimColor:!0,children:["run ",XB.jsx(Text,{color:"suggestion",children:"/skills"})," to disable some, or raise ",XB.jsx(Text,{color:"suggestion",children:"skillListingBudgetFraction"})," ","(currently ",avo(S),") in settings.json"]}),n>0&&XB.jsx(cs.Node,{dimColor:!0,children:`${n} ${Sn(n,"description exceeds","descriptions exceed")} the per-entry cap: ${svo(t.cappedSkills)}`})]}):XB.jsxs(cs.Group,{children:[XB.jsx(cs.Node,{color:"warning",children:`${n} skill ${Sn(n,"description exceeds","descriptions exceed")} the per-entry cap and will be shortened: ${svo(t.cappedSkills)}`}),XB.jsxs(cs.Node,{dimColor:!0,children:["raise ",XB.jsx(Text,{color:"suggestion",children:"skillListingMaxDescChars"})," ","(currently ",C$e(),") in settings.json"]})]}),e[23]=o,e[24]=n,e[25]=r,e[26]=t.budget,e[27]=t.budgetFromEnv,e[28]=t.budgetMode,e[29]=t.budgetTruncatedSkills,e[30]=t.cappedSkills,e[31]=t.maxDescLen,e[32]=t.totalChars,e[33]=i,e[34]=a,e[35]=d,e[36]=p,e[37]=m,e[38]=f,e[39]=h}else i=e[33],a=e[34],d=e[35],p=e[36],m=e[37],f=e[38],h=e[39];s=cs.Node,l=!0,c="Opting in would cost ~",u=ivo(y),e[0]=o,e[1]=n,e[2]=r,e[3]=t.budget,e[4]=t.budgetFromEnv,e[5]=t.budgetMode,e[6]=t.budgetTruncatedSkills,e[7]=t.bytesPerToken,e[8]=t.cappedSkills,e[9]=t.maxDescLen,e[10]=t.rawTotalChars,e[11]=t.totalChars,e[12]=s,e[13]=i,e[14]=a,e[15]=l,e[16]=c,e[17]=u,e[18]=d,e[19]=p,e[20]=m,e[21]=f,e[22]=h}else s=e[12],i=e[13],a=e[14],l=e[15],c=e[16],u=e[17],d=e[18],p=e[19],m=e[20],f=e[21],h=e[22];let g;if(e[41]!==s||e[42]!==l||e[43]!==c||e[44]!==u)g=XB.jsxs(s,{dimColor:l,children:[c,u," tokens for skills every session and uses rate limits faster"]}),e[41]=s,e[42]=l,e[43]=c,e[44]=u,e[45]=g;else g=e[45];let _;if(e[46]!==i||e[47]!==d||e[48]!==p||e[49]!==g)_=XB.jsxs(i,{variant:d,children:[p,g]}),e[46]=i,e[47]=d,e[48]=p,e[49]=g,e[50]=_;else _=e[50];let T;if(e[51]!==a||e[52]!==m||e[53]!==f||e[54]!==h||e[55]!==_)T=XB.jsxs(a,{flexDirection:m,marginTop:f,children:[h,_]}),e[51]=a,e[52]=m,e[53]=f,e[54]=h,e[55]=_,e[56]=T;else T=e[56];return T}
+function Otm(e){return e.skillTruncationStats}
+var y_l,XB,ovo=3;
+var S_l=b(()=>{je();uo();Hrt();lr();tht();kte();y_l=x(tt(),1),XB=x(oe(),1)});
+export {svo,ivo,avo,T_l,Otm,y_l,XB,ovo,S_l};

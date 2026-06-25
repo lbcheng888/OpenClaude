@@ -1,19 +1,9 @@
 // @ts-nocheck
-import {Ufr,$fr,qfr,nes} from "./m679.ts";
-import {jfr,ses,ies} from "./m680.ts";
-import {yZo,_Zo,TZo,hZo,gZo,SZo} from "./m668.ts";
-import {Lbt,lZo} from "./m664.ts";
-import {Ffr,YZo,JZo} from "./m678.ts";
-import {JQo,XQo} from "./m660.ts";
-import {KZo,GZo,VZo,WZo,zZo} from "./m677.ts";
-import {CZo,vZo} from "./m669.ts";
-import {VQo,yfr,KQo} from "./m658.ts";
-import {cZo,uZo} from "./m665.ts";
-import {b,M} from "../runtime.ts";
-import {_fr} from "./m657.ts";
-function zMe(e,t,n){let r=des(e,t,n),o=Ufr(e,t),s=$fr(e,t);jfr(s,r.options),yZo(r.options);let i;try{i=ktn.default.spawn(r.file,r.args,r.options)}catch(m){let f=new ktn.default.ChildProcess,A=Promise.reject(Lbt({error:m,stdout:"",stderr:"",all:"",command:o,escapedCommand:s,parsed:r,timedOut:!1,isCanceled:!1,killed:!1}));return Ffr(f,A),f}let a=YZo(i),l=_Zo(i,r.options,a),c=TZo(i,r.options,l),u={isCanceled:!1};i.kill=hZo.bind(null,i.kill.bind(i)),i.cancel=gZo.bind(null,i,u);let p=JQo(async()=>{let[{error:m,exitCode:f,signal:A,timedOut:h},g,_,y]=await KZo(i,r.options,c),T=Fbt(r.options,g),S=Fbt(r.options,_),v=Fbt(r.options,y);if(m||f!==0||A!==null){let R=Lbt({error:m,exitCode:f,signal:A,stdout:T,stderr:S,all:v,command:o,escapedCommand:s,parsed:r,timedOut:h,isCanceled:u.isCanceled||(r.options.signal?r.options.signal.aborted:!1),killed:i.killed});if(!r.options.reject)return R;throw R}return{command:o,escapedCommand:s,exitCode:0,stdout:T,stderr:S,all:v,failed:!1,timedOut:!1,isCanceled:!1,killed:!1}});return GZo(i,r.options),i.all=VZo(i,r.options),CZo(i),Ffr(i,p),i}
-function Wfr(e,t,n){let r=des(e,t,n),o=Ufr(e,t),s=$fr(e,t);jfr(s,r.options);let i=WZo(r.options),a;try{a=ktn.default.spawnSync(r.file,r.args,{...r.options,input:i})}catch(u){throw Lbt({error:u,stdout:"",stderr:"",all:"",command:o,escapedCommand:s,parsed:r,timedOut:!1,isCanceled:!1,killed:!1})}let l=Fbt(r.options,a.stdout,a.error),c=Fbt(r.options,a.stderr,a.error);if(a.error||a.status!==0||a.signal!==null){let u=Lbt({stdout:l,stderr:c,error:a.error,signal:a.signal,exitCode:a.status,command:o,escapedCommand:s,parsed:r,timedOut:a.error&&a.error.code==="ETIMEDOUT",isCanceled:!1,killed:a.signal!==null});if(!r.options.reject)return u;throw u}return{command:o,escapedCommand:s,exitCode:0,stdout:l,stderr:c,failed:!1,timedOut:!1,isCanceled:!1,killed:!1}}
-function pes(e){function t(n,...r){if(!Array.isArray(n))return pes({...e,...n});let[o,...s]=qfr(n,r);return zMe(o,s,aes(e))}return t.sync=(n,...r)=>{if(!Array.isArray(n))throw TypeError("Please use $(options).sync`command` instead of $.sync(options)`command`.");let[o,...s]=qfr(n,r);return Wfr(o,s,aes(e))},t}
-var les,ces,ktn,Bbt,ues,mJc=1e8,fJc=({env:e,extendEnv:t,preferLocal:n,localDir:r,execPath:o})=>{let s=t?{...Bbt.default.env,...e}:e;if(n)return VQo({env:s,cwd:r,execPath:o});return s},des=(e,t,n={})=>{let r=ues.default._parse(e,t,n);if(e=r.command,t=r.args,n=r.options,n={maxBuffer:mJc,buffer:!0,stripFinalNewline:!0,extendEnv:!0,preferLocal:!1,localDir:n.cwd||Bbt.default.cwd(),execPath:Bbt.default.execPath,encoding:"utf8",reject:!0,cleanup:!0,all:!1,windowsHide:!0,verbose:ses,...n},n.env=fJc(n),n.stdio=cZo(n),Bbt.default.platform==="win32"&&ces.default.basename(e,".exe")==="cmd")t.unshift("/q");return{file:e,args:t,options:n,parsed:r}},Fbt=(e,t,n)=>{if(typeof t!=="string"&&!les.Buffer.isBuffer(t))return n===void 0?void 0:"";if(e.stripFinalNewline)return yfr(t);return t},AJc=({input:e,inputFile:t,stdio:n})=>e===void 0&&t===void 0&&n===void 0?{stdin:"inherit"}:{},aes=(e={})=>({preferLocal:!0,...AJc(e),...e}),oSf;
-var Gfr=b(()=>{KQo();XQo();lZo();uZo();SZo();vZo();zZo();JZo();nes();ies();les=require("buffer"),ces=M(require("path")),ktn=M(require("child_process")),Bbt=M(require("process")),ues=M(_fr(),1);oSf=pes()});
-export {zMe,Wfr,pes,les,ces,ktn,Bbt,ues,mJc,fJc,des,Fbt,AJc,aes,oSf,Gfr};
+import {b} from "../runtime.ts";
+import {vss} from "./m677.ts";
+import {uTr} from "./m678.ts";
+import {Pss} from "./m679.ts";
+import {Oss} from "./m680.ts";
+import {cRt} from "./m676.ts";
+var Lss=b(()=>{vss();uTr();Pss();Oss();cRt()});
+export {Lss};

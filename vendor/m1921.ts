@@ -1,7 +1,9 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Vfn,WorkloadIdentityCredential} from "./m1920.ts";
-import {GS,hm} from "./m1631.ts";
-var zXs="ManagedIdentityCredential - Token Exchange",d6u,APr;
-var YXs=b(()=>{Vfn();GS();d6u=hm(zXs),APr={name:"tokenExchangeMsi",async isAvailable(e){let t=process.env,n=Boolean((e||t.AZURE_CLIENT_ID)&&t.AZURE_TENANT_ID&&process.env.AZURE_FEDERATED_TOKEN_FILE);if(!n)d6u.info(`${zXs}: Unavailable. The environment variables needed are: AZURE_CLIENT_ID (or the client ID sent through the parameters), AZURE_TENANT_ID and AZURE_FEDERATED_TOKEN_FILE`);return n},async getToken(e,t={}){let{scopes:n,clientId:r}=e,o={};return new WorkloadIdentityCredential(Object.assign(Object.assign({clientId:r,tenantId:process.env.AZURE_TENANT_ID,tokenFilePath:process.env.AZURE_FEDERATED_TOKEN_FILE},o),{disableInstanceDiscovery:!0})).getToken(n,t)}}});
-export {zXs,d6u,APr,YXs};
+import {L1r,bri} from "./m1917.ts";
+import {N1r,vri} from "./m1919.ts";
+import {B1r,Hri} from "./m1920.ts";
+import {b,x} from "../runtime.ts";
+async function U1r(){if(C_n.default.platform==="darwin"){let e=await L1r();return{name:await N1r(e),id:e}}if(C_n.default.platform==="linux"){let{stdout:e}=await bYu("xdg-mime",["query","default","x-scheme-handler/http"]),t=e.trim();return{name:EYu(t.replace(/.desktop$/,"").replace("-"," ")),id:t}}if(C_n.default.platform==="win32")return B1r();throw Error("Only macOS, Linux, and Windows are supported")}
+var Iri,C_n,xri,bYu,EYu=(e)=>e.toLowerCase().replaceAll(/(?:^|\s|-)\S/g,(t)=>t.toUpperCase());
+var Dri=b(()=>{bri();vri();Hri();Iri=require("util"),C_n=x(require("process")),xri=require("child_process"),bYu=Iri.promisify(xri.execFile)});
+export {U1r,Iri,C_n,xri,bYu,EYu,Dri};

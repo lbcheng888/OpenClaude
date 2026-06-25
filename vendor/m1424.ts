@@ -1,8 +1,9 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-class aRr{dbName;constructor(e="aws:cognito-identity-ids"){this.dbName=e}getItem(e){return this.withObjectStore("readonly",(t)=>{let n=t.get(e);return new Promise((r)=>{n.onerror=()=>r(null),n.onsuccess=()=>r(n.result?n.result.value:null)})}).catch(()=>null)}removeItem(e){return this.withObjectStore("readwrite",(t)=>{let n=t.delete(e);return new Promise((r,o)=>{n.onerror=()=>o(n.error),n.onsuccess=()=>r()})})}setItem(e,t){return this.withObjectStore("readwrite",(n)=>{let r=n.put({id:e,value:t});return new Promise((o,s)=>{r.onerror=()=>s(r.error),r.onsuccess=()=>o()})})}getDb(){let e=self.indexedDB.open(this.dbName,1);return new Promise((t,n)=>{e.onsuccess=()=>{t(e.result)},e.onerror=()=>{n(e.error)},e.onblocked=()=>{n(Error("Unable to access DB"))},e.onupgradeneeded=()=>{let r=e.result;r.onerror=()=>{n(Error("Failed to create object store"))},r.createObjectStore("IdentityIds",{keyPath:"id"})}})}withObjectStore(e,t){return this.getDb().then((n)=>{let r=n.transaction("IdentityIds",e);return r.oncomplete=()=>n.close(),new Promise((o,s)=>{r.onerror=()=>s(r.error),o(t(r.objectStore("IdentityIds")))}).catch((o)=>{throw n.close(),o})})}}
-class lRr{store;constructor(e={}){this.store=e}getItem(e){if(e in this.store)return this.store[e];return null}removeItem(e){delete this.store[e]}setItem(e,t){this.store[e]=t}}
-function I2s(){if(typeof self==="object"&&self.indexedDB)return new aRr;if(typeof window==="object"&&window.localStorage)return window.localStorage;return EPu}
-var EPu;
-var D2s=b(()=>{EPu=new lRr});
-export {aRr,lRr,I2s,EPu,D2s};
+import {b,x} from "../runtime.ts";
+import {Gpn,CognitoIdentityClient} from "./m1395.ts";
+import {omn,Ekt} from "./m1411.ts";
+import {Zu} from "./m855.ts";
+var S6s=()=>{};
+var b6s,kCh;
+var E6s=b(()=>{Gpn();omn();b6s=x(Zu(),1),kCh=b6s.createPaginator(CognitoIdentityClient,Ekt,"NextToken","NextToken","MaxResults")});
+export {S6s,b6s,kCh,E6s};

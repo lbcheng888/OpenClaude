@@ -1,4 +1,23 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Leo=X((bLn)=>{Object.defineProperty(bLn,"__esModule",{value:!0});bLn.CompressionAlgorithms=void 0;var J_a;(function(e){e[e.identity=0]="identity",e[e.deflate=1]="deflate",e[e.gzip=2]="gzip"})(J_a||(bLn.CompressionAlgorithms=J_a={}))});
-export {Leo};
+import {Q} from "../runtime.ts";
+import {Hro} from "./m3473.ts";
+import {Goo} from "./m3574.ts";
+import {Poo} from "./m3562.ts";
+import {Moo} from "./m3563.ts";
+import {Boo} from "./m3564.ts";
+import {qIe} from "./m3572.ts";
+import {mlt} from "./m3557.ts";
+import {eNn} from "./m3567.ts";
+import {Xee} from "./m3573.ts";
+import {J1n} from "./m3566.ts";
+import {$Ie} from "./m3570.ts";
+import {b4e} from "./m3571.ts";
+import {G1n} from "./m3558.ts";
+import {K1n} from "./m3560.ts";
+import {V1n} from "./m3559.ts";
+import {z1n} from "./m3561.ts";
+import {Uoo} from "./m3565.ts";
+import {E4e} from "./m3569.ts";
+import {XO} from "./m3568.ts";
+var gRa=Q((OP_,hRa)=>{var f_=hRa.exports=Hro();f_.build="light";function pup(e,t,n){if(typeof t==="function")n=t,t=new f_.Root;else if(!t)t=new f_.Root;return t.load(e,n)}f_.load=pup;function mup(e,t){if(!t)t=new f_.Root;return t.loadSync(e)}f_.loadSync=mup;f_.encoder=Goo();f_.decoder=Poo();f_.verifier=Moo();f_.converter=Boo();f_.ReflectionObject=qIe();f_.Namespace=mlt();f_.Root=eNn();f_.Enum=Xee();f_.Type=J1n();f_.Field=$Ie();f_.OneOf=b4e();f_.MapField=G1n();f_.Service=K1n();f_.Method=V1n();f_.Message=z1n();f_.wrappers=Uoo();f_.types=E4e();f_.util=XO();f_.ReflectionObject._configure(f_.Root);f_.Namespace._configure(f_.Type,f_.Service,f_.Enum);f_.Root._configure(f_.Type);f_.Field._configure(f_.Type)});
+export {gRa};

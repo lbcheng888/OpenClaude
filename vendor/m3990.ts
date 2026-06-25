@@ -1,18 +1,16 @@
 // @ts-nocheck
-import {Dl,lo} from "../src/tools/5190_userPromptCount.ts";
-import {Pw} from "./m2207.ts";
-import {lv,QM,sl} from "./m715.ts";
-import {Text} from "./m2423.ts";
-import {Box} from "./m2422.ts";
-import {l_,dU} from "./m3932.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function gNa(e){let t=zUn.c(2),{content:n}=e,r;if(t[0]!==n){let o=Dl(n,"local-command-stdout"),s=Dl(n,"local-command-stderr");if(r=[],o?.trim()&&o.trim()!==Pw)r.push(qy.createElement(hNa,{key:"stdout"},o.trim()));if(s?.trim())r.push(qy.createElement(hNa,{key:"stderr"},s.trim()));t[0]=n,t[1]=r}else r=t[1];if(r.length===0)return null;return r}
-function hNa(e){let t=zUn.c(5),{children:n}=e;if(n.startsWith(`${lv} `)||n.startsWith(`${QM} `)){let s;if(t[0]!==n)s=qy.createElement(HEp,null,n),t[0]=n,t[1]=s;else s=t[1];return s}let r;if(t[2]===Symbol.for("react.memo_cache_sentinel"))r=qy.createElement(Text,{dimColor:!0},"  \u23BF  "),t[2]=r;else r=t[2];let o;if(t[3]!==n)o=qy.createElement(Box,{flexDirection:"row"},r,qy.createElement(Box,{flexDirection:"column",flexGrow:1},qy.createElement(l_,null,n))),t[3]=n,t[4]=o;else o=t[4];return o}
-function HEp(e){let t=zUn.c(19),{children:n}=e,r=n[0],o,s,i;if(t[0]!==n){let f=n.indexOf(`
-`),A=f===-1?n.slice(2):n.slice(2,f);s=f===-1?"":n.slice(f+1).trim();let h=A.indexOf(" \xB7 ");o=h===-1?A:A.slice(0,h),i=h===-1?"":A.slice(h),t[0]=n,t[1]=o,t[2]=s,t[3]=i}else o=t[1],s=t[2],i=t[3];let a=i,l;if(t[4]!==r)l=qy.createElement(Text,{color:"background"},r," "),t[4]=r,t[5]=l;else l=t[5];let c;if(t[6]!==o)c=qy.createElement(Text,{bold:!0},o),t[6]=o,t[7]=c;else c=t[7];let u;if(t[8]!==a)u=a&&qy.createElement(Text,{dimColor:!0},a),t[8]=a,t[9]=u;else u=t[9];let d;if(t[10]!==l||t[11]!==c||t[12]!==u)d=qy.createElement(Text,null,l,c,u),t[10]=l,t[11]=c,t[12]=u,t[13]=d;else d=t[13];let p;if(t[14]!==s)p=s&&qy.createElement(Box,{flexDirection:"row"},qy.createElement(Text,{dimColor:!0},"  \u23BF  "),qy.createElement(Text,{dimColor:!0},s)),t[14]=s,t[15]=p;else p=t[15];let m;if(t[16]!==d||t[17]!==p)m=qy.createElement(Box,{flexDirection:"column"},d,p),t[16]=d,t[17]=p,t[18]=m;else m=t[18];return m}
-var zUn,qy;
-var _Na=b(()=>{sl();ze();lo();dU();zUn=M(rt(),1),qy=M(Te(),1)});
-export {gNa,hNa,HEp,zUn,qy,_Na};
+import {mi,lr} from "./m233.ts";
+import {b} from "../runtime.ts";
+var B9n="artifact-design",Sye="code-review",v6e="verify",D3t="simplify",Qdo="commit",Zdo="pr",epo="commit-push-pr";
+function mdt(e){if(typeof e==="object"&&e!==null&&"replacement"in e&&typeof e.replacement==="string"&&"partial"in e&&typeof e.partial==="boolean")return{replacement:e.replacement,partial:e.partial};return null}
+function b9a(e,t){let n=[],r=`${t}:`;for(let o of e){if(o.type!=="prompt"||!o.urlTemplate)continue;if(!o.name.startsWith(r))continue;n.push({uriTemplate:o.urlTemplate,name:o.name,description:o.description,server:t})}return n}
+function tpo(e){let t=e.indexOf("{");return t===-1?e:e.slice(0,t)}
+function U9n(e,t){let n=e.indexOf(":");if(n<=0)return null;let r=e.slice(0,n),o=e.slice(n+1);if(!o.includes("://"))return null;for(let s of t)if(s.type==="prompt"&&s.urlTemplate&&s.name.startsWith(`${r}:`)&&T0p(o,s.urlTemplate))return{commandName:s.name,args:o};return null}
+function T0p(e,t){let n=$9n(t),r=0;for(let o=0;o<n.length;o++){let s=n[o];if(s.type==="literal"){if(!e.startsWith(s.value,r))return!1;r+=s.value.length}else{let i=o+1;while(n[i]?.type==="variable")i++;let a=n[i];if(a?.type==="literal"){let c=i===n.length-1?e.lastIndexOf(a.value):e.indexOf(a.value,r);if(c<=r)return!1;r=c,o=i-1}else return e.length>r}}return r===e.length}
+function E9a(e){let t=$9n(e.template.uriTemplate),n=Object.keys(e.resolvedArgs).length,r=0;for(let o=0;o<t.length;o++){if(t[o].type!=="variable")continue;if(r===n)return t[o+1]?.type==="literal"&&t[o+2]?.type==="variable";r++}return!1}
+function $9n(e){let t=[],n=0,r=0;while(n<e.length)if(e[n]==="{"){if(n>r)t.push({type:"literal",value:e.slice(r,n)});let o=e.indexOf("}",n);if(o===-1)return t.push({type:"literal",value:e.slice(n)}),t;let s=e.slice(n+1,o);s=s.replace(/^[+#./;?&]/,"").replace(/\*$|:\d+$/,""),s=mi(s,","),t.push({type:"variable",name:s}),n=o+1,r=n}else n++;if(r<e.length)t.push({type:"literal",value:e.slice(r)});return t}
+function S0p(e,t){let n=$9n(e.uriTemplate),r={},o=0;for(let s=0;s<n.length;s++){let i=n[s];if(i.type==="literal"){let a=t.slice(o);if(a.length<i.value.length)return null;if(!a.startsWith(i.value))return null;o+=i.value.length}else{let a=n[s+1],l=a?.type==="literal"?a.value:null,c=t.slice(o);if(l){let u=c.indexOf(l);if(u===-1)return{template:e,argName:i.name,argValue:c,resolvedArgs:r,valueStartIndex:o};r[i.name]=c.slice(0,u),o+=u}else return{template:e,argName:i.name,argValue:c,resolvedArgs:r,valueStartIndex:o}}}return null}
+function C9a(e,t){let n=null,r=[-1,-1,-1];for(let o of t){let s=S0p(o,e);if(!s)continue;let i=[Object.keys(s.resolvedArgs).length,s.valueStartIndex,(o.uriTemplate.match(/\{/g)??[]).length];if(!n||i[0]>r[0]||i[0]===r[0]&&i[1]>r[1]||i[0]===r[0]&&i[1]===r[1]&&i[2]>r[2])n=s,r=i}return n}
+function A9a(e,t,n){let r=e.slice(0,t.valueStartIndex),o=$9n(t.template.uriTemplate),s=-1,i=0;for(let u=0;u<o.length;u++)if(o[u].type==="variable"){if(i===Object.keys(t.resolvedArgs).length){s=u;break}i++}let a=s+1;while(o[a]?.type==="variable")a++;let l=s>=0?o[a]:void 0,c=l?.type==="literal"?l.value:"";return r+n+c}
+var fdt=b(()=>{lr()});
+export {B9n,Sye,v6e,D3t,Qdo,Zdo,epo,mdt,b9a,tpo,U9n,T0p,E9a,$9n,S0p,C9a,A9a,fdt};

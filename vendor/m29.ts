@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function Epc(e,t){return e===t||e!==e&&t!==t}
-var _re;
-var AWe=b(()=>{_re=Epc});
-export {Epc,_re,AWe};
+function REc(e,t){return e==null?void 0:e[t]}
+var U3o;
+var $3o=b(()=>{U3o=REc});
+export {REc,U3o,$3o};

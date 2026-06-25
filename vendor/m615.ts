@@ -1,9 +1,5 @@
 // @ts-nocheck
-import {_re,AWe} from "./m29.ts";
-import {hSe,pyt} from "./m198.ts";
 import {b} from "../runtime.ts";
-function g7e(e){let t=[],n=!1;async function r(){if(n)return;if(t.length===0)return;n=!0;while(t.length>0){let{args:o,resolve:s,reject:i,context:a}=t.shift();try{let l=await e.apply(a,o);s(l)}catch(l){i(l)}}if(n=!1,t.length>0)r()}return function(...o){return new Promise((s,i)=>{t.push({args:o,resolve:s,reject:i,context:this}),r()})}}
-function $Kc(e,t,n){if(n!==void 0&&!_re(e[t],n)||n===void 0&&!(t in e))hSe(e,t,n)}
-var Rbt;
-var Kmr=b(()=>{pyt();AWe();Rbt=$Kc});
-export {g7e,$Kc,Rbt,Kmr};
+var n2="command-name",xv="command-message",Trn="command-args",jAt="bash-input",YAt="bash-stdout",ioe="bash-stderr",hyr="bash-exit-code",Tk="local-command-stdout",jX="local-command-stderr",C1e="local-command-caveat",Wns,aoe="tick",bc="task-notification",yp="task-id",Dv="tool-use-id",UEe="task-type",qP="output-file",Qd="status",Fu="summary",gyr="worktree",_yr="worktreePath",yyr="worktreeBranch",A1e="remote-review",lje="remote-review-progress",WN="teammate-message",R1e="channel",v1e='<channel source="',JAt="cross-session-message",Srn="agent-message",Mpe="fork-boilerplate",XAt="Your directive: ",i3,loe;
+var Ud=b(()=>{Wns=["bash-input","bash-stdout","bash-stderr","bash-exit-code","local-command-stdout","local-command-stderr","local-command-caveat"],i3=["help","-h","--help"],loe=["list","show","display","current","view","get","check","describe","print","version","about","status","?"]});
+export {n2,xv,Trn,jAt,YAt,ioe,hyr,Tk,jX,C1e,Wns,aoe,bc,yp,Dv,UEe,qP,Qd,Fu,gyr,_yr,yyr,A1e,lje,WN,R1e,v1e,JAt,Srn,Mpe,XAt,i3,loe,Ud};

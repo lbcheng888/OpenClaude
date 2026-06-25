@@ -1,21 +1,46 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {invalidateWorkflowCache,QIe,j9t} from "./m4183.ts";
-import {Le,Xt} from "../src/config/0228_encoding.ts";
-import {Ow,R4} from "../src/agent/2214_available.ts";
-var Hko={};
-isFullscreenWithTTY(Hko,{invalidateWorkflowCache:()=>invalidateWorkflowCache,getWorkflowCommands:()=>getWorkflowCommands,createWorkflowCommand:()=>createWorkflowCommand});
-function createWorkflowCommand(e){return{type:"prompt",name:e.name,description:e.description,hasUserSpecifiedDescription:!0,whenToUse:e.whenToUse,progressMessage:"running dynamic workflow",contentLength:e.script.length,source:e.source==="built-in"?"bundled":e.source,loadedFrom:e.source==="built-in"?"bundled":e.source==="plugin"?"plugin":"skills",...e.source==="plugin"&&{pluginInfo:{pluginManifest:e.pluginManifest,repository:e.plugin}},kind:"workflow",async getPromptForCommand(t){let n=e.phases?`
-
-Phases:
-`+e.phases.map((i)=>`- ${i.title}${i.detail?`: ${i.detail}`:""}`).join(`
-`):"",r=t.trim(),o=Le(e.name),s=r?`{ name: ${o}, args: ${Le(r)} }`:`{ name: ${o} }`;return[{type:"text",text:`Run the "${e.name}" workflow.
-
-${e.description}${e.whenToUse?`
-
-${e.whenToUse}`:""}${n}
-
-Invoke: Workflow(${s})`}]}}}
-async function getWorkflowCommands(e){if(!Ow())return[];return(await QIe(e)).filter((n)=>!n.hidden).map(createWorkflowCommand)}
-var Iko=b(()=>{Xt();j9t();R4()});
-export {Hko,createWorkflowCommand,getWorkflowCommands,Iko};
+import {_g,zR} from "./m2562.ts";
+import {Dy,SE} from "./m2559.ts";
+import {_r,ui} from "./m2463.ts";
+import {_t,bo,uo} from "./m2468.ts";
+import {shellToolNames,isReplMode} from "./m4331.ts";
+import {kKa,g5e} from "../src/agent/4190_runId.ts";
+import {Oo,ss} from "./m2553.ts";
+import {killWorkflowTask,pauseWorkflowTask,skipWorkflowAgent,retryWorkflowAgent,Hce} from "../src/agent/4186_parse.ts";
+import {WorkflowDetailDialog,qjn} from "./m4903.ts";
+import {Bw,Nte} from "./m4186.ts";
+import {the,oz} from "./m2254.ts";
+import {Bjn,IIo} from "./m4902.ts";
+import {zn} from "../src/api/0465_getOauthConfig.ts";
+import {oy,B8} from "./m2385.ts";
+import {IWt,z7n} from "./m4710.ts";
+import {Box} from "./m2432.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Text} from "./m2433.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {Hc,OE} from "./m3855.ts";
+import {wl,sy} from "./m2585.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {Sn,lr} from "./m233.ts";
+import {formatTokens,formatDuration,Xo} from "./m240.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function nAm(e){return{id:e.taskId,type:"local_workflow",description:e.summary??"Dynamic workflow",status:e.status,startTime:e.startTime,endTime:e.startTime+e.durationMs,toolUseId:void 0,outputFile:"",outputOffset:0,notified:!0,script:e.script,scriptPath:e.scriptPath,prompt:e.script,summary:e.summary,workflowName:e.workflowName,phases:e.phases,defaultModel:e.defaultModel,workflowRunId:e.runId,workflowProgress:e.workflowProgress,progressVersion:0,agentCount:e.agentCount,totalTokens:e.totalTokens??0,totalToolCalls:e.totalToolCalls??0,logs:e.logs,result:e.result,error:e.error}}
+function c2l(e){let t=VDo.c(139),{onDone:n}=e;_g("workflow-history-dialog");let{rows:r}=Dy(_r()),o=_t(dAm);bo();let s=shellToolNames(),i;if(t[0]===Symbol.for("react.memo_cache_sentinel"))i=[],t[0]=i;else i=t[0];let[a,l]=Gue.useState(i),[c,u]=Gue.useState(!0),d,p;if(t[1]===Symbol.for("react.memo_cache_sentinel"))d=()=>{let ie=!1;return kKa().then((ae)=>{if(!ie)l(ae),u(!1)}),()=>{ie=!0}},p=[],t[1]=d,t[2]=p;else d=t[1],p=t[2];Gue.useEffect(d,p);let m;if(t[3]!==a||t[4]!==o){let ae=Object.values(o??{}).filter(uAm),pe=new Set(ae.map(cAm).filter(lAm)),me=a.filter((de)=>!pe.has(de.runId)).map(aAm);m=[...ae.map(iAm),...me].sort(sAm),t[3]=a,t[4]=o,t[5]=m}else m=t[5];let f=m,h;if(t[6]===Symbol.for("react.memo_cache_sentinel"))h={mode:"list"},t[6]=h;else h=t[6];let[g,_]=Gue.useState(h),[T,y]=Gue.useState(0),S=Gue.useRef(!1),E;if(t[7]!==c||t[8]!==f[0]||t[9]!==f.length||t[10]!==g.mode)E=()=>{if(!c&&f.length===1&&g.mode==="list"&&!S.current)S.current=!0,_({mode:"detail",itemId:f[0].task.id})},t[7]=c,t[8]=f[0],t[9]=f.length,t[10]=g.mode,t[11]=E;else E=t[11];let R;if(t[12]!==c||t[13]!==f||t[14]!==g.mode)R=[c,f,g.mode],t[12]=c,t[13]=f,t[14]=g.mode,t[15]=R;else R=t[15];Gue.useEffect(E,R);let w=f[T],H;if(t[16]===Symbol.for("react.memo_cache_sentinel"))H=()=>y(oAm),t[16]=H;else H=t[16];let k;if(t[17]!==f.length)k=()=>y((ie)=>Math.min(f.length-1,ie+1)),t[17]=f.length,t[18]=k;else k=t[18];let I;if(t[19]!==w)I=()=>{if(w)_({mode:"detail",itemId:w.task.id})},t[19]=w,t[20]=I;else I=t[20];let D;if(t[21]!==I||t[22]!==k)D={"confirm:previous":H,"confirm:next":k,"confirm:yes":I},t[21]=I,t[22]=k,t[23]=D;else D=t[23];let O=g.mode==="list",L;if(t[24]!==O)L={context:"Confirmation",isActive:O},t[24]=O,t[25]=L;else L=t[25];Oo(D,L);let P=w!==void 0&&w.task.script.length>0,M;if(t[26]!==w||t[27]!==P||t[28]!==s||t[29]!==g.mode)M=(ie)=>{if(g.mode!=="list")return;if(ie.ctrl||ie.meta)return;if(ie.key==="x"&&w?.task.status==="running")ie.preventDefault(),killWorkflowTask(w.task.id,s);else if(ie.key==="s"&&P&&w)ie.preventDefault(),_({mode:"save",itemId:w.task.id})},t[26]=w,t[27]=P,t[28]=s,t[29]=g.mode,t[30]=M;else M=t[30];let B=M,N;if(t[31]!==f.length||t[32]!==n)N=()=>{if(S.current&&f.length<=1)n("Dynamic workflows dialog dismissed",{display:"system"});else S.current=!1,_({mode:"list"})},t[31]=f.length,t[32]=n,t[33]=N;else N=t[33];let F=N;if(g.mode==="detail"){let ie;if(t[34]!==f||t[35]!==g.itemId){let Oe;if(t[37]!==g.itemId)Oe=(We)=>We.task.id===g.itemId,t[37]=g.itemId,t[38]=Oe;else Oe=t[38];ie=f.find(Oe),t[34]=f,t[35]=g.itemId,t[36]=ie}else ie=t[36];let ae=ie;if(!ae)return _({mode:"list"}),null;let pe=ae.task.status==="running",me=ae.task,_e;if(t[39]!==n)_e=(Oe)=>Oe?n(Oe,{display:"system"}):n(),t[39]=n,t[40]=_e;else _e=t[40];let de;if(t[41]!==pe||t[42]!==ae.task.id||t[43]!==s)de=pe?()=>killWorkflowTask(ae.task.id,s):void 0,t[41]=pe,t[42]=ae.task.id,t[43]=s,t[44]=de;else de=t[44];let ge;if(t[45]!==pe||t[46]!==ae.task.id||t[47]!==s)ge=pe?()=>pauseWorkflowTask(ae.task.id,s):void 0,t[45]=pe,t[46]=ae.task.id,t[47]=s,t[48]=ge;else ge=t[48];let Te;if(t[49]!==n)Te=(Oe)=>n(Oe,{shouldQuery:!0,display:"system",metaMessages:[Oe]}),t[49]=n,t[50]=Te;else Te=t[50];let he;if(t[51]!==pe||t[52]!==ae.task.id||t[53]!==s)he=pe?(Oe)=>skipWorkflowAgent(ae.task.id,Oe,s):void 0,t[51]=pe,t[52]=ae.task.id,t[53]=s,t[54]=he;else he=t[54];let ye;if(t[55]!==pe||t[56]!==ae.task.id||t[57]!==s)ye=pe?(Oe)=>retryWorkflowAgent(ae.task.id,Oe,s):void 0,t[55]=pe,t[56]=ae.task.id,t[57]=s,t[58]=ye;else ye=t[58];let we;if(t[59]!==F||t[60]!==ae.task.id||t[61]!==me||t[62]!==_e||t[63]!==de||t[64]!==ge||t[65]!==Te||t[66]!==he||t[67]!==ye)we=aR.jsx(WorkflowDetailDialog,{workflow:me,onDone:_e,onBack:F,onKill:de,onPause:ge,onResume:Te,onSkipAgent:he,onRetryAgent:ye},ae.task.id),t[59]=F,t[60]=ae.task.id,t[61]=me,t[62]=_e,t[63]=de,t[64]=ge,t[65]=Te,t[66]=he,t[67]=ye,t[68]=we;else we=t[68];return we}if(g.mode==="save"){let ie,ae,pe;if(t[69]!==f||t[70]!==g.itemId){pe=Symbol.for("react.early_return_sentinel");e:{let ge;if(t[74]!==g.itemId)ge=(he)=>he.task.id===g.itemId,t[74]=g.itemId,t[75]=ge;else ge=t[75];if(ie=f.find(ge),!ie||ie.task.script.length===0){_({mode:"list"}),pe=null;break e}let Te=Bw(ie.task.script);ae=!("error"in Te)?Te.meta.name:the(ie.task.summary??ie.task.description)}t[69]=f,t[70]=g.itemId,t[71]=ie,t[72]=ae,t[73]=pe}else ie=t[71],ae=t[72],pe=t[73];if(pe!==Symbol.for("react.early_return_sentinel"))return pe;let me=ae,_e;if(t[76]!==n)_e=(ge)=>{if(ge)n(ge,{display:"system"});else _({mode:"list"})},t[76]=n,t[77]=_e;else _e=t[77];let de;if(t[78]!==me||t[79]!==ie.task.script||t[80]!==_e)de=aR.jsx(Bjn,{script:ie.task.script,defaultName:me,onDone:_e}),t[78]=me,t[79]=ie.task.script,t[80]=_e,t[81]=de;else de=t[81];return de}let V=zn(f,rAm),G=f.length-V,z,J,K,j,X,ee,te,ne,se,re,ue,le;if(t[82]!==G||t[83]!==B||t[84]!==c||t[85]!==f||t[86]!==n||t[87]!==r||t[88]!==V||t[89]!==w?.task.status||t[90]!==P||t[91]!==T){let ie=oy(r-7,3,f.length),{windowStart:ae,windowEnd:pe,moreAbove:me,moreBelow:_e}=IWt(T,f.length,ie),de=f.slice(ae,pe),ge;if(t[104]!==n)ge=()=>n("Dynamic workflows dialog dismissed",{display:"system"}),t[104]=n,t[105]=ge;else ge=t[105];let Te=ge;if(J=Box,se="column",re=0,ue=!0,le=B,z=preInitQueue,K="Dynamic workflows",t[106]!==G||t[107]!==f.length||t[108]!==V)j=f.length===0?void 0:aR.jsx(Text,{dimColor:!0,children:aR.jsxs(bn,{children:[V>0&&`${V} running`,G>0&&`${G} completed`]})}),t[106]=G,t[107]=f.length,t[108]=V,t[109]=j;else j=t[109];X=Te,ee="background";let he;if(t[110]!==f.length)he=f.length>0&&aR.jsx(at,{chord:["up","down"],action:"select"}),t[110]=f.length,t[111]=he;else he=t[111];let ye;if(t[112]!==f.length)ye=f.length>0&&aR.jsx(at,{chord:"enter",action:"view"}),t[112]=f.length,t[113]=ye;else ye=t[113];let we;if(t[114]!==w?.task.status)we=w?.task.status==="running"&&aR.jsx(at,{chord:"x",action:"stop"}),t[114]=w?.task.status,t[115]=we;else we=t[115];let Oe;if(t[116]!==P)Oe=P&&aR.jsx(at,{chord:"s",action:"save"}),t[116]=P,t[117]=Oe;else Oe=t[117];let We;if(t[118]===Symbol.for("react.memo_cache_sentinel"))We=aR.jsx(at,{chord:"escape",action:"close"}),t[118]=We;else We=t[118];if(t[119]!==he||t[120]!==ye||t[121]!==we||t[122]!==Oe)te=aR.jsxs(bn,{children:[he,ye,we,Oe,We]}),t[119]=he,t[120]=ye,t[121]=we,t[122]=Oe,t[123]=te;else te=t[123];ne=c?aR.jsx(Hc,{message:"Loading dynamic workflow history\u2026",dimColor:!0}):f.length===0?aR.jsx(wl,{children:"No dynamic workflows in this session."}):aR.jsxs(Box,{flexDirection:"column",children:[me>0&&aR.jsxs(Text,{dimColor:!0,children:["  ",Xe.arrowUp," ",me," more above"]}),de.map((Fe,ke)=>aR.jsx(pAm,{item:Fe,isSelected:ae+ke===T},Fe.task.id)),_e>0&&aR.jsxs(Text,{dimColor:!0,children:["  ",Xe.arrowDown," ",_e," more below"]})]}),t[82]=G,t[83]=B,t[84]=c,t[85]=f,t[86]=n,t[87]=r,t[88]=V,t[89]=w?.task.status,t[90]=P,t[91]=T,t[92]=z,t[93]=J,t[94]=K,t[95]=j,t[96]=X,t[97]=ee,t[98]=te,t[99]=ne,t[100]=se,t[101]=re,t[102]=ue,t[103]=le}else z=t[92],J=t[93],K=t[94],j=t[95],X=t[96],ee=t[97],te=t[98],ne=t[99],se=t[100],re=t[101],ue=t[102],le=t[103];let ce;if(t[124]!==z||t[125]!==K||t[126]!==j||t[127]!==X||t[128]!==ee||t[129]!==te||t[130]!==ne)ce=aR.jsx(z,{title:K,subtitle:j,onCancel:X,color:ee,inputGuide:te,children:ne}),t[124]=z,t[125]=K,t[126]=j,t[127]=X,t[128]=ee,t[129]=te,t[130]=ne,t[131]=ce;else ce=t[131];let Se;if(t[132]!==J||t[133]!==se||t[134]!==re||t[135]!==ue||t[136]!==le||t[137]!==ce)Se=aR.jsx(J,{flexDirection:se,tabIndex:re,autoFocus:ue,onKeyDown:le,children:ce}),t[132]=J,t[133]=se,t[134]=re,t[135]=ue,t[136]=le,t[137]=ce,t[138]=Se;else Se=t[138];return Se}
+function rAm(e){return e.task.status==="running"}
+function oAm(e){return Math.max(0,e-1)}
+function sAm(e,t){return t.task.startTime-e.task.startTime}
+function iAm(e){return{task:e}}
+function aAm(e){return{task:nAm(e),snapshot:e}}
+function lAm(e){return!!e}
+function cAm(e){return e.workflowRunId}
+function uAm(e){return e.type==="local_workflow"}
+function dAm(e){return e.tasks}
+function pAm(e){let t=VDo.c(27),{item:n,isSelected:r}=e,o=n.task,s=n.snapshot,i,a;e:switch(o.status){case"completed":{i=Xe.tick,a="success";break e}case"failed":case"killed":{i=Xe.cross,a="error";break e}default:i="\u27F3",a=void 0}let l=s?.totalTokens??o.totalTokens??0,c;if(t[0]!==o.endTime)c=o.endTime??Date.now(),t[0]=o.endTime,t[1]=c;else c=t[1];let u=Math.max(0,c-o.startTime-(o.totalPausedMs??0)),d;if(t[2]!==o.agentCount)d=o.agentCount>0?`${o.agentCount} ${Sn(o.agentCount,"agent")}`:null,t[2]=o.agentCount,t[3]=d;else d=t[3];let p;if(t[4]!==l)p=l>0?`${formatTokens(l)} tok`:null,t[4]=l,t[5]=p;else p=t[5];let m;if(t[6]!==u)m=formatDuration(u),t[6]=u,t[7]=m;else m=t[7];let f;if(t[8]!==d||t[9]!==p||t[10]!==m)f=[d,p,m].filter(Boolean),t[8]=d,t[9]=p,t[10]=m,t[11]=f;else f=t[11];let h=f,g=o.workflowName??o.summary??o.description,_=g.length>50?g.slice(0,49)+"\u2026":g,T=r?Xe.pointer+" ":"  ",y;if(t[12]!==T)y=aR.jsx(Text,{children:T}),t[12]=T,t[13]=y;else y=t[13];let S=r?"suggestion":void 0,E;if(t[14]!==i||t[15]!==a)E=aR.jsx(Text,{color:a,children:i}),t[14]=i,t[15]=a,t[16]=E;else E=t[16];let R=h.join(" \xB7 "),w;if(t[17]!==R)w=aR.jsxs(Text,{dimColor:!0,children:["  ",R]}),t[17]=R,t[18]=w;else w=t[18];let H;if(t[19]!==_||t[20]!==w||t[21]!==S||t[22]!==E)H=aR.jsxs(Text,{color:S,children:[E," ",_,w]}),t[19]=_,t[20]=w,t[21]=S,t[22]=E,t[23]=H;else H=t[23];let k;if(t[24]!==H||t[25]!==y)k=aR.jsxs(Box,{children:[y,H]}),t[24]=H,t[25]=y,t[26]=k;else k=t[26];return k}
+var VDo,Gue,aR;
+var u2l=b(()=>{Zs();uo();isReplMode();SE();zR();ui();B8();je();ss();Hce();Nte();g5e();oz();Xo();lr();Is();di();sy();Wo();OE();z7n();IIo();qjn();VDo=x(tt(),1),Gue=x(et(),1),aR=x(oe(),1)});
+export {nAm,c2l,rAm,oAm,sAm,iAm,aAm,lAm,cAm,uAm,dAm,pAm,VDo,Gue,aR,u2l};

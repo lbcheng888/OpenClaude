@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {VFs,KFs} from "./m1384.ts";
-import {b,M} from "../runtime.ts";
-import {Ioe} from "./m866.ts";
-import {JX} from "./m606.ts";
-var zFs,lYe,cDu,YFs=(e,t={})=>cDu.get(e,()=>lYe.resolveEndpoint(VFs,{endpointParams:e,logger:t.logger}));
-var JFs=b(()=>{KFs();zFs=M(Ioe(),1),lYe=M(JX(),1),cDu=new lYe.EndpointCache({size:50,params:["Endpoint","Region","UseDualStack","UseFIPS"]});lYe.customEndpointFunctions.aws=zFs.awsEndpointFunctions});
-export {zFs,lYe,cDu,YFs,JFs};
+import {b} from "../runtime.ts";
+var b4s=(e)=>typeof ArrayBuffer==="function"&&e instanceof ArrayBuffer||Object.prototype.toString.call(e)==="[object ArrayBuffer]";
+var Opn,E4s=(e,t=0,n=e.byteLength-t)=>{if(!b4s(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return Opn.Buffer.from(e,t,n)},C4s=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?Opn.Buffer.from(e,t):Opn.Buffer.from(e)};
+var qIr=b(()=>{Opn=require("buffer")});
+export {b4s,Opn,E4s,C4s,qIr};

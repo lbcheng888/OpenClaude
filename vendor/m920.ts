@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {IKe} from "./m919.ts";
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-var gAs,aEe=(e,t,n=!1)=>{if(typeof t>"u")throw new gAs.TokenProviderError(`Value not present for '${e}' in SSO Token${n?". Cannot refresh":""}. ${IKe}`,!1)};
-var _As=b(()=>{gAs=M(createDefaultGlobalConfig(),1)});
-export {gAs,aEe,_As};
+import {Q} from "../runtime.ts";
+import {yk} from "./m613.ts";
+import {$N} from "./m607.ts";
+var PSs=Q((WYe)=>{Object.defineProperty(WYe,"__esModule",{value:!0});WYe.warning=void 0;WYe.stsRegionDefaultResolver=cbu;var DSs=yk(),lbu=$N();function cbu(e={}){return(0,lbu.loadConfig)({...DSs.NODE_REGION_CONFIG_OPTIONS,async default(){if(!WYe.warning.silence)console.warn("@aws-sdk - WARN - default STS region of us-east-1 used. See @aws-sdk/credential-providers README and set a region explicitly.");return"us-east-1"}},{...DSs.NODE_REGION_CONFIG_FILE_OPTIONS,...e})}WYe.warning={silence:!1}});
+export {PSs};

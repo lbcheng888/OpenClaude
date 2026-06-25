@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {getGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {xh,mf} from "./m702.ts";
-import {getSettingsForSource,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {b} from "../runtime.ts";
-function R$l(){if(process.env.NODE_EXTRA_CA_CERTS)return;let e=pwm();if(e)process.env.NODE_EXTRA_CA_CERTS=e,logForDebugging(`CA certs: Applied NODE_EXTRA_CA_CERTS from config to process.env: ${e}`)}
-function pwm(){try{let t=getGlobalConfig()?.env,r=(xh("userSettings")?getSettingsForSource("userSettings"):void 0)?.env;logForDebugging(`CA certs: Config fallback - globalEnv keys: ${t?Object.keys(t).join(","):"none"}, settingsEnv keys: ${r?Object.keys(r).join(","):"none"}`);let o=r?.NODE_EXTRA_CA_CERTS||t?.NODE_EXTRA_CA_CERTS;if(o)logForDebugging(`CA certs: Found NODE_EXTRA_CA_CERTS in config/settings: ${o}`);return o}catch(e){logForDebugging(`CA certs: Config fallback failed: ${e}`,{level:"error"});return}}
-var x$l=b(()=>{Qn();qe();mf();yr()});
-export {R$l,pwm,x$l};
+import {b,x} from "../runtime.ts";
+import {B8l} from "./m5247.ts";
+var U8l,b_b,E_b,C_b,A_b,R_b,$8l,v_b,q8l,w_b,collectFlagValueIndexes,k_b;
+var XQn=b(()=>{U8l=x(B8l(),1),{program:b_b,createCommand:E_b,createArgument:C_b,createOption:A_b,CommanderError:R_b,InvalidArgumentError:$8l,InvalidOptionArgumentError:v_b,Command:q8l,Argument:w_b,Option:collectFlagValueIndexes,Help:k_b}=U8l.default});
+export {U8l,b_b,E_b,C_b,A_b,R_b,$8l,v_b,q8l,w_b,collectFlagValueIndexes,k_b,XQn};

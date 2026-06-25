@@ -1,30 +1,9 @@
 // @ts-nocheck
+import {HKo,Ven} from "./m325.ts";
+import {s7o,tfr} from "./m348.ts";
+import {Ken,bR,CK} from "./m327.ts";
 import {b} from "../runtime.ts";
-import {Hcr,djo} from "./m348.ts";
-import {pQt} from "./m323.ts";
-import {rcr} from "./m324.ts";
-import {JI} from "./m347.ts";
-import {QV,scr} from "./m325.ts";
-import {icr,AQt} from "./m326.ts";
-import {acr} from "./m327.ts";
-import {ccr,ucr} from "./m328.ts";
-import {dcr} from "./m329.ts";
-import {pcr} from "./m330.ts";
-import {Acr} from "./m333.ts";
-import {hcr} from "./m334.ts";
-import {gcr} from "./m336.ts";
-import {_cr,ycr} from "./m337.ts";
-import {Tcr} from "./m338.ts";
-import {Scr} from "./m339.ts";
-import {bcr} from "./m340.ts";
-import {Rcr} from "./m345.ts";
-import {yQt} from "./m332.ts";
-import {Ecr} from "./m341.ts";
-import {gQt} from "./m331.ts";
-import {Ccr} from "./m342.ts";
-import {vcr} from "./m343.ts";
-import {TQt} from "./m335.ts";
-import {wcr} from "./m344.ts";
-import {xcr} from "./m346.ts";
-var pjo=b(()=>{Hcr();pQt();rcr();JI();djo();QV();scr();icr();AQt();acr();ccr();ucr();dcr();pcr();Acr();hcr();gcr();_cr();ycr();Tcr();Scr();bcr();Rcr();yQt();Ecr();gQt();Ccr();vcr();TQt();wcr();xcr();Hcr()});
-export {pjo};
+function Ad(e,t,n=!1){let r=t.seen.get(e);if(t.override){let a=t.override?.(e,t,r,n);if(a!==HKo)return a}if(r&&!n){let a=MPc(r,t);if(a!==void 0)return a}let o={def:e,path:t.currentPath,jsonSchema:void 0};t.seen.set(e,o);let s=s7o(e,e.typeName,t),i=typeof s==="function"?Ad(s(),t):s;if(i)NPc(e,t,i);if(t.postProcess){let a=t.postProcess(i,e,t);return o.jsonSchema=i,a}return o.jsonSchema=i,i}
+var MPc=(e,t)=>{switch(t.$refStrategy){case"root":return{$ref:e.path.join("/")};case"relative":return{$ref:Ken(t.currentPath,e.path)};case"none":case"seen":{if(e.path.length<t.currentPath.length&&e.path.every((n,r)=>t.currentPath[r]===n))return console.warn(`Recursive reference detected at ${t.currentPath.join("/")}! Defaulting to any`),bR(t);return t.$refStrategy==="seen"?bR(t):void 0}}},NPc=(e,t,n)=>{if(e.description){if(n.description=e.description,t.markdownDescription)n.markdownDescription=e.description}return n};
+var h0=b(()=>{Ven();tfr();CK()});
+export {Ad,MPc,NPc,h0};

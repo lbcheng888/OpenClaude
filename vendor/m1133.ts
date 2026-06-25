@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,cRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Yxs,ListInferenceProfilesCommand;
-var qan=b(()=>{ri();wi();xi();Yxs=M(yo(),1);ListInferenceProfilesCommand=class ListInferenceProfilesCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Yxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListInferenceProfiles",{}).n("BedrockClient","ListInferenceProfilesCommand").sc(cRs).build(){}});
-export {Yxs,ListInferenceProfilesCommand,qan};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Qxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var FPs,ListEvaluationJobsCommand;
+var Sun=b(()=>{$s();ai();ci();FPs=x(yo(),1);ListEvaluationJobsCommand=class ListEvaluationJobsCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[FPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListEvaluationJobs",{}).n("BedrockClient","ListEvaluationJobsCommand").sc(Qxs).build(){}});
+export {FPs,ListEvaluationJobsCommand,Sun};

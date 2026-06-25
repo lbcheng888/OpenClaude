@@ -1,20 +1,23 @@
 // @ts-nocheck
-import {AE} from "../src/tools/2698_allErrors.ts";
-import {getOriginalCwd,lt} from "../src/session/0131_sent.ts";
-import {Text} from "./m2423.ts";
-import {Qi,$u} from "../src/mcp/2194_mcpServerName.ts";
-import {Box} from "./m2422.ts";
-import {QU,oTe} from "./m5411.ts";
-import {eOe,FGt} from "../src/tui/5458_options.ts";
-import {Tm,Fk} from "./m3341.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function kLm(e,t,n){switch(e){case"yes":return{behavior:"allow",updatedInput:t.input,...n&&{feedback:n}};case"yes-exact":return{behavior:"allow",updatedInput:t.input,permissionUpdates:[{type:"addRules",rules:[{toolName:AE,ruleContent:t.skill}],behavior:"allow",destination:"localSettings"}]};case"yes-prefix":{let r=t.skill.indexOf(" "),o=r>0?t.skill.substring(0,r):t.skill;return{behavior:"allow",updatedInput:t.input,permissionUpdates:[{type:"addRules",rules:[{toolName:AE,ruleContent:`${o}:*`}],behavior:"allow",destination:"localSettings"}]}}case"no":return{behavior:"deny",...n&&{feedback:n}}}}
-function HLm(e){return e.showAlwaysAllow&&e.skill!==""}
-function ILm(e){if(!e.showAlwaysAllow)return!1;return e.skill.indexOf(" ")>0}
-function CVl(e){let t=EVl.c(52),{payload:n,answer:r}=e,o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o=getOriginalCwd(),t[0]=o;else o=t[0];let s=o,i;if(t[1]!==n)i=HLm(n),t[1]=n,t[2]=i;else i=t[2];let a=i,l;if(t[3]!==n)l=ILm(n),t[3]=n,t[4]=l;else l=t[4];let c=l,u;if(t[5]===Symbol.for("react.memo_cache_sentinel"))u={label:"Yes",value:"yes",feedbackConfig:{type:"accept"}},t[5]=u;else u=t[5];let d;if(t[6]!==n.skill||t[7]!==a||t[8]!==c){if(d=[u],a){let P;if(t[10]!==n.skill)P=jE.createElement(Text,{bold:!0},n.skill),t[10]=n.skill,t[11]=P;else P=t[11];let L;if(t[12]===Symbol.for("react.memo_cache_sentinel"))L=jE.createElement(Text,{bold:!0},s),t[12]=L;else L=t[12];let D;if(t[13]!==P)D={label:jE.createElement(Text,null,"Yes, and don't ask again for ",P," ","in ",L),value:"yes-exact"},t[13]=P,t[14]=D;else D=t[14];d.push(D)}if(c){let P;if(t[15]!==n.skill){let U=n.skill.indexOf(" ");P=n.skill.substring(0,U),t[15]=n.skill,t[16]=P}else P=t[16];let D=P+":*",N;if(t[17]!==D)N=jE.createElement(Text,{bold:!0},D),t[17]=D,t[18]=N;else N=t[18];let O;if(t[19]===Symbol.for("react.memo_cache_sentinel"))O=jE.createElement(Text,{bold:!0},s),t[19]=O;else O=t[19];let $;if(t[20]!==N)$={label:jE.createElement(Text,null,"Yes, and don't ask again for"," ",N," commands in"," ",O),value:"yes-prefix"},t[20]=N,t[21]=$;else $=t[21];d.push($)}let I;if(t[22]===Symbol.for("react.memo_cache_sentinel"))I={label:"No",value:"no",feedbackConfig:{type:"reject"}},t[22]=I;else I=t[22];d.push(I),t[6]=n.skill,t[7]=a,t[8]=c,t[9]=d}else d=t[9];let p=d,m;if(t[23]!==n.toolName)m=Qi(n.toolName),t[23]=n.toolName,t[24]=m;else m=t[24];let f;if(t[25]!==n.isMcp||t[26]!==m)f={toolName:m,isMcp:n.isMcp},t[25]=n.isMcp,t[26]=m,t[27]=f;else f=t[27];let A=f,h;if(t[28]!==r||t[29]!==n)h=(I,P)=>{r(kLm(I,n,P))},t[28]=r,t[29]=n,t[30]=h;else h=t[30];let g=h,_;if(t[31]!==r)_=()=>{r({behavior:"deny"})},t[31]=r,t[32]=_;else _=t[32];let y=_,T=`Use skill "${n.skill}"?`,S;if(t[33]===Symbol.for("react.memo_cache_sentinel"))S=jE.createElement(Text,null,"Claude may use instructions, code, or files from this Skill."),t[33]=S;else S=t[33];let v;if(t[34]!==n.skillDescription)v=n.skillDescription?jE.createElement(Box,{flexDirection:"column",paddingX:2,paddingY:1},jE.createElement(Text,{dimColor:!0},n.skillDescription)):null,t[34]=n.skillDescription,t[35]=v;else v=t[35];let R;if(t[36]!==n.permissionResult)R=jE.createElement(QU,{permissionResult:n.permissionResult,toolType:"tool"}),t[36]=n.permissionResult,t[37]=R;else R=t[37];let k;if(t[38]!==y||t[39]!==g||t[40]!==p||t[41]!==A)k=jE.createElement(eOe,{options:p,onSelect:g,onCancel:y,toolAnalyticsContext:A}),t[38]=y,t[39]=g,t[40]=p,t[41]=A,t[42]=k;else k=t[42];let x;if(t[43]!==R||t[44]!==k)x=jE.createElement(Box,{flexDirection:"column"},R,k),t[43]=R,t[44]=k,t[45]=x;else x=t[45];let H;if(t[46]!==n.requestSource||t[47]!==n.workerBadge||t[48]!==v||t[49]!==x||t[50]!==T)H=jE.createElement(Tm,{title:T,workerBadge:n.workerBadge,requestSource:n.requestSource},S,v,x),t[46]=n.requestSource,t[47]=n.workerBadge,t[48]=v,t[49]=x,t[50]=T,t[51]=H;else H=t[51];return H}
-var EVl,jE;
-var vVl=b(()=>{lt();Fk();FGt();oTe();ze();$u();EVl=M(rt(),1),jE=M(Te(),1)});
-export {kLm,HLm,ILm,CVl,EVl,jE,vVl};
+import {$O,Aee,Ree,Lge,V4} from "./m3150.ts";
+import {hee} from "../src/api/3029_expanded.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {xe,He,Pt,mn} from "../src/telemetry/0600_feature_name.ts";
+import {b5e,l6n,i6n,cqt,a6n,c6n} from "./m4212.ts";
+import {B2,zM} from "./m2240.ts";
+import {shouldSkipHookDueToTrust,Wd} from "../src/tools/5204_shouldSkipHookDueToTrust.ts";
+import {Xae,KO} from "../src/agent/3295_code.ts";
+import {H$e,Zm} from "../src/config/2709_Zm.ts";
+import {Kxe,vG} from "./m4362.ts";
+import {buildMcpToolName,ky} from "../src/agent/2238_explicitlyRequested.ts";
+import {v4,qz} from "../src/telemetry/2700_qz.ts";
+import {getIsNonInteractiveSession,lt} from "../src/session/0132_sent.ts";
+import {b} from "../runtime.ts";
+function m$m(e,t){let n=t.manifest.userConfig?$O(Aee(t)):void 0,r=(o)=>{let s=Ree(o,t);if(n)s=Lge(s,n);return hee(s).expanded};return{name:e.name,command:r(e.command),description:e.description,when:e.when,pluginName:t.name,pluginRoot:t.path}}
+function f$m(e){let t=[],n=!1;for(let r of e){let o=r.monitors;if(!o)continue;for(let s of o)try{t.push(m$m(s,r))}catch(i){n=!0,logForDebugging(`plugin ${r.name}: failed to resolve monitor "${s.name}": ${i}`,{level:"error"})}}if(n)xe("plugin_load_monitors","plugin_load_monitors_resolve_failed");else He("plugin_load_monitors");return t}
+function h$m(e,t,n=b5e,r=l6n(i6n,cqt)){let o=0;function s(){if(o===0)return;n(e.description,`[plugin monitor "${e.name}" suppressed ${o} events \u2014 output rate exceeded]`,t.id),o=0}return{onBatch:(i)=>{if(!r.tryConsume()){o++;return}s(),n(e.description,i,t.id)},onExit:s}}
+async function g$m(e,t){if(B2())return;if(shouldSkipHookDueToTrust()){logForDebugging(`Skipping plugin monitor ${e.pluginName}:${e.name} - workspace trust not accepted`);return}let n={},r=h$m(e,n),o=a6n(r.onBatch),s=await Xae(e.command,t.abortController.signal,H$e(),{preventCwdChanges:!0,shouldUseSandbox:!1,onStdout:o.onData});return n.id=s.taskOutput.taskId,await Kxe({command:e.command,description:e.description,shellCommand:s,toolUseId:void 0,agentId:void 0,kind:"monitor"},t),s.result.then(()=>{o.flush(!0),r.onExit()}),n.id}
+async function OBo(e,t,n,r=g$m,o=p$m){if(buildMcpToolName("pluginMonitors"))return;if(!v4())return;if(getIsNonInteractiveSession())return;let s=!1;for(let i of f$m(e)){if(!t(i))continue;let a=`${i.pluginName}:${i.name}`;if(o.has(a))continue;o.add(a);try{if(await r(i,n)===void 0)o.delete(a)}catch(l){o.delete(a),s=!0,logForDebugging(`plugin monitor ${a}: failed to arm: ${l}`,{level:"error"})}}if(s)Pt("plugin_arm_monitor","plugin_arm_monitor_failed");else He("plugin_arm_monitor")}
+var p$m;
+var LQl=b(()=>{lt();mn();vG();c6n();qz();ky();qe();zM();Wd();KO();Zm();V4();p$m=new Set});
+export {m$m,f$m,h$m,g$m,OBo,p$m,LQl};

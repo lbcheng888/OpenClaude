@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {nC} from "./m880.ts";
-import {TB} from "./m604.ts";
-var dSr=X((hEe)=>{Object.defineProperty(hEe,"__esModule",{value:!0});hEe.resolveHttpAuthSchemeConfig=hEe.defaultSigninHttpAuthSchemeProvider=hEe.defaultSigninHttpAuthSchemeParametersProvider=void 0;var lAu=nC(),uSr=TB(),cAu=async(e,t,n)=>({operation:(0,uSr.getSmithyContext)(t).operation,region:await(0,uSr.normalizeProvider)(e.region)()||(()=>{throw Error("expected `region` to be configured for `aws.auth#sigv4`")})()});hEe.defaultSigninHttpAuthSchemeParametersProvider=cAu;function uAu(e){return{schemeId:"aws.auth#sigv4",signingProperties:{name:"signin",region:e.region},propertiesExtractor:(t,n)=>({signingProperties:{config:t,context:n}})}}function dAu(e){return{schemeId:"smithy.api#noAuth"}}var pAu=(e)=>{let t=[];switch(e.operation){case"CreateOAuth2Token":{t.push(dAu(e));break}default:t.push(uAu(e))}return t};hEe.defaultSigninHttpAuthSchemeProvider=pAu;var mAu=(e)=>{let t=(0,lAu.resolveAwsSdkSigV4Config)(e);return Object.assign(t,{authSchemePreference:(0,uSr.normalizeProvider)(e.authSchemePreference??[])})};hEe.resolveHttpAuthSchemeConfig=mAu});
-export {dSr};
+import {Q} from "../runtime.ts";
+import {iQ} from "./m921.ts";
+import {Ian} from "./m922.ts";
+import {m2} from "./m901.ts";
+import {TRs} from "./m994.ts";
+var ARs=Q((cln)=>{Object.defineProperty(cln,"__esModule",{value:!0});cln.resolveRuntimeExtensions=void 0;var SRs=iQ(),bRs=Ian(),ERs=m2(),CRs=TRs(),JCu=(e,t)=>{let n=Object.assign((0,SRs.getAwsRegionExtensionConfiguration)(e),(0,ERs.getDefaultExtensionConfiguration)(e),(0,bRs.getHttpHandlerExtensionConfiguration)(e),(0,CRs.getHttpAuthExtensionConfiguration)(e));return t.forEach((r)=>r.configure(n)),Object.assign(e,(0,SRs.resolveAwsRegionExtensionConfiguration)(n),(0,ERs.resolveDefaultRuntimeConfig)(n),(0,bRs.resolveHttpHandlerRuntimeConfig)(n),(0,CRs.resolveHttpAuthRuntimeConfig)(n))};cln.resolveRuntimeExtensions=JCu});
+export {ARs};

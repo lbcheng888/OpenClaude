@@ -1,9 +1,11 @@
 // @ts-nocheck
-import {mi,SH} from "./m135.ts";
 import {b} from "../runtime.ts";
-function P$o(e){return e?.output_format??e?.output_config?.format}
-function ior(e,t,n){let r=P$o(t);if(!t||!("parse"in(r??{})))return{...e,content:e.content.map((o)=>{if(o.type==="text"){let s=Object.defineProperty({...o},"parsed_output",{value:null,enumerable:!1});return Object.defineProperty(s,"parsed",{get(){return n.logger.warn("The `parsed` property on `text` blocks is deprecated, please use `parsed_output` instead."),null},enumerable:!1})}return o}),parsed_output:null};return aor(e,t,n)}
-function aor(e,t,n){let r=null,o=e.content.map((s)=>{if(s.type==="text"){let i=Whc(t,s.text);if(r===null)r=i;let a=Object.defineProperty({...s},"parsed_output",{value:i,enumerable:!1});return Object.defineProperty(a,"parsed",{get(){return n.logger.warn("The `parsed` property on `text` blocks is deprecated, please use `parsed_output` instead."),i},enumerable:!1})}return s});return{...e,content:o,parsed_output:r}}
-function Whc(e,t){let n=P$o(e);if(n?.type!=="json_schema")return null;try{if("parse"in n)return n.parse(t);return JSON.parse(t)}catch(r){throw new mi(`Failed to parse structured output: ${r}`)}}
-var lor=b(()=>{SH()});
-export {P$o,ior,aor,Whc,lor};
+import {dk,bX} from "./m154.ts";
+import {oA,Jd,is} from "./m158.ts";
+import {Dlr,QKe} from "./m171.ts";
+import {npe} from "./m170.ts";
+import {u0,oa} from "./m159.ts";
+import {Qs} from "./m137.ts";
+var fbt;
+var Plr=b(()=>{dk();oA();Dlr();npe();u0();fbt=class fbt extends Jd{create(e,t){let{betas:n,...r}=e;return this._client.post("/v1/messages/batches?beta=true",{body:r,...t,headers:is([{"anthropic-beta":[...n??[],"message-batches-2024-09-24"].toString()},t?.headers])})}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(oa`/v1/messages/batches/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"message-batches-2024-09-24"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/messages/batches?beta=true",bX,{query:r,...t,headers:is([{"anthropic-beta":[...n??[],"message-batches-2024-09-24"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(oa`/v1/messages/batches/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"message-batches-2024-09-24"].toString()},n?.headers])})}cancel(e,t={},n){let{betas:r}=t??{};return this._client.post(oa`/v1/messages/batches/${e}/cancel?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"message-batches-2024-09-24"].toString()},n?.headers])})}async results(e,t={},n){let r=await this.retrieve(e);if(!r.results_url)throw new Qs(`No batch \`results_url\`; Has it finished processing? ${r.processing_status} - ${r.id}`);let{betas:o}=t??{};return this._client.get(r.results_url,{...n,headers:is([{"anthropic-beta":[...o??[],"message-batches-2024-09-24"].toString(),Accept:"application/binary"},n?.headers]),stream:!0,__binaryResponse:!0})._thenUnwrap((s,i)=>QKe.fromResponse(i.response,i.controller))}}});
+export {fbt,Plr};

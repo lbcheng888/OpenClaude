@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {qK,N4} from "./m2376.ts";
-import {b} from "../runtime.ts";
-function swe(e,t,n,r,o){return{screen:qK(0,0,n,r,o),viewport:{width:t,height:e},cursor:{x:0,y:0,visible:!0}}}
-var HCi=b(()=>{N4()});
-export {swe,HCi};
+import {Q} from "../runtime.ts";
+var RIi=Q((j_g,AIi)=>{var l_d=/[|\\{}()[\]^$+*?.-]/g;AIi.exports=(e)=>{if(typeof e!=="string")throw TypeError("Expected a string");return e.replace(l_d,"\\$&")}});
+export {RIi};

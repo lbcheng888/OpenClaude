@@ -1,6 +1,7 @@
 // @ts-nocheck
+import {fKe,lsr} from "./m55.ts";
 import {b} from "../runtime.ts";
-function Mgc(e){var t=new e.constructor(e.source,Lgc.exec(e));return t.lastIndex=e.lastIndex,t}
-var Lgc,x9o;
-var k9o=b(()=>{Lgc=/\w*$/;x9o=Mgc});
-export {Mgc,Lgc,x9o,k9o};
+function Nwc(e){var t=new e.constructor(e.byteLength);return new fKe(t).set(new fKe(e)),t}
+var m7e;
+var MXt=b(()=>{lsr();m7e=Nwc});
+export {Nwc,m7e,MXt};

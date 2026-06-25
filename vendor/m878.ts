@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Lds} from "./m877.ts";
-var Mds=X((pyr)=>{Object.defineProperty(pyr,"__esModule",{value:!0});pyr.parseXML=Uiu;var Fiu=Lds(),dyr=new Fiu.XMLParser({attributeNamePrefix:"",htmlEntities:!0,ignoreAttributes:!1,ignoreDeclaration:!0,parseTagValue:!1,trimValues:!1,tagValueProcessor:(e,t)=>t.trim()===""&&t.includes(`
-`)?"":void 0});dyr.addEntity("#xD","\r");dyr.addEntity("#10",`
-`);function Uiu(e){return dyr.parse(e,!0)}});
-export {Mds};
+import {Q} from "../runtime.ts";
+import {C_s} from "./m877.ts";
+var FCr=Q((NCr)=>{var Kgu=C_s(),MCr=require("buffer"),zgu=(e,t=0,n=e.byteLength-t)=>{if(!Kgu.isArrayBuffer(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return MCr.Buffer.from(e,t,n)},jgu=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?MCr.Buffer.from(e,t):MCr.Buffer.from(e)};NCr.fromArrayBuffer=zgu;NCr.fromString=jgu});
+export {FCr};

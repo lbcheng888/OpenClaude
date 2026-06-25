@@ -1,5 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {MK} from "./m2323.ts";
-var DSi=X((knh,ISi)=>{var HSi=MK(),Wrd=(e,t,n)=>(e=new HSi(e,n),t=new HSi(t,n),e.intersects(t,n));ISi.exports=Wrd});
-export {DSi};
+import {Q} from "../runtime.ts";
+import {mCn} from "./m2306.ts";
+import {ott} from "./m2305.ts";
+import {q3r} from "./m2330.ts";
+import {JDt} from "./m2304.ts";
+import {OF} from "./m2308.ts";
+import {dz} from "./m2333.ts";
+var ZDt=Q((Zfg,_wi)=>{var ePt=Symbol("SemVer ANY");class ACn{static get ANY(){return ePt}constructor(e,t){if(t=pwi(t),e instanceof ACn)if(e.loose===!!t.loose)return e;else e=e.value;if(e=e.trim().split(/\s+/).join(" "),V3r("comparator",e,t),this.options=t,this.loose=!!t.loose,this.parse(e),this.semver===ePt)this.value="";else this.value=this.operator+this.semver.version;V3r("comp",this)}parse(e){let t=this.options.loose?mwi[fwi.COMPARATORLOOSE]:mwi[fwi.COMPARATOR],n=e.match(t);if(!n)throw TypeError(`Invalid comparator: ${e}`);if(this.operator=n[1]!==void 0?n[1]:"",this.operator==="=")this.operator="";if(!n[2])this.semver=ePt;else this.semver=new hwi(n[2],this.options.loose)}toString(){return this.value}test(e){if(V3r("Comparator.test",e,this.options.loose),this.semver===ePt||e===ePt)return!0;if(typeof e==="string")try{e=new hwi(e,this.options)}catch(t){return!1}return G3r(e,this.operator,this.semver,this.options)}intersects(e,t){if(!(e instanceof ACn))throw TypeError("a Comparator is required");if(this.operator===""){if(this.value==="")return!0;return new gwi(e.value,t).test(this.value)}else if(e.operator===""){if(e.value==="")return!0;return new gwi(this.value,t).test(e.semver)}if(t=pwi(t),t.includePrerelease&&(this.value==="<0.0.0-0"||e.value==="<0.0.0-0"))return!1;if(!t.includePrerelease&&(this.value.startsWith("<0.0.0")||e.value.startsWith("<0.0.0")))return!1;if(this.operator.startsWith(">")&&e.operator.startsWith(">"))return!0;if(this.operator.startsWith("<")&&e.operator.startsWith("<"))return!0;if(this.semver.version===e.semver.version&&this.operator.includes("=")&&e.operator.includes("="))return!0;if(G3r(this.semver,"<",e.semver,t)&&this.operator.startsWith(">")&&e.operator.startsWith("<"))return!0;if(G3r(this.semver,">",e.semver,t)&&this.operator.startsWith("<")&&e.operator.startsWith(">"))return!0;return!1}}_wi.exports=ACn;var pwi=mCn(),{safeRe:mwi,t:fwi}=ott(),G3r=q3r(),V3r=JDt(),hwi=OF(),gwi=dz()});
+export {ZDt};

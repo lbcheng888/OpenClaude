@@ -1,15 +1,21 @@
 // @ts-nocheck
-import {pxt,x7s} from "./m1780.ts";
-import {Iw,fxt} from "./m1784.ts";
-import {B0r,D7s} from "./m1783.ts";
-import {b} from "../runtime.ts";
-import {AT} from "./m1775.ts";
-import {Ho} from "./m1717.ts";
-import {ProtocolMode} from "./m1734.ts";
-import {AzureCloudInstance} from "./m1725.ts";
-import {LogLevel} from "./m1723.ts";
-function P7s({auth:e,broker:t,cache:n,system:r,telemetry:o}){let s={...BFu,networkClient:new pxt(r?.proxyUrl,r?.customAgentOptions),loggerOptions:r?.loggerOptions||F0r,disableInternalRetries:r?.disableInternalRetries||!1};if(!!e.clientCertificate&&!e.clientCertificate.thumbprint&&!e.clientCertificate.thumbprintSha256)throw Iw.createStateNotFoundError();return{auth:{...MFu,...e},broker:{...t},cache:{...NFu,...n},system:{...s,...r},telemetry:{...FFu,...o}}}
-function O7s({clientCapabilities:e,managedIdentityIdParams:t,system:n}){let r=new B0r(t),o=n?.loggerOptions||F0r,s;if(n?.networkClient)s=n.networkClient;else s=new pxt(n?.proxyUrl,n?.customAgentOptions);return{clientCapabilities:e||[],managedIdentityId:r,system:{loggerOptions:o,networkClient:s},disableInternalRetries:n?.disableInternalRetries||!1}}
-var MFu,NFu,F0r,BFu,FFu;
-var U0r=b(()=>{AT();x7s();D7s();fxt();/*! @azure/msal-node v3.8.1 2025-10-29 */MFu={clientId:Ho.EMPTY_STRING,authority:Ho.DEFAULT_AUTHORITY,clientSecret:Ho.EMPTY_STRING,clientAssertion:Ho.EMPTY_STRING,clientCertificate:{thumbprint:Ho.EMPTY_STRING,thumbprintSha256:Ho.EMPTY_STRING,privateKey:Ho.EMPTY_STRING,x5c:Ho.EMPTY_STRING},knownAuthorities:[],cloudDiscoveryMetadata:Ho.EMPTY_STRING,authorityMetadata:Ho.EMPTY_STRING,clientCapabilities:[],protocolMode:ProtocolMode.AAD,azureCloudOptions:{azureCloudInstance:AzureCloudInstance.None,tenant:Ho.EMPTY_STRING},skipAuthorityMetadataCache:!1,encodeExtraQueryParams:!1},NFu={claimsBasedCachingEnabled:!1},F0r={loggerCallback:()=>{},piiLoggingEnabled:!1,logLevel:LogLevel.Info},BFu={loggerOptions:F0r,networkClient:new pxt,proxyUrl:Ho.EMPTY_STRING,customAgentOptions:{},disableInternalRetries:!1},FFu={application:{appName:Ho.EMPTY_STRING,appVersion:Ho.EMPTY_STRING}}});
-export {P7s,O7s,MFu,NFu,F0r,BFu,FFu,U0r};
+import {AA,bgn,k2,RA} from "./m1783.ts";
+import {FIt,TQs} from "./m1784.ts";
+import {Sp} from "./m1722.ts";
+import {b,x} from "../runtime.ts";
+import {iT} from "./m1780.ts";
+class BIt{constructor(e,t){this.proxyUrl=e||"",this.customAgentOptions=t||{}}async sendGetRequestAsync(e,t,n){if(this.proxyUrl)return SQs(e,this.proxyUrl,AA.GET,t,this.customAgentOptions,n);else return bQs(e,AA.GET,t,this.customAgentOptions,n)}async sendPostRequestAsync(e,t){if(this.proxyUrl)return SQs(e,this.proxyUrl,AA.POST,t,this.customAgentOptions);else return bQs(e,AA.POST,t,this.customAgentOptions)}}
+var Agn,pMr,SQs=(e,t,n,r,o,s)=>{let i=new URL(e),a=new URL(t),l=r?.headers||{},c={host:a.hostname,port:a.port,method:"CONNECT",path:i.hostname,headers:l};if(o&&Object.keys(o).length)c.agent=new Agn.default.Agent(o);let u="";if(n===AA.POST){let p=r?.body||"";u=`Content-Type: application/x-www-form-urlencoded\r
+Content-Length: ${p.length}\r
+\r
+${p}`}else if(s)c.timeout=s;let d=`${n.toUpperCase()} ${i.href} HTTP/1.1\r
+Host: ${i.host}\r
+Connection: close\r
+`+u+`\r
+`;return new Promise((p,m)=>{let f=Agn.default.request(c);if(s)f.on("timeout",()=>{f.destroy(),m(Error("Request time out"))});f.end(),f.on("connect",(h,g)=>{let _=h?.statusCode||bgn.SERVER_ERROR;if(_<bgn.SUCCESS_RANGE_START||_>bgn.SUCCESS_RANGE_END)f.destroy(),g.destroy(),m(Error(`Error connecting to proxy. Http status code: ${h.statusCode}. Http status message: ${h?.statusMessage||"Unknown"}`));g.write(d);let T=[];g.on("data",(y)=>{T.push(y)}),g.on("end",()=>{let S=Buffer.concat([...T]).toString().split(`\r
+`),E=parseInt(S[0].split(" ")[1]),R=S[0].split(" ").slice(2).join(" "),w=S[S.length-1],H=S.slice(1,S.length-2),k=new Map;H.forEach((L)=>{let P=L.split(new RegExp(/:\s(.*)/s)),M=P[0],B=P[1];try{let N=JSON.parse(B);if(N&&typeof N==="object")B=N}catch(N){}k.set(M,B)});let D=Object.fromEntries(k),O=FIt.getNetworkResponse(D,EQs(E,R,D,w),E);if((E<Sp.SUCCESS_RANGE_START||E>Sp.SUCCESS_RANGE_END)&&O.body.error!==k2.AUTHORIZATION_PENDING)f.destroy();p(O)}),g.on("error",(y)=>{f.destroy(),g.destroy(),m(Error(y.toString()))})}),f.on("error",(h)=>{f.destroy(),m(Error(h.toString()))})})},bQs=(e,t,n,r,o)=>{let s=t===AA.POST,i=n?.body||"",a=new URL(e),l=n?.headers||{},c={method:t,headers:l,...FIt.urlToHttpOptions(a)};if(r&&Object.keys(r).length)c.agent=new pMr.default.Agent(r);if(s)c.headers={...c.headers,"Content-Length":i.length};else if(o)c.timeout=o;return new Promise((u,d)=>{let p;if(c.protocol==="http:")p=Agn.default.request(c);else p=pMr.default.request(c);if(s)p.write(i);if(o)p.on("timeout",()=>{p.destroy(),d(Error("Request time out"))});p.end(),p.on("response",(m)=>{let{headers:f,statusCode:h,statusMessage:g}=m,_=[];m.on("data",(T)=>{_.push(T)}),m.on("end",()=>{let T=Buffer.concat([..._]).toString(),y=f,S=FIt.getNetworkResponse(y,EQs(h,g,y,T),h);if((h<Sp.SUCCESS_RANGE_START||h>Sp.SUCCESS_RANGE_END)&&S.body.error!==k2.AUTHORIZATION_PENDING)p.destroy();u(S)})}),p.on("error",(m)=>{p.destroy(),d(Error(m.toString()))})})},EQs=(e,t,n,r)=>{let o;try{o=JSON.parse(r)}catch(s){let i,a;if(e>=Sp.CLIENT_ERROR_RANGE_START&&e<=Sp.CLIENT_ERROR_RANGE_END)i="client_error",a="A client";else if(e>=Sp.SERVER_ERROR_RANGE_START&&e<=Sp.SERVER_ERROR_RANGE_END)i="server_error",a="A server";else i="unknown_error",a="An unknown";o={error:i,error_description:`${a} error occured.
+Http status code: ${e}
+Http status message: ${t||"Unknown"}
+Headers: ${JSON.stringify(n)}`}}return o};
+var CQs=b(()=>{iT();RA();TQs();Agn=x(require("http")),pMr=x(require("https"));/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {BIt,Agn,pMr,SQs,bQs,EQs,CQs};

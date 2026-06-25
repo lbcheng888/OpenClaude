@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {xno} from "./m3709.ts";
-import {Ino} from "./m3711.ts";
-import {Dno} from "./m3712.ts";
-import {RFt} from "./m3710.ts";
-var LCa=X((B1n)=>{Object.defineProperty(B1n,"__esModule",{value:!0});B1n.AsyncMetricStorage=void 0;var Ccp=xno(),vcp=Ino(),wcp=Dno(),Rcp=RFt();class OCa extends Ccp.MetricStorage{_aggregationCardinalityLimit;_deltaMetricStorage;_temporalMetricStorage;_attributesProcessor;constructor(e,t,n,r,o){super(e);this._aggregationCardinalityLimit=o,this._deltaMetricStorage=new vcp.DeltaMetricProcessor(t,this._aggregationCardinalityLimit),this._temporalMetricStorage=new wcp.TemporalMetricProcessor(t,r),this._attributesProcessor=n}record(e,t){let n=new Rcp.AttributeHashMap;for(let[r,o]of e.entries())n.set(this._attributesProcessor.process(r),o);this._deltaMetricStorage.batchCumulate(n,t)}collect(e,t){let n=this._deltaMetricStorage.collect();return this._temporalMetricStorage.buildMetrics(e,this._instrumentDescriptor,n,t)}}B1n.AsyncMetricStorage=OCa});
-export {LCa};
+import {Q} from "../runtime.ts";
+import {e$t} from "./m3703.ts";
+import {iao} from "./m3711.ts";
+var C0a=Q((SBn)=>{Object.defineProperty(SBn,"__esModule",{value:!0});SBn.osDetector=void 0;var S0a=e$t(),b0a=require("os"),BTp=iao();class E0a{detect(e){return{attributes:{[S0a.ATTR_OS_TYPE]:(0,BTp.normalizeType)((0,b0a.platform)()),[S0a.ATTR_OS_VERSION]:(0,b0a.release)()}}}}SBn.osDetector=new E0a});
+export {C0a};

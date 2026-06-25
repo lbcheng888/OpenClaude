@@ -1,6 +1,31 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {frs} from "./m740.ts";
-var Ghr=X((T8)=>{var hrs=T8&&T8.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),zQc=T8&&T8.__setModuleDefault||(Object.create?function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}:function(e,t){e.default=t}),grs=T8&&T8.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(e!=null){for(var n in e)if(n!=="default"&&Object.prototype.hasOwnProperty.call(e,n))hrs(t,e,n)}return zQc(t,e),t},YQc=T8&&T8.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))hrs(t,e,n)};Object.defineProperty(T8,"__esModule",{value:!0});T8.Agent=void 0;var JQc=grs(require("net")),Ars=grs(require("http")),XQc=require("https");YQc(frs(),T8);var xoe=Symbol("AgentBaseInternalState");class _rs extends Ars.Agent{constructor(e){super(e);this[xoe]={}}isSecureEndpoint(e){if(e){if(typeof e.secureEndpoint==="boolean")return e.secureEndpoint;if(typeof e.protocol==="string")return e.protocol==="https:"}let{stack:t}=Error();if(typeof t!=="string")return!1;return t.split(`
-`).some((n)=>n.indexOf("(https.js:")!==-1||n.indexOf("node:https:")!==-1)}incrementSockets(e){if(this.maxSockets===1/0&&this.maxTotalSockets===1/0)return null;if(!this.sockets[e])this.sockets[e]=[];let t=new JQc.Socket({writable:!1});return this.sockets[e].push(t),this.totalSocketCount++,t}decrementSockets(e,t){if(!this.sockets[e]||t===null)return;let n=this.sockets[e],r=n.indexOf(t);if(r!==-1){if(n.splice(r,1),this.totalSocketCount--,n.length===0)delete this.sockets[e]}}getName(e){if(typeof e.secureEndpoint==="boolean"?e.secureEndpoint:this.isSecureEndpoint(e))return XQc.Agent.prototype.getName.call(this,e);return super.getName(e)}createSocket(e,t,n){let r={...t,secureEndpoint:this.isSecureEndpoint(t)},o=this.getName(r),s=this.incrementSockets(o);Promise.resolve().then(()=>this.connect(e,r)).then((i)=>{if(this.decrementSockets(o,s),i instanceof Ars.Agent)try{return i.addRequest(e,r)}catch(a){return n(a)}this[xoe].currentSocket=i,super.createSocket(e,t,n)},(i)=>{this.decrementSockets(o,s),n(i)})}createConnection(){let e=this[xoe].currentSocket;if(this[xoe].currentSocket=void 0,!e)throw Error("No socket was returned in the `connect()` function");return e}get defaultPort(){return this[xoe].defaultPort??(this.protocol==="https:"?443:80)}set defaultPort(e){if(this[xoe])this[xoe].defaultPort=e}get protocol(){return this[xoe].protocol??(this.isSecureEndpoint()?"https:":"http:")}set protocol(e){if(this[xoe])this[xoe].protocol=e}}T8.Agent=_rs});
-export {Ghr};
+import {getMdmRawReadPromise,fireRawRead,ysn} from "./m740.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {wn,pf} from "../src/config/0693_timestamp.ts";
+import {ba,pd} from "./m706.ts";
+import {cCe,eNe} from "../src/config/0740_settings.ts";
+import {kon,zje,xRt,Hon,uM,ZEe} from "./m710.ts";
+import {Fv,qK} from "./m709.ts";
+import {IN,tn} from "../src/config/0230_encoding.ts";
+import {Ov,GN} from "./m640.ts";
+import {jpe,tvt} from "./m738.ts";
+import {Wt,ps} from "./m230.ts";
+import {b} from "../runtime.ts";
+function Klu(){if(Tsn)return;Tsn=(async()=>{let e=Date.now(),t=getMdmRawReadPromise()??fireRawRead(),{mdm:n,hkcu:r,wslInherits:o}=Xls(await t);obr=n,sbr=r,Ssn=o;let s=Date.now()-e;if(logForDebugging(`MDM settings load completed in ${s}ms`),Object.keys(n.settings).length>0){logForDebugging(`MDM settings found: ${Object.keys(n.settings).join(", ")}`);try{wn("info","mdm_settings_loaded",{duration_ms:s,key_count:Object.keys(n.settings).length,error_count:n.errors.length})}catch{}}})()}
+async function cYe(){if(!Tsn)Klu();await Tsn}
+function Coe(){return obr??pCe}
+function mCe(){return sbr??pCe}
+function rQ(){return Ssn}
+function Yls(e,t,n){obr=e,sbr=t,Ssn=n}
+async function Jls(){let e=await fireRawRead();return Xls(e)}
+function rbr(e,t){let n=ba(e,!1);if(!n||typeof n!=="object")return{settings:{},errors:[]};let{settings:r,errors:o}=cCe(n,t);return{settings:r??{},errors:o}}
+function Kls(e,t="Settings"){let n=e.split(/\r?\n/),r=t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),o=new RegExp(`^\\s+${r}\\s+REG_(?:EXPAND_)?SZ\\s+(.*)$`,"i");for(let s of n){let i=s.match(o);if(i&&i[1])return i[1].trimEnd()}return null}
+function Xls(e){let t=[];if(e.plistStdouts&&e.plistStdouts.length>0){let{stdout:i,label:a}=e.plistStdouts[0],l=rbr(i,a),{wslInheritsWindowsSettings:c,...u}=l.settings;if(Object.keys(u).length>0)return{mdm:l,hkcu:pCe,wslInherits:!1};t.push(...l.errors)}let n=null;if(e.hklmStdout){let i=Kls(e.hklmStdout);if(i)n=rbr(i,`Registry: ${kon}\\${zje}`)}if(n)t.push(...n.errors);let r=t.length>0?{settings:{},errors:t}:pCe,o=xRt(),s=!1;if(o){if(s=n?.settings.wslInheritsWindowsSettings===!0||jlu(),!s)return{mdm:r,hkcu:pCe,wslInherits:!1}}if(n){let{wslInheritsWindowsSettings:i,...a}=n.settings;if(Object.keys(a).length>0)return{mdm:n,hkcu:pCe,wslInherits:s}}if(zlu(s))return{mdm:r,hkcu:pCe,wslInherits:s};if(e.hkcuStdout){let i=Kls(e.hkcuStdout);if(i){let a=rbr(i,`Registry: ${Hon}\\${zje}`);if(!o||a.settings.wslInheritsWindowsSettings===!0){let{wslInheritsWindowsSettings:l,...c}=a.settings;return{mdm:r,hkcu:{settings:c,errors:a.errors},wslInherits:s}}if(a.errors.length>0)return{mdm:r,hkcu:{settings:{},errors:a.errors},wslInherits:s}}}return{mdm:r,hkcu:pCe,wslInherits:s}}
+function zlu(e){if(e&&jls(uM))return!0;return jls(Fv())}
+function zls(e){let t=IN(ba(Ov(e),!1));if(!t||typeof t!=="object")return!1;jpe(t,e);let{wslInheritsWindowsSettings:n,...r}=t;return Object.keys(r).length>0}
+function ibr(){if(!xRt()||!Ssn)return"";let e=[];try{e.push(Ov(Eoe.join(uM,"managed-settings.json")))}catch{e.push("")}try{let t=Eoe.join(uM,"managed-settings.d"),n=Wt().readdirSync(t).filter((r)=>(r.isFile()||r.isSymbolicLink())&&r.name.endsWith(".json")&&!r.name.startsWith(".")).map((r)=>r.name).sort();for(let r of n)try{e.push(`${r}\x00${Ov(Eoe.join(t,r))}`)}catch{e.push(`${r}\x00`)}}catch{}return e.join("\x01")}
+function jlu(){function e(t){try{let n=ba(Ov(t),!1);return!!n&&typeof n==="object"&&"wslInheritsWindowsSettings"in n&&n.wslInheritsWindowsSettings===!0}catch{return!1}}if(e(Eoe.join(uM,"managed-settings.json")))return!0;try{let t=Eoe.join(uM,"managed-settings.d");for(let n of Wt().readdirSync(t))if((n.isFile()||n.isSymbolicLink())&&n.name.endsWith(".json")&&!n.name.startsWith(".")&&e(Eoe.join(t,n.name)))return!0}catch{}return!1}
+function jls(e){try{if(zls(Eoe.join(e,"managed-settings.json")))return!0}catch{}try{let t=Eoe.join(e,"managed-settings.d"),n=Wt().readdirSync(t);for(let r of n){if(!(r.isFile()||r.isSymbolicLink())||!r.name.endsWith(".json")||r.name.startsWith("."))continue;try{if(zls(Eoe.join(t,r.name)))return!0}catch{}}}catch{}return!1}
+var Eoe,pCe,obr=null,sbr=null,Ssn=!1,Tsn=null;
+var fCe=b(()=>{qe();pf();GN();ps();pd();tn();qK();eNe();tvt();ZEe();ysn();Eoe=require("path"),pCe=Object.freeze({settings:{},errors:[]})});
+export {Klu,cYe,Coe,mCe,rQ,Yls,Jls,rbr,Kls,Xls,zlu,zls,ibr,jlu,jls,Eoe,pCe,obr,sbr,Ssn,Tsn,fCe};

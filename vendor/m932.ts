@@ -1,9 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var QAs=()=>{};
-var ZAs=()=>{};
-var ehs=()=>{};
-var ths=()=>{};
-var nhs=()=>{};
-var rhs=b(()=>{QAs();ZAs();ehs();ths();nhs()});
-export {QAs,ZAs,ehs,ths,nhs,rhs};
+var Abs=()=>{};
+var Rbs;
+var vbs=b(()=>{(function(e){e.HEADER="header",e.QUERY="query"})(Rbs||(Rbs={}))});
+export {Abs,Rbs,vbs};

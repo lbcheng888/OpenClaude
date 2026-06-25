@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {sK} from "./m1830.ts";
-var Izs=X((ONA,Hzs)=>{var Y2u=sK(),J2u=(e,t)=>Y2u(e,t,!0);Hzs.exports=J2u});
-export {Izs};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+var gei=Q((X8h,hei)=>{var sVu=TF(),iVu=(e,t)=>new sVu(e,t).minor;hei.exports=iVu});
+export {gei};

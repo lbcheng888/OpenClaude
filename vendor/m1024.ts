@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var dbs=()=>{};
-var pbs;
-var mbs=b(()=>{(function(e){e.HEADER="header",e.QUERY="query"})(pbs||(pbs={}))});
-export {dbs,pbs,mbs};
+import {ft,b} from "../runtime.ts";
+import {defaultProvider,credentialsWillNeedRefresh,credentialsTreatedAsExpired,jws} from "./m1023.ts";
+var Yws={};
+ft(Yws,{defaultProvider:()=>defaultProvider,credentialsWillNeedRefresh:()=>credentialsWillNeedRefresh,credentialsTreatedAsExpired:()=>credentialsTreatedAsExpired});
+var CNe=b(()=>{jws()});
+export {Yws,CNe};

@@ -1,8 +1,9 @@
 // @ts-nocheck
+import {eS,B2,zM} from "./m2240.ts";
+import {getSettingsForSource,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {isProjectScopeTrustAccepted,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
 import {b} from "../runtime.ts";
-import {Lr} from "./m578.ts";
-import {je} from "./m577.ts";
-import {jsl,qsl} from "../src/core/4501_call.ts";
-var l8p,c8n;
-var Wsl=b(()=>{Lr();l8p={type:"local",name:"compact",description:"Free up context by summarizing the conversation so far",isEnabled:()=>!je.DISABLE_COMPACT,supportsNonInteractive:!0,argumentHint:"<optional custom summarization instructions>",thinClientDispatch:"post-text",load:()=>Promise.resolve().then(() => (jsl(),qsl))},c8n=l8p});
-export {l8p,c8n,Wsl};
+function P8e(e){return eS()?getSettingsForSource("policySettings")?.statusLine:e}
+function _Vn(e){if(B2())return;if(!isProjectScopeTrustAccepted())return;return eS()?getSettingsForSource("policySettings")?.fileSuggestion:e}
+var c8t=b(()=>{tr();br();zM()});
+export {P8e,_Vn,c8t};

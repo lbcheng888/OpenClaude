@@ -1,12 +1,12 @@
 // @ts-nocheck
-import {lE,xu,tA} from "../src/config/2201_tA.ts";
-import {_debugModuleInit,GO} from "../src/telemetry/2241_GO.ts";
-import {qBr,$Br,Cyn} from "./m2242.ts";
-import {XHt,QHt,OBr,LBr,HQe} from "../src/config/2240_user.ts";
-import {ap,BE} from "./m5006.ts";
+import {Td,Cb} from "./m5036.ts";
+import {isClaudeInChromeWiredThisSession,kTe} from "../src/permissions/4676_shouldSuppressChromeOffer.ts";
+import {aEo,dGn} from "./m4444.ts";
 import {b} from "../runtime.ts";
-function mNm(){let e=lE(),t=_debugModuleInit();if(e)return t?qBr:$Br;return t?XHt:QHt}
-function jKl(){ap({name:OBr,description:"Full reference for the memory type taxonomy \u2014 what each type captures, when to save it, how to structure the body, with examples.",whenToUse:"Use before writing a memory file to choose the right `type:` frontmatter value and body structure.",userInvocable:!1,isEnabled:()=>xu()&&LBr(),async getPromptForCommand(){return[{type:"text",text:mNm().join(`
-`)}]}})}
-var WKl=b(()=>{HQe();tA();GO();Cyn();BE()});
-export {mNm,jKl,WKl};
+function ctc(){Td({name:"claude-in-chrome",menuDescription:"Let Claude browse and interact with pages in your Chrome",description:"Automates your Chrome browser to interact with web pages - clicking elements, filling forms, capturing screenshots, reading console logs, and navigating sites. Opens pages in new tabs within your existing Chrome session. Requires site-level permissions before executing (configured in the extension).",whenToUse:"When the user wants to interact with web pages, automate browser tasks, capture screenshots, read console logs, or perform any browser-based actions. Always invoke BEFORE attempting to use any mcp__claude-in-chrome__* tools.",allowedTools:[],userInvocable:!0,isEnabled:()=>isClaudeInChromeWiredThisSession(),async getPromptForCommand(e){let t=aEo;if(e)t+=`
+
+## Task
+
+${e}`;return[{type:"text",text:t}]}})}
+var utc=b(()=>{dGn();kTe();Cb()});
+export {ctc,utc};

@@ -1,18 +1,18 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {allTools,lo} from "../src/tools/5190_userPromptCount.ts";
-import {Ms,Pp} from "../src/config/2273_loggedTmuxCcDisable.ts";
-import {dd,YM,Dd} from "./m687.ts";
-import {hat,_He} from "./m3752.ts";
-import {pTo,wll} from "../src/tui/4557_count.ts";
-import {S6t,mTo} from "../src/core/4558_categories.ts";
-import {Se,bt} from "./m195.ts";
-import {k6n,H6n} from "../src/permissions/4412_level.ts";
-import {Te} from "./m2253.ts";
-var Rll={};
-isFullscreenWithTTY(Rll,{call:()=>mVp});
-function pVp(e){return allTools(e)}
-async function mVp(e,t,n){let r=Ms()&&n.trim().toLowerCase()!=="all",o=dd();if(o){if(!YM("controlChannel"))return e("Context usage isn't available over this remote connection"),null;try{let f=await o.sendControlRequest({subtype:"get_context_usage"}),A=await hat(b6t.createElement(pTo,{data:f,isRemote:!0,collapseDetailSections:r}));e(A,{display:"system",metaMessages:[S6t(f,{skipCollapseStatus:!0})]})}catch(f){e(`Couldn't fetch context from remote: ${Se(f)}`)}return null}let{messages:s,getAppState:i,options:{mainLoopModel:a,tools:l}}=t,c=pVp(s),u=process.stdout.columns||80,d=i(),p=await k6n(c,a,async()=>d.toolPermissionContext,l,d.agentDefinitions,u,t,void 0,c,d.autoCompactWindow),m=await hat(b6t.createElement(pTo,{data:p,collapseDetailSections:r}));return e(m,{display:"system",metaMessages:[S6t(p)]}),null}
-var b6t;
-var xll=b(()=>{wll();Dd();H6n();bt();Pp();lo();_He();mTo();b6t=M(Te(),1)});
-export {Rll,pVp,mVp,b6t,xll};
+import {MRn,ORn,LRn,NRn} from "./m2529.ts";
+import {_r,ui} from "./m2463.ts";
+import {vl,I2e} from "./m2532.ts";
+import {h6,zft} from "./m4552.ts";
+import {QAo,ZAo} from "./m4557.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function kXp(e){if(e.ctrl&&(e.key==="k"||e.key==="u"||e.key==="w"))return!0;if(e.meta&&e.key==="backspace")return!0;return!1}
+function HXp(e){return(e.ctrl||e.meta)&&e.key==="y"}
+function RH({isActive:e,onExit:t,onCancel:n,onExitUp:r,onExitDown:o,columns:s,passthroughCtrlKeys:i=[],initialQuery:a="",backspaceExitsOnEmpty:l=!0,multiline:c=!1,onSpaceOnEmpty:u,onTabOnEmpty:d,killRing:p,onChange:m,honorEditorMode:f=!1}){let h=MRn(),g=p??h,{columns:_}=_r(),T=s??_,[y,S]=ane.useState(a),[E,R]=ane.useState(a.length),w=ane.useRef(y),H=ane.useRef(E),k=ane.useRef(m);k.current=m;let I=ane.useCallback((F)=>{w.current=F,S(F),k.current?.(F)},[]),D=ane.useCallback((F)=>{H.current=F,R(F)},[]),O=ane.useCallback((F)=>{I(F),D(F.length)},[I,D]),L=(F)=>{if(!e)return;let V=w.current,G=H.current,z=vl.fromText(V,T,G);if(F.ctrl&&i.includes(F.key.toLowerCase()))return;if(!kXp(F)&&!HXp(F))g.dispatch({type:"interrupt"});if(F.name==="return"){if(F.preventDefault(),c){if(G>0&&V[G-1]==="\\"){I(V.slice(0,G-1)+`
+`+V.slice(G));return}if(F.shift||F.meta){I(V.slice(0,G)+`
+`+V.slice(G)),D(G+1);return}}t();return}if(c&&F.name==="enter"){F.preventDefault();let J=z.insert(`
+`);I(J.text),D(J.offset);return}if(F.name==="down"){if(F.preventDefault(),c){let J=z.down();if(!J.equals(z)){D(J.offset);return}}if(o)o();else if(!c)t();return}if(F.name==="up"){if(F.preventDefault(),c){let J=z.up();if(!J.equals(z)){D(J.offset);return}}if(r)r();return}if(F.name==="escape"){if(F.preventDefault(),n)n();else if(V.length>0)I(""),D(0);else t();return}if(F.name==="backspace"){if(F.preventDefault(),F.meta){let{cursor:K,killed:j}=z.deleteWordBefore();g.dispatch({type:"kill",text:j,direction:"prepend"}),I(K.text),D(K.offset);return}if(V.length===0){if(l)(n??t)();return}let J=z.backspace();I(J.text),D(J.offset);return}if(F.name==="delete"){F.preventDefault();let J=z.del();I(J.text),D(J.offset);return}if(F.name==="left"&&(F.ctrl||F.meta||F.fn)){F.preventDefault();let J=z.prevWord();D(J.offset);return}if(F.name==="right"&&(F.ctrl||F.meta||F.fn)){F.preventDefault();let J=z.nextWord();D(J.offset);return}if(F.name==="left"){F.preventDefault();let J=z.left();D(J.offset);return}if(F.name==="right"){F.preventDefault();let J=z.right();D(J.offset);return}if(F.name==="home"){F.preventDefault(),D(z.startOfLine().offset);return}if(F.name==="end"){F.preventDefault(),D(z.endOfLine().offset);return}if(F.ctrl){switch(F.preventDefault(),F.key.toLowerCase()){case"a":D(z.startOfLogicalLine().offset);return;case"e":D(z.endOfLogicalLine().offset);return;case"b":D(z.left().offset);return;case"f":D(z.right().offset);return;case"d":{if(V.length===0){(n??t)();return}let J=z.del();I(J.text),D(J.offset);return}case"h":{if(V.length===0){if(l)(n??t)();return}let J=z.backspace();I(J.text),D(J.offset);return}case"k":{let{cursor:J,killed:K}=z.deleteToLineEnd();g.dispatch({type:"kill",text:K,direction:"append"}),I(J.text),D(J.offset);return}case"u":{let{cursor:J,killed:K}=z.deleteToLineStart();g.dispatch({type:"kill",text:K,direction:"prepend"}),I(J.text),D(J.offset);return}case"w":{let{cursor:J,killed:K}=z.deleteWordBefore();g.dispatch({type:"kill",text:K,direction:"prepend"}),I(J.text),D(J.offset);return}case"y":{let J=ORn(g.state);if(J.length>0){let K=z.offset,j=z.insert(J);g.dispatch({type:"yank",start:K,length:J.length}),I(j.text),D(j.offset)}return}case"g":case"c":if(n){n();return}}return}if(F.meta){switch(F.preventDefault(),F.key.toLowerCase()){case"b":D(z.prevWord().offset);return;case"f":D(z.nextWord().offset);return;case"d":{let J=z.deleteWordAfter();I(J.text),D(J.offset);return}case"y":{let J=LRn(g.state);if(J){let{text:K,start:j,length:X}=J;g.dispatch({type:"yankPop"});let ee=V.slice(0,j),te=V.slice(j+X),ne=ee+K+te,se=j+K.length;g.dispatch({type:"updateYankLength",length:K.length}),I(ne),D(se)}return}}return}if(F.name==="tab"){if(F.preventDefault(),d&&V==="")d();return}if(u&&F.key===" "&&V===""){F.preventDefault(),u();return}if(F.key.length>=1&&!IXp.has(F.name)){F.preventDefault();let J=z.insert(F.key);I(J.text),D(J.offset)}},P=f&&h6(),M=QAo({value:y,onChange:I,columns:T,onHistoryUp:r,onHistoryDown:o});return M.baseRef.current={handleKeyDown:L,offset:E,setOffset:D},{query:y,queryRef:w,setQuery:O,cursorOffset:E,setCursorOffset:D,handleKeyDown:(F)=>{if(!P){L(F);return}if(!e)return;if(F.name==="escape"&&M.mode==="NORMAL"){M.handleKeyDown(F),L(F);return}M.handleKeyDown(F)},handlePaste:(F)=>{if(!e||F.text.length===0)return;F.preventDefault();let V=c?F.text.replace(/\r\n|\r/g,`
+`):F.text.split(/\r\n|\r|\n/,2)[0]??"";if(V.length===0)return;let z=vl.fromText(w.current,T,H.current).insert(V);I(z.text),D(z.offset)},vimMode:P?M.mode:void 0}}
+var ane,IXp;
+var lne=b(()=>{zft();NRn();I2e();ui();ZAo();ane=x(et(),1);IXp=new Set(["pageup","pagedown","insert","wheelup","wheeldown","mouse","clear","enter","f1","f2","f3","f4","f5","f6","f7","f8","f9","f10","f11","f12"])});
+export {kXp,HXp,RH,ane,IXp,lne};

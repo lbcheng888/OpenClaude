@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,cws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var YRs,CreateModelImportJobCommand;
-var Lbr=b(()=>{ri();wi();xi();YRs=M(yo(),1);CreateModelImportJobCommand=class CreateModelImportJobCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[YRs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateModelImportJob",{}).n("BedrockClient","CreateModelImportJobCommand").sc(cws).build(){}});
-export {YRs,CreateModelImportJobCommand,Lbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Q0s} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var FDs,CreateGuardrailVersionCommand;
+var swr=b(()=>{$s();ai();ci();FDs=x(yo(),1);CreateGuardrailVersionCommand=class CreateGuardrailVersionCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[FDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateGuardrailVersion",{}).n("BedrockClient","CreateGuardrailVersionCommand").sc(Q0s).build(){}});
+export {FDs,CreateGuardrailVersionCommand,swr};

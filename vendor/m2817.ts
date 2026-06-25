@@ -1,4 +1,12 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var v3i=X((u2h,C3i)=>{function IHd(e){let t={className:"number",begin:/[$%]\d+/},n={className:"number",begin:/\d+/},r={className:"number",begin:/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?/},o={className:"number",begin:/:\d{1,5}/};return{name:"Apache config",aliases:["apacheconf"],case_insensitive:!0,contains:[e.HASH_COMMENT_MODE,{className:"section",begin:/<\/?/,end:/>/,contains:[r,o,e.inherit(e.QUOTE_STRING_MODE,{relevance:0})]},{className:"attribute",begin:/\w+/,relevance:0,keywords:{nomarkup:"order deny allow setenv rewriterule rewriteengine rewritecond documentroot sethandler errordocument loadmodule options header listen serverroot servername"},starts:{end:/$/,relevance:0,keywords:{literal:"on off all deny allow"},contains:[{className:"meta",begin:/\s\[/,end:/\]$/},{className:"variable",begin:/[\$%]\{/,end:/\}/,contains:["self",t]},r,n,e.QUOTE_STRING_MODE]}}],illegal:/\S/}}C3i.exports=IHd});
-export {v3i};
+import {Yn,Pl} from "./m2465.ts";
+import {wl,sy} from "./m2585.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {S1,sHe} from "./m2816.ts";
+import {b,x} from "../runtime.ts";
+import {oe} from "./m2275.ts";
+function KWi(e){return e.server?`List MCP resources from server "${e.server}"`:"List all MCP resources"}
+function zWi(e,t,{verbose:n}){if(!e||e.length===0)return GIn.jsx(Yn,{height:1,children:GIn.jsx(wl,{children:"(No resources found)"})});let r=TeamDeleteToolName(e,null,2);return GIn.jsx(S1,{content:r,verbose:n})}
+var GIn;
+var jWi=b(()=>{sy();Pl();sHe();tn();GIn=x(oe(),1)});
+export {KWi,zWi,GIn,jWi};

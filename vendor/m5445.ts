@@ -1,8 +1,0 @@
-// @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function LOm(e,t){switch(t.type){case"next-question":return{...e,currentQuestionIndex:e.currentQuestionIndex+1,isInTextInput:!1};case"prev-question":return{...e,currentQuestionIndex:Math.max(0,e.currentQuestionIndex-1),isInTextInput:!1};case"update-question-state":{let n=e.questionStates[t.questionText],r={selectedValue:t.updates.selectedValue??n?.selectedValue??(t.isMultiSelect?[]:void 0),textInputValue:t.updates.textInputValue??n?.textInputValue??""};return{...e,questionStates:{...e.questionStates,[t.questionText]:r}}}case"set-answer":{let n={...e,answers:{...e.answers,[t.questionText]:t.answer}};if(t.shouldAdvance)return{...n,currentQuestionIndex:n.currentQuestionIndex+1,isInTextInput:!1};return n}case"set-text-input-mode":return{...e,isInTextInput:t.isInInput}}}
-function IGl(){let[e,t]=XPe.useReducer(LOm,MOm),n=XPe.useCallback(()=>{t({type:"next-question"})},[]),r=XPe.useCallback(()=>{t({type:"prev-question"})},[]),o=XPe.useCallback((a,l,c)=>{t({type:"update-question-state",questionText:a,updates:l,isMultiSelect:c})},[]),s=XPe.useCallback((a,l,c=!0)=>{t({type:"set-answer",questionText:a,answer:l,shouldAdvance:c})},[]),i=XPe.useCallback((a)=>{t({type:"set-text-input-mode",isInInput:a})},[]);return{currentQuestionIndex:e.currentQuestionIndex,answers:e.answers,questionStates:e.questionStates,isInTextInput:e.isInTextInput,nextQuestion:n,prevQuestion:r,updateQuestionState:o,setAnswer:s,setTextInputMode:i}}
-var XPe,MOm;
-var DGl=b(()=>{XPe=M(Te(),1);MOm={currentQuestionIndex:0,answers:{},questionStates:{},isInTextInput:!1}});
-export {LOm,IGl,XPe,MOm,DGl};

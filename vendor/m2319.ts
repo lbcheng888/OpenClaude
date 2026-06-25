@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {LK} from "./m2308.ts";
-var LTn=X((fnh,KTi)=>{var Und=LK(),$nd=(e,t,n)=>Und(e,t,n)<=0;KTi.exports=$nd});
-export {LTn};
+import {Q} from "../runtime.ts";
+import {uz} from "./m2318.ts";
+var $vi=Q((Ffg,Uvi)=>{var jpd=uz(),Ypd=(e,t,n)=>jpd(t,e,n);Uvi.exports=Ypd});
+export {$vi};

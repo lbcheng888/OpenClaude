@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var GVo=X((udf,WVo)=>{WVo.exports=Math.pow});
-export {GVo};
+import {Q} from "../runtime.ts";
+var knn=Q((RCf,IXo)=>{IXo.exports=TypeError});
+export {knn};

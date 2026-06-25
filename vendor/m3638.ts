@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {aba} from "./m3636.ts";
-import {QQ} from "./m2112.ts";
-import {lba} from "./m3637.ts";
-var cba=X((kMn)=>{Object.defineProperty(kMn,"__esModule",{value:!0});kMn.SDK_INFO=void 0;var pip=aba(),xMn=QQ(),mip=lba();kMn.SDK_INFO={[xMn.ATTR_TELEMETRY_SDK_NAME]:"opentelemetry",[mip.ATTR_PROCESS_RUNTIME_NAME]:"node",[xMn.ATTR_TELEMETRY_SDK_LANGUAGE]:xMn.TELEMETRY_SDK_LANGUAGE_VALUE_NODEJS,[xMn.ATTR_TELEMETRY_SDK_VERSION]:pip.VERSION}});
-export {cba};
+import {b,x} from "../runtime.ts";
+import {u1n} from "./m3523.ts";
+import {gle} from "./m3495.ts";
+import {b_e} from "./m3509.ts";
+var Qka,Zka,fFn,OTLPMetricExporter;
+var eHa=b(()=>{Qka=x(u1n(),1),Zka=x(gle(),1),fFn=x(b_e(),1);OTLPMetricExporter=class OTLPMetricExporter extends Qka.OTLPMetricExporterBase{constructor(e){super(fFn.createOtlpHttpExportDelegate(fFn.convertLegacyHttpOptions(e??{},"METRICS","v1/metrics",{"Content-Type":"application/x-protobuf"}),Zka.ProtobufMetricsSerializer),e)}}});
+export {Qka,Zka,fFn,OTLPMetricExporter,eHa};

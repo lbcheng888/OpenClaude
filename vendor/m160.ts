@@ -1,10 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Yx,EX} from "./m152.ts";
-import {QC,Rp,Ss} from "./m156.ts";
-import {P_t,D$o} from "./m159.ts";
-import {eGe,ZWe} from "./m153.ts";
-import {GI,Ta} from "./m157.ts";
-var O_t;
-var Yrr=b(()=>{Yx();QC();P_t();eGe();GI();O_t=class O_t extends Rp{list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/files?beta=true",EX,{query:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"files-api-2025-04-14"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(Ta`/v1/files/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString()},n?.headers])})}download(e,t={},n){let{betas:r}=t??{};return this._client.get(Ta`/v1/files/${e}/content?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString(),Accept:"application/binary"},n?.headers]),__binaryResponse:!0})}retrieveMetadata(e,t={},n){let{betas:r}=t??{};return this._client.get(Ta`/v1/files/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString()},n?.headers])})}upload(e,t){let{betas:n,...r}=e;return this._client.post("/v1/files?beta=true",ZWe({body:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"files-api-2025-04-14"].toString()},D$o(r.file),t?.headers])},this._client))}}});
-export {O_t,Yrr};
+import {dk,UT} from "./m154.ts";
+import {oA,Jd,is} from "./m158.ts";
+import {u0,oa} from "./m159.ts";
+var sbt;
+var Elr=b(()=>{dk();oA();u0();sbt=class sbt extends Jd{create(e,t){let{betas:n,...r}=e;return this._client.post("/v1/environments?beta=true",{body:r,...t,headers:is([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(oa`/v1/environments/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}update(e,t,n){let{betas:r,...o}=t;return this._client.post(oa`/v1/environments/${e}?beta=true`,{body:o,...n,headers:is([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/environments?beta=true",UT,{query:r,...t,headers:is([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(oa`/v1/environments/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}archive(e,t={},n){let{betas:r}=t??{};return this._client.post(oa`/v1/environments/${e}/archive?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}}});
+export {sbt,Elr};

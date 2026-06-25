@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {_Hr} from "./m1649.ts";
+import {LYs,MYs} from "./m1676.ts";
 import {b} from "../runtime.ts";
-import {DQ} from "./m1662.ts";
-function JWs(){return _Hr()}
-var XWs=b(()=>{DQ()});
-export {JWs,XWs};
+function SOr(e,t){let n,{abortSignal:r,abortErrorMsg:o}=t!==null&&t!==void 0?t:{};return LYs((s)=>{n=setTimeout(s,e)},{cleanupBeforeAbort:()=>clearTimeout(n),abortSignal:r,abortErrorMsg:o!==null&&o!==void 0?o:U6u})}
+var U6u="The delay was aborted.";
+var NYs=b(()=>{MYs()});
+export {SOr,U6u,NYs};

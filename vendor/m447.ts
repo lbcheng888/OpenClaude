@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function s0c(e,t,n,r){var o=-1,s=e==null?0:e.length;while(++o<s){var i=e[o];t(r,i,n(i),e)}return r}
-var SGo;
-var bGo=b(()=>{SGo=s0c});
-export {s0c,SGo,bGo};
+function iUc(e){return function(t,n,r){var o=-1,s=Object(t),i=r(t),a=i.length;while(a--){var l=i[e?a:++o];if(n(s[l],l,s)===!1)break}return t}}
+var gJo;
+var _Jo=b(()=>{gJo=iUc});
+export {iUc,gJo,_Jo};

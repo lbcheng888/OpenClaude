@@ -1,6 +1,9 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-import {g1r} from "./m2093.ts";
-var _1r=X((Fse)=>{Object.defineProperty(Fse,"__esModule",{value:!0});Fse.parseKeyPairsIntoRecord=Fse.parsePairKeyValue=Fse.getKeyPairs=Fse.serializeKeyPairs=void 0;var dKu=Xi(),tFe=g1r();function pKu(e){return e.reduce((t,n)=>{let r=`${t}${t!==""?tFe.BAGGAGE_ITEMS_SEPARATOR:""}${n}`;return r.length>tFe.BAGGAGE_MAX_TOTAL_LENGTH?t:r},"")}Fse.serializeKeyPairs=pKu;function mKu(e){return e.getAllEntries().map(([t,n])=>{let r=`${encodeURIComponent(t)}=${encodeURIComponent(n.value)}`;if(n.metadata!==void 0)r+=tFe.BAGGAGE_PROPERTIES_SEPARATOR+n.metadata.toString();return r})}Fse.getKeyPairs=mKu;function noi(e){let t=e.split(tFe.BAGGAGE_PROPERTIES_SEPARATOR);if(t.length<=0)return;let n=t.shift();if(!n)return;let r=n.indexOf(tFe.BAGGAGE_KEY_PAIR_SEPARATOR);if(r<=0)return;let o=decodeURIComponent(n.substring(0,r).trim()),s=decodeURIComponent(n.substring(r+1).trim()),i;if(t.length>0)i=(0,dKu.baggageEntryMetadataFromString)(t.join(tFe.BAGGAGE_PROPERTIES_SEPARATOR));return{key:o,value:s,metadata:i}}Fse.parsePairKeyValue=noi;function fKu(e){let t={};if(typeof e==="string"&&e.length>0)e.split(tFe.BAGGAGE_ITEMS_SEPARATOR).forEach((n)=>{let r=noi(n);if(r!==void 0&&r.value.length>0)t[r.key]=r.value});return t}Fse.parseKeyPairsIntoRecord=fKu});
-export {_1r};
+import {Q} from "../runtime.ts";
+import {JBe} from "./m2055.ts";
+import {wUr} from "./m2078.ts";
+import {PTn} from "./m2074.ts";
+import {EUr} from "./m2073.ts";
+import {XBe} from "./m2059.ts";
+var qci=Q((jTn)=>{Object.defineProperty(jTn,"__esModule",{value:!0});jTn.TraceAPI=void 0;var FUr=JBe(),Bci=wUr(),Uci=PTn(),BZe=EUr(),$ci=XBe(),BUr="trace";class UUr{constructor(){this._proxyTracerProvider=new Bci.ProxyTracerProvider,this.wrapSpanContext=Uci.wrapSpanContext,this.isSpanContextValid=Uci.isSpanContextValid,this.deleteSpan=BZe.deleteSpan,this.getSpan=BZe.getSpan,this.getActiveSpan=BZe.getActiveSpan,this.getSpanContext=BZe.getSpanContext,this.setSpan=BZe.setSpan,this.setSpanContext=BZe.setSpanContext}static getInstance(){if(!this._instance)this._instance=new UUr;return this._instance}setGlobalTracerProvider(e){let t=(0,FUr.registerGlobal)(BUr,this._proxyTracerProvider,$ci.DiagAPI.instance());if(t)this._proxyTracerProvider.setDelegate(e);return t}getTracerProvider(){return(0,FUr.getGlobal)(BUr)||this._proxyTracerProvider}getTracer(e,t){return this.getTracerProvider().getTracer(e,t)}disable(){(0,FUr.unregisterGlobal)(BUr,$ci.DiagAPI.instance()),this._proxyTracerProvider=new Bci.ProxyTracerProvider}}jTn.TraceAPI=UUr});
+export {qci};

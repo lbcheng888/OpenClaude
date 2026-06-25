@@ -1,8 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function LO(e){return bme.includes(e)}
-function $l(e){return e.replace(/\[1m\]$/i,"")}
-function nNe(e){return XPu.includes(e)}
-var bme,XPu;
-var X2=b(()=>{bme=["sonnet","opus","haiku","fable","best","sonnet[1m]","opus[1m]","fable[1m]","opusplan"];XPu=["sonnet","opus","haiku","fable"]});
-export {LO,$l,nNe,bme,XPu,X2};
+import {Sc,OAUTH_BETA_HEADER} from "../src/api/0465_getOauthConfig.ts";
+function qS(e,t){return Object.freeze({name:e,header:t})}
+function o5s(e){return r5s.get(e)}
+function J0r(e){return r5s.get(e)??Object.freeze({name:e,header:e})}
+function Yv(e){return e.map((t)=>t.header)}
+var GNe,HAe,cXe,m7,VNe,TQ,Ckt,W0r,Akt,uXe,umn,dXe,KNe,pXe,Rkt,dmn,vkt,lI,G0r,vme,V0r,K0r,z0r,j0r,Y0r,f7,HM,IM,n9u,r5s,X0r,Q0r;
+var xM=b(()=>{Sc();GNe=qS("claude_code","claude-code-20250219"),HAe=qS("oauth_auth",OAUTH_BETA_HEADER),cXe=qS("interleaved_thinking","interleaved-thinking-2025-05-14"),m7=qS("long_context","context-1m-2025-08-07"),VNe=qS("context_management","context-management-2025-06-27"),TQ=qS("structured_outputs","structured-outputs-2025-12-15"),Ckt=qS("web_search","web-search-2025-03-05"),W0r=qS("tool_search","advanced-tool-use-2025-11-20"),Akt=qS("tool_search","tool-search-tool-2025-10-19"),uXe=qS("effort","effort-2025-11-24"),umn=qS("task_budgets","task-budgets-2026-03-13"),dXe=qS("prompt_caching_scope","prompt-caching-scope-2026-01-05"),KNe=qS("extended_cache_ttl","extended-cache-ttl-2025-04-11"),pXe=qS("speed","fast-mode-2026-02-01"),Rkt=qS("redact_thinking","redact-thinking-2026-02-12"),dmn=qS("thinking_token_count","thinking-token-count-2026-05-13"),vkt=qS("narration_summaries","summarize-connector-text-2026-03-13"),lI=qS("afk_mode","afk-mode-2026-01-31"),G0r=qS("advisor_tool","advisor-tool-2026-03-01"),vme=qS("cache_diagnosis","cache-diagnosis-2026-04-07"),V0r=qS("context_hint","context-hint-2026-04-09"),K0r=qS("mcp_servers","mcp-servers-2025-12-04"),z0r=qS("files_api","files-api-2025-04-14"),j0r=qS("environments","environments-2025-11-01"),Y0r=qS("ccr_byoc","ccr-byoc-2025-07-29"),f7=qS("mid_conversation_system","mid-conversation-system-2026-04-07"),HM=qS("server_side_fallback","server-side-fallback-2026-06-01"),IM=qS("fallback_credit","fallback-credit-2026-06-01"),n9u=Object.freeze([GNe,HAe,cXe,m7,VNe,TQ,Ckt,W0r,Akt,uXe,umn,dXe,KNe,pXe,Rkt,dmn,vkt,lI,G0r,vme,V0r,K0r,z0r,j0r,Y0r,f7,HM,IM].filter((e)=>e!==null)),r5s=new Map(n9u.map((e)=>[e.header,e]));X0r=new Set([cXe,m7,Akt]),Q0r=new Set([GNe,cXe,VNe,HAe])});
+export {qS,o5s,J0r,Yv,GNe,HAe,cXe,m7,VNe,TQ,Ckt,W0r,Akt,uXe,umn,dXe,KNe,pXe,Rkt,dmn,vkt,lI,G0r,vme,V0r,K0r,z0r,j0r,Y0r,f7,HM,IM,n9u,r5s,X0r,Q0r,xM};

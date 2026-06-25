@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {ksn} from "./m992.ts";
-var V2s={};
-isFullscreenWithTTY(V2s,{STSClient:()=>Eun.STSClient,AssumeRoleCommand:()=>Eun.AssumeRoleCommand});
-var Eun;
-var K2s=b(()=>{Eun=M(ksn(),1)});
-export {V2s,Eun,K2s};
+import {fromInstanceMetadata} from "./m769.ts";
+import {b,x} from "../runtime.ts";
+import {sNe} from "./m770.ts";
+import {b0} from "./m756.ts";
+var M6s,z$u=(e)=>(e?.logger?.debug("@smithy/credential-provider-imds","fromInstanceMetadata"),async()=>fromInstanceMetadata(e)().then((t)=>M6s.setCredentialFeature(t,"CREDENTIALS_IMDS","0")));
+var N6s=b(()=>{sNe();M6s=x(b0(),1)});
+export {M6s,z$u,N6s};

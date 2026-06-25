@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {ple} from "./m3439.ts";
-import {rFt} from "./m3614.ts";
-var DSa=X((gMn)=>{Object.defineProperty(gMn,"__esModule",{value:!0});gMn.createOtlpGrpcExportDelegate=void 0;var Nsp=ple(),Bsp=rFt();function Fsp(e,t,n,r){return(0,Nsp.createOtlpNetworkExportDelegate)(e,t,(0,Bsp.createOtlpGrpcExporterTransport)({address:e.url,compression:e.compression,credentials:e.credentials,metadata:e.metadata,userAgent:e.userAgent,grpcName:n,grpcPath:r}))}gMn.createOtlpGrpcExportDelegate=Fsp});
-export {DSa};
+import {Q} from "../runtime.ts";
+var $wa=Q((KNn)=>{Object.defineProperty(KNn,"__esModule",{value:!0});KNn.StatusBuilder=void 0;class Uwa{constructor(){this.code=null,this.details=null,this.metadata=null}withCode(e){return this.code=e,this}withDetails(e){return this.details=e,this}withMetadata(e){return this.metadata=e,this}build(){let e={};if(this.code!==null)e.code=this.code;if(this.details!==null)e.details=this.details;if(this.metadata!==null)e.metadata=this.metadata;return e}}KNn.StatusBuilder=Uwa});
+export {$wa};

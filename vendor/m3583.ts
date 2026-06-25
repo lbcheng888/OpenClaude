@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var cya=X((HLn)=>{var Weo;Object.defineProperty(HLn,"__esModule",{value:!0});HLn.GRPC_NODE_USE_ALTERNATIVE_RESOLVER=void 0;HLn.GRPC_NODE_USE_ALTERNATIVE_RESOLVER=((Weo=process.env.GRPC_NODE_USE_ALTERNATIVE_RESOLVER)!==null&&Weo!==void 0?Weo:"false")==="true"});
-export {cya};
+import {Q} from "../runtime.ts";
+var URa=Q(($P_,Jup)=>{Jup.exports={nested:{google:{nested:{protobuf:{nested:{Api:{fields:{name:{type:"string",id:1},methods:{rule:"repeated",type:"Method",id:2},options:{rule:"repeated",type:"Option",id:3},version:{type:"string",id:4},sourceContext:{type:"SourceContext",id:5},mixins:{rule:"repeated",type:"Mixin",id:6},syntax:{type:"Syntax",id:7}}},Method:{fields:{name:{type:"string",id:1},requestTypeUrl:{type:"string",id:2},requestStreaming:{type:"bool",id:3},responseTypeUrl:{type:"string",id:4},responseStreaming:{type:"bool",id:5},options:{rule:"repeated",type:"Option",id:6},syntax:{type:"Syntax",id:7}}},Mixin:{fields:{name:{type:"string",id:1},root:{type:"string",id:2}}},SourceContext:{fields:{fileName:{type:"string",id:1}}},Option:{fields:{name:{type:"string",id:1},value:{type:"Any",id:2}}},Syntax:{values:{SYNTAX_PROTO2:0,SYNTAX_PROTO3:1}}}}}}}}});
+export {URa};

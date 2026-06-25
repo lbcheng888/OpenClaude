@@ -1,14 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {YMn} from "./m3658.ts";
-import {bge} from "./m3659.ts";
-import {gno} from "./m3678.ts";
-import {LEa} from "./m3679.ts";
-import {BEa} from "./m3680.ts";
-import {UEa} from "./m3681.ts";
-import {bva} from "./m3728.ts";
-import {yFt} from "./m3676.ts";
-import {W1n} from "./m3720.ts";
-import {Mle} from "./m3660.ts";
-var Nno=X((DC)=>{Object.defineProperty(DC,"__esModule",{value:!0});DC.TimeoutError=DC.createDenyListAttributesProcessor=DC.createAllowListAttributesProcessor=DC.AggregationType=DC.MeterProvider=DC.ConsoleMetricExporter=DC.InMemoryMetricExporter=DC.PeriodicExportingMetricReader=DC.MetricReader=DC.InstrumentType=DC.DataPointType=DC.AggregationTemporality=void 0;var uup=YMn();Object.defineProperty(DC,"AggregationTemporality",{enumerable:!0,get:function(){return uup.AggregationTemporality}});var Eva=bge();Object.defineProperty(DC,"DataPointType",{enumerable:!0,get:function(){return Eva.DataPointType}});Object.defineProperty(DC,"InstrumentType",{enumerable:!0,get:function(){return Eva.InstrumentType}});var dup=gno();Object.defineProperty(DC,"MetricReader",{enumerable:!0,get:function(){return dup.MetricReader}});var pup=LEa();Object.defineProperty(DC,"PeriodicExportingMetricReader",{enumerable:!0,get:function(){return pup.PeriodicExportingMetricReader}});var mup=BEa();Object.defineProperty(DC,"InMemoryMetricExporter",{enumerable:!0,get:function(){return mup.InMemoryMetricExporter}});var fup=UEa();Object.defineProperty(DC,"ConsoleMetricExporter",{enumerable:!0,get:function(){return fup.ConsoleMetricExporter}});var Aup=bva();Object.defineProperty(DC,"MeterProvider",{enumerable:!0,get:function(){return Aup.MeterProvider}});var hup=yFt();Object.defineProperty(DC,"AggregationType",{enumerable:!0,get:function(){return hup.AggregationType}});var Cva=W1n();Object.defineProperty(DC,"createAllowListAttributesProcessor",{enumerable:!0,get:function(){return Cva.createAllowListAttributesProcessor}});Object.defineProperty(DC,"createDenyListAttributesProcessor",{enumerable:!0,get:function(){return Cva.createDenyListAttributesProcessor}});var gup=Mle();Object.defineProperty(DC,"TimeoutError",{enumerable:!0,get:function(){return gup.TimeoutError}})});
-export {Nno};
+import {Q} from "../runtime.ts";
+import {uao} from "./m3725.ts";
+import {mao} from "./m3727.ts";
+import {fao} from "./m3728.ts";
+import {r$t} from "./m3726.ts";
+var J0a=Q((xBn)=>{Object.defineProperty(xBn,"__esModule",{value:!0});xBn.AsyncMetricStorage=void 0;var dSp=uao(),pSp=mao(),mSp=fao(),fSp=r$t();class Y0a extends dSp.MetricStorage{_aggregationCardinalityLimit;_deltaMetricStorage;_temporalMetricStorage;_attributesProcessor;constructor(e,t,n,r,o){super(e);this._aggregationCardinalityLimit=o,this._deltaMetricStorage=new pSp.DeltaMetricProcessor(t,this._aggregationCardinalityLimit),this._temporalMetricStorage=new mSp.TemporalMetricProcessor(t,r),this._attributesProcessor=n}record(e,t){let n=new fSp.AttributeHashMap;for(let[r,o]of e.entries())n.set(this._attributesProcessor.process(r),o);this._deltaMetricStorage.batchCumulate(n,t)}collect(e,t){let n=this._deltaMetricStorage.collect();return this._temporalMetricStorage.buildMetrics(e,this._instrumentDescriptor,n,t)}}xBn.AsyncMetricStorage=Y0a});
+export {J0a};

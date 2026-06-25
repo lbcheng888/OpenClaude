@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JB} from "./m1820.ts";
-import {initSessionMetadataPersistence} from "./m1845.ts";
-var uYs=X((XNA,cYs)=>{var Y$u=JB(),J$u=initSessionMetadataPersistence(),X$u=(e,t,n)=>{let r=null,o=null,s=null;try{s=new J$u(t,n)}catch(i){return null}return e.forEach((i)=>{if(s.test(i)){if(!r||o.compare(i)===-1)r=i,o=new Y$u(r,n)}}),r};cYs.exports=X$u});
-export {uYs};
+import {Q} from "../runtime.ts";
+var Gei=Q((fWh,Wei)=>{class qei{constructor(){this.max=1000,this.map=new Map}get(e){let t=this.map.get(e);if(t===void 0)return;else return this.map.delete(e),this.map.set(e,t),t}delete(e){return this.map.delete(e)}set(e,t){if(!this.delete(e)&&t!==void 0){if(this.map.size>=this.max){let r=this.map.keys().next().value;this.delete(r)}this.map.set(e,t)}return this}}Wei.exports=qei});
+export {Gei};

@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {$gs,qgs} from "./m957.ts";
-import {b,M} from "../runtime.ts";
-import {Ioe} from "./m866.ts";
-import {JX} from "./m606.ts";
-var jgs,JKe,Hpu,Wgs=(e,t={})=>Hpu.get(e,()=>JKe.resolveEndpoint($gs,{endpointParams:e,logger:t.logger}));
-var Ggs=b(()=>{qgs();jgs=M(Ioe(),1),JKe=M(JX(),1),Hpu=new JKe.EndpointCache({size:50,params:["Endpoint","Region","UseDualStack","UseFIPS"]});JKe.customEndpointFunctions.aws=jgs.awsEndpointFunctions});
-export {jgs,JKe,Hpu,Wgs,Ggs};
+import {b} from "../runtime.ts";
+var hCs=(e)=>typeof ArrayBuffer==="function"&&e instanceof ArrayBuffer||Object.prototype.toString.call(e)==="[object ArrayBuffer]";
+var Ban,gCs=(e,t=0,n=e.byteLength-t)=>{if(!hCs(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return Ban.Buffer.from(e,t,n)},_Cs=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?Ban.Buffer.from(e,t):Ban.Buffer.from(e)};
+var cRr=b(()=>{Ban=require("buffer")});
+export {hCs,Ban,gCs,_Cs,cRr};

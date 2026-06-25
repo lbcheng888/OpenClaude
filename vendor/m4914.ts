@@ -1,9 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {tE,l4,uc} from "../src/api/1448_month.ts";
-import {pVn,cft} from "../src/telemetry/4910_pVn.ts";
-import {qvo,pvl} from "../src/tui/4913_call.ts";
-import {fvl,mvl} from "./m4913.ts";
-var kim,Avl,jvo;
-var hvl=b(()=>{tE();pVn();kim={type:"local-jsx",name:"fast",get description(){return`Toggle fast mode (${l4()})`},get isHidden(){return!uc()},argumentHint:"[on|off]",get immediate(){return cft()},requires:{ink:!0},thinClientDispatch:"control-request",load:()=>Promise.resolve().then(() => (qvo(),pvl))},Avl={type:"local",name:"fast",supportsNonInteractive:!0,get description(){return`Toggle fast mode (${l4()})`},argumentHint:"[on|off]",load:()=>Promise.resolve().then(() => (fvl(),mvl))},jvo=kim});
-export {kim,Avl,jvo,hvl};
+import {Ir} from "./m584.ts";
+import {Ne} from "./m583.ts";
+import {cwe,CLi} from "./m2528.ts";
+var cxl,Gfm,$Io;
+var uxl=b(()=>{Ir();cxl={ghostty:"Ghostty",kitty:"Kitty",WarpTerminal:"Warp",WezTerm:"WezTerm","windows-terminal":"Windows Terminal"},Gfm={type:"local-jsx",name:"terminal-setup",get description(){if(Ne.terminal==="Apple_Terminal")return"Enable Option+Enter key binding for newlines and visual bell";if(Ne.terminal!==null&&Object.hasOwn(cxl,Ne.terminal))return`Check terminal setup (Shift+Enter is natively supported in ${cxl[Ne.terminal]})`;if(process.env.__CFBundleIdentifier==="com.googlecode.iterm2"&&(Ne.terminal==="iTerm.app"||Ne.terminal==="tmux"||Ne.terminal==="screen"||Ne.terminal===null))return"Enable iTerm2 clipboard access for /copy";return"Install Shift+Enter key binding for newlines"},requires:{ink:!0},load:()=>Promise.resolve().then(() => (cwe(),CLi))},$Io=Gfm});
+export {cxl,Gfm,$Io,uxl};

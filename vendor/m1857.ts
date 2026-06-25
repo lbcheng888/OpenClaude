@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Hxt} from "./m1847.ts";
-import {sK} from "./m1830.ts";
-var HYs=X((sBA,kYs)=>{var g9u=Hxt(),_9u=sK();kYs.exports=(e,t,n)=>{let r=[],o=null,s=null,i=e.sort((u,d)=>_9u(u,d,n));for(let u of i)if(g9u(u,t,n)){if(s=u,!o)o=u}else{if(s)r.push([o,s]);s=null,o=null}if(o)r.push([o,null]);let a=[];for(let[u,d]of r)if(u===d)a.push(u);else if(!d&&u===i[0])a.push("*");else if(!d)a.push(`>=${u}`);else if(u===i[0])a.push(`<=${d}`);else a.push(`${u} - ${d}`);let l=a.join(" || "),c=typeof t.raw==="string"?t.raw:String(t);return l.length<c.length?l:t}});
-export {HYs};
+import {Q} from "../runtime.ts";
+import {x7} from "./m1850.ts";
+var pti=Q((EWh,dti)=>{var EKu=x7(),CKu=(e,t)=>{try{return new EKu(e,t).range||"*"}catch(n){return null}};dti.exports=CKu});
+export {pti};

@@ -1,5 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {DL} from "./m3513.ts";
-var wOn=X((vOn)=>{Object.defineProperty(vOn,"__esModule",{value:!0});vOn.CallCredentials=void 0;var hZr=DL();function fJd(e){return"getRequestHeaders"in e&&typeof e.getRequestHeaders==="function"}class rit{static createFromMetadataGenerator(e){return new gZr(e)}static createFromGoogleCredential(e){return rit.createFromMetadataGenerator((t,n)=>{let r;if(fJd(e))r=e.getRequestHeaders(t.service_url);else r=new Promise((o,s)=>{e.getRequestMetadata(t.service_url,(i,a)=>{if(i){s(i);return}if(!a){s(Error("Headers not set by metadata plugin"));return}o(a)})});r.then((o)=>{let s=new hZr.Metadata;for(let i of Object.keys(o))s.add(i,o[i]);n(null,s)},(o)=>{n(o)})})}static createEmpty(){return new _Zr}}vOn.CallCredentials=rit;class COn extends rit{constructor(e){super();this.creds=e}async generateMetadata(e){let t=new hZr.Metadata,n=await Promise.all(this.creds.map((r)=>r.generateMetadata(e)));for(let r of n)t.merge(r);return t}compose(e){return new COn(this.creds.concat([e]))}_equals(e){if(this===e)return!0;if(e instanceof COn)return this.creds.every((t,n)=>t._equals(e.creds[n]));else return!1}}class gZr extends rit{constructor(e){super();this.metadataGenerator=e}generateMetadata(e){return new Promise((t,n)=>{this.metadataGenerator(e,(r,o)=>{if(o!==void 0)t(o);else n(r)})})}compose(e){return new COn([this,e])}_equals(e){if(this===e)return!0;if(e instanceof gZr)return this.metadataGenerator===e.metadataGenerator;else return!1}}class _Zr extends rit{generateMetadata(e){return Promise.resolve(new hZr.Metadata)}compose(e){return e}_equals(e){return e instanceof _Zr}}});
-export {wOn};
+import {b,x} from "../runtime.ts";
+import {dle} from "./m3455.ts";
+import {gle} from "./m3495.ts";
+import {b_e} from "./m3509.ts";
+var qEa,WEa,s1n,OTLPLogExporter;
+var GEa=b(()=>{qEa=x(dle(),1),WEa=x(gle(),1),s1n=x(b_e(),1);OTLPLogExporter=class OTLPLogExporter extends qEa.OTLPExporterBase{constructor(e={}){super(s1n.createOtlpHttpExportDelegate(s1n.convertLegacyHttpOptions(e,"LOGS","v1/logs",{"Content-Type":"application/json"}),WEa.JsonLogsSerializer))}}});
+export {qEa,WEa,s1n,OTLPLogExporter,GEa};

@@ -1,0 +1,7 @@
+// @ts-nocheck
+import {Q} from "../runtime.ts";
+import {XHe} from "./m3246.ts";
+import {bit} from "./m3242.ts";
+import {Cit} from "./m3247.ts";
+var cPn=Q((Ait)=>{Object.defineProperty(Ait,"__esModule",{value:!0});Ait.CancellationTokenSource=Ait.CancellationToken=void 0;var KYd=XHe(),zYd=bit(),wZr=Cit(),lPn;(function(e){e.None=Object.freeze({isCancellationRequested:!1,onCancellationRequested:wZr.Event.None}),e.Cancelled=Object.freeze({isCancellationRequested:!0,onCancellationRequested:wZr.Event.None});function t(n){let r=n;return r&&(r===e.None||r===e.Cancelled||zYd.boolean(r.isCancellationRequested)&&!!r.onCancellationRequested)}e.is=t})(lPn||(Ait.CancellationToken=lPn={}));var jYd=Object.freeze(function(e,t){let n=(0,KYd.default)().timer.setTimeout(e.bind(t),0);return{dispose(){n.dispose()}}});class kZr{constructor(){this._isCancelled=!1}cancel(){if(!this._isCancelled){if(this._isCancelled=!0,this._emitter)this._emitter.fire(void 0),this.dispose()}}get isCancellationRequested(){return this._isCancelled}get onCancellationRequested(){if(this._isCancelled)return jYd;if(!this._emitter)this._emitter=new wZr.Emitter;return this._emitter.event}dispose(){if(this._emitter)this._emitter.dispose(),this._emitter=void 0}}class Rda{get token(){if(!this._token)this._token=new kZr;return this._token}cancel(){if(!this._token)this._token=lPn.Cancelled;else this._token.cancel()}dispose(){if(!this._token)this._token=lPn.None;else if(this._token instanceof kZr)this._token.dispose()}}Ait.CancellationTokenSource=Rda});
+export {cPn};

@@ -1,7 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {ahe} from "./m2757.ts";
-function E5r(e,t,n){return L2i.diff(e,t,n)}
-var O2i,L2i;
-var M2i=b(()=>{O2i=class O2i extends ahe{tokenize(e){return e.slice()}join(e){return e}removeEmpty(e){return e}};L2i=new O2i});
-export {E5r,O2i,L2i,M2i};
+function q1d(e,t,n){var r=-1,o=e==null?0:e.length;while(++r<o)if(n(t,e[r]))return!0;return!1}
+var V6i;
+var K6i=b(()=>{V6i=q1d});
+export {q1d,V6i,K6i};

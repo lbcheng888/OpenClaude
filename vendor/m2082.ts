@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {$Mr} from "./m2060.ts";
-var Dri=X((FXe)=>{Object.defineProperty(FXe,"__esModule",{value:!0});FXe.NOOP_METER_PROVIDER=FXe.NoopMeterProvider=void 0;var M7u=$Mr();class r1r{getMeter(e,t,n){return M7u.NOOP_METER}}FXe.NoopMeterProvider=r1r;FXe.NOOP_METER_PROVIDER=new r1r});
-export {Dri};
+import {Q} from "../runtime.ts";
+var yci=Q((NZe)=>{Object.defineProperty(NZe,"__esModule",{value:!0});NZe.validateValue=NZe.validateKey=void 0;var kUr="[_0-9a-z-*/]",Wnd=`[a-z]${kUr}{0,255}`,Gnd=`[a-z0-9]${kUr}{0,240}@[a-z]${kUr}{0,13}`,Vnd=new RegExp(`^(?:${Wnd}|${Gnd})$`),Knd=/^[ -~]{0,255}[!-~]$/,znd=/,|=/;function jnd(e){return Vnd.test(e)}NZe.validateKey=jnd;function Ynd(e){return Knd.test(e)&&!znd.test(e)}NZe.validateValue=Ynd});
+export {yci};

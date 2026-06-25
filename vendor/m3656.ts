@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-import {aFt} from "./m3626.ts";
-var zba=X((VMn)=>{Object.defineProperty(VMn,"__esModule",{value:!0});VMn._export=void 0;var Kba=Xi(),map=aFt();function fap(e,t){return new Promise((n)=>{Kba.context.with((0,map.suppressTracing)(Kba.context.active()),()=>{e.export(t,n)})})}VMn._export=fap});
-export {zba};
+import {Q} from "../runtime.ts";
+import {RHa} from "./m3655.ts";
+var Mio=Q((SB)=>{Object.defineProperty(SB,"__esModule",{value:!0});SB.getStringListFromEnv=SB.getNumberFromEnv=SB.getStringFromEnv=SB.getBooleanFromEnv=SB.otperformance=SB._globalThis=SB.SDK_INFO=void 0;var L4e=RHa();Object.defineProperty(SB,"SDK_INFO",{enumerable:!0,get:function(){return L4e.SDK_INFO}});Object.defineProperty(SB,"_globalThis",{enumerable:!0,get:function(){return L4e._globalThis}});Object.defineProperty(SB,"otperformance",{enumerable:!0,get:function(){return L4e.otperformance}});Object.defineProperty(SB,"getBooleanFromEnv",{enumerable:!0,get:function(){return L4e.getBooleanFromEnv}});Object.defineProperty(SB,"getStringFromEnv",{enumerable:!0,get:function(){return L4e.getStringFromEnv}});Object.defineProperty(SB,"getNumberFromEnv",{enumerable:!0,get:function(){return L4e.getNumberFromEnv}});Object.defineProperty(SB,"getStringListFromEnv",{enumerable:!0,get:function(){return L4e.getStringListFromEnv}})});
+export {Mio};

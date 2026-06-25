@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {US} from "./m818.ts";
-function $rn(e,t){if(t==null)return t;let n=Els.NormalizedSchema.of(e);if(n.getMergedTraits().sensitive)return s_r;if(n.isListSchema()){if(!!n.getValueSchema().getMergedTraits().sensitive)return s_r}else if(n.isMapSchema()){if(!!n.getKeySchema().getMergedTraits().sensitive||!!n.getValueSchema().getMergedTraits().sensitive)return s_r}else if(n.isStructSchema()&&typeof t==="object"){let r=t,o={};for(let[s,i]of n.structIterator())if(r[s]!=null)o[s]=$rn(i,r[s]);return o}return t}
-var Els,s_r="***SensitiveInformation***";
-var Cls=b(()=>{Els=M(US(),1)});
-export {$rn,Els,s_r,Cls};
+import {Q} from "../runtime.ts";
+import {wEr} from "./m829.ts";
+import {BS} from "./m793.ts";
+var rfs=Q((Sin)=>{Object.defineProperty(Sin,"__esModule",{value:!0});Sin.toBase64=void 0;var Cmu=wEr(),Amu=BS(),Rmu=(e)=>{let t;if(typeof e==="string")t=(0,Amu.fromUtf8)(e);else t=e;if(typeof t!=="object"||typeof t.byteOffset!=="number"||typeof t.byteLength!=="number")throw Error("@smithy/util-base64: toBase64 encoder function only accepts string | Uint8Array.");return(0,Cmu.fromArrayBuffer)(t.buffer,t.byteOffset,t.byteLength).toString("base64")};Sin.toBase64=Rmu});
+export {rfs};

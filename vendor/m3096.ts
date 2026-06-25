@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var IYi=X((xjh,HYi)=>{var Rjh=require("path");HYi.exports.checkPath=function(t){}});
-export {IYi};
+import {Q} from "../runtime.ts";
+import {mJr} from "./m3095.ts";
+var Qta=Q((iZg,Xta)=>{var X0n=mJr();Xta.exports={readJson:X0n.readFile,readJsonSync:X0n.readFileSync,writeJson:X0n.writeFile,writeJsonSync:X0n.writeFileSync}});
+export {Qta};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,nRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var qxs,ListCustomModelDeploymentsCommand;
-var Lan=b(()=>{ri();wi();xi();qxs=M(yo(),1);ListCustomModelDeploymentsCommand=class ListCustomModelDeploymentsCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[qxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListCustomModelDeployments",{}).n("BedrockClient","ListCustomModelDeploymentsCommand").sc(nRs).build(){}});
-export {qxs,ListCustomModelDeploymentsCommand,Lan};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Vxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var xPs,GetUseCaseForModelAccessCommand;
+var Qwr=b(()=>{$s();ai();ci();xPs=x(yo(),1);GetUseCaseForModelAccessCommand=class GetUseCaseForModelAccessCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[xPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetUseCaseForModelAccess",{}).n("BedrockClient","GetUseCaseForModelAccessCommand").sc(Vxs).build(){}});
+export {xPs,GetUseCaseForModelAccessCommand,Qwr};

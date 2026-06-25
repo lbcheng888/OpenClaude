@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Lvi} from "./m2424.ts";
-import {uen} from "./m535.ts";
-var Bvi=X((xch,Nvi)=>{var old=Lvi(),LZe=uen();function Mvi(e){if(/^\d{3,4}$/.test(e)){let n=/(\d{1,2})(\d{2})/.exec(e);return{major:0,minor:parseInt(n[1],10),patch:parseInt(n[2],10)}}let t=(e||"").split(".").map((n)=>parseInt(n,10));return{major:t[0],minor:t[1],patch:t[2]}}function v$r(e){let{env:t}=process;if("FORCE_HYPERLINK"in t)return!(t.FORCE_HYPERLINK.length>0&&parseInt(t.FORCE_HYPERLINK,10)===0);if(LZe("no-hyperlink")||LZe("no-hyperlinks")||LZe("hyperlink=false")||LZe("hyperlink=never"))return!1;if(LZe("hyperlink=true")||LZe("hyperlink=always"))return!0;if("NETLIFY"in t)return!0;if(!old.supportsColor(e))return!1;if(e&&!e.isTTY)return!1;if("CI"in t)return!1;if("TEAMCITY_VERSION"in t)return!1;if("TERM_PROGRAM"in t){let n=Mvi(t.TERM_PROGRAM_VERSION);switch(t.TERM_PROGRAM){case"iTerm.app":if(n.major===3)return n.minor>=1;return n.major>3;case"WezTerm":return n.major>=20200620;case"vscode":return n.major>1||n.major===1&&n.minor>=72}}if("VTE_VERSION"in t){if(t.VTE_VERSION==="0.50.0")return!1;let n=Mvi(t.VTE_VERSION);return n.major>0||n.minor>=50}return!1}Nvi.exports={supportsHyperlink:v$r,stdout:v$r(process.stdout),stderr:v$r(process.stderr)}});
-export {Bvi};
+import {b} from "../runtime.ts";
+import {ett} from "./m2297.ts";
+var Yqr=b(()=>{ett()});
+export {Yqr};

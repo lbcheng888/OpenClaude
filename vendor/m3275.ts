@@ -1,14 +1,16 @@
 // @ts-nocheck
-import {Xa} from "./m2509.ts";
 import {b} from "../runtime.ts";
-function r0n(e,t){let n=e.lastIndexOf(" -");if(n>0){let r=e.substring(0,n),o=e.substring(n+1);return`${Xa([r])} ${o} ${Xa([t])}`}else return`${Xa([e])} ${Xa([t])}`}
-var UYr=()=>{};
-function $Yr(e){if(/\d\s*<<\s*\d/.test(e)||/\[\[\s*\d+\s*<<\s*\d+\s*\]\]/.test(e)||/\$\(\(.*<<.*\)\)/.test(e))return!1;return/<<-?\s*(?:(['"]?)(\w+)\1|\\(\w+))/.test(e)}
-function Qjd(e){let t=/'(?:[^'\\]|\\.)*\n(?:[^'\\]|\\.)*'/,n=/"(?:[^"\\]|\\.)*\n(?:[^"\\]|\\.)*"/;return t.test(e)||n.test(e)}
-function Cia(e,t=!0){if($Yr(e)||Qjd(e)){let o=`'${e.replaceAll("'",`'"'"'`)}'`;if($Yr(e))return o;return t?`${o} < /dev/null`:o}let n=Xa([e]);return t?`${n} < /dev/null`:n}
-function Zjd(e){return/(?:^|[\s;&|])<(?![<(])\s*\S+/.test(e)}
-function via(e){if($Yr(e))return!1;if(Zjd(e))return!1;return!0}
-function wia(e){if(e.includes("<")||e.includes("$")||e.includes("`"))return e;return e.replace(e8d,"$1/dev/null")}
-var e8d;
-var Ria=b(()=>{e8d=/(\d?&?>+[ \t]*)[Nn][Uu][Ll](?=\s|$|[|&;)\n])/g});
-export {r0n,UYr,$Yr,Qjd,Cia,Zjd,via,wia,e8d,Ria};
+import {qe,logForDebugging} from "../src/config/0236_setHasFormattedOutput.ts";
+import {ps,pk,UXt} from "./m230.ts";
+import {aBt,ueo,Nit} from "./m3274.ts";
+import {lr,KXt} from "./m233.ts";
+import {wE,gf,FPn} from "./m5177.ts";
+var nma,iXd=8388608,aXd=1000,lXd=4096,My;
+var T3e=b(()=>{qe();ps();aBt();lr();wE();nma=require("fs/promises");My=class My{taskId;path;stdoutToFile;#e="";#t="";#n=null;#s=new ueo(1000);#i=0;#a=0;#o;#c;#u=!1;#l=0;static#r=new Map;static#p=new Map;static#g=null;constructor(e,t,n=!1,r=iXd){if(this.taskId=e,this.path=gf(e),this.stdoutToFile=n,this.#o=r,this.#c=t,n&&t)My.#r.set(e,this)}static startPolling(e){let t=My.#r.get(e);if(!t||!t.#c)return;if(My.#p.set(e,t),!My.#g)My.#g=setInterval(My.#f,aXd),My.#g.unref()}static stopPolling(e){if(My.#p.delete(e),My.#p.size===0&&My.#g)clearInterval(My.#g),My.#g=null}static#f(){for(let[,e]of My.#p){if(!e.#c)continue;pk(e.path,lXd).then(({content:t,bytesRead:n,bytesTotal:r})=>{if(!e.#c)return;if(!t){e.#c("","",e.#i,r,!1);return}let o=t.length,s=0,i=0,a=0;while(o>0){if(o=t.lastIndexOf(`
+`,o-1),a++,a===5)s=o<=0?0:o+1;if(a===100)i=o<=0?0:o+1}let l=n>=r?a:Math.max(e.#i,Math.round(r/n*a));e.#i=l,e.#a=r,e.#c(t.slice(s),t.slice(i),l,r,n<r)},()=>{})}}writeStdout(e){this.#d(e,!1)}writeStderr(e){this.#d(e,!0)}#d(e,t){if(this.#a+=e.length,this.#_(e),this.#n){this.#n.append(t?`[stderr] ${e}`:e);return}if(this.#e.length+this.#t.length+e.length>this.#o){this.#h(t?e:null,t?null:e);return}if(t)this.#t+=e;else this.#e+=e}#_(e){let r=0,o=[],s=0,i=e.length;while(i>0){let a=e.lastIndexOf(`
+`,i-1);if(a===-1)break;if(r++,o.length<100&&s<4096){let l=i-a-1;if(l>0&&l<=4096-s){let c=e.slice(a+1,i);if(c.trim())o.push(Buffer.from(c).toString()),s+=l}}i=a}this.#i+=r;for(let a=o.length-1;a>=0;a--)this.#s.add(o[a]);if(this.#c&&o.length>0){let a=this.#s.getRecent(5);this.#c(KXt(a,`
+`),KXt(this.#s.getRecent(100),`
+`),this.#i,this.#a,this.#n!==null)}}#h(e,t){if(this.#n=new FPn(this.taskId),this.#e)this.#n.append(this.#e),this.#e="";if(this.#t)this.#n.append(`[stderr] ${this.#t}`),this.#t="";if(t)this.#n.append(t);if(e)this.#n.append(`[stderr] ${e}`)}async getStdout(){if(this.stdoutToFile)return this.#T();if(this.#n){let e=this.#s.getRecent(5),t=KXt(e,`
+`),r=`
+Output truncated (${Math.round(this.#a/1024)}KB total). Full output saved to: ${this.path}`;return t?t+r:r.trimStart()}return this.#e}async#T(){let e=Nit();try{let t=await UXt(this.path,0,e);if(!t)return this.#u=!0,"";let{content:n,bytesRead:r,bytesTotal:o}=t;return this.#l=o,this.#u=o<=r,n}catch(t){let n=t instanceof Error&&"code"in t?String(t.code):"unknown";return logForDebugging(`TaskOutput.#readStdoutFromFile: failed to read ${this.path} (${n}): ${t}`),`<bash output unavailable: output file ${this.path} could not be read (${n}). This usually means another Claude Code process in the same project deleted it during startup cleanup.>`}}getStderr(){if(this.#n)return"";return this.#t}get isOverflowed(){return this.#n!==null}get totalLines(){return this.#i}get totalBytes(){return this.#a}get outputFileRedundant(){return this.#u}get outputFileSize(){return this.#l}spillToDisk(){if(!this.#n)this.#h(null,null)}async flush(){await this.#n?.flush()}async deleteOutputFile(){try{await nma.unlink(this.path)}catch{}}clear(){this.#e="",this.#t="",this.#s.clear(),this.#c=null,this.#n?.cancel(),My.stopPolling(this.taskId),My.#r.delete(this.taskId)}}});
+export {nma,iXd,aXd,lXd,My,T3e};

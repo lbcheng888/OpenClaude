@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {Nan,ListEvaluationJobsCommand} from "./m1128.ts";
-import {Sd} from "./m850.ts";
-var Lks,paginateListEvaluationJobs;
-var Mks=b(()=>{s0();Nan();Lks=M(Sd(),1),paginateListEvaluationJobs=Lks.createPaginator(BedrockClient,ListEvaluationJobsCommand,"nextToken","nextToken","maxResults")});
-export {Lks,paginateListEvaluationJobs,Mks};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {hun,ListAutomatedReasoningPolicyBuildWorkflowsCommand} from "./m1128.ts";
+import {Zu} from "./m855.ts";
+var TOs,paginateListAutomatedReasoningPolicyBuildWorkflows;
+var SOs=b(()=>{C0();hun();TOs=x(Zu(),1),paginateListAutomatedReasoningPolicyBuildWorkflows=TOs.createPaginator(BedrockClient,ListAutomatedReasoningPolicyBuildWorkflowsCommand,"nextToken","nextToken","maxResults")});
+export {TOs,paginateListAutomatedReasoningPolicyBuildWorkflows,SOs};

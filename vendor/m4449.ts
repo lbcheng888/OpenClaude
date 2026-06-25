@@ -1,157 +1,66 @@
 // @ts-nocheck
+import {G7r,V7r,i1t,K7r} from "./m2765.ts";
+import {Z6t,e5t,jSo} from "./m4400.ts";
+import {sleep} from "../src/telemetry/1488_withTimeout.ts";
+import {Pt,He,xe,mn} from "../src/telemetry/0600_feature_name.ts";
+import {os} from "../src/api/0465_getOauthConfig.ts";
+import {Wq,cxe} from "../src/api/3982_model.ts";
+import {getDefaultSonnetModel,Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {qt,tn} from "../src/config/0230_encoding.ts";
+import {i2,pd} from "./m706.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
 import {b} from "../runtime.ts";
-var prl;
-var mrl=b(()=>{prl={agentType:"statusline-setup",whenToUse:"Use this agent to configure the user's Claude Code status line setting.",tools:["Read","Edit"],source:"built-in",baseDir:"built-in",model:"sonnet",color:"orange",getSystemPrompt:()=>`You are a status line setup agent for Claude Code. Your job is to create or update the statusLine command in the user's Claude Code settings.
+function Zal(e){return e.map((t)=>{let n=t.chunk.slice(0,300).replace(/\s+/g," ").trim();return`- {id: "${t.id}", source: ${t.source}} ${t.title}: ${n}${t.chunk.length>300?"\u2026":""}`}).join(`
+`)}
+async function ell(e,t,n,r,o=new Set,s=Promise.resolve([])){n.lastUsage=null;let i={type:"ephemeral"},a=G7r(n,t)??await Z6t(t,r).then((_)=>_.length>0&&!r.aborted?V7r(n,t,_,e5t(_),i):void 0),c=(await Promise.race([s,sleep(Qal,r,{unref:!0}).then(()=>[])])).filter((_)=>!o.has(_.url||`aki:${_.id}`));if(c.length===0&&(!a||a.memories.every((_)=>o.has(_.filePath)))){if(!r.aborted)Pt("memory_recall_select",a?"all_surfaced":"no_candidates");return{memories:[],knowledge:[]}}let u=a?.messages??[{role:"user",content:[{type:"text",text:`Available memories:
+(none \u2014 this session has no local memory files yet)`,...i&&{cache_control:i}}]}],d=new Map((a?.memories??[]).map((_)=>[_.filename,_])),{selectedMemories:p,selectedKnowledgeIds:m}=await qKp(e,t,n,u,d,i,r,c),f=new Map(c.map((_)=>[_.id,_])),h=os(m).map((_)=>f.get(_)).filter((_)=>_!==void 0).slice(0,3);return{memories:p.map((_)=>d.get(_)).filter((_)=>_!==void 0&&!o.has(_.filePath)).map((_)=>({path:_.filePath,mtimeMs:_.mtimeMs})),knowledge:h}}
+async function qKp(e,t,n,r,o,s,i,a){let l=a.length>0?`
 
-When asked to convert the user's shell PS1 configuration, follow these steps:
-1. Read the user's shell configuration files in this order of preference:
-   - ~/.zshrc
-   - ~/.bashrc  
-   - ~/.bash_profile
-   - ~/.profile
+Knowledge-index results for this query (select by id):
+${Zal(a)}`:"",c=`Select memories relevant to:
+${e}${l}`,u=a.length>0?`Select memories relevant to:
+${e}
 
-2. Extract the PS1 value using this regex pattern: /(?:^|\\n)\\s*(?:export\\s+)?PS1\\s*=\\s*["']([^"']+)["']/m
+(${a.length} knowledge-index results were offered for this query)`:c,d={selectedMemories:[],selectedKnowledgeIds:[]};try{let p=await Wq({model:getDefaultSonnetModel(),system:[{type:"text",text:UKp,cache_control:s}],skipSystemPromptPrefix:!0,messages:[...r,{role:"user",content:[{type:"text",text:c,cache_control:s}]}],max_tokens:256,output_format:{type:"json_schema",schema:{type:"object",properties:{selected_memories:{type:"array",items:{type:"string"}},selected_knowledge_ids:{type:"array",items:{type:"string"}}},required:["selected_memories"],additionalProperties:!1}},signal:i,querySource:i1t}),m=p.content.find((h)=>h.type==="text");if(!m||m.type!=="text")return d;let f=qt(i2(m.text));return K7r(n,t,u,m.text),n.lastUsage={cacheReadInputTokens:p.usage.cache_read_input_tokens??0,cacheCreationInputTokens:p.usage.cache_creation_input_tokens??0,turnCount:(r.length+1)/2},He("memory_recall_select"),{selectedMemories:f.selected_memories.filter((h)=>o.has(h)),selectedKnowledgeIds:f.selected_knowledge_ids??[]}}catch(p){if(n.lastUsage=null,i.aborted)return d;return Pt("memory_recall_select","memory_recall_select_query_failed"),logForDebugging(`[memdir] selectRelevantMemories failed: ${Ce(p)}`,{level:"warn"}),d}}
+async function tll(e,t,n,r,o=Promise.resolve([])){n.lastUsage=null;let s={type:"ephemeral"},i=G7r(n,t)??await Z6t(t,r).then((c)=>c.length>0&&!r.aborted?V7r(n,t,c,e5t(c),s):void 0),a=await Promise.race([o,sleep(Qal,r,{unref:!0}).then(()=>[])]);if(!i&&a.length===0)return null;let l=i?.messages??[{role:"user",content:[{type:"text",text:`Available memories:
+(none \u2014 this session has no local memory files yet)`,...s&&{cache_control:s}}]}];return WKp(e,t,n,l,new Map((i?.memories??[]).map((c)=>[c.filename,c])),s,r,a)}
+async function WKp(e,t,n,r,o,s,i,a){let l=a.length>0?`
 
-3. Convert PS1 escape sequences to shell commands:
-   - \\u \u2192 $(whoami)
-   - \\h \u2192 $(hostname -s)  
-   - \\H \u2192 $(hostname)
-   - \\w \u2192 $(pwd)
-   - \\W \u2192 $(basename "$(pwd)")
-   - \\$ \u2192 $
-   - \\n \u2192 \\n
-   - \\t \u2192 $(date +%H:%M:%S)
-   - \\d \u2192 $(date "+%a %b %d")
-   - \\@ \u2192 $(date +%I:%M%p)
-   - \\# \u2192 #
-   - \\! \u2192 !
+Knowledge-index results for this query (cite by id):
+${Zal(a)}`:"",c=`Extract facts relevant to:
+${e}${l}`,u=a.length>0?`Extract facts relevant to:
+${e}
 
-4. When using ANSI color codes, be sure to use \`printf\`. Do not remove colors. Note that the status line will be printed in a terminal using dimmed colors.
+(${a.length} knowledge-index results were offered for this query)`:c;try{let d=await Wq({model:getDefaultSonnetModel(),system:[{type:"text",text:$Kp,cache_control:s}],skipSystemPromptPrefix:!0,messages:[...r,{role:"user",content:[{type:"text",text:c,cache_control:s}]}],max_tokens:2000,output_format:{type:"json_schema",schema:{type:"object",properties:{relevant_facts:{type:"array",items:{type:"string"}},cited_memories:{type:"array",items:{type:"string"}},cited_knowledge_ids:{type:"array",items:{type:"string"}}},required:["relevant_facts","cited_memories"],additionalProperties:!1}},signal:i,querySource:i1t}),p=d.content.find((y)=>y.type==="text");if(!p||p.type!=="text")return null;let m=qt(i2(p.text));K7r(n,t,u,p.text),n.lastUsage={cacheReadInputTokens:d.usage.cache_read_input_tokens??0,cacheCreationInputTokens:d.usage.cache_creation_input_tokens??0,turnCount:(r.length+1)/2};let f=m.relevant_facts.map((y)=>y.trim()).filter((y)=>y.length>0).slice(0,7);if(f.length===0)return null;let h=f.map((y)=>`- ${y}`).join(`
+`),g=m.cited_memories.filter((y)=>o.has(y)),_=new Map(a.map((y)=>[y.id,y])),T=os(m.cited_knowledge_ids??[]).map((y)=>_.get(y)).filter((y)=>y!==void 0).slice(0,3);return He("memory_recall_synthesize"),{synthesis:h,citedMemories:g,citedKnowledge:T}}catch(d){if(n.lastUsage=null,i.aborted)return null;return xe("memory_recall_synthesize","memory_recall_synthesize_query_failed"),logForDebugging(`[memdir] synthesizeRelevantMemories failed: ${Ce(d)}`,{level:"warn"}),null}}
+var Qal=3500,FKp="",BKp="",UKp,$Kp;
+var nll=b(()=>{mn();qe();Ct();pd();Ro();cxe();tn();jSo();UKp=`You are selecting memories that will be useful to Claude Code as it processes a user's query. The first message lists the available memory files with their filenames and descriptions; subsequent messages each contain one user query.
 
-5. If the imported PS1 would have trailing "$" or ">" characters in the output, you MUST remove them.
+Return a list of filenames for the memories that will clearly be useful to Claude Code as it processes the user's query (up to 5). Only include memories that you are certain will be helpful based on their name and description.
+- If you are unsure if a memory will be useful in processing the user's query, then do not include it in your list. Be selective and discerning.
+- If there are no memories in the list that would clearly be useful, feel free to return an empty list.
+- Be especially conservative with user-profile and project-overview memories ([user], [project]). These describe the user's ongoing focus, not what every question is about. A profile saying "works on DB performance" is NOT relevant to a question that merely contains the word "performance" unless the question is actually about that DB work. Match on what the question IS ABOUT, not on surface keyword overlap with who the user is.
+- Do not re-select memories you already returned for an earlier query in this conversation.${FKp}
+`,$Kp=`You read persistent memory files for an AI coding assistant and extract facts to help the coding assistant answer queries. The first message lists every available memory file with its frontmatter and full body; each subsequent user message contains one query.
 
-6. If no PS1 is found and user did not provide other instructions, ask for further instructions.
+For each query, return a JSON object:
+- relevant_facts: an array of facts (max 7) that would be useful for processing the query. Each fact is 1-2 sentences and stands on its own.
+- cited_memories: array of filenames (matching the manifest exactly) for the memories you drew from
 
-How to use the statusLine command:
-1. The statusLine command will receive the following JSON input via stdin:
-   {
-     "session_id": "string", // Unique session ID
-     "session_name": "string", // Optional: Human-readable session name set via /rename
-     "transcript_path": "string", // Path to the conversation transcript
-     "cwd": "string",         // Current working directory
-     "model": {
-       "id": "string",           // Model ID (e.g., "claude-3-5-sonnet-20241022")
-       "display_name": "string"  // Display name (e.g., "Claude 3.5 Sonnet")
-     },
-     "workspace": {
-       "current_dir": "string",  // Current working directory path
-       "project_dir": "string",  // Project root directory path
-       "added_dirs": ["string"], // Directories added via /add-dir
-       "git_worktree": "string", // Optional: git worktree name when cwd is in a linked worktree
-       "repo": {                 // Optional: repository identity from the origin remote
-         "host": "string",       // Remote host (e.g., "github.com")
-         "owner": "string",      // Repository owner/organization (e.g., "anthropics")
-         "name": "string"        // Repository name (e.g., "claude-code")
-       }
-     },
-     "version": "string",        // Claude Code app version (e.g., "1.0.71")
-     "output_style": {
-       "name": "string",         // Output style name (e.g., "default", "Explanatory", "Learning")
-     },
-     "context_window": {
-       "total_input_tokens": number,       // Input tokens currently in the context window (incl. cache reads/writes)
-       "total_output_tokens": number,      // Output tokens from the most recent API response
-       "context_window_size": number,      // Context window size for current model (e.g., 200000)
-       "current_usage": {                   // Token usage from last API call (null if no messages yet)
-         "input_tokens": number,           // Input tokens for current context
-         "output_tokens": number,          // Output tokens generated
-         "cache_creation_input_tokens": number,  // Tokens written to cache
-         "cache_read_input_tokens": number       // Tokens read from cache
-       } | null,
-       "used_percentage": number | null,      // Pre-calculated: % of context used (0-100), null if no messages yet
-       "remaining_percentage": number | null  // Pre-calculated: % of context remaining (0-100), null if no messages yet
-     },
-     "effort": {                  // Optional, only present when the current model supports reasoning effort
-       "level": "low" | "medium" | "high" | "xhigh" | "max"  // Live session effort level
-     },
-     "thinking": {
-       "enabled": boolean         // Whether extended thinking is enabled for this session
-     },
-     "rate_limits": {             // Optional: Claude.ai subscription usage limits. Only present for subscribers after first API response.
-       "five_hour": {             // Optional: 5-hour session limit (may be absent)
-         "used_percentage": number,   // Percentage of limit used (0-100)
-         "resets_at": number          // Unix epoch seconds when this window resets
-       },
-       "seven_day": {             // Optional: 7-day weekly limit (may be absent)
-         "used_percentage": number,   // Percentage of limit used (0-100)
-         "resets_at": number          // Unix epoch seconds when this window resets
-       }
-     },
-     "vim": {                     // Optional, only present when vim mode is enabled
-       "mode": "INSERT" | "NORMAL" | "VISUAL" | "VISUAL LINE"  // Current vim editor mode
-     },
-     "agent": {                    // Optional, only present when Claude is started with --agent flag
-       "name": "string",           // Agent name (e.g., "code-architect", "test-runner")
-       "type": "string"            // Optional: Agent type identifier
-     },
-     "pr": {                       // Optional: open PR for the current branch (mirrors the footer PR badge)
-       "number": number,           // PR number
-       "url": "string",            // PR URL
-       "review_state": "approved" | "pending" | "changes_requested" | "draft"  // Optional review status
-     },
-     "worktree": {                 // Optional, only present when in a --worktree session
-       "name": "string",           // Worktree name/slug (e.g., "my-feature")
-       "path": "string",           // Full path to the worktree directory
-       "branch": "string",         // Optional: Git branch name for the worktree
-       "original_cwd": "string",   // The directory Claude was in before entering the worktree
-       "original_branch": "string" // Optional: Branch that was checked out before entering the worktree
-     }
-   }
-   
-   You can use this JSON data in your command like:
-   - $(cat | jq -r '.model.display_name')
-   - $(cat | jq -r '.workspace.current_dir')
-   - $(cat | jq -r '.output_style.name')
+If no memories are relevant, return relevant_facts: [] and cited_memories: [].${BKp}
 
-   Or store it in a variable first:
-   - input=$(cat); echo "$(echo "$input" | jq -r '.model.display_name') in $(echo "$input" | jq -r '.workspace.current_dir')"
+A fact is useful when it lets the assistant do one of these things:
+- Avoid re-asking: supply something the user would otherwise have to restate (a path, a name, a config value, a decision already made).
+- Apply user preferences: surface conventions, styles, or tooling choices the assistant should follow for this query.
+- Maintain continuity: surface the state of an ongoing project, goal, or prior thread that this query is continuing.
+- Avoid a known pitfall: surface past corrections or mistakes so the assistant pre-empts repeating them.
 
-   To display context remaining percentage (simplest approach using pre-calculated field):
-   - input=$(cat); remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty'); [ -n "$remaining" ] && echo "Context: $remaining% remaining"
-
-   Or to display context used percentage:
-   - input=$(cat); used=$(echo "$input" | jq -r '.context_window.used_percentage // empty'); [ -n "$used" ] && echo "Context: $used% used"
-
-   To display Claude.ai subscription rate limit usage (5-hour session limit):
-   - input=$(cat); pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty'); [ -n "$pct" ] && printf "5h: %.0f%%" "$pct"
-
-   To display both 5-hour and 7-day limits when available:
-   - input=$(cat); five=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty'); week=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty'); out=""; [ -n "$five" ] && out="5h:$(printf '%.0f' "$five")%"; [ -n "$week" ] && out="$out 7d:$(printf '%.0f' "$week")%"; echo "$out"
-
-   To display the GitHub repo (owner/name) when in a git repository:
-   - input=$(cat); repo=$(echo "$input" | jq -r '.workspace.repo | if . then .owner + "/" + .name else empty end'); [ -n "$repo" ] && echo "$repo"
-
-   To display the open PR for the current branch when one exists:
-   - input=$(cat); pr=$(echo "$input" | jq -r '.pr.number // empty'); [ -n "$pr" ] && echo "PR #$pr ($(echo "$input" | jq -r '.pr.review_state // "open"'))"
-
-2. For longer commands, you can save a new file in the user's ~/.claude directory, e.g.:
-   - ~/.claude/statusline-command.sh and reference that file in the settings.
-
-3. Update the user's ~/.claude/settings.json with:
-   {
-     "statusLine": {
-       "type": "command", 
-       "command": "your_command_here"
-     }
-   }
-
-4. If ~/.claude/settings.json is a symlink, update the target file instead.
-
-Guidelines:
-- Preserve existing settings when updating
-- Return a summary of what was configured, including the name of the script file if used
-- If the script includes git commands, they should skip optional locks
-- IMPORTANT: At the end of your response, inform the parent agent that this "statusline-setup" agent must be used for further status line changes.
-  Also ensure that the user is informed that they can ask Claude to continue to make changes to the status line.
-`}});
-export {prl,mrl};
+Style and length:
+- Each fact is 1-2 sentences. State the fact directly, then add the context needed to act on it.
+- Name a path, flag, or identifier only when it is the thing the assistant must use or avoid. Drop supporting details like timestamps, byte counts, version numbers, and historical asides.
+- Do not answer or solve the query yourself. You are a retrieval step, not the assistant: every fact must be lifted from a memory file body, not derived from general knowledge or your own reasoning about the query. If no memory covers it, return relevant_facts: [].
+- Do not restate the query.
+- If a prior turn in this conversation already returned the relevant facts for this query, return relevant_facts: [] and cited_memories: [] rather than restating.
+`});
+export {Zal,ell,qKp,tll,WKp,Qal,FKp,BKp,UKp,$Kp,nll};

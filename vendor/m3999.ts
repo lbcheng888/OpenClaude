@@ -1,15 +1,15 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {vbt,initKp,xpe} from "./m609.ts";
-import {Text} from "./m2423.ts";
-import {X7e,sl} from "./m715.ts";
-import {Box} from "./m2422.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var WNa={};
-isFullscreenWithTTY(WNa,{UserForkBoilerplateMessage:()=>UserForkBoilerplateMessage});
-function UserForkBoilerplateMessage(e){let t=jNa.c(8),{addMargin:n,param:r}=e,{text:o}=r,s;if(t[0]!==o){let d=o.replace(XEp,"");s=d.startsWith(vbt)?d.slice(vbt.length):d,t[0]=o,t[1]=s}else s=t[1];let i=s,a=n?1:0,l;if(t[2]===Symbol.for("react.memo_cache_sentinel"))l=r_e.createElement(Text,{dimColor:!0},X7e),t[2]=l;else l=t[2];let c;if(t[3]!==i)c=r_e.createElement(Box,{paddingLeft:1},r_e.createElement(Text,null,i)),t[3]=i,t[4]=c;else c=t[4];let u;if(t[5]!==a||t[6]!==c)u=r_e.createElement(Box,{marginTop:a,backgroundColor:"userMessageBackground",paddingRight:1},l,c),t[5]=a,t[6]=c,t[7]=u;else u=t[7];return u}
-var jNa,r_e,XEp;
-var GNa=b(()=>{sl();initKp();ze();jNa=M(rt(),1),r_e=M(Te(),1),XEp=new RegExp(`<${xpe}>[\\s\\S]*?</${xpe}>\\n*`)});
-export {WNa,UserForkBoilerplateMessage,jNa,r_e,XEp,GNa};
+import {useIsScreenReaderEnabled} from "./m2444.ts";
+import {F9a,B9a} from "./m3998.ts";
+import {gdt,N9a,W9n} from "./m3997.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {Ql,Pa} from "./m720.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function Hte({isError:e,isUnresolved:t,shouldAnimate:n}){let r=useIsScreenReaderEnabled(),[o,s]=F9a(n&&!r),i=gdt(),a=G9n.useRef(null);return G9n.useEffect(()=>{if(t)a.current??=Date.now();else if(a.current!==null){if(Date.now()-a.current>N9a)i();a.current=null}},[t,i]),ipo.jsx(Box,{ref:o,minWidth:2,children:ipo.jsx(Text,{"aria-label":e?"tool error:":"tool:",color:t?void 0:e?"error":"success",dimColor:t,children:!n||s||e||!t?Ql:" "})})}
+var G9n,ipo;
+var _dt=b(()=>{Pa();W9n();B9a();je();G9n=x(et(),1),ipo=x(oe(),1)});
+export {Hte,G9n,ipo,_dt};

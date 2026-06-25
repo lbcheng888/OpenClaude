@@ -1,10 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Afn} from "./m1818.ts";
-import {MJe} from "./m1817.ts";
-import {TDr} from "./m1842.ts";
-import {vxt} from "./m1816.ts";
-import {JB} from "./m1820.ts";
-import {initSessionMetadataPersistence} from "./m1845.ts";
-var xxt=X((zNA,sYs)=>{var kxt=Symbol("SemVer ANY");class vfn{static get ANY(){return kxt}constructor(e,t){if(t=eYs(t),e instanceof vfn)if(e.loose===!!t.loose)return e;else e=e.value;if(e=e.trim().split(/\s+/).join(" "),EDr("comparator",e,t),this.options=t,this.loose=!!t.loose,this.parse(e),this.semver===kxt)this.value="";else this.value=this.operator+this.semver.version;EDr("comp",this)}parse(e){let t=this.options.loose?tYs[nYs.COMPARATORLOOSE]:tYs[nYs.COMPARATOR],n=e.match(t);if(!n)throw TypeError(`Invalid comparator: ${e}`);if(this.operator=n[1]!==void 0?n[1]:"",this.operator==="=")this.operator="";if(!n[2])this.semver=kxt;else this.semver=new rYs(n[2],this.options.loose)}toString(){return this.value}test(e){if(EDr("Comparator.test",e,this.options.loose),this.semver===kxt||e===kxt)return!0;if(typeof e==="string")try{e=new rYs(e,this.options)}catch(t){return!1}return bDr(e,this.operator,this.semver,this.options)}intersects(e,t){if(!(e instanceof vfn))throw TypeError("a Comparator is required");if(this.operator===""){if(this.value==="")return!0;return new oYs(e.value,t).test(this.value)}else if(e.operator===""){if(e.value==="")return!0;return new oYs(this.value,t).test(e.semver)}if(t=eYs(t),t.includePrerelease&&(this.value==="<0.0.0-0"||e.value==="<0.0.0-0"))return!1;if(!t.includePrerelease&&(this.value.startsWith("<0.0.0")||e.value.startsWith("<0.0.0")))return!1;if(this.operator.startsWith(">")&&e.operator.startsWith(">"))return!0;if(this.operator.startsWith("<")&&e.operator.startsWith("<"))return!0;if(this.semver.version===e.semver.version&&this.operator.includes("=")&&e.operator.includes("="))return!0;if(bDr(this.semver,"<",e.semver,t)&&this.operator.startsWith(">")&&e.operator.startsWith("<"))return!0;if(bDr(this.semver,">",e.semver,t)&&this.operator.startsWith("<")&&e.operator.startsWith(">"))return!0;return!1}}sYs.exports=vfn;var eYs=Afn(),{safeRe:tYs,t:nYs}=MJe(),bDr=TDr(),EDr=vxt(),rYs=JB(),oYs=initSessionMetadataPersistence()});
-export {xxt};
+import {Q} from "../runtime.ts";
+import {I7} from "./m1835.ts";
+var o_n=Q((dWh,Fei)=>{var xVu=I7(),DVu=(e,t,n)=>xVu(e,t,n)<=0;Fei.exports=DVu});
+export {o_n};

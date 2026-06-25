@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Fws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Cxs,GetFoundationModelAvailabilityCommand;
-var uEr=b(()=>{ri();wi();xi();Cxs=M(yo(),1);GetFoundationModelAvailabilityCommand=class GetFoundationModelAvailabilityCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Cxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetFoundationModelAvailability",{}).n("BedrockClient","GetFoundationModelAvailabilityCommand").sc(Fws).build(){}});
-export {Cxs,GetFoundationModelAvailabilityCommand,uEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,wxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var mPs,GetAutomatedReasoningPolicyTestCaseCommand;
+var Owr=b(()=>{$s();ai();ci();mPs=x(yo(),1);GetAutomatedReasoningPolicyTestCaseCommand=class GetAutomatedReasoningPolicyTestCaseCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[mPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetAutomatedReasoningPolicyTestCase",{}).n("BedrockClient","GetAutomatedReasoningPolicyTestCaseCommand").sc(wxs).build(){}});
+export {mPs,GetAutomatedReasoningPolicyTestCaseCommand,Owr};

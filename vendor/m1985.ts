@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var eei=X((pAn)=>{Object.defineProperty(pAn,"__esModule",{value:!0});pAn.ErrorWithCode=void 0;class ZZs extends Error{code;constructor(e,t){super(e);this.code=t}}pAn.ErrorWithCode=ZZs});
-export {eei};
+import {Q} from "../runtime.ts";
+import {BM} from "./m1964.ts";
+import {I0t} from "./m1973.ts";
+import {xBe} from "./m1984.ts";
+var zNr=Q((V_n)=>{Object.defineProperty(V_n,"__esModule",{value:!0});V_n.Compute=void 0;var AXu=BM(),$si=I0t(),RXu=xBe();class qsi extends RXu.OAuth2Client{serviceAccountEmail;scopes;constructor(e={}){super(e);this.credentials={expiry_date:1,refresh_token:"compute-placeholder"},this.serviceAccountEmail=e.serviceAccountEmail||"default",this.scopes=Array.isArray(e.scopes)?e.scopes:e.scopes?[e.scopes]:[]}async refreshTokenNoCache(){let e=`service-accounts/${this.serviceAccountEmail}/token`,t;try{let r={property:e};if(this.scopes.length>0)r.params={scopes:this.scopes.join(",")};t=await $si.instance(r)}catch(r){if(r instanceof AXu.GaxiosError)r.message=`Could not refresh access token: ${r.message}`,this.wrapError(r);throw r}let n=t;if(t&&t.expires_in)n.expiry_date=new Date().getTime()+t.expires_in*1000,delete n.expires_in;return this.emit("tokens",n),{tokens:n,res:null}}async fetchIdToken(e){let t=`service-accounts/${this.serviceAccountEmail}/identity?format=full&audience=${e}`,n;try{let r={property:t};n=await $si.instance(r)}catch(r){if(r instanceof Error)r.message=`Could not fetch ID token: ${r.message}`;throw r}return n}wrapError(e){let t=e.response;if(t&&t.status){if(e.status=t.status,t.status===403)e.message="A Forbidden error was returned while attempting to retrieve an access token for the Compute Engine built-in service account. This may be because the Compute Engine instance does not have the correct permission scopes specified: "+e.message;else if(t.status===404)e.message="A Not Found error was returned while attempting to retrieve an accesstoken for the Compute Engine built-in service account. This may be because the Compute Engine instance does not have any permission scopes specified: "+e.message}}}V_n.Compute=qsi});
+export {zNr};

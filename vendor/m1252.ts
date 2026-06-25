@@ -1,6 +1,6 @@
 // @ts-nocheck
+import {oHr,sHr} from "./m1251.ts";
 import {b} from "../runtime.ts";
-import {SDs} from "./m1250.ts";
-import {CDs} from "./m1251.ts";
-var vDs=b(()=>{SDs();CDs()});
-export {vDs};
+var lNs=(e)=>new oHr(e);
+var cNs=b(()=>{sHr()});
+export {lNs,cNs};

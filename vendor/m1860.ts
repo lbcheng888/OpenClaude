@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Rfn} from "./m1859.ts";
-var $Ys=X((lBA,UYs)=>{var i3u=Rfn();UYs.exports=i3u.satisfies(process.version,">=15.7.0")});
-export {$Ys};
+import {Q} from "../runtime.ts";
+import {l_n} from "./m1858.ts";
+var Sti=Q((RWh,Tti)=>{var PKu=l_n(),OKu=(e,t,n)=>PKu(e,t,"<",n);Tti.exports=OKu});
+export {Sti};

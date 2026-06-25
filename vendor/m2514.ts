@@ -1,19 +1,9 @@
 // @ts-nocheck
-import {jt,ws} from "./m228.ts";
-import {Pt,Go} from "./m632.ts";
-import {nQo,mc} from "../src/config/0645_maxBytes.ts";
-import {getCurrentProjectConfig,saveCurrentProjectConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {Ie,ln} from "../src/telemetry/0594_feature_name.ts";
-import {b} from "../runtime.ts";
-import {ta,wn} from "./m45.ts";
-function I0t(e,t){switch(t){case"bash":return`!${e}`;default:return e}}
-function Ck(e){if(e.startsWith("!"))return"bash";return"prompt"}
-function TF(e){if(Ck(e)==="prompt")return e;return e.slice(1)}
-function D0t(e){return e==="!"}
-function D9r(){let e=jt().existsSync(Wki.join(Pt(),"CLAUDE.md")),t=nQo(Pt());return[{key:"workspace",text:"Ask Claude to create a new app or clone a repository",isComplete:!1,isCompletable:!0,isEnabled:t},{key:"claudemd",text:"Run /init to create a CLAUDE.md file with instructions for Claude",isComplete:e,isCompletable:!0,isEnabled:!t}]}
-function Gki(){return D9r().filter(({isCompletable:e,isEnabled:t})=>e&&t).every(({isComplete:e})=>e)}
-function uet(){if(getCurrentProjectConfig().hasCompletedProjectOnboarding)return;if(Gki())saveCurrentProjectConfig((e)=>({...e,hasCompletedProjectOnboarding:!0})),Ie("onboarding_project_complete")}
-function Kki(){saveCurrentProjectConfig((e)=>({...e,projectOnboardingSeenCount:e.projectOnboardingSeenCount+1}))}
-var Wki,Vki;
-var P0t=b(()=>{ta();ln();Qn();Go();mc();ws();Wki=require("path");Vki=wn(()=>{let e=getCurrentProjectConfig();if(e.hasCompletedProjectOnboarding||e.projectOnboardingSeenCount>=4||process.env.IS_DEMO)return!1;return!Gki()})});
-export {I0t,Ck,TF,D0t,D9r,Gki,uet,Kki,Wki,Vki,P0t};
+import {Q} from "../runtime.ts";
+import {SOi} from "./m2513.ts";
+import {Tie} from "./m2479.ts";
+var AOi=Q((dvg,COi)=>{/*!
+  Copyright 2013 Lovell Fuller and others.
+  SPDX-License-Identifier: Apache-2.0
+*/var GEd=SOi(),Che=Tie(),bOi={multiband:"multiband","b-w":"b-w",bw:"b-w",cmyk:"cmyk",srgb:"srgb"};function VEd(e){return this._setBackgroundColourOption("tint",e),this}function KEd(e){return this.options.greyscale=Che.bool(e)?e:!0,this}function zEd(e){return this.greyscale(e)}function jEd(e){if(!Che.string(e))throw Che.invalidParameterError("colourspace","string",e);return this.options.colourspacePipeline=e,this}function YEd(e){return this.pipelineColourspace(e)}function JEd(e){if(!Che.string(e))throw Che.invalidParameterError("colourspace","string",e);return this.options.colourspace=e,this}function XEd(e){return this.toColourspace(e)}function EOi(e){if(Che.object(e)||Che.string(e)&&e.length>=3&&e.length<=200){let t=GEd(e);return[t.red(),t.green(),t.blue(),Math.round(t.alpha()*255)]}else throw Che.invalidParameterError("background","object or string",e)}function QEd(e,t){if(Che.defined(t))this.options[e]=EOi(t)}COi.exports=(e)=>{Object.assign(e.prototype,{tint:VEd,greyscale:KEd,grayscale:zEd,pipelineColourspace:jEd,pipelineColorspace:YEd,toColourspace:JEd,toColorspace:XEd,_getBackgroundColourOption:EOi,_setBackgroundColourOption:QEd}),e.colourspace=bOi,e.colorspace=bOi}});
+export {AOi};

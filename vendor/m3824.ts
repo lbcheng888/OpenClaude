@@ -1,14 +1,6 @@
 // @ts-nocheck
-import {getAgentColorMap,lt} from "../src/session/0131_sent.ts";
-import {b} from "../runtime.ts";
-function yS(e){return typeof e==="object"&&e!==null&&"type"in e&&e.type==="in_process_teammate"}
-function PHe(e,t){if(e===void 0||e.length===0)return[t];if(e.length>=vBn){let n=e.slice(-(vBn-1));return n.push(t),n}return[...e,t]}
-function RHa(e,t){let n=e===void 0||e.every((r)=>r.uuid!==t.uuid)?e:e.filter((r)=>r.uuid!==t.uuid);return PHe(n,t)}
-var vBn=50;
-function xHa(e){return e!==void 0&&i_.includes(e)}
-function elt(e){return e.userOverride??e.agentDefinitionColor}
-function Dge(e){if(e==="general-purpose")return;let n=getAgentColorMap().get(e);if(n&&i_.includes(n))return NL[n];return}
-function OHe(e,t){let n=getAgentColorMap();if(!t){n.delete(e);return}if(i_.includes(t))n.set(e,t)}
-var i_,NL;
-var K0=b(()=>{lt();i_=["red","blue","green","yellow","purple","orange","pink","cyan"],NL={red:"red_FOR_SUBAGENTS_ONLY",blue:"blue_FOR_SUBAGENTS_ONLY",green:"green_FOR_SUBAGENTS_ONLY",yellow:"yellow_FOR_SUBAGENTS_ONLY",purple:"purple_FOR_SUBAGENTS_ONLY",orange:"orange_FOR_SUBAGENTS_ONLY",pink:"pink_FOR_SUBAGENTS_ONLY",cyan:"cyan_FOR_SUBAGENTS_ONLY"}});
-export {yS,PHe,RHa,vBn,xHa,elt,Dge,OHe,i_,NL,K0};
+import {Q} from "../runtime.ts";
+import {FNr} from "./m1974.ts";
+import {hMa} from "./m3823.ts";
+var TMa=Q((yMa)=>{var gMa=FNr(),wAp=hMa();yMa.build=IAp;function kAp(e){function t(n){return n<10?"0"+n:n}return e.getUTCFullYear()+"-"+t(e.getUTCMonth()+1)+"-"+t(e.getUTCDate())+"T"+t(e.getUTCHours())+":"+t(e.getUTCMinutes())+":"+t(e.getUTCSeconds())+"Z"}var HAp=Object.prototype.toString;function _Ma(e){var t=HAp.call(e).match(/\[object (.*)\]/);return t?t[1]:t}function IAp(e,t){var n={version:"1.0",encoding:"UTF-8"},r={pubid:"-//Apple//DTD PLIST 1.0//EN",sysid:"http://www.apple.com/DTDs/PropertyList-1.0.dtd"},o=wAp.create("plist");if(o.dec(n.version,n.encoding,n.standalone),o.dtd(r.pubid,r.sysid),o.att("version","1.0"),Plo(e,o),!t)t={};return t.pretty=t.pretty!==!1,o.end(t)}function Plo(e,t){var n,r,o,s=_Ma(e);if(s=="Undefined")return;else if(Array.isArray(e)){t=t.ele("array");for(r=0;r<e.length;r++)Plo(e[r],t)}else if(Buffer.isBuffer(e))t.ele("data").raw(e.toString("base64"));else if(s=="Object"){t=t.ele("dict");for(o in e)if(e.hasOwnProperty(o))t.ele("key").txt(o),Plo(e[o],t)}else if(s=="Number")n=e%1===0?"integer":"real",t.ele(n).txt(e.toString());else if(s=="BigInt")t.ele("integer").txt(e);else if(s=="Date")t.ele("date").txt(kAp(new Date(e)));else if(s=="Boolean")t.ele(e?"true":"false");else if(s=="String")t.ele("string").txt(e);else if(s=="ArrayBuffer")t.ele("data").raw(gMa.fromByteArray(e));else if(e&&e.buffer&&_Ma(e.buffer)=="ArrayBuffer")t.ele("data").raw(gMa.fromByteArray(new Uint8Array(e.buffer),t));else if(s==="Null")t.ele("null").txt("")}});
+export {TMa};

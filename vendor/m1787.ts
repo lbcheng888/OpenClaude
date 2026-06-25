@@ -1,6 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function q0r(){if(Qmn>Zmn.length-16)N7s.randomFillSync(Zmn),Qmn=0;return Zmn.slice(Qmn,Qmn+=16)}
-var N7s,Zmn,Qmn;
-var B7s=b(()=>{N7s=require("crypto"),Zmn=new Uint8Array(256),Qmn=Zmn.length});
-export {q0r,N7s,Zmn,Qmn,B7s};
+import {iT} from "./m1780.ts";
+import {uBe,Rgn,vgn,yRe,wgn,kgn,AQs,cBe,RQs,Hgn,Ign,xgn,UIt,vQs,Dgn,Pgn} from "./m1786.ts";
+import {RA,wd} from "./m1783.ts";
+import {AuthError} from "./m1724.ts";
+function dI(e){return new mMr(e)}
+var eWu,mMr;
+var kQe=b(()=>{iT();uBe();RA();/*! @azure/msal-node v3.8.1 2025-10-29 */eWu={[Rgn]:"The file path in the WWW-Authenticate header does not contain a .key file.",[vgn]:"The file path in the WWW-Authenticate header is not in a valid Windows or Linux Format.",[yRe]:"More than one ManagedIdentityIdType was provided.",[wgn]:"The secret in the file on the file path in the WWW-Authenticate header is greater than 4096 bytes.",[kgn]:"The platform is not supported by Azure Arc. Azure Arc only supports Windows and Linux.",[AQs]:"A ManagedIdentityId id was not provided.",[cBe.AZURE_POD_IDENTITY_AUTHORITY_HOST]:`The Managed Identity's '${wd.AZURE_POD_IDENTITY_AUTHORITY_HOST}' environment variable is malformed.`,[cBe.IDENTITY_ENDPOINT]:`The Managed Identity's '${wd.IDENTITY_ENDPOINT}' environment variable is malformed.`,[cBe.IMDS_ENDPOINT]:`The Managed Identity's '${wd.IMDS_ENDPOINT}' environment variable is malformed.`,[cBe.MSI_ENDPOINT]:`The Managed Identity's '${wd.MSI_ENDPOINT}' environment variable is malformed.`,[RQs]:"Authentication unavailable. The request to the managed identity endpoint timed out.",[Hgn]:"Azure Arc Managed Identities can only be system assigned.",[Ign]:"Cloud Shell Managed Identities can only be system assigned.",[xgn]:"Unable to create a Managed Identity source based on environment variables.",[UIt]:"Unable to read the secret file.",[vQs]:"Service Fabric user assigned managed identity ClientId or ResourceId is not configurable at runtime.",[Dgn]:"A 401 response was received form the Azure Arc Managed Identity, but the www-authenticate header is missing.",[Pgn]:"A 401 response was received form the Azure Arc Managed Identity, but the www-authenticate header is in an unsupported format."};mMr=class mMr extends AuthError{constructor(e){super(e,eWu[e]);this.name="ManagedIdentityError",Object.setPrototypeOf(this,mMr.prototype)}}});
+export {dI,eWu,mMr,kQe};

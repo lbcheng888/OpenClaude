@@ -1,10 +1,7 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {AHl,hHl} from "../src/tui/5033_onDone.ts";
-import {Te} from "./m2253.ts";
-var gHl={};
-isFullscreenWithTTY(gHl,{call:()=>_um});
-async function _um(e){return oRo.createElement(AHl,{onDone:e})}
-var oRo;
-var _Hl=b(()=>{hHl();oRo=M(Te(),1)});
-export {gHl,_um,oRo,_Hl};
+import {b} from "../runtime.ts";
+import {yte,Mut,dG} from "../src/config/3910_claude_haiku_4_5.ts";
+import {vMl,RMl} from "../src/tui/5033_call.ts";
+var wMl;
+var kMl=b(()=>{yte();wMl={type:"local-jsx",name:"advisor",description:"Let Claude consult a stronger model at key moments",get argumentHint(){return`[${[...Mut(),"off"].join("|")}]`},isEnabled:()=>dG(),get isHidden(){return!dG()},load:()=>Promise.resolve().then(() => (vMl(),RMl))}});
+export {wMl,kMl};

@@ -1,12 +1,15 @@
 // @ts-nocheck
-import {resolveGitDir,getCommonDir,vO} from "./m691.ts";
-import {dn,bt} from "./m195.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {b} from "../runtime.ts";
-async function jnc(e){if(qnc.has(e))return;qnc.add(e);try{let t=await resolveGitDir(e);if(!t)return;let n=await getCommonDir(t)??t,r=i1o.join(n,"info","exclude"),o="";try{if(o=await _ht.readFile(r,"utf-8"),o.includes($nc))return}catch(a){if(dn(a)!=="ENOENT")throw a;await _ht.mkdir(i1o.join(n,"info"),{recursive:!0})}let s=o&&!o.endsWith(`
-`)?`
-`:"",i=[$nc,...e9m,""].join(`
-`);await _ht.appendFile(r,s+i)}catch(t){logForDebugging(`ensureClaudeRuntimeFilesExcluded: ${t}`)}}
-var _ht,i1o,e9m,$nc="# claude-code-runtime",qnc;
-var Wnc=b(()=>{qe();bt();vO();_ht=require("fs/promises"),i1o=require("path"),e9m=["**/.claude/scheduled_tasks.lock","**/.claude/scheduled_tasks.json","**/.claude/routines/.state/","**/.claude/worktrees/","**/.claude/checkpoints/","**/.claude/mailbox/","**/.claude/agent-registry.json","**/.claude/agent-memory-local","**/.claude/first-run","**/.claude/assistant-daemon-state.json"],qnc=new Set});
-export {jnc,_ht,i1o,e9m,$nc,qnc,Wnc};
+import {pl,Wu} from "./m438.ts";
+import {ec,eb,q1i,Oi,Pf} from "../src/agent/2591_level.ts";
+import {getCurrentSessionAgentName,getCurrentSessionTitle,_a} from "../src/permissions/5175_writeRemoteAgentMetadata.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {oTe,s5t} from "./m4409.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
+import {_2o,vcc} from "./m5617.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function kcc(e){y2o.useEffect(()=>{if(pl())return;let t=ec(eb()),n,r=async()=>{if(q1i())return;let o=await Oi(t);if(!o||!o.name)return;if(o.name===getCurrentSessionAgentName()||o.name===getCurrentSessionTitle(getSessionId()))return;let s=o.nameSource??"auto";if(oTe(o.name,s),s==="user")e?.(o.name)};try{n=wcc.watch(t,(o,s)=>{if(s&&!s.startsWith("state.json"))return;r()}),n.on("error",(o)=>logForDebugging(`[jobStateNameSync] watcher error: ${Ce(o)}`,{level:"warn"})),n.unref()}catch(o){logForDebugging(`[jobStateNameSync] watch skipped: ${o}`);return}return r(),()=>n?.close()},[e]),y2o.useEffect(()=>{if(pl())return;return _2o((t)=>{if(!t||t===getCurrentSessionAgentName())return;oTe(t,"user"),e?.(t)}),()=>_2o(null)},[e])}
+var wcc,y2o;
+var Hcc=b(()=>{lt();s5t();Pf();Wu();qe();Ct();_a();vcc();wcc=require("fs"),y2o=x(et(),1)});
+export {kcc,wcc,y2o,Hcc};

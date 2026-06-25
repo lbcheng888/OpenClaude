@@ -1,6 +1,26 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Gbo} from "./m4721.ts";
-import {Vbo} from "./m4722.ts";
-var Kbo=X((h5y,jAl)=>{var FXp=Gbo(),UXp=Vbo();function qAl(e,t,n){let r=e*t;if(n!==8)r=Math.ceil(r/(8/n));return r}var Imt=jAl.exports=function(e,t){let{width:n,height:r,interlace:o,bpp:s,depth:i}=e;if(this.read=t.read,this.write=t.write,this.complete=t.complete,this._imageIndex=0,this._images=[],o){let a=FXp.getImagePasses(n,r);for(let l=0;l<a.length;l++)this._images.push({byteWidth:qAl(a[l].width,s,i),height:a[l].height,lineIndex:0})}else this._images.push({byteWidth:qAl(n,s,i),height:r,lineIndex:0});if(i===8)this._xComparison=s;else if(i===16)this._xComparison=s*2;else this._xComparison=1};Imt.prototype.start=function(){this.read(this._images[this._imageIndex].byteWidth+1,this._reverseFilterLine.bind(this))};Imt.prototype._unFilterType1=function(e,t,n){let r=this._xComparison,o=r-1;for(let s=0;s<n;s++){let i=e[1+s],a=s>o?t[s-r]:0;t[s]=i+a}};Imt.prototype._unFilterType2=function(e,t,n){let r=this._lastLine;for(let o=0;o<n;o++){let s=e[1+o],i=r?r[o]:0;t[o]=s+i}};Imt.prototype._unFilterType3=function(e,t,n){let r=this._xComparison,o=r-1,s=this._lastLine;for(let i=0;i<n;i++){let a=e[1+i],l=s?s[i]:0,c=i>o?t[i-r]:0,u=Math.floor((c+l)/2);t[i]=a+u}};Imt.prototype._unFilterType4=function(e,t,n){let r=this._xComparison,o=r-1,s=this._lastLine;for(let i=0;i<n;i++){let a=e[1+i],l=s?s[i]:0,c=i>o?t[i-r]:0,u=i>o&&s?s[i-r]:0,d=UXp(c,l,u);t[i]=a+d}};Imt.prototype._reverseFilterLine=function(e){let t=e[0],n,r=this._images[this._imageIndex],o=r.byteWidth;if(t===0)n=e.slice(1,o+1);else switch(n=Buffer.alloc(o),t){case 1:this._unFilterType1(e,n,o);break;case 2:this._unFilterType2(e,n,o);break;case 3:this._unFilterType3(e,n,o);break;case 4:this._unFilterType4(e,n,o);break;default:throw Error("Unrecognised filter type - "+t)}if(this.write(n),r.lineIndex++,r.lineIndex>=r.height)this._lastLine=null,this._imageIndex++,r=this._images[this._imageIndex];else this._lastLine=n;if(r)this.read(r.byteWidth+1,this._reverseFilterLine.bind(this));else this._lastLine=null,this.complete()}});
-export {Kbo};
+import {Xe,Zs} from "./m2216.ts";
+import {nzn,OWt,rzn,Nwo} from "./m4722.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function OEl(e){let t=DEl.c(9),{onComplete:n,path:r,push:o,dryRun:s,force:i,unknownFlag:a}=e,l,c;if(t[0]!==s||t[1]!==i||t[2]!==n||t[3]!==r||t[4]!==o||t[5]!==a)l=()=>{d();async function d(){if(a!==void 0){n(a==="--help"||a==="-h"?xEl:`${Xe.cross} Unexpected argument "${a}".
+
+${xEl}`);return}let p=await nzn(r??".",{force:i}),m=p.warnings.map(Osm);if(!p.ok){m.push(`${Xe.cross} ${p.error}`),n(m.join(`
+`));return}let{plan:f}=p;if(m.push(`Plugin:  ${f.pluginName}`,`Version: ${f.version} (from ${f.versionFrom})`),f.marketplace)m.push(`Marketplace entry: plugins[${f.marketplace.entryIndex}] in ${f.marketplace.path}`+(f.marketplace.entryVersion?` (version: ${f.marketplace.entryVersion})`:""));m.push(`Tag:     ${f.tag}`,"");let h=`git -C ${f.gitRoot} push ${i?"--force ":""}origin refs/tags/${f.tag}`;if(s){m.push(`${Xe.tick} Dry run \u2014 would create tag ${f.tag} at HEAD in ${f.gitRoot}`,`  git -C ${f.gitRoot} tag ${i?"-f ":""}-a ${f.tag} -m "${OWt(f,void 0)}"`,`  ${h}`),n(m.join(`
+`));return}let g=await rzn(f,{push:o,force:i,message:void 0,remote:"origin"});if(!g.ok){m.push(`${Xe.cross} ${g.error}`),n(m.join(`
+`));return}m.push(`${Xe.tick} Created tag ${f.tag}`),m.push(g.pushed?`${Xe.tick} Pushed to origin`:`  Push with: ${h}`),m.push("","For -m/--message and --remote, use: claude plugin tag --help"),n(m.join(`
+`))}},c=[n,r,o,s,i,a],t[0]=s,t[1]=i,t[2]=n,t[3]=r,t[4]=o,t[5]=a,t[6]=l,t[7]=c;else l=t[6],c=t[7];PEl.useEffect(l,c);let u;if(t[8]===Symbol.for("react.memo_cache_sentinel"))u=Fwo.jsx(Box,{flexDirection:"column",children:Fwo.jsx(Text,{children:"Preparing tag\u2026"})}),t[8]=u;else u=t[8];return u}
+function Osm(e){return`${Xe.warning} ${e}`}
+var DEl,PEl,Fwo,xEl=`Usage: /plugin tag [path] [--push] [--dry-run] [-f|--force]
+
+Create a {name}--v{version} git tag for the plugin at <path> (default: .).
+Validates plugin.json and any enclosing marketplace entry agree on the version.
+
+For -m/--message and --remote, use the CLI: claude plugin tag --help`;
+var LEl=b(()=>{Zs();je();Nwo();DEl=x(tt(),1),PEl=x(et(),1),Fwo=x(oe(),1)});
+export {OEl,Osm,DEl,PEl,Fwo,xEl,LEl};

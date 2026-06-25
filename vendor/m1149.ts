@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,vRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var dks,StopModelInvocationJobCommand;
-var OEr=b(()=>{ri();wi();xi();dks=M(yo(),1);StopModelInvocationJobCommand=class StopModelInvocationJobCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[dks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","StopModelInvocationJob",{}).n("BedrockClient","StopModelInvocationJobCommand").sc(vRs).build(){}});
-export {dks,StopModelInvocationJobCommand,OEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,fDs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var eOs,RegisterMarketplaceModelEndpointCommand;
+var okr=b(()=>{$s();ai();ci();eOs=x(yo(),1);RegisterMarketplaceModelEndpointCommand=class RegisterMarketplaceModelEndpointCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[eOs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","RegisterMarketplaceModelEndpoint",{}).n("BedrockClient","RegisterMarketplaceModelEndpointCommand").sc(fDs).build(){}});
+export {eOs,RegisterMarketplaceModelEndpointCommand,okr};

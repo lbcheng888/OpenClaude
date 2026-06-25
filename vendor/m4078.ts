@@ -1,9 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-import {zg} from "./m2752.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-var Y$t;
-var Qlo=b(()=>{Xr();Y$t=zg({kind:"permission_monitor",payload:we(()=>E.custom((e)=>typeof e==="object"&&e!==null&&("requestId"in e)&&("toolName"in e)&&("permissionResult"in e)&&("intervalMs"in e))),result:we(()=>E.custom((e)=>typeof e==="object"&&e!==null&&("behavior"in e))),default:{behavior:"cancelled"}})});
-export {Y$t,Qlo};
+function Xqa(e){let t=e.teamCount??0;if(t===0)return null;return{segment:`${t} team ${t===1?"memory":"memories"}`,count:t}}
+var Qqa;
+var Zqa=b(()=>{Qqa=["Baked","Brewed","Churned","Cogitated","Cooked","Crunched","Saut\xE9ed","Worked"]});
+export {Xqa,Qqa,Zqa};

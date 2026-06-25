@@ -1,13 +1,12 @@
 // @ts-nocheck
-import {cx,iW} from "./m2798.ts";
-import {Text} from "./m2423.ts";
-import {Cn,dr} from "./m231.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function initModule(e){let t=N9i.c(8),{count:n,unit:r,expandable:o}=e,s=r===void 0?"line":r,i=o===void 0?!1:o;if(n<=0)return null;let a;if(t[0]!==n||t[1]!==s)a=lLt(n,s),t[0]=n,t[1]=s,t[2]=a;else a=t[2];let l;if(t[3]!==i)l=i&&aLt.default.createElement(aLt.default.Fragment,null," ",aLt.default.createElement(cx,null)),t[3]=i,t[4]=l;else l=t[4];let c;if(t[5]!==a||t[6]!==l)c=aLt.default.createElement(Text,{dimColor:!0},a,l),t[5]=a,t[6]=l,t[7]=c;else c=t[7];return c}
-function lLt(e,t="line"){if(e<=0)return"";return`\u2026 +${e} ${Cn(e,t)}`}
-var N9i,aLt;
-var Oz=b(()=>{ze();dr();iW();N9i=M(rt(),1),aLt=M(Te(),1)});
-export {initModule,lLt,N9i,aLt,Oz};
+import {b} from "../runtime.ts";
+function Uzr(e){}
+function rWi(e){if(typeof e=="function")throw TypeError("`callbacks` must be an object, got a function instead. Did you mean `{onEvent: fn}`?");let{onEvent:t=Uzr,onError:n=Uzr,onRetry:r=Uzr,onComment:o}=e,s="",i=!0,a,l="",c="";function u(h){let g=i?h.replace(/^\xEF\xBB\xBF/,""):h,[_,T]=HFd(`${s}${g}`);for(let y of _)d(y);s=T,i=!1}function d(h){if(h===""){m();return}if(h.startsWith(":")){o&&o(h.slice(h.startsWith(": ")?2:1));return}let g=h.indexOf(":");if(g!==-1){let _=h.slice(0,g),T=h[g+1]===" "?2:1,y=h.slice(g+T);p(_,y,h);return}p(h,"",h)}function p(h,g,_){switch(h){case"event":c=g;break;case"data":l=`${l}${g}
+`;break;case"id":a=g.includes("\x00")?void 0:g;break;case"retry":/^\d+$/.test(g)?r(parseInt(g,10)):n(new $zr(`Invalid \`retry\` value: "${g}"`,{type:"invalid-retry",value:g,line:_}));break;default:n(new $zr(`Unknown field "${h.length>20?`${h.slice(0,20)}\u2026`:h}"`,{type:"unknown-field",field:h,value:g,line:_}));break}}function m(){l.length>0&&t({id:a,event:c||void 0,data:l.endsWith(`
+`)?l.slice(0,-1):l}),a=void 0,l="",c=""}function f(h={}){s&&h.consume&&d(s),i=!0,a=void 0,l="",c="",s=""}return{feed:u,reset:f}}
+function HFd(e){let t=[],n="",r=0;for(;r<e.length;){let o=e.indexOf("\r",r),s=e.indexOf(`
+`,r),i=-1;if(o!==-1&&s!==-1?i=Math.min(o,s):o!==-1?i=o:s!==-1&&(i=s),i===-1){n=e.slice(r);break}else{let a=e.slice(r,i);t.push(a),r=i+1,e[r-1]==="\r"&&e[r]===`
+`&&r++}}return[t,n]}
+var $zr;
+var oWi=b(()=>{$zr=class $zr extends Error{constructor(e,t){super(e),this.name="ParseError",this.type=t.type,this.field=t.field,this.value=t.value,this.line=t.line}}});
+export {Uzr,rWi,HFd,$zr,oWi};

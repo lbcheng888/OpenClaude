@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-import {nHt} from "./m2092.ts";
-var xpi=X((qgn)=>{Object.defineProperty(qgn,"__esModule",{value:!0});qgn._export=void 0;var Rpi=Xi(),Bzu=nHt();function Fzu(e,t){return new Promise((n)=>{Rpi.context.with((0,Bzu.suppressTracing)(Rpi.context.active()),()=>{e.export(t,(r)=>{n(r)})})})}qgn._export=Fzu});
-export {xpi};
+import {Q} from "../runtime.ts";
+var myi=Q((qZe)=>{Object.defineProperty(qZe,"__esModule",{value:!0});qZe.callWithTimeout=qZe.TimeoutError=void 0;class _Sn extends Error{constructor(e){super(e);Object.setPrototypeOf(this,_Sn.prototype)}}qZe.TimeoutError=_Sn;function esd(e,t){let n,r=new Promise(function(s,i){n=setTimeout(function(){i(new _Sn("Operation timed out."))},t)});return Promise.race([e,r]).then((o)=>(clearTimeout(n),o),(o)=>{throw clearTimeout(n),o})}qZe.callWithTimeout=esd});
+export {myi};

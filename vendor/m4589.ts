@@ -1,16 +1,9 @@
 // @ts-nocheck
-import {SandboxManager,Ag} from "./m2671.ts";
-import {Box} from "./m2422.ts";
-import {Hx,Ypt} from "./m4573.ts";
-import {Es,kte} from "./m3926.ts";
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function jcl(){let e=qcl.c(2);if(!SandboxManager.isSupportedPlatform())return null;if(!SandboxManager.isSandboxEnabledInSettings())return null;if(!SandboxManager.isPlatformInEnabledList())return null;let t,n;if(e[0]===Symbol.for("react.memo_cache_sentinel")){n=Symbol.for("react.early_return_sentinel");e:{let r=SandboxManager.checkDependencies(),o=r.errors.length>0,s=r.warnings.length>0;if(!o&&!s){n=null;break e}t=_De.default.createElement(Box,{flexDirection:"column",marginTop:1},_De.default.createElement(Hx,{title:"Sandbox",status:o?"error":"warning"}),_De.default.createElement(Es,{variant:"tree"},r.errors.map(B7p),r.warnings.map(N7p),o&&_De.default.createElement(Es.Node,{dimColor:!0},"Run ",_De.default.createElement(Text,{color:"suggestion"},"/sandbox")," for install instructions")))}e[0]=t,e[1]=n}else t=e[0],n=e[1];if(n!==Symbol.for("react.early_return_sentinel"))return n;return t}
-function N7p(e,t){return _De.default.createElement(Es.Node,{key:t,color:"warning"},e)}
-function B7p(e,t){return _De.default.createElement(Es.Node,{key:t,color:"error"},e)}
-var qcl,_De;
-var Wcl=b(()=>{ze();Ag();Ypt();kte();qcl=M(rt(),1),_De=M(Te(),1)});
-export {jcl,N7p,B7p,qcl,_De,Wcl};
+import {s4,Rtt,$ve} from "./m2391.ts";
+import {aUa,lUa,t3t} from "../src/config/3927_hunks.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function DRo(e=0){let n=rJ.useContext(s4)?.setTimeout??Rtt,[r,o]=rJ.useState(null),[s,i]=rJ.useState(xRo),[a,l]=rJ.useState(!0),c=rJ.useRef(!1);return rJ.useEffect(()=>{let u=!1,d=new AbortController;async function p(){try{let f=await aUa(d.signal);if(u)return;let h=f?.source.kind==="branch"?f.source.baseRef:"HEAD",g=await lUa(d.signal,h);if(u)return;if(f!==null)o(f);else if(!c.current)o(null);if(g!==null)i(g);else if(!c.current)i(xRo);c.current=!0,l(!1)}catch(f){if(u)return;if(!c.current)o(null),i(xRo);c.current=!0,l(!1)}}let m=n(p,c.current?Sem:0);return()=>{u=!0,m(),d.abort()}},[e]),rJ.useMemo(()=>{if(!r)return{stats:null,files:[],hunks:new Map,loading:a,source:{kind:"working-tree"}};let{stats:u,perFileStats:d,source:p}=r,m=[];for(let[f,h]of d){let g=h.isUntracked,_=s.skippedLarge.has(f),T=h.added+h.removed,y=!_&&!h.isBinary&&T>Tem;m.push({path:f,linesAdded:h.added,linesRemoved:h.removed,isBinary:h.isBinary,isLargeFile:_,isTruncated:y,isUntracked:g})}return m.sort((f,h)=>f.path.localeCompare(h.path)),{stats:u,files:m,hunks:s.hunks,loading:!1,source:p}},[r,s,a])}
+var rJ,Tem=400,Sem=150,xRo;
+var PRo=b(()=>{$ve();t3t();rJ=x(et(),1),xRo={hunks:new Map,skippedLarge:new Set}});
+export {DRo,rJ,Tem,Sem,xRo,PRo};

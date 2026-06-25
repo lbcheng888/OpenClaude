@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var Dfn="@azure/msal-node",BQ="3.8.1";
-var BJe=b(()=>{/*! @azure/msal-node v3.8.1 2025-10-29 */});
-export {Dfn,BQ,BJe};
+import {Q} from "../runtime.ts";
+var uni=Q((UWh,cni)=>{var lju="[object String]",cju=Object.prototype,uju=cju.toString,dju=Array.isArray;function pju(e){return!!e&&typeof e=="object"}function mju(e){return typeof e=="string"||!dju(e)&&pju(e)&&uju.call(e)==lju}cni.exports=mju});
+export {uni};

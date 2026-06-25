@@ -1,11 +1,12 @@
 // @ts-nocheck
-import {_A} from "./m459.ts";
-import {Whe,Xae,Ske} from "./m3273.ts";
-import {b,M} from "../runtime.ts";
-import {O4} from "./m2337.ts";
-function FBn(){if(!_A())return!1;let e=l4e.join(Whe(),"claude","versions")+l4e.sep;return process.execPath.startsWith(e)}
-function sU(e={}){if(!e.pinToCurrentBinary&&FBn())return{cmd:l4e.join(Xae(),"claude"),prefixArgs:[]};if(_A())return{cmd:process.execPath,prefixArgs:[]};let t=process.argv[1];if(!t)return{cmd:process.execPath,prefixArgs:[]};return{cmd:process.execPath,prefixArgs:[t]}}
-async function UBn(){let e=l4e.join(Whe(),"claude","versions"),t;try{t=await NBn.readdir(e)}catch{return null}let n=t.filter((r)=>!/\.tmp\.\d+\.\d+$/.test(r)&&BBn.valid(r)).sort(BBn.rcompare);for(let r of n){let o=l4e.join(e,r);try{let s=await NBn.stat(o);if(s.isFile()&&s.size>0)return o}catch{}}return null}
-var NBn,l4e,BBn;
-var Pge=b(()=>{Ske();NBn=require("fs/promises"),l4e=require("path"),BBn=M(O4(),1)});
-export {FBn,sU,UBn,NBn,l4e,BBn,Pge};
+import {gd,xw} from "../src/tui/3853_mode.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function Hc(e){let t=D1a.c(10),{message:n,bold:r,dimColor:o,subtitle:s}=e,i=r===void 0?!1:r,a=o===void 0?!1:o,l;if(t[0]===Symbol.for("react.memo_cache_sentinel"))l=Tqe.jsx(gd,{}),t[0]=l;else l=t[0];let c;if(t[1]!==i||t[2]!==a||t[3]!==n)c=Tqe.jsxs(Box,{flexDirection:"row",children:[l,Tqe.jsxs(Text,{bold:i,dimColor:a,children:[" ",n]})]}),t[1]=i,t[2]=a,t[3]=n,t[4]=c;else c=t[4];let u;if(t[5]!==s)u=s&&Tqe.jsx(Text,{dimColor:!0,children:s}),t[5]=s,t[6]=u;else u=t[6];let d;if(t[7]!==c||t[8]!==u)d=Tqe.jsxs(Box,{flexDirection:"column",children:[c,u]}),t[7]=c,t[8]=u,t[9]=d;else d=t[9];return d}
+var D1a,Tqe;
+var OE=b(()=>{je();xw();D1a=x(tt(),1),Tqe=x(oe(),1)});
+export {Hc,D1a,Tqe,OE};

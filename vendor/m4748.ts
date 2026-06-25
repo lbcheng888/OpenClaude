@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Rjt} from "./m4742.ts";
-var iEo=X((Vhl)=>{var ZQp=Rjt();function Ghl(e,t){let n=e.a/255,r=t+'="'+e.hex+'"';return n<1?r+" "+t+'-opacity="'+n.toFixed(2).slice(1)+'"':r}function sEo(e,t,n){let r=e+t;if(typeof n<"u")r+=" "+n;return r}function eZp(e,t,n){let r="",o=0,s=!1,i=0;for(let a=0;a<e.length;a++){let l=Math.floor(a%t),c=Math.floor(a/t);if(!l&&!s)s=!0;if(e[a]){if(i++,!(a>0&&l>0&&e[a-1]))r+=s?sEo("M",l+n,0.5+c+n):sEo("m",o,0),o=0,s=!1;if(!(l+1<t&&e[a+1]))r+=sEo("h",i),i=0}else o++}return r}Vhl.render=function(t,n,r){let o=ZQp.getOptions(n),s=t.modules.size,i=t.modules.data,a=s+o.margin*2,l=!o.color.light.a?"":"<path "+Ghl(o.color.light,"fill")+' d="M0 0h'+a+"v"+a+'H0z"/>',c="<path "+Ghl(o.color.dark,"stroke")+' d="'+eZp(i,s,o.margin)+'"/>',u='viewBox="0 0 '+a+" "+a+'"',p='<svg xmlns="http://www.w3.org/2000/svg" '+(!o.width?"":'width="'+o.width+'" height="'+o.width+'" ')+u+' shape-rendering="crispEdges">'+l+c+`</svg>
-`;if(typeof r==="function")r(null,p);return p}});
-export {iEo};
+import {Q} from "../runtime.ts";
+import {DPe} from "./m4742.ts";
+import {IPe} from "./m4729.ts";
+var ACl=Q((prS,CCl)=>{var Iim=DPe(),xim=IPe();function $ht(e){this.mode=Iim.KANJI,this.data=e}$ht.getBitsLength=function(t){return t*13};$ht.prototype.getLength=function(){return this.data.length};$ht.prototype.getBitsLength=function(){return $ht.getBitsLength(this.data.length)};$ht.prototype.write=function(e){let t;for(t=0;t<this.data.length;t++){let n=xim.toSJIS(this.data[t]);if(n>=33088&&n<=40956)n-=33088;else if(n>=57408&&n<=60351)n-=49472;else throw Error("Invalid SJIS character: "+this.data[t]+`
+Make sure your charset is UTF-8`);n=(n>>>8&255)*192+(n&255),e.put(n,13)}};CCl.exports=$ht});
+export {ACl};

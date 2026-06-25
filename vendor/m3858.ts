@@ -1,18 +1,21 @@
 // @ts-nocheck
-import {getFileStatus,stashToCleanState,Ba} from "./m693.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Box} from "./m2422.ts";
-import {tp,_x} from "../src/tui/3835_mode.ts";
-import {Text} from "./m2423.ts";
-import {et,Ai} from "./m2208.ts";
-import {at,rs} from "./m2546.ts";
-import {Kn,Li} from "./m2572.ts";
-import {ic,Ny} from "./m2574.ts";
-import {ac,e_} from "./m3338.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-function o0a({onStashAndContinue:e,onCancel:t}){let[n,r]=fb.useState(null),o=n!==null?[...n.tracked,...n.untracked]:[],[s,i]=fb.useState(!0),[a,l]=fb.useState(!1),[c,u]=fb.useState(null);fb.useEffect(()=>{(async()=>{try{let f=await getFileStatus();r(f)}catch(f){let A=f instanceof Error?f.message:String(f);logForDebugging(`Error getting changed files: ${A}`,{level:"error"}),u("Failed to get changed files")}finally{i(!1)}})()},[]);let d=async()=>{l(!0);try{if(logForDebugging("Stashing changes before teleport..."),await stashToCleanState("Teleport auto-stash"))logForDebugging("Successfully stashed changes"),e();else u("Failed to stash changes")}catch(m){let f=m instanceof Error?m.message:String(m);logForDebugging(`Error stashing changes: ${f}`,{level:"error"}),u("Failed to stash changes")}finally{l(!1)}};if(s)return fb.default.createElement(Box,{flexDirection:"column",padding:1},fb.default.createElement(Box,{marginBottom:1},fb.default.createElement(tp,null),fb.default.createElement(Text,null," Checking git status",et.ellipsis)));if(c)return fb.default.createElement(Box,{flexDirection:"column",padding:1},fb.default.createElement(Text,{bold:!0,color:"error"},"Error: ",c),fb.default.createElement(Box,{marginTop:1},fb.default.createElement(Text,{dimColor:!0},fb.default.createElement(at,{chord:"escape",action:"cancel",bold:!0}))));let p=o.length>8;return fb.default.createElement(Kn,{title:"Working directory has changes",onCancel:t},fb.default.createElement(Text,null,"Teleport will switch git branches. The following changes were found:"),fb.default.createElement(Box,{flexDirection:"column",paddingLeft:2},o.length>0?p?fb.default.createElement(Text,null,o.length," files changed"):o.map((m,f)=>fb.default.createElement(Text,{key:f},m)):fb.default.createElement(ic,null,"No changes detected")),fb.default.createElement(Text,null,"Would you like to stash these changes and continue with teleport?"),a?fb.default.createElement(Box,null,fb.default.createElement(tp,null),fb.default.createElement(Text,null," Stashing changes...")):fb.default.createElement(ac,{confirmLabel:"Stash changes and continue",cancelLabel:"Exit",onConfirm:()=>void d(),onCancel:t}))}
-var fb;
-var s0a=b(()=>{Ai();ze();qe();Ba();e_();Li();Ny();rs();_x();fb=M(Te(),1)});
-export {o0a,fb,s0a};
+import {iu} from "./m3830.ts";
+import {Or,ss} from "./m2553.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {dr,uc} from "./m2558.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {ga,rh} from "./m2550.ts";
+import {Ba,I_} from "./m2584.ts";
+import {_c,PE} from "./m3831.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {Fy} from "./m3832.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function $1a(){let e=U1a.c(17),{goBack:t,goNext:n,updateWizardData:r,wizardData:o}=iu(),[s,i]=w2n.useState(o.region??"us-east-1"),[a,l]=w2n.useState(s.length),[c,u]=w2n.useState(null),d;if(e[0]===Symbol.for("react.memo_cache_sentinel"))d={context:"Settings"},e[0]=d;else d=e[0];Or("confirm:no",t,d);let p;if(e[1]!==n||e[2]!==r||e[3]!==s)p=()=>{let S=s.trim();if(!S){u("Region is required");return}u(null),r({region:S}),n()},e[1]=n,e[2]=r,e[3]=s,e[4]=p;else p=e[4];let m=p,f;if(e[5]===Symbol.for("react.memo_cache_sentinel"))f=rG.jsxs(bn,{children:[rG.jsx(at,{chord:"enter",action:"continue"}),rG.jsx(dr,{action:"confirm:no",context:"Settings",fallback:"Esc",description:"go back"})]}),e[5]=f;else f=e[5];let h,g;if(e[6]===Symbol.for("react.memo_cache_sentinel"))h=rG.jsx(Text,{children:"Where your Bedrock models are enabled."}),g=rG.jsx(Text,{dimColor:!0,children:"Claude Code reads this from AWS_REGION, not ~/.aws/config \u2014 set it explicitly even if your profile has a region."}),e[6]=h,e[7]=g;else h=e[6],g=e[7];let _;if(e[8]!==a||e[9]!==m||e[10]!==s)_=rG.jsx(Box,{marginTop:1,children:rG.jsx(ga,{value:s,onChange:i,onSubmit:m,placeholder:"us-east-1",columns:40,cursorOffset:a,onChangeCursorOffset:l,focus:!0,showCursor:!0})}),e[8]=a,e[9]=m,e[10]=s,e[11]=_;else _=e[11];let T;if(e[12]!==c)T=c&&rG.jsx(Box,{marginTop:1,children:rG.jsx(Ba,{error:c})}),e[12]=c,e[13]=T;else T=e[13];let y;if(e[14]!==_||e[15]!==T)y=rG.jsx(_c,{subtitle:"AWS region",footerText:f,children:rG.jsxs(Box,{flexDirection:"column",children:[h,g,_,T]})}),e[14]=_,e[15]=T,e[16]=y;else y=e[16];return y}
+var U1a,w2n,rG;
+var q1a=b(()=>{je();ss();uc();Is();I_();Wo();rh();Fy();PE();U1a=x(tt(),1),w2n=x(et(),1),rG=x(oe(),1)});
+export {$1a,U1a,w2n,rG,q1a};

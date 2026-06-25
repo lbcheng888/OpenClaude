@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {z1n} from "./m3724.ts";
-var fva=X((Y1n)=>{Object.defineProperty(Y1n,"__esModule",{value:!0});Y1n.InstrumentSelector=void 0;var pva=z1n();class mva{_nameFilter;_type;_unitFilter;constructor(e){this._nameFilter=new pva.PatternPredicate(e?.name??"*"),this._type=e?.type,this._unitFilter=new pva.ExactPredicate(e?.unit)}getType(){return this._type}getNameFilter(){return this._nameFilter}getUnitFilter(){return this._unitFilter}}Y1n.InstrumentSelector=mva});
-export {fva};
+import {Q} from "../runtime.ts";
+import {n$t} from "./m3722.ts";
+var uao=Q((kBn)=>{Object.defineProperty(kBn,"__esModule",{value:!0});kBn.MetricStorage=void 0;var sSp=n$t();class K0a{_instrumentDescriptor;constructor(e){this._instrumentDescriptor=e}getInstrumentDescriptor(){return this._instrumentDescriptor}updateDescription(e){this._instrumentDescriptor=(0,sSp.createInstrumentDescriptor)(this._instrumentDescriptor.name,this._instrumentDescriptor.type,{description:e,valueType:this._instrumentDescriptor.valueType,unit:this._instrumentDescriptor.unit,advice:this._instrumentDescriptor.advice})}}kBn.MetricStorage=K0a});
+export {uao};

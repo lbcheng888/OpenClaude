@@ -1,8 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Qpi} from "./m2150.ts";
-import {nmi} from "./m2151.ts";
-import {omi} from "./m2152.ts";
-import {imi} from "./m2153.ts";
-var ami=X((qse)=>{Object.defineProperty(qse,"__esModule",{value:!0});qse.serviceInstanceIdDetector=qse.processDetector=qse.osDetector=qse.hostDetector=void 0;var FYu=Qpi();Object.defineProperty(qse,"hostDetector",{enumerable:!0,get:function(){return FYu.hostDetector}});var UYu=nmi();Object.defineProperty(qse,"osDetector",{enumerable:!0,get:function(){return UYu.osDetector}});var $Yu=omi();Object.defineProperty(qse,"processDetector",{enumerable:!0,get:function(){return $Yu.processDetector}});var qYu=imi();Object.defineProperty(qse,"serviceInstanceIdDetector",{enumerable:!0,get:function(){return qYu.serviceInstanceIdDetector}})});
-export {ami};
+import {Q} from "../runtime.ts";
+var d2r=Q((VZe)=>{Object.defineProperty(VZe,"__esModule",{value:!0});VZe.normalizeType=VZe.normalizeArch=void 0;var Jsd=(e)=>{switch(e){case"arm":return"arm32";case"ppc":return"ppc32";case"x64":return"amd64";default:return e}};VZe.normalizeArch=Jsd;var Xsd=(e)=>{switch(e){case"sunos":return"solaris";case"win32":return"windows";default:return e}};VZe.normalizeType=Xsd});
+export {d2r};

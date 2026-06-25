@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Kri} from "./m2089.ts";
-var zri=X((hgn)=>{Object.defineProperty(hgn,"__esModule",{value:!0});hgn.trace=void 0;var z7u=Kri();hgn.trace=z7u.TraceAPI.getInstance()});
-export {zri};
+import {Q} from "../runtime.ts";
+var Dci=Q((GTn)=>{Object.defineProperty(GTn,"__esModule",{value:!0});GTn.NoopTextMapPropagator=void 0;class xci{inject(e,t){}extract(e,t){return e}fields(){return[]}}GTn.NoopTextMapPropagator=xci});
+export {Dci};

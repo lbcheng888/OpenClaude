@@ -1,5 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {DVr} from "./m3085.ts";
-var XJi=X((Vjh,JJi)=>{var Akn=DVr();JJi.exports={readJson:Akn.readFile,readJsonSync:Akn.readFileSync,writeJson:Akn.writeFile,writeJsonSync:Akn.writeFileSync}});
-export {XJi};
+import {Q} from "../runtime.ts";
+import {AC} from "./m3074.ts";
+import {Wna} from "./m3112.ts";
+import {jna} from "./m3113.ts";
+var nxn=Q((RZg,Yna)=>{var HWd=AC().fromCallback;Yna.exports={copy:HWd(Wna()),copySync:jna()}});
+export {nxn};

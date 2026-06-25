@@ -1,4 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Rka=X((vka,wka)=>{(function(){var e;wka.exports=e=function(){class t{constructor(n){this.nodes=n}clone(){return this.nodes=null}item(n){return this.nodes[n]||null}}return Object.defineProperty(t.prototype,"length",{get:function(){return this.nodes.length||0}}),t}.call(this)}).call(vka)});
-export {Rka};
+import {Q} from "../runtime.ts";
+import {LI} from "./m3796.ts";
+import {ZW} from "./m3815.ts";
+var klo=Q((pLa,mLa)=>{(function(){var e,t,n;e=LI(),n=ZW(),mLa.exports=t=function(){class r{constructor(o,s,i){if(this.parent=o,this.parent)this.options=this.parent.options,this.stringify=this.parent.stringify;if(s==null)throw Error("Missing attribute name. "+this.debugInfo(s));this.name=this.stringify.name(s),this.value=this.stringify.attValue(i),this.type=e.Attribute,this.isId=!1,this.schemaTypeInfo=null}clone(){return Object.create(this)}toString(o){return this.options.writer.attribute(this,this.options.writer.filterOptions(o))}debugInfo(o){if(o=o||this.name,o==null)return"parent: <"+this.parent.name+">";else return"attribute: {"+o+"}, parent: <"+this.parent.name+">"}isEqualNode(o){if(o.namespaceURI!==this.namespaceURI)return!1;if(o.prefix!==this.prefix)return!1;if(o.localName!==this.localName)return!1;if(o.value!==this.value)return!1;return!0}}return Object.defineProperty(r.prototype,"nodeType",{get:function(){return this.type}}),Object.defineProperty(r.prototype,"ownerElement",{get:function(){return this.parent}}),Object.defineProperty(r.prototype,"textContent",{get:function(){return this.value},set:function(o){return this.value=o||""}}),Object.defineProperty(r.prototype,"namespaceURI",{get:function(){return""}}),Object.defineProperty(r.prototype,"prefix",{get:function(){return""}}),Object.defineProperty(r.prototype,"localName",{get:function(){return this.name}}),Object.defineProperty(r.prototype,"specified",{get:function(){return!0}}),r}.call(this)}).call(pLa)});
+export {klo};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,kRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var fks,UpdateAutomatedReasoningPolicyAnnotationsCommand;
-var NEr=b(()=>{ri();wi();xi();fks=M(yo(),1);UpdateAutomatedReasoningPolicyAnnotationsCommand=class UpdateAutomatedReasoningPolicyAnnotationsCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[fks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","UpdateAutomatedReasoningPolicyAnnotations",{}).n("BedrockClient","UpdateAutomatedReasoningPolicyAnnotationsCommand").sc(kRs).build(){}});
-export {fks,UpdateAutomatedReasoningPolicyAnnotationsCommand,NEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,_Ds} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var rOs,StopEvaluationJobCommand;
+var akr=b(()=>{$s();ai();ci();rOs=x(yo(),1);StopEvaluationJobCommand=class StopEvaluationJobCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[rOs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","StopEvaluationJob",{}).n("BedrockClient","StopEvaluationJobCommand").sc(_Ds).build(){}});
+export {rOs,StopEvaluationJobCommand,akr};

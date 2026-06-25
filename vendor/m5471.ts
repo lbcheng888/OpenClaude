@@ -1,16 +1,26 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {lt} from "../src/session/0131_sent.ts";
-import {EU} from "./m4256.ts";
-import {Dd} from "./m687.ts";
-import {zVl} from "./m5470.ts";
-import {vW} from "../src/config/3301_fileStates.ts";
-import {qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {tk} from "./m577.ts";
-import {bt} from "./m195.ts";
-import {oa} from "./m684.ts";
-import {vO} from "./m691.ts";
-import {Ba} from "./m693.ts";
-import {Rn} from "../src/session/0615_length.ts";
-var YVl=b(()=>{lt();EU();Dd();zVl();vW();qe();tk();bt();oa();vO();Ba();Rn()});
-export {YVl};
+import {L$} from "../src/computer-use/3227_level.ts";
+import {execFileNoThrow,Ii} from "./m690.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {hr,Ol} from "./m2573.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Sn,lr} from "./m233.ts";
+import {Hj,xDn} from "./m3214.ts";
+import {aca,RQr} from "./m3218.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function ZQl(e){let t=Etr.c(3),{request:n,onDone:r}=e,o;if(t[0]!==r||t[1]!==n)o=n.tccState?RS.jsx(S$m,{tccState:n.tccState,onDone:()=>r(QQl)}):RS.jsx(E$m,{request:n,onDone:r}),t[0]=r,t[1]=n,t[2]=o;else o=t[2];return o}
+function S$m(e){let t=Etr.c(26),{tccState:n,onDone:r}=e,o;if(t[0]!==n.accessibility||t[1]!==n.screenRecording){if(o=[],!n.accessibility){let T;if(t[3]===Symbol.for("react.memo_cache_sentinel"))T={label:"Open System Settings \u2192 Accessibility",value:"open_accessibility"},t[3]=T;else T=t[3];o.push(T)}if(!n.screenRecording){let T;if(t[4]===Symbol.for("react.memo_cache_sentinel"))T={label:"Open System Settings \u2192 Screen Recording",value:"open_screen_recording"},t[4]=T;else T=t[4];o.push(T)}let _;if(t[5]===Symbol.for("react.memo_cache_sentinel"))_={label:"Try again",value:"retry"},t[5]=_;else _=t[5];o.push(_),t[0]=n.accessibility,t[1]=n.screenRecording,t[2]=o}else o=t[2];let s=o,i;if(t[6]!==r)i=function(T){let y=L$();switch(T){case"open_accessibility":{y.tcc.requestAccessibility(),execFileNoThrow("open",["x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"],{useCwd:!1});return}case"open_screen_recording":{y.tcc.requestScreenRecording(),execFileNoThrow("open",["x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"],{useCwd:!1});return}case"retry":{r();return}}},t[6]=r,t[7]=i;else i=t[7];let a=i,l=n.accessibility?`${Xe.tick} granted`:`${Xe.cross} not granted`,c;if(t[8]!==l)c=RS.jsxs(Text,{children:["Accessibility:"," ",l]}),t[8]=l,t[9]=c;else c=t[9];let u=n.screenRecording?`${Xe.tick} granted`:`${Xe.cross} not granted`,d;if(t[10]!==u)d=RS.jsxs(Text,{children:["Screen Recording:"," ",u]}),t[10]=u,t[11]=d;else d=t[11];let p;if(t[12]!==c||t[13]!==d)p=RS.jsxs(Box,{flexDirection:"column",children:[c,d]}),t[12]=c,t[13]=d,t[14]=p;else p=t[14];let m;if(t[15]===Symbol.for("react.memo_cache_sentinel"))m=RS.jsx(Text,{dimColor:!0,children:'Grant the missing permissions in System Settings, then select "Try again". macOS may require you to restart Claude Code after granting Screen Recording.'}),t[15]=m;else m=t[15];let f;if(t[16]!==a||t[17]!==r||t[18]!==s)f=RS.jsx(hr,{options:s,onChange:a,onCancel:r}),t[16]=a,t[17]=r,t[18]=s,t[19]=f;else f=t[19];let h;if(t[20]!==p||t[21]!==f)h=RS.jsxs(Box,{flexDirection:"column",paddingX:1,paddingY:1,gap:1,children:[p,m,f]}),t[20]=p,t[21]=f,t[22]=h;else h=t[22];let g;if(t[23]!==r||t[24]!==h)g=RS.jsx(preInitQueue,{title:"Computer Use needs macOS permissions",onCancel:r,children:h}),t[23]=r,t[24]=h,t[25]=g;else g=t[25];return g}
+function E$m(e){let t=Etr.c(48),{request:n,onDone:r}=e,o;if(t[0]!==n.apps)o=()=>new Set(n.apps.flatMap(v$m)),t[0]=n.apps,t[1]=o;else o=t[1];let[s]=XQl.useState(o),i;if(t[2]===Symbol.for("react.memo_cache_sentinel"))i=["clipboardRead","clipboardWrite","systemKeyCombos"],t[2]=i;else i=t[2];let a=i,l;if(t[3]!==n.requestedFlags)l=a.filter((P)=>n.requestedFlags[P]),t[3]=n.requestedFlags,t[4]=l;else l=t[4];let c=l,u=s.size,d;if(t[5]!==s.size)d=Sn(s.size,"app"),t[5]=s.size,t[6]=d;else d=t[6];let p=`Allow for this session (${u} ${d})`,m;if(t[7]!==p)m={label:p,value:"allow_all"},t[7]=p,t[8]=m;else m=t[8];let f;if(t[9]===Symbol.for("react.memo_cache_sentinel"))f={label:RS.jsxs(Text,{children:["Deny, and tell Claude what to do differently ",RS.jsx(Text,{bold:!0,children:"(esc)"})]}),value:"deny"},t[9]=f;else f=t[9];let h;if(t[10]!==m)h=[m,f],t[10]=m,t[11]=h;else h=t[11];let g=h,_;if(t[12]!==s||t[13]!==r||t[14]!==n.apps||t[15]!==c)_=function(M){if(!M){r(QQl);return}let B=Date.now(),N=n.apps.flatMap((G)=>G.resolved&&s.has(G.resolved.bundleId)?[{bundleId:G.resolved.bundleId,displayName:G.resolved.displayName,grantedAt:B}]:[]),F=n.apps.filter((G)=>!G.resolved||!s.has(G.resolved.bundleId)).map(R$m),V={...Hj,...Object.fromEntries(c.map(A$m))};r({granted:N,denied:F,flags:V})},t[12]=s,t[13]=r,t[14]=n.apps,t[15]=c,t[16]=_;else _=t[16];let T=_,y;if(t[17]!==T)y=()=>T(!1),t[17]=T,t[18]=y;else y=t[18];let S;if(t[19]!==n.reason)S=n.reason?RS.jsx(Text,{dimColor:!0,children:n.reason}):null,t[19]=n.reason,t[20]=S;else S=t[20];let E;if(t[21]!==s||t[22]!==n.apps){let P;if(t[24]!==s)P=(M)=>{let B=M.resolved;if(!B)return RS.jsxs(Text,{dimColor:!0,children:["  ",Xe.circle," ",M.requestedName," ",RS.jsx(Text,{dimColor:!0,children:"(not installed)"})]},M.requestedName);if(M.alreadyGranted)return RS.jsxs(Text,{dimColor:!0,children:["  ",Xe.tick," ",B.displayName," ",RS.jsx(Text,{dimColor:!0,children:"(already granted)"})]},B.bundleId);let N=aca(B.bundleId),F=s.has(B.bundleId);return RS.jsxs(Box,{flexDirection:"column",children:[RS.jsxs(Text,{children:["  ",F?Xe.circleFilled:Xe.circle," ",B.displayName]}),N?RS.jsxs(Text,{bold:!0,children:["    ",Xe.warning," ",b$m[N]]}):null]},B.bundleId)},t[24]=s,t[25]=P;else P=t[25];E=n.apps.map(P),t[21]=s,t[22]=n.apps,t[23]=E}else E=t[23];let R;if(t[26]!==E)R=RS.jsx(Box,{flexDirection:"column",children:E}),t[26]=E,t[27]=R;else R=t[27];let w;if(t[28]!==c)w=c.length>0?RS.jsxs(Box,{flexDirection:"column",children:[RS.jsx(Text,{dimColor:!0,children:"Also requested:"}),c.map(C$m)]}):null,t[28]=c,t[29]=w;else w=t[29];let H;if(t[30]!==n.willHide)H=n.willHide&&n.willHide.length>0?RS.jsxs(Text,{dimColor:!0,children:[n.willHide.length," other"," ",Sn(n.willHide.length,"app")," will be hidden while Claude works."]}):null,t[30]=n.willHide,t[31]=H;else H=t[31];let k,I;if(t[32]!==T)k=(P)=>T(P==="allow_all"),I=()=>T(!1),t[32]=T,t[33]=k,t[34]=I;else k=t[33],I=t[34];let D;if(t[35]!==g||t[36]!==k||t[37]!==I)D=RS.jsx(hr,{options:g,onChange:k,onCancel:I}),t[35]=g,t[36]=k,t[37]=I,t[38]=D;else D=t[38];let O;if(t[39]!==S||t[40]!==R||t[41]!==w||t[42]!==H||t[43]!==D)O=RS.jsxs(Box,{flexDirection:"column",paddingX:1,paddingY:1,gap:1,children:[S,R,w,H,D]}),t[39]=S,t[40]=R,t[41]=w,t[42]=H,t[43]=D,t[44]=O;else O=t[44];let L;if(t[45]!==y||t[46]!==O)L=RS.jsx(preInitQueue,{title:"Computer Use wants to control these apps",onCancel:y,children:O}),t[45]=y,t[46]=O,t[47]=L;else L=t[47];return L}
+function C$m(e){return RS.jsxs(Text,{dimColor:!0,children:["  ","\xB7 ",e]},e)}
+function A$m(e){return[e,!0]}
+function R$m(e){return{bundleId:e.resolved?.bundleId??e.requestedName,reason:e.resolved?"user_denied":"not_installed"}}
+function v$m(e){return e.resolved&&!e.alreadyGranted?[e.resolved.bundleId]:[]}
+var Etr,XQl,RS,QQl,b$m;
+var eZl=b(()=>{RQr();xDn();Zs();je();Ii();lr();Ol();di();Etr=x(tt(),1),XQl=x(et(),1),RS=x(oe(),1),QQl={granted:[],denied:[],flags:Hj};b$m={shell:"equivalent to shell access",filesystem:"can read/write any file",system_settings:"can change system settings"}});
+export {ZQl,S$m,E$m,C$m,A$m,R$m,v$m,Etr,XQl,RS,QQl,b$m,eZl};

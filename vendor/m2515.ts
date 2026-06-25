@@ -1,16 +1,8 @@
 // @ts-nocheck
-import {saveGlobalConfig,getGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {execFileNoThrow,oa} from "./m684.ts";
-import {ds,bt} from "./m195.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {b} from "../runtime.ts";
-function Mmd(e){saveGlobalConfig((t)=>({...t,appleTerminalSetupInProgress:!0,appleTerminalBackupPath:e}))}
-function det(){saveGlobalConfig((e)=>({...e,appleTerminalSetupInProgress:!1}))}
-function Nmd(){let e=getGlobalConfig();return{inProgress:e.appleTerminalSetupInProgress??!1,backupPath:e.appleTerminalBackupPath||null}}
-function pet(){return Yki.join(zki.homedir(),"Library","Preferences","com.apple.Terminal.plist")}
-async function Jki(){let e=pet(),t=`${e}.bak`;try{let{code:n}=await execFileNoThrow("defaults",["export","com.apple.Terminal",e]);if(n!==0)return null;try{await P9r.stat(e)}catch{return null}return await execFileNoThrow("defaults",["export","com.apple.Terminal",t]),Mmd(t),t}catch(n){if(ds(n))return logForDebugging(`backupTerminalPreferences: config write failed: ${n}`),null;return De(n),null}}
-async function Fbn(){let{inProgress:e,backupPath:t}=Nmd();if(!e)return{status:"no_backup"};if(!t)return det(),{status:"no_backup"};try{await P9r.stat(t)}catch{return det(),{status:"no_backup"}}let n=!1;try{let{code:r}=await execFileNoThrow("defaults",["import","com.apple.Terminal",t]);if(r!==0)return{status:"failed",backupPath:t};return n=!0,await execFileNoThrow("killall",["cfprefsd"]),det(),{status:"restored"}}catch(r){if(ds(r))logForDebugging(`checkAndRestoreTerminalBackup: config write failed: ${r}`);else De(r);try{det()}catch{}return n?{status:"restored"}:{status:"failed",backupPath:t}}}
-var P9r,zki,Yki;
-var O9r=b(()=>{Qn();qe();bt();oa();Rn();P9r=require("fs/promises"),zki=require("os"),Yki=require("path")});
-export {Mmd,det,Nmd,pet,Jki,Fbn,P9r,zki,Yki,O9r};
+import {Q} from "../runtime.ts";
+import {Tie} from "./m2479.ts";
+var vOi=Q((pvg,ROi)=>{/*!
+  Copyright 2013 Lovell Fuller and others.
+  SPDX-License-Identifier: Apache-2.0
+*/var Rie=Tie(),ZEd={and:"and",or:"or",eor:"eor"};function eCd(){return this.options.removeAlpha=!0,this}function tCd(e){if(Rie.defined(e))if(Rie.number(e)&&Rie.inRange(e,0,1))this.options.ensureAlpha=e;else throw Rie.invalidParameterError("alpha","number between 0 and 1",e);else this.options.ensureAlpha=1;return this}function nCd(e){let t={red:0,green:1,blue:2,alpha:3};if(Object.keys(t).includes(e))e=t[e];if(Rie.integer(e)&&Rie.inRange(e,0,4))this.options.extractChannel=e;else throw Rie.invalidParameterError("channel","integer or one of: red, green, blue, alpha",e);return this}function rCd(e,t){if(Array.isArray(e))e.forEach(function(n){this.options.joinChannelIn.push(this._createInputDescriptor(n,t))},this);else this.options.joinChannelIn.push(this._createInputDescriptor(e,t));return this}function oCd(e){if(Rie.string(e)&&Rie.inArray(e,["and","or","eor"]))this.options.bandBoolOp=e;else throw Rie.invalidParameterError("boolOp","one of: and, or, eor",e);return this}ROi.exports=(e)=>{Object.assign(e.prototype,{removeAlpha:eCd,ensureAlpha:tCd,extractChannel:nCd,joinChannel:rCd,bandbool:oCd}),e.bool=ZEd}});
+export {vOi};

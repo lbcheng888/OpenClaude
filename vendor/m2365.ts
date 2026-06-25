@@ -1,19 +1,6 @@
 // @ts-nocheck
-import {Vve,DIt} from "./m2343.ts";
-import {KT,KI} from "./m234.ts";
-import {I4,KO,hZ} from "./m2267.ts";
-import {uZe} from "./m2363.ts";
-import {tn,Hc} from "./m235.ts";
-import {UK} from "./m2357.ts";
-import {F1} from "./m2356.ts";
-import {nAe} from "./m2358.ts";
 import {b} from "../runtime.ts";
-import {dZe} from "./m2364.ts";
-function Xbi(e){let t=Vve(),n=[...t.feed(e),...t.flush()],r=[];for(let o of n){if(o.type==="text"){for(let{segment:i}of KT().segment(o.value))r.push({type:"char",value:i});continue}let s=o.value;if(s.charCodeAt(1)===I4.CSI&&s.endsWith("m")){for(let i of uZe(s))if(i.type==="ansi")r.push(i)}else if(s.startsWith("\x1B]8;")&&(s.endsWith(KO)||s.endsWith(Jbi))){let i=s.endsWith(Jbi)?s.slice(0,-2)+KO:s;r.push({type:"ansi",code:i,endCode:Dsd})}}return r}
-function Psd(e){return e.code===e.endCode}
-function pZe(e){return e.filter((t)=>!Psd(t))}
-function U1(e,t,n){let r=Xbi(e),o=[],s=0,i="",a=!1;for(let c of r){let u=c.type==="ansi"?0:tn(c.value);if(n!==void 0&&s>=n){if(c.type==="ansi"||u>0||!a)break}if(c.type==="ansi"){if(o.push(c),a)i+=c.code}else{if(!a&&s>=t){if(t>0&&u===0)continue;a=!0,o=pZe(UK(o)),i=F1(o)}if(a)i+=c.value;s+=u}}let l=pZe(UK(o));return i+=F1(nAe(l)),i}
-function Qbi(e,t){let n=Xbi(e),r=0,o=[],s="",i=!1,a=!1,l=[],c="",u=!1;for(let m of n){let f=m.type==="ansi"?0:tn(m.value);if(!a)if(r>=t&&(m.type==="ansi"||f>0||!i))a=!0;else if(m.type==="ansi"){if(o.push(m),i)s+=m.code}else{if(!i)i=!0,o=pZe(UK(o)),s=F1(o);s+=m.value}if(m.type==="ansi"){if(l.push(m),u)c+=m.code}else{if(!u&&r>=t){if(!(t>0&&f===0))u=!0,l=pZe(UK(l)),c=F1(l)}if(u)c+=m.value}if(m.type!=="ansi")r+=f}let d=pZe(UK(o));s+=F1(nAe(d));let p=pZe(UK(l));return c+=F1(nAe(p)),[s,c]}
-var Jbi="\x1B\\",Dsd;
-var Yve=b(()=>{dZe();Hc();hZ();DIt();KI();Dsd=`\x1B]8;;${KO}`});
-export {Xbi,Psd,pZe,U1,Qbi,Jbi,Dsd,Yve};
+function Khd(){let e=new Map;for(let[t,n]of Object.entries(VR)){for(let[r,o]of Object.entries(n))VR[r]={open:`\x1B[${o[0]}m`,close:`\x1B[${o[1]}m`},n[r]=VR[r],e.set(o[0],o[1]);Object.defineProperty(VR,t,{value:n,enumerable:!1})}return Object.defineProperty(VR,"codes",{value:e,enumerable:!1}),VR.color.close="\x1B[39m",VR.bgColor.close="\x1B[49m",VR.color.ansi=zki(),VR.color.ansi256=jki(),VR.color.ansi16m=Yki(),VR.bgColor.ansi=zki(10),VR.bgColor.ansi256=jki(10),VR.bgColor.ansi16m=Yki(10),Object.defineProperties(VR,{rgbToAnsi256:{value:(t,n,r)=>{if(t===n&&n===r){if(t<8)return 16;if(t>248)return 231;return Math.round((t-8)/247*24)+232}return 16+36*Math.round(t/255*5)+6*Math.round(n/255*5)+Math.round(r/255*5)},enumerable:!1},hexToRgb:{value:(t)=>{let n=/[a-f\d]{6}|[a-f\d]{3}/i.exec(t.toString(16));if(!n)return[0,0,0];let[r]=n;if(r.length===3)r=[...r].map((s)=>s+s).join("");let o=Number.parseInt(r,16);return[o>>16&255,o>>8&255,o&255]},enumerable:!1},hexToAnsi256:{value:(t)=>VR.rgbToAnsi256(...VR.hexToRgb(t)),enumerable:!1},ansi256ToAnsi:{value:(t)=>{if(t<8)return 30+t;if(t<16)return 90+(t-8);let n,r,o;if(t>=232)n=((t-232)*10+8)/255,r=n,o=n;else{t-=16;let a=t%36;n=Math.floor(t/36)/5,r=Math.floor(a/6)/5,o=a%6/5}let s=Math.max(n,r,o)*2;if(s===0)return 30;let i=30+(Math.round(o)<<2|Math.round(r)<<1|Math.round(n));if(s===2)i+=60;return i},enumerable:!1},rgbToAnsi:{value:(t,n,r)=>VR.ansi256ToAnsi(VR.rgbToAnsi256(t,n,r)),enumerable:!1},hexToAnsi:{value:(t)=>VR.ansi256ToAnsi(VR.hexToAnsi256(t)),enumerable:!1}}),VR}
+var zki=(e=0)=>(t)=>`\x1B[${t+e}m`,jki=(e=0)=>(t)=>`\x1B[${38+e};5;${t}m`,Yki=(e=0)=>(t,n,r)=>`\x1B[${38+e};2;${t};${n};${r}m`,VR,igg,Ghd,Vhd,agg,zhd,FF;
+var w4r=b(()=>{VR={modifier:{reset:[0,0],bold:[1,22],dim:[2,22],italic:[3,23],underline:[4,24],overline:[53,55],inverse:[7,27],hidden:[8,28],strikethrough:[9,29]},color:{black:[30,39],red:[31,39],green:[32,39],yellow:[33,39],blue:[34,39],magenta:[35,39],cyan:[36,39],white:[37,39],blackBright:[90,39],gray:[90,39],grey:[90,39],redBright:[91,39],greenBright:[92,39],yellowBright:[93,39],blueBright:[94,39],magentaBright:[95,39],cyanBright:[96,39],whiteBright:[97,39]},bgColor:{bgBlack:[40,49],bgRed:[41,49],bgGreen:[42,49],bgYellow:[43,49],bgBlue:[44,49],bgMagenta:[45,49],bgCyan:[46,49],bgWhite:[47,49],bgBlackBright:[100,49],bgGray:[100,49],bgGrey:[100,49],bgRedBright:[101,49],bgGreenBright:[102,49],bgYellowBright:[103,49],bgBlueBright:[104,49],bgMagentaBright:[105,49],bgCyanBright:[106,49],bgWhiteBright:[107,49]}},igg=Object.keys(VR.modifier),Ghd=Object.keys(VR.color),Vhd=Object.keys(VR.bgColor),agg=[...Ghd,...Vhd];zhd=Khd(),FF=zhd});
+export {Khd,zki,jki,Yki,VR,igg,Ghd,Vhd,agg,zhd,FF,w4r};

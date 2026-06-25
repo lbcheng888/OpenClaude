@@ -1,34 +1,227 @@
 // @ts-nocheck
-import {KQl,VQl,zQl,YQl} from "./m5541.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {JLe,C2,YT} from "../src/tools/0323_ttl.ts";
-import {fp,J_,__,Mf,initKp} from "./m609.ts";
-import {isAmberSentinelEnabled,QH} from "./m2784.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {sleep} from "../src/telemetry/1483_withTimeout.ts";
-import {pLt,mLt} from "../src/telemetry/2807__meta.ts";
-import {Ie,Oe,ln} from "../src/telemetry/0594_feature_name.ts";
-import {_m,sA} from "./m2782.ts";
-import {mainAgentId,lt} from "../src/session/0131_sent.ts";
-import {Ikn,Dkn} from "./m3143.ts";
-import {uI,Ax} from "./m5146.ts";
-import {b} from "../runtime.ts";
-async function YGt(e){try{await KQl(e)}catch(t){logForDebugging(`removeMcpTaskMetadata failed: ${String(t)}`)}}
-function bMo(e){return e==="completed"||e==="failed"||e==="cancelled"}
-function HUm(e,t,n){let r=EMo.get(e);if(!r)r=new Map,EMo.set(e,r),e.setNotificationHandler(JLe,(o)=>{EMo.get(e)?.get(o.params.taskId)?.(o.params.status,o.params.statusMessage)});return r.set(t,n),()=>{r.delete(t)}}
-function XQl(e){let n=`MCP task ${e.mcpTaskId.slice(0,8)} (${e.serverName}/${e.toolName}) ${e.status}.`,r=e.status==="completed"?e.resultText??"":e.status==="failed"?`Task failed: ${e.statusMessage??"no detail"}`:"Task was cancelled by the server.";return`<${fp}>
-<${J_}>${e.registryId}</${J_}>
-<${__}>${e.status}</${__}>
-<${Mf}>${isAmberSentinelEnabled(n)}</${Mf}>
-<result>
-${isAmberSentinelEnabled(r)}
-</result>
-</${fp}>`}
-function IUm(e){return DUm(e).catch((t)=>De(t))}
-async function DUm({client:e,taskRegistry:t,taskState:n,pollIntervalMs:r}){let{id:o,mcpTaskId:s,serverName:i,toolName:a}=n,l=n.mcpStatus,c=n.statusMessage;VQl(o,{taskId:o,serverName:i,toolName:a,mcpTaskId:s,pollIntervalMs:r,spawnedAt:n.startTime,toolUseId:n.toolUseId}).catch((A)=>logForDebugging(`writeMcpTaskMetadata ${o}: ${String(A)}`));let u=(A,h)=>{if(A===l&&h===c)return;if(bMo(l)&&!bMo(A))return;l=A,c=h,t.update(o,(g)=>({...g,mcpStatus:A,statusMessage:h}))},d=HUm(e,s,u),p=Math.min(Math.max(r??wUm,RUm),xUm),m=0,f;try{while(!bMo(l)){if(l==="input_required")try{await e.experimental.tasks.getTaskResult(s,C2)}catch(h){logForDebugging(`mcp task ${s} getTaskResult during input_required: ${h}`)}if(await sleep(p),t.get(o)?.status==="killed"){e.experimental.tasks.cancelTask(s).catch((h)=>logForDebugging(`mcp task ${s} cancel after kill: ${h}`)),YGt(o);return}try{let h=await e.experimental.tasks.getTask(s);m=0,u(h.status,h.statusMessage)}catch(h){if(m++,logForDebugging(`mcp task ${s} poll failed: ${h}`),m>=kUm){l="failed",c=`Task polling failed repeatedly: ${String(h)}`,f="poll_failed_repeatedly";break}}}let A;if(l==="completed")try{let g=((await e.experimental.tasks.getTaskResult(s,C2)).content??[]).map((y)=>y.type==="text"?y.text:`[${y.type}]`).join(`
-`),_=await pLt(g);A=typeof _==="string"?_:g}catch(h){l="failed",c=`Failed to fetch task result: ${String(h)}`,f="result_fetch_failed"}if(t.get(o)?.status==="killed"){e.experimental.tasks.cancelTask(s).catch((h)=>logForDebugging(`mcp task ${s} cancel after kill: ${h}`)),YGt(o);return}if(l==="completed")Ie("mcp_task_complete");else if(l==="cancelled")Oe("mcp_task_complete","cancelled_by_server");else Oe("mcp_task_complete",f??"failed");t.update(o,(h)=>({...h,status:l==="completed"?"completed":"failed",mcpStatus:l,statusMessage:c,endTime:Date.now(),notified:!0})),YGt(o),_m({value:XQl({registryId:o,mcpTaskId:s,serverName:i,toolName:a,status:l,resultText:A,statusMessage:c}),mode:"task-notification",agentId:mainAgentId(),priority:"next"})}finally{d()}}
-async function JGt(e){if(!Ikn())return;let t;try{t=await zQl()}catch(n){Oe("mcp_task_restore","list_failed"),logForDebugging(`restoreMcpTasks list failed: ${String(n)}`);return}for(let n of t)PUm(n,e).catch((r)=>logForDebugging(`restoreMcpTasks ${n.taskId}: ${String(r)}`));Ie("mcp_task_restore")}
-async function PUm(e,{taskRegistry:t,getMcpClients:n}){let r={...uI(e.taskId,"mcp_task",`${e.serverName}/${e.toolName}`,e.toolUseId),type:"mcp_task",status:"running",serverName:e.serverName,toolName:e.toolName,mcpTaskId:e.mcpTaskId,mcpStatus:"working",statusMessage:"reconnecting\u2026",pollIntervalMs:e.pollIntervalMs,startTime:e.spawnedAt};t.register(r);let o=Date.now()+JQl,s,i;while(Date.now()<o){if(t.get(e.taskId)?.status==="killed"){YGt(e.taskId);return}let a=n().find((l)=>l.name===e.serverName);if(a?.type==="connected"){s=a.client;break}if(a?.type==="failed"||a?.type==="disabled"||a?.type==="needs-auth"){i=`server '${e.serverName}' is ${a.type}`;break}await sleep(500)}if(!s){i??=`server '${e.serverName}' did not connect within ${JQl/1000}s`,t.update(e.taskId,(a)=>({...a,status:"failed",mcpStatus:"failed",statusMessage:i,endTime:Date.now(),notified:!0})),YGt(e.taskId),_m({value:XQl({registryId:e.taskId,mcpTaskId:e.mcpTaskId,serverName:e.serverName,toolName:e.toolName,status:"failed",statusMessage:`Could not reconnect after resume: ${i}`}),mode:"task-notification",agentId:mainAgentId(),priority:"next"});return}IUm({client:s,taskRegistry:t,taskState:r,pollIntervalMs:e.pollIntervalMs})}
-var wUm=2000,RUm=100,xUm=60000,kUm=10,JQl=30000,EMo;
-var CMo=b(()=>{YT();lt();initKp();Ax();qe();Rn();YQl();mLt();sA();QH();ln();Dkn();EMo=new WeakMap});
-export {YGt,bMo,HUm,XQl,IUm,DUm,JGt,PUm,wUm,RUm,xUm,kUm,JQl,EMo,CMo};
+import {Q} from "../runtime.ts";
+var dnc=Q((ziE,M4m)=>{M4m.exports=`// The hash recipes \u2014 single source of truth for every consumer that must
+// agree byte-for-byte: package-build.mjs writes the recipe outputs into
+// _ds_sync.json (the uploaded sidecar future syncs diff against) and stamps
+// per-component sourceKeys into .stories-map.json; package-capture.mjs /
+// compare.mjs key their local grade lifecycle on the stamped sourceKey;
+// lib/preview-rebuild.mjs re-stamps after targeted recompiles;
+// lib/remote-diff.mjs compares a fetched sidecar against a fresh build.
+// "Verified" carry-forward is sound only because all of them compute the
+// same hashes from the same recipe \u2014 never fork this logic into a harness.
+//
+// Factorization, by what a change should cost:
+//   - sourceKey (KEY_RECIPE) \u2014 the GRADE contract: the user's own inputs
+//     (story files, owned previews, story set, preview-affecting config,
+//     committed forks). A change re-grades that component.
+//   - renderHash \u2014 the per-component ARTIFACT fingerprint: feeds the upload
+//     partition and the churn detector (artifacts moved while sourceKey
+//     held \u21D2 pipeline churn \u21D2 sampled spot-check, never a re-grade storm).
+//   - styleSha \u2014 the global styling surface, upload partition only.
+// gradeKey = H(sourceKey).
+
+import { createHash } from 'node:crypto';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+function hashFile(h, p, label) {
+  h.update(label);
+  try { h.update(readFileSync(p)); } catch { h.update('\u2205'); }
+}
+function hashDir(h, dir, prefix, skip) {
+  let entries;
+  try { entries = readdirSync(dir, { withFileTypes: true }); } catch { h.update('\u2205'); return; }
+  for (const e of entries.sort((a, b) => (a.name < b.name ? -1 : 1))) {
+    if (e.name.startsWith('.') || skip?.has(e.name)) continue;
+    if (e.isDirectory()) hashDir(h, join(dir, e.name), \`\${prefix}\${e.name}/\`, skip);
+    else hashFile(h, join(dir, e.name), \`\${prefix}\${e.name}\`);
+  }
+}
+
+// JSON with sorted object keys, so config slices hash stably across
+// key-order churn. undefined collapses to null.
+function canonical(v) {
+  if (Array.isArray(v)) return \`[\${v.map(canonical).join(',')}]\`;
+  if (v && typeof v === 'object') {
+    return \`{\${Object.keys(v).sort().map((k) => \`\${JSON.stringify(k)}:\${canonical(v[k])}\`).join(',')}}\`;
+  }
+  return JSON.stringify(v) ?? 'null';
+}
+
+// Global styling surface \u2014 feeds the upload partition only (upload.styling),
+// never grades. The package shape includes the compiled DS bundle body (a DS
+// recompile re-ships the styling surface); the storybook shape excludes it
+// (the bundle ships via bundleSha12 \u2192 upload.bundle).
+export function styleShaFor(OUT, { includeBundleBody }) {
+  const h = createHash('sha256');
+  if (includeBundleBody) {
+    // Body only \u2014 the first-line @ds-bundle header embeds per-file hashes,
+    // so including it would invalidate everything whenever anything changes.
+    h.update('bundlejs');
+    try {
+      const src = readFileSync(join(OUT, '_ds_bundle.js'), 'utf8');
+      h.update(src.slice(src.indexOf('\\n') + 1));
+    } catch { h.update('\u2205'); }
+  }
+  hashFile(h, join(OUT, '_ds_bundle.css'), 'bundlecss');
+  hashFile(h, join(OUT, 'styles.css'), 'styles');
+  hashDir(h, join(OUT, 'fonts'), 'fonts/');
+  hashDir(h, join(OUT, 'tokens'), 'tokens/');
+  // The whole vendor runtime, not just the decorators: every preview card
+  // loads _vendor/react.js, so a React version bump must flip the styling
+  // surface and re-ship _vendor/** (upload.styling).
+  hashDir(h, join(OUT, '_vendor'), '_vendor/');
+  return h.digest('hex');
+}
+
+// Per-component render contract. The card html is hashed MINUS its first-line
+// @dsCard marker \u2014 the marker embeds the display group, and a pure regroup
+// must not read as a contract change (the viewport attr does belong: capture
+// honors it). For storybook components the story contract (names/export keys,
+// NOT the title-embedding storybook id) and the story-file fingerprint join \u2014
+// an owned preview doesn't recompile when its story file changes, but the
+// contract must move either way.
+export function renderHashFor(OUT, c, { stories, srcSha } = {}) {
+  const h = createHash('sha256');
+  hashFile(h, join(OUT, '_preview', \`\${c.name}.js\`), 'preview');
+  hashFile(h, join(OUT, '_preview', \`\${c.name}.css\`), 'previewcss');
+  h.update('html');
+  try {
+    const html = readFileSync(join(OUT, 'components', c.group, c.name, \`\${c.name}.html\`), 'utf8');
+    const nl = html.indexOf('\\n');
+    h.update(/viewport="[^"]*"/.exec(html.slice(0, nl))?.[0] ?? '');
+    h.update(html.slice(nl + 1));
+  } catch { h.update('\u2205'); }
+  if (stories) h.update(JSON.stringify(stories.map((s) => [s.name, s.exportKey ?? null, s.emitted ?? null])));
+  if (srcSha !== undefined) h.update(String(srcSha ?? ''));
+  return h.digest('hex').slice(0, 16);
+}
+
+// Auxiliary docs surface \u2014 guidelines/, README.md. Neither affects renders
+// (no verification impact) but both upload, and without a hash a docs-only
+// edit would be invisible to the diff and never ship.
+export function auxShaFor(OUT) {
+  const h = createHash('sha256');
+  hashDir(h, join(OUT, 'guidelines'), 'guidelines/');
+  hashFile(h, join(OUT, 'README.md'), 'readme');
+  return h.digest('hex').slice(0, 16);
+}
+
+export function gradeKeyFrom(key) {
+  return createHash('sha256').update(key).digest('hex').slice(0, 16);
+}
+
+// \u2500\u2500 sourceKey: the grade contract, keyed on what the user expressed \u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// Versioned: the sidecar and capture jsons record keyRecipe, so a recipe
+// change reads as "unknown \u2014 re-verify", never as source churn. ANY change
+// to what feeds these hashes MUST bump this constant in the same commit \u2014
+// same number over different bytes makes every existing anchor read as
+// total source churn (a full grade-wipe storm) instead of taking the
+// render-hash fallback. The golden-key test in resync-driver.test.ts
+// enforces the pairing.
+// Recipe 7: cardMode/primaryStory left the per-component override slice \u2014
+// they only pick what the DEFAULT card view shows, but grading captures
+// every story solo via ?story=, so flipping them never changes a graded
+// pixel. viewport and skip stay keyed (capture viewport / story set).
+export const KEY_RECIPE = 7;
+
+// Config slices in the grade contract: the knobs that change the preview's
+// DOM/mount semantics, plus committed lib forks. Asset-surface knobs
+// (cssEntry/tokensPkg/extraFonts/runtimeFontPrefixes) stay in the styling
+// trust class \u2014 deliberately NOT keyed; auto-detected siblings are derived
+// state whose churn rides renderHash into the spot-check tier. Computed at
+// BUILD time and stamped \u2014 consumers read the stamp, never live config, so
+// the key always describes the artifacts on disk.
+export function configSlicesFor(cfg = {}, designSyncDir = resolve('.design-sync')) {
+  const g = createHash('sha256');
+  g.update('provider');
+  g.update(canonical(cfg.provider ?? null));
+  g.update('storyImports');
+  g.update(canonical(cfg.storyImports ?? null));
+  g.update('extraEntries');
+  g.update(canonical(cfg.extraEntries ?? null));
+  // cfg.libOverrides is deliberately NOT keyed: its values are declaration
+  // prose with no render effect, and fork behavior is fully keyed by the
+  // fork file bytes below (loading keys off file existence, not the map).
+  let forks = [];
+  try { forks = readdirSync(join(designSyncDir, 'overrides')).filter((f) => f.endsWith('.mjs')).sort(); } catch { /* no forks */ }
+  for (const f of forks) hashFile(g, join(designSyncDir, 'overrides', f), \`fork:\${f}\`);
+  const global = g.digest('hex');
+  const titleMap = cfg.titleMap ?? {};
+  const overrides = cfg.overrides ?? {};
+  return {
+    global,
+    componentFor(name) {
+      const h = createHash('sha256');
+      h.update('override');
+      // Presentation-only knobs (cardMode/primaryStory) are excluded: they
+      // arrange the default card view, not any solo-captured story, so a
+      // layout flip carries grades forward. An override left empty by the
+      // strip canonicalizes to null \u2014 same key as no override at all.
+      const ov = overrides[name];
+      let graded = null;
+      if (ov && typeof ov === 'object' && !Array.isArray(ov)) {
+        const { cardMode, primaryStory, ...rest } = ov;
+        graded = Object.keys(rest).length ? rest : null;
+      } else if (ov !== undefined && ov !== null) {
+        graded = ov; // malformed (non-object) override \u2014 key it as-is
+      }
+      h.update(canonical(graded));
+      // Only remaps INTO this component are its identity; {title: null}
+      // exclusions remove the component from the manifest entirely.
+      h.update('titlemap');
+      h.update(canonical(Object.entries(titleMap).filter(([, v]) => v === name).sort()));
+      return h.digest('hex');
+    },
+  };
+}
+
+
+// Per-component grade contract. The owned preview is read at stamp time \u2014
+// normally right after its bytes were compiled, but a multi-target rebuild's
+// stamp can trail the compile by the rest of the pipeline (accepted
+// limitation; see preview-rebuild's KNOWN LIMITATION note). The package
+// shape passes no stories/srcSha. \`emitted\` labels are generator dedup
+// output \u2014 excluded.
+export function sourceKeyFor(name, { globalSlice, componentSlice, stories = null, srcSha = undefined, designSyncDir = resolve('.design-sync') } = {}) {
+  const h = createHash('sha256');
+  h.update(\`recipe:\${KEY_RECIPE}\`);
+  h.update('global');
+  h.update(globalSlice ?? '');
+  h.update('component');
+  h.update(componentSlice ?? '');
+  h.update('src');
+  h.update(String(srcSha ?? ''));
+  hashFile(h, join(designSyncDir, 'previews', \`\${name}.tsx\`), 'owned');
+  if (stories) {
+    h.update('stories');
+    h.update(JSON.stringify(stories.map((s) => [s.name, s.exportKey ?? null])));
+  }
+  return h.digest('hex').slice(0, 16);
+}
+
+// Reference-storybook fingerprint \u2014 compare's [REFERENCE_STALE?]/sampler and
+// the driver's drift trigger must agree on one recipe. project.json carries
+// a generatedAt timestamp \u2014 excluded.
+export function sbBaseShaFor(sbDir) {
+  const h = createHash('sha256');
+  hashDir(h, sbDir, 'sb/', new Set(['project.json']));
+  return h.digest('hex');
+}
+
+// Staged-scripts fingerprint, recorded in the sidecar so a spot-check event
+// can be traced to a skill release. Informational \u2014 never a partition input.
+export function scriptsShaFor() {
+  const libDir = fileURLToPath(new URL('.', import.meta.url));
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  const h = createHash('sha256');
+  hashDir(h, libDir, 'lib/');
+  for (const f of ['package-build.mjs', 'package-validate.mjs', 'package-capture.mjs', 'resync.mjs',
+    'storybook/compare.mjs', 'storybook/http-serve.mjs', 'storybook/probe.mjs']) {
+    hashFile(h, join(root, f), f);
+  }
+  return h.digest('hex').slice(0, 16);
+}
+`});
+export {dnc};

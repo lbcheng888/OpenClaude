@@ -1,8 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JSt} from "./m499.ts";
-import {KZt} from "./m481.ts";
-import {JZt} from "./m500.ts";
-import {_7o} from "./m503.ts";
-var T7o=X((Rdf,y7o)=>{var MFc=JSt(),NFc=KZt(),BFc=JZt(),FFc=_7o();y7o.exports=function(t){if(t.length<1||typeof t[0]!=="function")throw new NFc("a function is required");return FFc(MFc,BFc,t)}});
-export {T7o};
+import {Q} from "../runtime.ts";
+var lQo=Q((qCf,aQo)=>{var D8c="Function.prototype.bind called on incompatible ",P8c=Object.prototype.toString,O8c=Math.max,L8c="[object Function]",iQo=function(t,n){var r=[];for(var o=0;o<t.length;o+=1)r[o]=t[o];for(var s=0;s<n.length;s+=1)r[s+t.length]=n[s];return r},M8c=function(t,n){var r=[];for(var o=n||0,s=0;o<t.length;o+=1,s+=1)r[s]=t[o];return r},N8c=function(e,t){var n="";for(var r=0;r<e.length;r+=1)if(n+=e[r],r+1<e.length)n+=t;return n};aQo.exports=function(t){var n=this;if(typeof n!=="function"||P8c.apply(n)!==L8c)throw TypeError(D8c+n);var r=M8c(arguments,1),o,s=function(){if(this instanceof o){var u=n.apply(this,iQo(r,arguments));if(Object(u)===u)return u;return this}return n.apply(t,iQo(r,arguments))},i=O8c(0,n.length-r.length),a=[];for(var l=0;l<i;l++)a[l]="$"+l;if(o=Function("binder","return function ("+N8c(a,",")+"){ return binder.apply(this,arguments); }")(s),n.prototype){var c=function(){};c.prototype=n.prototype,o.prototype=new c,c.prototype=null}return o}});
+export {lQo};

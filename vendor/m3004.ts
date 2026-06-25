@@ -1,12 +1,4 @@
 // @ts-nocheck
-import {fGi} from "./m3003.ts";
-import {c3i,u3i} from "./m2810.ts";
-import {JWr,XWr,JWi,XWi} from "./m3002.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {b} from "../runtime.ts";
-function jnt(){if(iGr)return iGr;let e=fGi(),t="default"in e&&e.default?e.default:e;return c3i(t),iGr=t,t}
-function ZLd(e){return e.default??e}
-function n9(e){let t=jnt(),n=e.toLowerCase(),r=Object.prototype.hasOwnProperty.call(JWr,n)?n:Object.prototype.hasOwnProperty.call(XWr,n)?XWr[n]:null;if(r!==null){if(hGi.has(r))return null;if(!AGi.has(r)){let o=JWr[r];if(typeof o!=="function")return null;try{t.registerLanguage(r,ZLd(o()))}catch(s){return hGi.add(r),De(s),null}AGi.add(r);for(let s of JWi[r]??[])n9(s)}return r}return t.getLanguage(n)?n:null}
-var iGr=null,AGi,hGi;
-var aGr=b(()=>{u3i();XWi();Rn();AGi=new Set,hGi=new Set});
-export {jnt,ZLd,n9,iGr,AGi,hGi,aGr};
+import {Q} from "../runtime.ts";
+var bJi=Q((yYg,SJi)=>{function TJi(e){if(!e)return null;if(typeof e==="string")return e;return e.source}function O3d(...e){return e.map((n)=>TJi(n)).join("")}function L3d(...e){return"("+e.map((n)=>TJi(n)).join("|")+")"}function M3d(e){let t="lcase month vartype instrrev ubound setlocale getobject rgb getref string weekdayname rnd dateadd monthname now day minute isarray cbool round formatcurrency conversions csng timevalue second year space abs clng timeserial fixs len asc isempty maths dateserial atn timer isobject filter weekday datevalue ccur isdate instr datediff formatdatetime replace isnull right sgn array snumeric log cdbl hex chr lbound msgbox ucase getlocale cos cdate cbyte rtrim join hour oct typename trim strcomp int createobject loadpicture tan formatnumber mid split  cint sin datepart ltrim sqr time derived eval date formatpercent exp inputbox left ascw chrw regexp cstr err".split(" "),n=["server","response","request","scriptengine","scriptenginebuildversion","scriptengineminorversion","scriptenginemajorversion"],r={begin:O3d(L3d(...t),"\\s*\\("),relevance:0,keywords:{built_in:t}};return{name:"VBScript",aliases:["vbs"],case_insensitive:!0,keywords:{keyword:"call class const dim do loop erase execute executeglobal exit for each next function if then else on error option explicit new private property let get public randomize redim rem select case set stop sub while wend with end to elseif is or xor and not class_initialize class_terminate default preserve in me byval byref step resume goto",built_in:n,literal:"true false null nothing empty"},illegal:"//",contains:[r,e.inherit(e.QUOTE_STRING_MODE,{contains:[{begin:'""'}]}),e.COMMENT(/'/,/$/,{relevance:0}),e.C_NUMBER_MODE]}}SJi.exports=M3d});
+export {bJi};

@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var uLs=()=>{};
-var dLs=()=>{};
-var pLs;
-var mLs=b(()=>{(function(e){e.HTTP="http",e.HTTPS="https"})(pLs||(pLs={}))});
-export {uLs,dLs,pLs,mLs};
+import {b,x} from "../runtime.ts";
+import {sC} from "./m834.ts";
+var BBs;
+var UBs=b(()=>{BBs=x(sC(),1)});
+export {BBs,UBs};

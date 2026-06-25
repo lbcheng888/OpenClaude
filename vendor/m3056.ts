@@ -1,12 +1,9 @@
 // @ts-nocheck
+import {eNt,R0n} from "./m3055.ts";
 import {b} from "../runtime.ts";
-import {Fxn} from "./m3054.ts";
-import {y$e} from "./m3052.ts";
-import {yhe} from "./m3026.ts";
-import {lN} from "./m3021.ts";
-import {g$e} from "./m3027.ts";
-import {_$e} from "./m3030.ts";
-import {Knt,vxn} from "./m3019.ts";
-var Xg;
-var h7i=b(()=>{Fxn();Xg=y$e((e,t)=>{let{required:n,validate:r=()=>!0}=e,o=yhe(e.theme),[s,i]=lN("idle"),[a="",l]=lN(e.default),[c,u]=lN(),[d,p]=lN(""),m=g$e({status:s,theme:o});_$e(async(_,y)=>{if(s!=="idle")return;if(Knt(_)){let T=d||a;i("loading");let S=n&&!T?"You must provide a value":await r(T);if(S===!0)p(T),i("done"),t(T);else y.write(d),u(S||"You must provide a valid value"),i("idle")}else if(vxn(_)&&!d)l(void 0);else if(_.name==="tab"&&!d)l(void 0),y.clearLine(0),y.write(a),p(a);else p(y.line),u(void 0)});let f=o.style.message(e.message,s),A=d;if(typeof e.transformer==="function")A=e.transformer(d,{isFinal:s==="done"});else if(s==="done")A=o.style.answer(d);let h;if(a&&s!=="done"&&!d)h=o.style.defaultAnswer(a);let g="";if(c)g=o.style.error(c);return[[m,f,h,A].filter((_)=>_!==void 0).join(" "),g]})});
-export {Xg,h7i};
+function r6d(e,t){return eNt(e,t).split(`
+`)}
+function o6d(e,t){let n=t.length,r=(e%n+n)%n;return[...t.slice(r),...t.slice(0,r)]}
+function $Qi({items:e,width:t,renderItem:n,active:r,position:o,pageSize:s}){let i=e.map((f,h)=>({item:f,index:h,isActive:h===r})),a=o6d(r-o,i).slice(0,s),l=(f)=>a[f]==null?[]:r6d(n(a[f]),t),c=Array.from({length:s}),u=l(o).slice(0,s),d=o+u.length<=s?o:s-u.length;c.splice(d,u.length,...u);let p=d+u.length,m=o+1;while(p<s&&m<a.length){for(let f of l(m))if(c[p++]=f,p>=s)break;m++}p=d-1,m=o-1;while(p>=0&&m>=0){for(let f of l(m).reverse())if(c[p--]=f,p<0)break;m--}return c.filter((f)=>typeof f==="string")}
+var qQi=b(()=>{R0n()});
+export {r6d,o6d,$Qi,qQi};

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {QZe} from "./m2479.ts";
-var MRi=X((imh,LRi)=>{var ORi=QZe(),Jcd=(e,t,n=!1)=>{if(e instanceof ORi)return e;try{return new ORi(e,t)}catch(r){if(!n)return null;throw r}};LRi.exports=Jcd});
-export {MRi};
+import {Q} from "../runtime.ts";
+var CDi=Q((DRg,EDi)=>{var bDi=()=>!1,rRn=null,qTd=()=>{if(!rRn)if(bDi()&&process.report){let e=process.report.excludeNetwork;process.report.excludeNetwork=!0,rRn=process.report.getReport(),process.report.excludeNetwork=e}else rRn={};return rRn};EDi.exports={isLinux:bDi,getReport:qTd}});
+export {CDi};

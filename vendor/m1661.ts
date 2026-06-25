@@ -1,7 +1,8 @@
 // @ts-nocheck
+import {wQ,ahn} from "./m1648.ts";
+import {ase,_Ht} from "./m1645.ts";
 import {b} from "../runtime.ts";
-function UHr(e={}){let{maxRetries:t=20}=e;return{name:"redirectPolicy",async sendRequest(n,r){let o=await r(n);return SWs(r,o,t)}}}
-async function SWs(e,t,n,r=0){let{request:o,status:s,headers:i}=t,a=i.get("location");if(a&&(s===300||s===301&&TWs.includes(o.method)||s===302&&TWs.includes(o.method)||s===303&&o.method==="POST"||s===307)&&r<n){let l=new URL(a,o.url);if(o.url=l.toString(),s===303)o.method="GET",o.headers.delete("Content-Length"),delete o.body;o.headers.delete("Authorization");let c=await e(o);return SWs(e,c,n,r+1)}return t}
-var TWs;
-var bWs=b(()=>{TWs=["GET","HEAD"]});
-export {UHr,SWs,TWs,bWs};
+function dOr(e={}){var t;let n=(t=e.logger)!==null&&t!==void 0?t:wQ.info,r=new ase({additionalAllowedHeaderNames:e.additionalAllowedHeaderNames,additionalAllowedQueryParameters:e.additionalAllowedQueryParameters});return{name:uOr,async sendRequest(o,s){if(!n.enabled)return s(o);n(`Request: ${r.sanitize(o)}`);let i=await s(o);return n(`Response status code: ${i.status}`),n(`Headers: ${r.sanitize(i.headers)}`),i}}}
+var uOr="logPolicy";
+var Zjs=b(()=>{ahn();_Ht()});
+export {dOr,uOr,Zjs};

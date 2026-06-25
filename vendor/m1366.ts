@@ -1,22 +1,7 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {LNs} from "./m1354.ts";
-import {WNs} from "./m1356.ts";
-import {GNs,VNs,KNs,zNs,QNs} from "./m1357.ts";
-import {ZNs,eBs,nBs} from "./m1358.ts";
-import {lBs} from "./m1359.ts";
-import {cBs} from "./m1360.ts";
-import {mBs} from "./m1361.ts";
-import {fBs,hBs} from "./m1362.ts";
-import {gBs,bBs} from "./m1363.ts";
-import {EBs,vBs,RBs} from "./m1364.ts";
-import {xBs,kBs,HBs,IBs,DBs,PBs,OBs,LBs,MBs,NBs,BBs,FBs,UBs,$Bs,jBs} from "./m1365.ts";
-var WBs=()=>{};
-var GBs=()=>{};
-var VBs=()=>{};
-var KBs=()=>{};
-var zBs=()=>{};
-var YBs=()=>{};
-var JBs=()=>{};
-var rwr=b(()=>{LNs();WNs();GNs();VNs();KNs();zNs();QNs();ZNs();eBs();nBs();lBs();cBs();mBs();fBs();hBs();gBs();bBs();EBs();vBs();RBs();xBs();kBs();HBs();IBs();DBs();PBs();OBs();LBs();MBs();NBs();BBs();FBs();UBs();$Bs();jBs();WBs();GBs();VBs();KBs();zBs();YBs();JBs()});
-export {WBs,GBs,VBs,KBs,zBs,YBs,JBs,rwr};
+import {s3s} from "./m1365.ts";
+var i3s=()=>{};
+var a3s=()=>{};
+var l3s=b(()=>{s3s();i3s();a3s()});
+export {i3s,a3s,l3s};

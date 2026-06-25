@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {bKo} from "./m534.ts";
-import {xKo} from "./m537.ts";
-var JVe=X((Upf,Opr)=>{if(typeof process>"u"||process.type==="renderer"||!1||process.__nwjs)Opr.exports=bKo();else Opr.exports=xKo()});
-export {JVe};
+import {Q} from "../runtime.ts";
+var i_r=Q((nRf,_Zo)=>{var Vze=1000,Kze=Vze*60,zze=Kze*60,d1e=zze*24,iGc=d1e*7,aGc=d1e*365.25;_Zo.exports=function(e,t){t=t||{};var n=typeof e;if(n==="string"&&e.length>0)return lGc(e);else if(n==="number"&&isFinite(e))return t.long?uGc(e):cGc(e);throw Error("val is not a non-empty string or a valid number. val="+JSON.stringify(e))};function lGc(e){if(e=String(e),e.length>100)return;var t=/^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(e);if(!t)return;var n=parseFloat(t[1]),r=(t[2]||"ms").toLowerCase();switch(r){case"years":case"year":case"yrs":case"yr":case"y":return n*aGc;case"weeks":case"week":case"w":return n*iGc;case"days":case"day":case"d":return n*d1e;case"hours":case"hour":case"hrs":case"hr":case"h":return n*zze;case"minutes":case"minute":case"mins":case"min":case"m":return n*Kze;case"seconds":case"second":case"secs":case"sec":case"s":return n*Vze;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return n;default:return}}function cGc(e){var t=Math.abs(e);if(t>=d1e)return Math.round(e/d1e)+"d";if(t>=zze)return Math.round(e/zze)+"h";if(t>=Kze)return Math.round(e/Kze)+"m";if(t>=Vze)return Math.round(e/Vze)+"s";return e+"ms"}function uGc(e){var t=Math.abs(e);if(t>=d1e)return Wnn(e,t,d1e,"day");if(t>=zze)return Wnn(e,t,zze,"hour");if(t>=Kze)return Wnn(e,t,Kze,"minute");if(t>=Vze)return Wnn(e,t,Vze,"second");return e+" ms"}function Wnn(e,t,n,r){var o=t>=n*1.5;return Math.round(e/n)+" "+r+(o?"s":"")}});
+export {i_r};

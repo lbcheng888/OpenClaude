@@ -1,8 +1,15 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Q3e} from "./m3766.ts";
-import {QFt} from "./m3767.ts";
-import {Uro} from "./m3769.ts";
-import {xxa} from "./m3772.ts";
-var kxa=X((o_)=>{var Jat=Q3e();o_.assign=Jat.assign;o_.hasDefaultHTMLNamespace=Jat.hasDefaultHTMLNamespace;o_.isHTMLMimeType=Jat.isHTMLMimeType;o_.isValidMimeType=Jat.isValidMimeType;o_.MIME_TYPE=Jat.MIME_TYPE;o_.NAMESPACE=Jat.NAMESPACE;var tBn=QFt();o_.DOMException=tBn.DOMException;o_.DOMExceptionName=tBn.DOMExceptionName;o_.ExceptionCode=tBn.ExceptionCode;o_.ParseError=tBn.ParseError;var wP=Uro();o_.Attr=wP.Attr;o_.CDATASection=wP.CDATASection;o_.CharacterData=wP.CharacterData;o_.Comment=wP.Comment;o_.Document=wP.Document;o_.DocumentFragment=wP.DocumentFragment;o_.DocumentType=wP.DocumentType;o_.DOMImplementation=wP.DOMImplementation;o_.Element=wP.Element;o_.Entity=wP.Entity;o_.EntityReference=wP.EntityReference;o_.LiveNodeList=wP.LiveNodeList;o_.NamedNodeMap=wP.NamedNodeMap;o_.Node=wP.Node;o_.NodeList=wP.NodeList;o_.Notation=wP.Notation;o_.ProcessingInstruction=wP.ProcessingInstruction;o_.Text=wP.Text;o_.XMLSerializer=wP.XMLSerializer;var nBn=xxa();o_.DOMParser=nBn.DOMParser;o_.normalizeLineEndings=nBn.normalizeLineEndings;o_.onErrorStopParsing=nBn.onErrorStopParsing;o_.onWarningStopParsing=nBn.onWarningStopParsing});
-export {kxa};
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Yt,Es} from "./m641.ts";
+import {b} from "../runtime.ts";
+import {Wi,Hn} from "./m100.ts";
+import {Ii,execFileNoThrow} from "./m690.ts";
+function gUn(e,t){return t.includes(e.id)||e.idLike.some((n)=>t.includes(n))}
+function Bao(){let e=process.execPath||process.argv[0]||"";if(/[/\\]mise[/\\]installs[/\\]/i.test(e))return logForDebugging(`Detected mise installation: ${e}`),!0;return!1}
+function Uao(){let e=process.execPath||process.argv[0]||"";if(/[/\\]\.?asdf[/\\]installs[/\\]/i.test(e))return logForDebugging(`Detected asdf installation: ${e}`),!0;return!1}
+function wct(){let e=Yt();if(e!=="macos"&&e!=="linux"&&e!=="wsl")return!1;let t=process.execPath||process.argv[0]||"";if(t.includes("/Caskroom/"))return logForDebugging(`Detected Homebrew cask installation: ${t}`),!0;return!1}
+function f$t(){return(process.execPath||process.argv[0]||"").match(/\/Caskroom\/([^/]+)\//)?.[1]??null}
+function $ao(){if(Yt()!=="windows")return!1;let t=process.execPath||process.argv[0]||"",n=[/Microsoft[/\\]WinGet[/\\]Packages/i,/Microsoft[/\\]WinGet[/\\]Links/i];for(let r of n)if(r.test(t))return logForDebugging(`Detected winget installation: ${t}`),!0;return!1}
+var uPa,hUn,qao,Wao,Gao,Vao,rqe;
+var _Un=b(()=>{Wi();qe();Ii();Es();uPa=require("fs/promises"),hUn=Hn(async()=>{try{let e=await uPa.readFile("/etc/os-release","utf8"),t=e.match(/^ID=["']?(\S+?)["']?\s*$/m),n=e.match(/^ID_LIKE=["']?(.+?)["']?\s*$/m);return{id:t?.[1]??"",idLike:n?.[1]?.split(" ")??[]}}catch{return null}});qao=Hn(async()=>{if(Yt()!=="linux")return!1;let t=await hUn();if(t&&!gUn(t,["arch"]))return!1;let n=process.execPath||process.argv[0]||"",r=await execFileNoThrow("pacman",["-Qo",n],{timeout:5000,useCwd:!1});if(r.code===0&&r.stdout)return logForDebugging(`Detected pacman installation: ${r.stdout.trim()}`),!0;return!1}),Wao=Hn(async()=>{if(Yt()!=="linux")return!1;let t=await hUn();if(t&&!gUn(t,["debian"]))return!1;let n=process.execPath||process.argv[0]||"",r=await execFileNoThrow("dpkg",["-S",n],{timeout:5000,useCwd:!1});if(r.code===0&&r.stdout)return logForDebugging(`Detected deb installation: ${r.stdout.trim()}`),!0;return!1}),Gao=Hn(async()=>{if(Yt()!=="linux")return!1;let t=await hUn();if(t&&!gUn(t,["fedora","rhel","suse"]))return!1;let n=process.execPath||process.argv[0]||"",r=await execFileNoThrow("rpm",["-qf",n],{timeout:5000,useCwd:!1});if(r.code===0&&r.stdout)return logForDebugging(`Detected rpm installation: ${r.stdout.trim()}`),!0;return!1}),Vao=Hn(async()=>{if(Yt()!=="linux")return!1;let t=await hUn();if(t&&!gUn(t,["alpine"]))return!1;let n=process.execPath||process.argv[0]||"",r=await execFileNoThrow("apk",["info","--who-owns",n],{timeout:5000,useCwd:!1});if(r.code===0&&r.stdout)return logForDebugging(`Detected apk installation: ${r.stdout.trim()}`),!0;return!1}),rqe=Hn(async()=>{if(wct())return"homebrew";if($ao())return"winget";if(Bao())return"mise";if(Uao())return"asdf";if(await qao())return"pacman";if(await Vao())return"apk";if(await Wao())return"deb";if(await Gao())return"rpm";return"unknown"})});
+export {gUn,Bao,Uao,wct,f$t,$ao,uPa,hUn,qao,Wao,Gao,Vao,rqe,_Un};

@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {nT,d2} from "./m64.ts";
-import {SGo,bGo} from "./m447.ts";
-import {vGo,wGo} from "./m450.ts";
-import {T3,XTe} from "./m121.ts";
 import {b} from "../runtime.ts";
-function c0c(e,t){return function(n,r){var o=nT(n)?SGo:vGo,s=t?t():{};return o(n,e,T3(r,2),s)}}
-var RGo;
-var xGo=b(()=>{bGo();wGo();XTe();d2();RGo=c0c});
-export {c0c,RGo,xGo};
+function dUc(e){if(typeof e!="function")throw TypeError(uUc);return function(){var t=arguments;switch(t.length){case 0:return!e.call(this);case 1:return!e.call(this,t[0]);case 2:return!e.call(this,t[0],t[1]);case 3:return!e.call(this,t[0],t[1],t[2])}return!e.apply(this,t)}}
+var uUc="Expected a function",_nn;
+var ygr=b(()=>{_nn=dUc});
+export {dUc,uUc,_nn,ygr};

@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {oge,gPn} from "./m3410.ts";
-import {b} from "../runtime.ts";
-class sge{shouldSample(){return{decision:oge.RECORD_AND_SAMPLED}}toString(){return"AlwaysOnSampler"}}
-var fQr=b(()=>{gPn()});
-export {sge,fQr};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {gUt} from "./m3405.ts";
+import {WLn} from "./m3402.ts";
+var fTa=Q((qat)=>{Object.defineProperty(qat,"__esModule",{value:!0});qat.BatchObservableResultImpl=qat.ObservableResultImpl=void 0;var $at=xi(),dTa=gUt(),Nnp=WLn();class pTa{_instrumentName;_valueType;_buffer=new dTa.AttributeHashMap;constructor(e,t){this._instrumentName=e,this._valueType=t}observe(e,t={}){if(typeof e!=="number"){$at.diag.warn(`non-number value provided to metric ${this._instrumentName}: ${e}`);return}if(this._valueType===$at.ValueType.INT&&!Number.isInteger(e)){if($at.diag.warn(`INT value type cannot accept a floating-point value for ${this._instrumentName}, ignoring the fractional digits.`),e=Math.trunc(e),!Number.isInteger(e))return}this._buffer.set(t,e)}}qat.ObservableResultImpl=pTa;class mTa{_buffer=new Map;observe(e,t,n={}){if(!(0,Nnp.isObservableInstrument)(e))return;let r=this._buffer.get(e);if(r==null)r=new dTa.AttributeHashMap,this._buffer.set(e,r);if(typeof t!=="number"){$at.diag.warn(`non-number value provided to metric ${e._descriptor.name}: ${t}`);return}if(e._descriptor.valueType===$at.ValueType.INT&&!Number.isInteger(t)){if($at.diag.warn(`INT value type cannot accept a floating-point value for ${e._descriptor.name}, ignoring the fractional digits.`),t=Math.trunc(t),!Number.isInteger(t))return}r.set(n,t)}}qat.BatchObservableResultImpl=mTa});
+export {fTa};

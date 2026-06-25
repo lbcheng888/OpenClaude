@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Ry} from "./m1376.ts";
-import {shouldUsePowerShellTool,Kp} from "./m1378.ts";
-import {vw,$Us} from "./m1393.ts";
-import {yo} from "./m887.ts";
-import {Jd} from "./m1368.ts";
-var u2s,Mwr;
-var Nwr=b(()=>{Ry();shouldUsePowerShellTool();vw();u2s=M(yo(),1);Mwr=class Mwr extends Jd.classBuilder().ep(Kp).m(function(e,t,n,r){return[u2s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","ListIdentities",{}).n("CognitoIdentityClient","ListIdentitiesCommand").sc($Us).build(){}});
-export {u2s,Mwr,Nwr};
+import {b,x} from "../runtime.ts";
+import {vy} from "./m1381.ts";
+import {SA,cp} from "./m1383.ts";
+import {IR,xqs} from "./m1398.ts";
+import {yo} from "./m892.ts";
+import {Rd} from "./m1373.ts";
+var e6s,GetIdCommand;
+var n0r=b(()=>{vy();SA();IR();e6s=x(yo(),1);GetIdCommand=class GetIdCommand extends Rd.classBuilder().ep(cp).m(function(e,t,n,r){return[e6s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","GetId",{}).n("CognitoIdentityClient","GetIdCommand").sc(xqs).build(){}});
+export {e6s,GetIdCommand,n0r};

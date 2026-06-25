@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {srn} from "./m784.ts";
-import {FS} from "./m788.ts";
-var pis=X((lrn)=>{Object.defineProperty(lrn,"__esModule",{value:!0});lrn.toBase64=void 0;var beu=srn(),Eeu=FS(),Ceu=(e)=>{let t;if(typeof e==="string")t=(0,Eeu.fromUtf8)(e);else t=e;if(typeof t!=="object"||typeof t.byteOffset!=="number"||typeof t.byteLength!=="number")throw Error("@smithy/util-base64: toBase64 encoder function only accepts string | Uint8Array.");return(0,beu.fromArrayBuffer)(t.buffer,t.byteOffset,t.byteLength).toString("base64")};lrn.toBase64=Ceu});
-export {pis};
+import {Q} from "../runtime.ts";
+import {Zds} from "./m788.ts";
+var qsn=Q((Gbr)=>{var vuu=Zds(),Wbr=require("buffer"),wuu=(e,t=0,n=e.byteLength-t)=>{if(!vuu.isArrayBuffer(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return Wbr.Buffer.from(e,t,n)},kuu=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?Wbr.Buffer.from(e,t):Wbr.Buffer.from(e)};Gbr.fromArrayBuffer=wuu;Gbr.fromString=kuu});
+export {qsn};

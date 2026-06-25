@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {zer,lKt} from "./m83.ts";
-var vgc,fGe;
-var eYt=b(()=>{zer();vgc=lKt(Object.getPrototypeOf,Object),fGe=vgc});
-export {vgc,fGe,eYt};
+function wwc(e,t){var n=-1,r=e.length;t||(t=Array(r));while(++n<r)t[n]=e[n];return t}
+var DXt;
+var gcr=b(()=>{DXt=wwc});
+export {wwc,DXt,gcr};

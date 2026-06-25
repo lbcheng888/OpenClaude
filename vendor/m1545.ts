@@ -1,10 +1,7 @@
 // @ts-nocheck
+import {mKs,hFe} from "./m1542.ts";
+import {GAe,TDr} from "./m1536.ts";
 import {b} from "../runtime.ts";
-import {Qxr} from "./m1539.ts";
-import {ekr} from "./m1540.ts";
-import {tkr} from "./m1541.ts";
-import {skr,ikr} from "./m1543.ts";
-import {L6s} from "./m1544.ts";
-import {Xxr} from "./m1538.ts";
-var Vdn=b(()=>{Qxr();ekr();tkr();skr();ikr();L6s();Xxr()});
-export {Vdn};
+var HDr=({query:e={}})=>{let t=[],n={};for(let r of Object.keys(e).sort()){if(r.toLowerCase()===mKs)continue;t.push(r);let o=e[r];if(typeof o==="string")n[r]=`${GAe(r)}=${GAe(o)}`;else if(Array.isArray(o))n[r]=o.slice(0).reduce((s,i)=>s.concat([`${GAe(r)}=${GAe(i)}`]),[]).sort().join("&")}return t.map((r)=>n[r]).filter((r)=>r).join("&")};
+var IDr=b(()=>{TDr();hFe()});
+export {HDr,IDr};

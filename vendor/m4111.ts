@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var R$n=X((kco)=>{kco.isValidName=bxp;kco.isValidQName=Exp;var hxp=/^[_:A-Za-z][-.:\w]+$/,gxp=/^([_A-Za-z][-.\w]+|[_A-Za-z][-.\w]+:[_A-Za-z][-.\w]+)$/,s9t="_A-Za-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD",i9t="-._A-Za-z0-9\xB7\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0300-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD",Nqe="["+s9t+"]["+i9t+"]*",Rco=s9t+":",xco=i9t+":",_xp=new RegExp("^["+Rco+"]["+xco+"]*$"),yxp=new RegExp("^("+Nqe+"|"+Nqe+":"+Nqe+")$"),h9a=/[\uD800-\uDB7F\uDC00-\uDFFF]/,g9a=/[\uD800-\uDB7F\uDC00-\uDFFF]/g,_9a=/[\uD800-\uDB7F][\uDC00-\uDFFF]/g;s9t+="\uD800-\uDB7F\uDC00-\uDFFF";i9t+="\uD800-\uDB7F\uDC00-\uDFFF";Nqe="["+s9t+"]["+i9t+"]*";Rco=s9t+":";xco=i9t+":";var Txp=new RegExp("^["+Rco+"]["+xco+"]*$"),Sxp=new RegExp("^("+Nqe+"|"+Nqe+":"+Nqe+")$");function bxp(e){if(hxp.test(e))return!0;if(_xp.test(e))return!0;if(!h9a.test(e))return!1;if(!Txp.test(e))return!1;var t=e.match(g9a),n=e.match(_9a);return n!==null&&2*n.length===t.length}function Exp(e){if(gxp.test(e))return!0;if(yxp.test(e))return!0;if(!h9a.test(e))return!1;if(!Sxp.test(e))return!1;var t=e.match(g9a),n=e.match(_9a);return n!==null&&2*n.length===t.length}});
-export {R$n};
+import {Q} from "../runtime.ts";
+import {spt} from "./m4110.ts";
+var efo=Q((XCy,j5a)=>{var z5a=spt();j5a.exports=Zmo;function Zmo(){z5a.call(this),this.view=null,this.detail=0}Zmo.prototype=Object.create(z5a.prototype,{constructor:{value:Zmo},initUIEvent:{value:function(e,t,n,r,o){this.initEvent(e,t,n),this.view=r,this.detail=o}}})});
+export {efo};

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {bpi} from "./m2129.ts";
-var Cpi=X((Ugn)=>{Object.defineProperty(Ugn,"__esModule",{value:!0});Ugn.BindOnceFuture=void 0;var Mzu=bpi();class Epi{_callback;_that;_isCalled=!1;_deferred=new Mzu.Deferred;constructor(e,t){this._callback=e,this._that=t}get isCalled(){return this._isCalled}get promise(){return this._deferred.promise}call(...e){if(!this._isCalled){this._isCalled=!0;try{Promise.resolve(this._callback.call(this._that,...e)).then((t)=>this._deferred.resolve(t),(t)=>this._deferred.reject(t))}catch(t){this._deferred.reject(t)}}return this._deferred.promise}}Ugn.BindOnceFuture=Epi});
-export {Cpi};
+import {Q} from "../runtime.ts";
+var ayi=Q((mSn)=>{Object.defineProperty(mSn,"__esModule",{value:!0});mSn.isPlainObject=void 0;var Uod="[object Object]",$od="[object Null]",qod="[object Undefined]",Wod=Function.prototype,ryi=Wod.toString,God=ryi.call(Object),Vod=Object.getPrototypeOf,oyi=Object.prototype,syi=oyi.hasOwnProperty,oUe=Symbol?Symbol.toStringTag:void 0,iyi=oyi.toString;function Kod(e){if(!zod(e)||jod(e)!==Uod)return!1;let t=Vod(e);if(t===null)return!0;let n=syi.call(t,"constructor")&&t.constructor;return typeof n=="function"&&n instanceof n&&ryi.call(n)===God}mSn.isPlainObject=Kod;function zod(e){return e!=null&&typeof e=="object"}function jod(e){if(e==null)return e===void 0?qod:$od;return oUe&&oUe in Object(e)?Yod(e):Jod(e)}function Yod(e){let t=syi.call(e,oUe),n=e[oUe],r=!1;try{e[oUe]=void 0,r=!0}catch{}let o=iyi.call(e);if(r)if(t)e[oUe]=n;else delete e[oUe];return o}function Jod(e){return iyi.call(e)}});
+export {ayi};

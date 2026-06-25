@@ -1,17 +1,11 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Pfn,ClientApplication} from "./m1878.ts";
-import {Ifn,ClientAssertion} from "./m1874.ts";
-import {_v,s$,T7s,y7s,Xme} from "./m1778.ts";
-import {AT} from "./m1775.ts";
-import {Ofn,ClientCredentialClient} from "./m1882.ts";
-import {$Dr,OnBehalfOfClient} from "./m1883.ts";
-import {ls} from "./m1721.ts";
-import {ClientAuthErrorCodes} from "./m1720.ts";
-import {o$} from "./m1769.ts";
-import {KB,m4} from "./m1717.ts";
-import {Dm} from "./m1738.ts";
-import {AuthError} from "./m1719.ts";
-var ConfidentialClientApplication;
-var BJs=b(()=>{Pfn();Ifn();_v();AT();Ofn();$Dr();/*! @azure/msal-node v3.8.1 2025-10-29 */ConfidentialClientApplication=class ConfidentialClientApplication extends ClientApplication{constructor(e){super(e);let t=!!this.config.auth.clientSecret,n=!!this.config.auth.clientAssertion,r=(!!this.config.auth.clientCertificate?.thumbprint||!!this.config.auth.clientCertificate?.thumbprintSha256)&&!!this.config.auth.clientCertificate?.privateKey;if(this.appTokenProvider)return;if(t&&n||n&&r||t&&r)throw ls(ClientAuthErrorCodes.invalidClientCredential);if(this.config.auth.clientSecret){this.clientSecret=this.config.auth.clientSecret;return}if(this.config.auth.clientAssertion){this.developerProvidedClientAssertion=this.config.auth.clientAssertion;return}if(!r)throw ls(ClientAuthErrorCodes.invalidClientCredential);else this.clientAssertion=this.config.auth.clientCertificate.thumbprintSha256?ClientAssertion.fromCertificateWithSha256Thumbprint(this.config.auth.clientCertificate.thumbprintSha256,this.config.auth.clientCertificate.privateKey,this.config.auth.clientCertificate.x5c):ClientAssertion.fromCertificate(this.config.auth.clientCertificate.thumbprint,this.config.auth.clientCertificate.privateKey,this.config.auth.clientCertificate.x5c);this.appTokenProvider=void 0}SetAppTokenProvider(e){this.appTokenProvider=e}async acquireTokenByClientCredential(e){this.logger.info("acquireTokenByClientCredential called",e.correlationId);let t;if(e.clientAssertion)t={assertion:await o$(e.clientAssertion,this.config.auth.clientId),assertionType:s$.JWT_BEARER_ASSERTION_TYPE};let n=await this.initializeBaseRequest(e),r={...n,scopes:n.scopes.filter((d)=>!KB.includes(d))},o={...e,...r,clientAssertion:t},i=new Dm(o.authority).getUrlComponents().PathSegments[0];if(Object.values(m4).includes(i))throw ls(ClientAuthErrorCodes.missingTenantIdError);let a=process.env[T7s],l;if(o.azureRegion!=="DisableMsalForceRegion")if(!o.azureRegion&&a)l=a;else l=o.azureRegion;let c={azureRegion:l,environmentRegion:process.env[y7s]},u=this.initializeServerTelemetryManager(Xme.acquireTokenByClientCredential,o.correlationId,o.skipCache);try{let d=await this.createAuthority(o.authority,o.correlationId,c,e.azureCloudOptions),p=await this.buildOauthClientConfiguration(d,o.correlationId,"",u),m=new ClientCredentialClient(p,this.appTokenProvider);return this.logger.verbose("Client credential client created",o.correlationId),await m.acquireToken(o)}catch(d){if(d instanceof AuthError)d.setCorrelationId(o.correlationId);throw u.cacheFailedRequest(d),d}}async acquireTokenOnBehalfOf(e){this.logger.info("acquireTokenOnBehalfOf called",e.correlationId);let t={...e,...await this.initializeBaseRequest(e)};try{let n=await this.createAuthority(t.authority,t.correlationId,void 0,e.azureCloudOptions),r=await this.buildOauthClientConfiguration(n,t.correlationId,"",void 0),o=new OnBehalfOfClient(r);return this.logger.verbose("On behalf of client created",t.correlationId),await o.acquireToken(t)}catch(n){if(n instanceof AuthError)n.setCorrelationId(t.correlationId);throw n}}}});
-export {ConfidentialClientApplication,BJs};
+import {LR,$It} from "./m1789.ts";
+import {Co,Sp} from "./m1722.ts";
+import {NM} from "./m1742.ts";
+import {k2,RA} from "./m1783.ts";
+import {b,x} from "../runtime.ts";
+import {iT} from "./m1780.ts";
+class h1r{async listenForAuthCode(e,t){if(this.server)throw LR.createLoopbackServerAlreadyExistsError();return new Promise((n,r)=>{this.server=Ini.default.createServer((o,s)=>{let i=o.url;if(!i){s.end(t||"Error occurred loading redirectUrl"),r(LR.createUnableToLoadRedirectUrlError());return}else if(i===Co.FORWARD_SLASH){s.end(e||"Auth code was successfully acquired. You can close this window now.");return}let a=this.getRedirectUri(),l=new URL(i,a),c=NM.getDeserializedResponse(l.search)||{};if(c.code)s.writeHead(Sp.REDIRECT,{location:a}),s.end();if(c.error)s.end(t||`Error occurred: ${c.error}`);n(c)}),this.server.listen(0,"127.0.0.1")})}getRedirectUri(){if(!this.server||!this.server.listening)throw LR.createNoLoopbackServerExistsError();let e=this.server.address();if(!e||typeof e==="string"||!e.port)throw this.closeServer(),LR.createInvalidLoopbackAddressTypeError();let t=e&&e.port;return`${k2.HTTP_PROTOCOL}${k2.LOCALHOST}:${t}`}closeServer(){if(this.server){if(this.server.close(),typeof this.server.closeAllConnections==="function")this.server.closeAllConnections();this.server.unref(),this.server=void 0}}}
+var Ini;
+var xni=b(()=>{iT();$It();RA();Ini=x(require("http"));/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {h1r,Ini,xni};

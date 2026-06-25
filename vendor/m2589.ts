@@ -1,17 +1,16 @@
 // @ts-nocheck
-import {Ebe,SEt,ik} from "../src/agent/0726_level.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {dA} from "./m436.ts";
+import {yR,zf} from "./m133.ts";
 import {b} from "../runtime.ts";
-function GH(e){return e===YZ||e===hC}
-function Net(e){return e.scope==="project"&&e.source.endsWith(`@${hC}`)}
-function gs(e){if(e.includes("@")){let t=e.split("@");return{name:t[0]||"",marketplace:t[1]}}return{name:e}}
-function B0i(e,t){return t?`${e}@${t}`:e}
-function Gwe(e,t){return e===t||e.toLowerCase()===t.toLowerCase()}
-function JZ(e,t){return e.find((n)=>n===t)??e.find((n)=>Gwe(n,t))}
-function lP(e){return e!==void 0&&Ebe.has(e.toLowerCase())}
-function Y3r(e){return lP(e)||e!==void 0&&SEt.has(e.toLowerCase())}
-function F0i(e,t){return t===YZ&&ihd.has(e)}
-function cP(e){if(e==="managed")throw Error("Cannot install plugins to managed scope");return ahd[e]}
-function zEn(e){return z3r[e]}
-var YZ="inline",hC="skills-dir",z3r,ihd,ahd;
-var sh=b(()=>{ik();z3r={policySettings:"managed",userSettings:"user",projectSettings:"project",localSettings:"local",flagSettings:"flag"};ihd=new Set(["anthropic-skills","core","cowork-plugin-management","data","design","engineering","enterprise-search","figma","finance","human-resources","internal-apps","legal","marketing","operations","product-management","productivity","sales","small-business","ai-governance-legal","cocounsel-legal","commercial-legal","corporate-legal","employment-legal","ip-legal","law-student","legal-builder-hub","legal-clinic","litigation-legal","privacy-legal","product-legal","regulatory-legal"]);ahd={user:"userSettings",project:"projectSettings",local:"localSettings"}});
-export {GH,Net,gs,B0i,Gwe,JZ,lP,Y3r,F0i,cP,zEn,YZ,hC,z3r,ihd,ahd,sh};
+import {YU} from "./m459.ts";
+import {F2e,s8r,O1i,vOt} from "../src/agent/2589_F2e.ts";
+function F1i(e){let t=Object.keys(e).filter((r)=>!kvn.has(r));if(t.length===0)return e;logForDebugging(`[jobs] stripped non-allowlisted providerEnv key(s) from persisted job state: ${t.join(", ")}`,{level:"warn"});let n=dA(e,(r,o)=>kvn.has(o));return Object.keys(n).length>0?n:void 0}
+function Swe(e){let t=[],n=[];for(let r=0;r<e.length;r++){let o=e[r];if(!o.startsWith("-")){n.push(o);continue}let s=o.indexOf("="),i=s===-1?o:o.slice(0,s);if(s!==-1&&!y4.has(i)&&IOt.has(i)){t.push(i),n.push(o);continue}let a=s===-1&&y4.has(i),l=s===-1?IOt.has(i)||a&&e[r+1]!==void 0:y4.has(i),c=l?t:n;if(c.push(o),a&&e[r+1]!==void 0)c.push(e[++r]);if(!l||a&&B2e.has(i))while(e[r+1]!==void 0&&!e[r+1].startsWith("-"))c.push(e[++r])}if(n.length>0)logForDebugging(`[jobs] stripped non-allowlisted respawnFlags token(s) from persisted job state: ${n.join(" ")}`,{level:"warn"});return hvd(t)}
+function hvd(e){let t=[];for(let r=0;r<e.length;r++){let o=e[r],s=o.indexOf("="),i=s===-1?o:o.slice(0,s),a=[o];if(s===-1&&y4.has(i)&&e[r+1]!==void 0){if(a.push(e[++r]),B2e.has(i))while(e[r+1]!==void 0&&!e[r+1].startsWith("-"))a.push(e[++r])}t.push({name:i,toks:a})}let n=new Map;for(let r=0;r<t.length;r++){let o=t[r];if(y4.has(o.name)&&!B2e.has(o.name)&&!fvd.has(o.name))n.set(o.name,r)}return t.filter((r,o)=>(n.get(r.name)??o)===o).flatMap((r)=>r.toks)}
+function J8(e){let t=[];for(let n=0;n<e.length;n++){let r=e[n];if(r==="--"){for(let s=n;s<e.length;s++)t.push(e[s]);break}let o=r.startsWith("--")?r.indexOf("="):-1;if(o!==-1&&(y4.has(r.slice(0,o))||HOt.has(r.slice(0,o)))){t.push(r.slice(0,o+1)+xnt(r.slice(0,o),r.slice(o+1)));continue}if(/^-[a-zA-Z].+/.test(r)){let s=1;while(s<r.length-1&&Hvn.has(`-${r[s]}`))s++;let i=`-${r[s]}`;if(r.length>s+1&&(y4.has(i)||HOt.has(i))){t.push(r.slice(0,s+1)+xnt(i,r.slice(s+1)));continue}if(r.length===s+1&&s>1&&(y4.has(i)||HOt.has(i))){if(t.push(r),y4.has(i)&&e[n+1]!==void 0){if(t.push(xnt(i,e[++n])),B2e.has(i))while(e[n+1]!==void 0&&!wvn(e[n+1]))t.push(xnt(i,e[++n]))}else if(HOt.has(i)&&e[n+1]!==void 0&&!wvn(e[n+1]))t.push(yR(e[++n]));continue}}if(t.push(r),y4.has(r)&&e[n+1]!==void 0){if(t.push(xnt(r,e[++n])),B2e.has(r))while(e[n+1]!==void 0&&!wvn(e[n+1]))t.push(xnt(r,e[++n]))}else if(HOt.has(r)&&e[n+1]!==void 0&&!wvn(e[n+1]))t.push(yR(e[++n]))}return t}
+function xnt(e,t){return gvd.has(e)?t:yR(t)}
+function wvn(e){return e.length>1&&e.startsWith("-")}
+var y4,B2e,fvd,IOt,i8r,kvn,gvd,HOt,Hvn;
+var U2e=b(()=>{YU();zf();qe();F2e();y4=new Set(["--exec","--model","-m","--permission-mode","--agent","--agents","--routine","--effort","--add-dir","--mcp-config","--settings","--setting-sources","--system-prompt","--system-prompt-file","--append-system-prompt","--append-system-prompt-file","--fallback-model","--advisor","--channels","--permission-prompt-tool","--allowed-tools","--allowedTools","--disallowed-tools","--disallowedTools","--tools","--session-id","--debug-file","-n","--name","--autocompact","--betas","--file","--max-budget-usd","--max-thinking-tokens","--max-turns","--task-budget","--plan-mode-instructions","--plugin-dir","--plugin-dir-no-mcp","--plugin-url","--resume-session-at","--rewind-files","--thinking","--thinking-display","--remote-control-session-name-prefix","--json-schema"]),B2e=new Set(["--allowed-tools","--allowedTools","--disallowed-tools","--disallowedTools","--tools","--mcp-config","--betas","--add-dir","--file","--channels"]),fvd=new Set(["--plugin-dir","--plugin-dir-no-mcp","--plugin-url"]),IOt=new Set(["--dangerously-skip-permissions","--allow-dangerously-skip-permissions","--strict-mcp-config","--dangerously-allow-browser-network-access","--disable-slash-commands","--verbose","--reply-on-resume","--ide","--chrome","--no-chrome","--bare","--mcp-debug","--brief","--remote-control","--rc"]),i8r=[...s8r,...O1i],kvn=new Set(["CLAUDE_CONFIG_DIR","CLAUDE_INTERNAL_FC_OVERRIDES",...i8r,...vOt,"AWS_REGION","AWS_DEFAULT_REGION","AWS_PROFILE","AWS_CONFIG_FILE","AWS_SHARED_CREDENTIALS_FILE","GOOGLE_APPLICATION_CREDENTIALS","GOOGLE_CLOUD_PROJECT","GCLOUD_PROJECT","CLAUDE_SECURESTORAGE_CONFIG_DIR"]);gvd=new Set(["--system-prompt","--append-system-prompt","--plan-mode-instructions","--name","-n"]);HOt=new Set(["-r","--resume"]),Hvn=new Set(["-c","-p","-h","-v"])});
+export {F1i,Swe,hvd,J8,xnt,wvn,y4,B2e,fvd,IOt,i8r,kvn,gvd,HOt,Hvn,U2e};

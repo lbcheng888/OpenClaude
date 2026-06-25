@@ -1,10 +1,5 @@
 // @ts-nocheck
-import {KS,wCe} from "./m1727.ts";
-import {urlEmptyError,urlParseError,authorityUriInsecure,Wme} from "./m1726.ts";
-import {sE,RCe} from "./m1728.ts";
-import {m4,Ho,aC} from "./m1717.ts";
-import {getDeserializedResponse,nBe} from "./m1737.ts";
 import {b} from "../runtime.ts";
-class Dm{get urlString(){return this._urlString}constructor(e){if(this._urlString=e,!this._urlString)throw KS(urlEmptyError);if(!e.includes("#"))this._urlString=Dm.canonicalizeUri(e)}static canonicalizeUri(e){if(e){let t=e.toLowerCase();if(sE.endsWith(t,"?"))t=t.slice(0,-1);else if(sE.endsWith(t,"?/"))t=t.slice(0,-2);if(!sE.endsWith(t,"/"))t+="/";return t}return e}validateAsUri(){let e;try{e=this.getUrlComponents()}catch(t){throw KS(urlParseError)}if(!e.HostNameAndPort||!e.PathSegments)throw KS(urlParseError);if(!e.Protocol||e.Protocol.toLowerCase()!=="https:")throw KS(authorityUriInsecure)}static appendQueryString(e,t){if(!t)return e;return e.indexOf("?")<0?`${e}?${t}`:`${e}&${t}`}static removeHashFromUrl(e){return Dm.canonicalizeUri(e.split("#")[0])}replaceTenantPath(e){let t=this.getUrlComponents(),n=t.PathSegments;if(e&&n.length!==0&&(n[0]===m4.COMMON||n[0]===m4.ORGANIZATIONS))n[0]=e;return Dm.constructAuthorityUriFromObject(t)}getUrlComponents(){let e=RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?"),t=this.urlString.match(e);if(!t)throw KS(urlParseError);let n={Protocol:t[1],HostNameAndPort:t[4],AbsolutePath:t[5],QueryString:t[7]},r=n.AbsolutePath.split("/");if(r=r.filter((o)=>o&&o.length>0),n.PathSegments=r,n.QueryString&&n.QueryString.endsWith("/"))n.QueryString=n.QueryString.substring(0,n.QueryString.length-1);return n}static getDomainFromUrl(e){let t=RegExp("^([^:/?#]+://)?([^/?#]*)"),n=e.match(t);if(!n)throw KS(urlParseError);return n[2]}static getAbsoluteUrl(e,t){if(e[0]===Ho.FORWARD_SLASH){let r=new Dm(t).getUrlComponents();return r.Protocol+"//"+r.HostNameAndPort+e}return e}static constructAuthorityUriFromObject(e){return new Dm(e.Protocol+"//"+e.HostNameAndPort+"/"+e.PathSegments.join("/"))}static hashContainsKnownProperties(e){return!!getDeserializedResponse(e)}}
-var xCe=b(()=>{wCe();RCe();aC();nBe();Wme();/*! @azure/msal-common v15.13.1 2025-10-29 */});
-export {Dm,xCe};
+function $hn(e){if(e)return e.tid||e.tfp||e.acr||null;return null}
+var GOr=b(()=>{/*! @azure/msal-common v15.13.1 2025-10-29 */});
+export {$hn,GOr};

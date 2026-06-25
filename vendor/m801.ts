@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {xis} from "./m800.ts";
-import {Fbe} from "./m792.ts";
-var His=X((Arn)=>{Object.defineProperty(Arn,"__esModule",{value:!0});Arn.headStream=void 0;var Geu=require("stream"),Veu=xis(),Keu=Fbe(),zeu=(e,t)=>{if((0,Keu.isReadableStream)(e))return(0,Veu.headStream)(e,t);return new Promise((n,r)=>{let o=new kis;o.limit=t,e.pipe(o),e.on("error",(s)=>{o.end(),r(s)}),o.on("error",r),o.on("finish",function(){let s=new Uint8Array(Buffer.concat(this.buffers));n(s)})})};Arn.headStream=zeu;class kis extends Geu.Writable{buffers=[];limit=1/0;bytesBuffered=0;_write(e,t,n){if(this.buffers.push(e),this.bytesBuffered+=e.byteLength??0,this.bytesBuffered>=this.limit){let r=this.bytesBuffered-this.limit,o=this.buffers[this.buffers.length-1];this.buffers[this.buffers.length-1]=o.subarray(0,o.byteLength-r),this.emit("finish")}n()}}});
-export {His};
+import {Q} from "../runtime.ts";
+var Ybr=Q((Ysn)=>{Object.defineProperty(Ysn,"__esModule",{value:!0});Ysn.ByteArrayCollector=void 0;class fps{allocByteArray;byteLength=0;byteArrays=[];constructor(e){this.allocByteArray=e}push(e){this.byteArrays.push(e),this.byteLength+=e.byteLength}flush(){if(this.byteArrays.length===1){let n=this.byteArrays[0];return this.reset(),n}let e=this.allocByteArray(this.byteLength),t=0;for(let n=0;n<this.byteArrays.length;++n){let r=this.byteArrays[n];e.set(r,t),t+=r.byteLength}return this.reset(),e}reset(){this.byteArrays=[],this.byteLength=0}}Ysn.ByteArrayCollector=fps});
+export {Ybr};

@@ -1,6 +1,19 @@
 // @ts-nocheck
-import {_Cr,yCr} from "./m1229.ts";
 import {b} from "../runtime.ts";
-var D0s=({output:e,parsedBody:t,exceptionCtor:n,errorCode:r})=>{let o=yRu(e),s=o.httpStatusCode?o.httpStatusCode+"":void 0,i=new n({name:t?.code||t?.Code||r||s||"UnknownError",$fault:"client",$metadata:o});throw _Cr(i,t)},_Ru=(e)=>({output:t,parsedBody:n,errorCode:r})=>{D0s({output:t,parsedBody:n,exceptionCtor:e,errorCode:r})},yRu=(e)=>({httpStatusCode:e.statusCode,requestId:e.headers["x-amzn-requestid"]??e.headers["x-amzn-request-id"]??e.headers["x-amz-request-id"],extendedRequestId:e.headers["x-amz-id-2"],cfId:e.headers["x-amz-cf-id"]});
-var P0s=b(()=>{yCr()});
-export {D0s,_Ru,yRu,P0s};
+var QMs=()=>{};
+var ZMs=()=>{};
+var e1s=()=>{};
+var t1s=()=>{};
+var n1s=()=>{};
+var r1s=()=>{};
+var o1s=()=>{};
+var s1s=()=>{};
+var i1s=()=>{};
+var a1s=()=>{};
+var l1s=()=>{};
+var c1s=()=>{};
+var u1s=()=>{};
+var d1s=()=>{};
+var p1s;
+var m1s=b(()=>{(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(p1s||(p1s={}))});
+export {QMs,ZMs,e1s,t1s,n1s,r1s,o1s,s1s,i1s,a1s,l1s,c1s,u1s,d1s,p1s,m1s};

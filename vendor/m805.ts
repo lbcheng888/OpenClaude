@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Nis} from "./m804.ts";
-var vgr=X((Cgr)=>{var itu=Nis(),Egr=require("buffer"),atu=(e,t=0,n=e.byteLength-t)=>{if(!itu.isArrayBuffer(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return Egr.Buffer.from(e,t,n)},ltu=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?Egr.Buffer.from(e,t):Egr.Buffer.from(e)};Cgr.fromArrayBuffer=atu;Cgr.fromString=ltu});
-export {vgr};
+import {Q} from "../runtime.ts";
+var Eps=Q((Xbr)=>{Object.defineProperty(Xbr,"__esModule",{value:!0});Xbr.headStream=idu;async function idu(e,t){let n=0,r=[],o=e.getReader(),s=!1;while(!s){let{done:l,value:c}=await o.read();if(c)r.push(c),n+=c?.byteLength??0;if(n>=t)break;s=l}o.releaseLock();let i=new Uint8Array(Math.min(t,n)),a=0;for(let l of r){if(l.byteLength>i.byteLength-a){i.set(l.subarray(0,i.byteLength-a),a);break}else i.set(l,a);a+=l.length}return i}});
+export {Eps};

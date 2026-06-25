@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-function httpRequest(e){return new Promise((t,n)=>{let r=ios.request({method:"GET",...e,hostname:e.hostname?.replace(/^\[(.+)\]$/,"$1")});r.on("error",(o)=>{n(Object.assign(new Xnn.ProviderError("Unable to connect to instance metadata service"),o)),r.destroy()}),r.on("timeout",()=>{n(new Xnn.ProviderError("TimeoutError from instance metadata service")),r.destroy()}),r.on("response",(o)=>{let{statusCode:s=400}=o;if(s<200||300<=s)n(Object.assign(new Xnn.ProviderError("Error response received from instance metadata service"),{statusCode:s})),r.destroy();let i=[];o.on("data",(a)=>{i.push(a)}),o.on("end",()=>{t(sos.Buffer.concat(i)),r.destroy()})}),r.end()})}
-var Xnn,sos,ios;
-var Qnn=b(()=>{Xnn=M(createDefaultGlobalConfig(),1),sos=require("buffer"),ios=require("http")});
-export {httpRequest,Xnn,sos,ios,Qnn};
+import {Q} from "../runtime.ts";
+import {Dcs} from "./m753.ts";
+var wbr=Q((Pcs)=>{var vbr=Dcs();function $cu(e){let t=[];for(let n of Object.keys(e).sort()){let r=e[n];if(n=vbr.escapeUri(n),Array.isArray(r))for(let o=0,s=r.length;o<s;o++)t.push(`${n}=${vbr.escapeUri(r[o])}`);else{let o=n;if(r||typeof r==="string")o+=`=${vbr.escapeUri(r)}`;t.push(o)}}return t.join("&")}Pcs.buildQueryString=$cu});
+export {wbr};

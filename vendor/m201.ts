@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {$V,ELe} from "./m200.ts";
-import {xV,UOe} from "./m87.ts";
+import {mre,lKe} from "./m6.ts";
+import {Xbe,Bbt} from "./m200.ts";
 import {b} from "../runtime.ts";
-function fgc(e,t){return e&&$V(t,xV(t),e)}
-var l9o;
-var c9o=b(()=>{ELe();UOe();l9o=fgc});
-export {fgc,l9o,c9o};
+function gwc(e,t,n){var r=e[t];if(!(hwc.call(e,t)&&mre(r,n))||n===void 0&&!(t in e))Xbe(e,t,n)}
+var fwc,hwc,Qbe;
+var Ubt=b(()=>{Bbt();lKe();fwc=Object.prototype,hwc=fwc.hasOwnProperty;Qbe=gwc});
+export {gwc,fwc,hwc,Qbe,Ubt};

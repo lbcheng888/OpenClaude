@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Bms} from "./m901.ts";
-import {FS} from "./m788.ts";
-var ame=X((qms)=>{var nTr=Bms(),Gcu=FS(),Vcu=require("buffer"),Fms=require("crypto");class $ms{algorithmIdentifier;secret;hash;constructor(e,t){this.algorithmIdentifier=e,this.secret=t,this.reset()}update(e,t){this.hash.update(Gcu.toUint8Array(Ums(e,t)))}digest(){return Promise.resolve(this.hash.digest())}reset(){this.hash=this.secret?Fms.createHmac(this.algorithmIdentifier,Ums(this.secret)):Fms.createHash(this.algorithmIdentifier)}}function Ums(e,t){if(Vcu.Buffer.isBuffer(e))return e;if(typeof e==="string")return nTr.fromString(e,t);if(ArrayBuffer.isView(e))return nTr.fromArrayBuffer(e.buffer,e.byteOffset,e.byteLength);return nTr.fromArrayBuffer(e)}qms.Hash=$ms});
-export {ame};
+import {Q} from "../runtime.ts";
+import {iC} from "./m885.ts";
+import {qN} from "./m610.ts";
+var wAr=Q((BCe)=>{Object.defineProperty(BCe,"__esModule",{value:!0});BCe.resolveHttpAuthSchemeConfig=BCe.defaultSSOOIDCHttpAuthSchemeProvider=BCe.defaultSSOOIDCHttpAuthSchemeParametersProvider=void 0;var VTu=iC(),vAr=qN(),KTu=async(e,t,n)=>({operation:(0,vAr.getSmithyContext)(t).operation,region:await(0,vAr.normalizeProvider)(e.region)()||(()=>{throw Error("expected `region` to be configured for `aws.auth#sigv4`")})()});BCe.defaultSSOOIDCHttpAuthSchemeParametersProvider=KTu;function zTu(e){return{schemeId:"aws.auth#sigv4",signingProperties:{name:"sso-oauth",region:e.region},propertiesExtractor:(t,n)=>({signingProperties:{config:t,context:n}})}}function jTu(e){return{schemeId:"smithy.api#noAuth"}}var YTu=(e)=>{let t=[];switch(e.operation){case"CreateToken":{t.push(jTu(e));break}default:t.push(zTu(e))}return t};BCe.defaultSSOOIDCHttpAuthSchemeProvider=YTu;var JTu=(e)=>{let t=(0,VTu.resolveAwsSdkSigV4Config)(e);return Object.assign(t,{authSchemePreference:(0,vAr.normalizeProvider)(e.authSchemePreference??[])})};BCe.resolveHttpAuthSchemeConfig=JTu});
+export {wAr};

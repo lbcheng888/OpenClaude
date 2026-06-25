@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Kit} from "./m3661.ts";
-var eEa=X((XMn)=>{Object.defineProperty(XMn,"__esModule",{value:!0});XMn.DropAggregator=void 0;var Bap=Kit();class Zba{kind=Bap.AggregatorKind.DROP;createAccumulation(){return}merge(e,t){return}diff(e,t){return}toMetricData(e,t,n,r){return}}XMn.DropAggregator=Zba});
-export {eEa};
+import {Q} from "../runtime.ts";
+import {LHa} from "./m3661.ts";
+var Uio=Q((HFn)=>{Object.defineProperty(HFn,"__esModule",{value:!0});HFn.TraceState=void 0;var kFn=LHa(),C_p=32,MHa=512,NHa=",",FHa="=";class Bio{_length;_rawTraceState;_internalState;constructor(e){this._rawTraceState=typeof e==="string"?e:"",this._length=this._rawTraceState.length}set(e,t){if(!(0,kFn.validateKey)(e)||!(0,kFn.validateValue)(t))return this;let n=this._getState(),r=n.get(e),o=this._length;if(typeof r==="string")o+=t.length-r.length;else o+=e.length+t.length+(n.size>0?2:1);if(o>MHa)return this;let s=new Map(n);return s.delete(e),s.set(e,t),this._fromState(s,o)}unset(e){let t=this._getState(),n=t.get(e);if(typeof n!=="string")return this;let r=this._length-(e.length+n.length+1);if(t.size>1)r=r-1;let o=new Map(t);return o.delete(e),this._fromState(o,r)}get(e){return this._getState().get(e)}serialize(){let e="",t=0;for(let n of this._getState()){if(t>0)e=NHa+e;e=`${n[0]}${FHa}${n[1]}`+e,t++}return e}_getState(){if(this._internalState)return this._internalState;let e=this._rawTraceState.split(NHa),t=new Map,n=0;for(let r of e){let o=r.trim(),s=o.indexOf(FHa);if(s===-1)continue;let i=o.slice(0,s),a=o.slice(s+1);if(!(0,kFn.validateKey)(i)||!(0,kFn.validateValue)(a))continue;let l=n+o.length+(t.size>0?1:0);if(l>MHa)continue;if(t.set(i,a),n=l,t.size>=C_p)break}return this._length=n,this._internalState=new Map(Array.from(t.entries()).reverse()),this._internalState}_fromState(e,t){let n=Object.create(Bio.prototype);return n._internalState=e,n._length=t,n}}HFn.TraceState=Bio});
+export {Uio};

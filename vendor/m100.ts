@@ -1,6 +1,7 @@
 // @ts-nocheck
+import {LLe,_Yt} from "./m46.ts";
 import {b} from "../runtime.ts";
-function Qfc(e,t){return function(n){if(n==null)return!1;return n[e]===t&&(t!==void 0||(e in Object(n)))}}
-var AKt;
-var Qer=b(()=>{AKt=Qfc});
-export {Qfc,AKt,Qer};
+function bsr(e,t){if(typeof e!="function"||t!=null&&typeof t!="function")throw TypeError(aRc);var n=function(){var r=arguments,o=t?t.apply(this,r):r[0],s=n.cache;if(s.has(o))return s.get(o);var i=e.apply(this,r);return n.cache=s.set(o,i)||s,i};return n.cache=new(bsr.Cache||LLe),n}
+var aRc="Expected a function",Hn;
+var Wi=b(()=>{_Yt();bsr.Cache=LLe;Hn=bsr});
+export {bsr,aRc,Hn,Wi};

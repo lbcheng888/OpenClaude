@@ -1,5 +1,13 @@
 // @ts-nocheck
+import {rr,oC} from "./m466.ts";
+import {Hi,S5} from "./m467.ts";
 import {b} from "../runtime.ts";
-var dmr,qzo;
-var jzo=b(()=>{dmr={Continue:100,SwitchingProtocols:101,Processing:102,EarlyHints:103,Ok:200,Created:201,Accepted:202,NonAuthoritativeInformation:203,NoContent:204,ResetContent:205,PartialContent:206,MultiStatus:207,AlreadyReported:208,ImUsed:226,MultipleChoices:300,MovedPermanently:301,Found:302,SeeOther:303,NotModified:304,UseProxy:305,Unused:306,TemporaryRedirect:307,PermanentRedirect:308,BadRequest:400,Unauthorized:401,PaymentRequired:402,Forbidden:403,NotFound:404,MethodNotAllowed:405,NotAcceptable:406,ProxyAuthenticationRequired:407,RequestTimeout:408,Conflict:409,Gone:410,LengthRequired:411,PreconditionFailed:412,PayloadTooLarge:413,UriTooLong:414,UnsupportedMediaType:415,RangeNotSatisfiable:416,ExpectationFailed:417,ImATeapot:418,MisdirectedRequest:421,UnprocessableEntity:422,Locked:423,FailedDependency:424,TooEarly:425,UpgradeRequired:426,PreconditionRequired:428,TooManyRequests:429,RequestHeaderFieldsTooLarge:431,UnavailableForLegalReasons:451,InternalServerError:500,NotImplemented:501,BadGateway:502,ServiceUnavailable:503,GatewayTimeout:504,HttpVersionNotSupported:505,VariantAlsoNegotiates:506,InsufficientStorage:507,LoopDetected:508,NotExtended:510,NetworkAuthenticationRequired:511,WebServerIsDown:521,ConnectionTimedOut:522,OriginIsUnreachable:523,TimeoutOccurred:524,SslHandshakeFailed:525,InvalidSslCertificate:526};Object.entries(dmr).forEach(([e,t])=>{dmr[t]=e});qzo=dmr});
-export {dmr,qzo,jzo};
+import {ges,hes} from "./m557.ts";
+import {Ces,Ees} from "./m562.ts";
+import {Ies,P_r} from "./m564.ts";
+function EVc(e,t){e=rr.isArray(e)?e:[e];let{length:n}=e,r,o,s={};for(let i=0;i<n;i++){r=e[i];let a;if(o=r,!bVc(r)){if(o=O_r[(a=String(r)).toLowerCase()],o===void 0)throw new Hi(`Unknown adapter '${a}'`)}if(o&&(rr.isFunction(o)||(o=o.get(t))))break;s[a||"#"+i]=o}if(!o){let i=Object.entries(s).map(([l,c])=>`adapter ${l} `+(c===!1?"is not supported by the environment":"is not available in the build")),a=n?i.length>1?`since :
+`+i.map(xes).join(`
+`):" "+xes(i[0]):"as no adapter specified";throw new Hi("There is no suitable adapter to dispatch the request "+a,"ERR_NOT_SUPPORT")}return o}
+var O_r,xes=(e)=>`- ${e}`,bVc=(e)=>rr.isFunction(e)||e===null||e===!1,trn;
+var L_r=b(()=>{oC();ges();Ces();Ies();S5();O_r={http:hes,xhr:Ees,fetch:{get:P_r}};rr.forEach(O_r,(e,t)=>{if(e){try{Object.defineProperty(e,"name",{value:t})}catch(n){}Object.defineProperty(e,"adapterName",{value:t})}});trn={getAdapter:EVc,adapters:O_r}});
+export {EVc,O_r,xes,bVc,trn,L_r};

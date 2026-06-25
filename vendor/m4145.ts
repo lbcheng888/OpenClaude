@@ -1,4 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var P4a=X((fp_,D4a)=>{var uHp=Object.create(null,{appCodeName:{value:"Mozilla"},appName:{value:"Netscape"},appVersion:{value:"4.0"},platform:{value:""},product:{value:"Gecko"},productSub:{value:"20100101"},userAgent:{value:""},vendor:{value:""},vendorSub:{value:""},taintEnabled:{value:function(){return!1}}});D4a.exports=uHp});
-export {P4a};
+import {Q} from "../runtime.ts";
+import {spt} from "./m4110.ts";
+import {efo} from "./m4111.ts";
+import {nfo} from "./m4112.ts";
+import {LWa} from "./m4144.ts";
+var Xfo=Q((xAy,MWa)=>{MWa.exports={Event:spt(),UIEvent:efo(),MouseEvent:nfo(),CustomEvent:LWa()}});
+export {Xfo};

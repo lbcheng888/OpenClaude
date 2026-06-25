@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var Ige;
-var yBn=b(()=>{Ige={AUTH_METHOD:0,PROFILE:1,BEARER:2,ACCESS_KEY_ID:3,REGION:4,VERIFY:5,PIN_MODELS:6,CONFIRM:7}});
-export {Ige,yBn};
+import {Q} from "../runtime.ts";
+var q$t=Q((eMa,tMa)=>{(function(){tMa.exports={None:0,OpenTag:1,InsideTag:2,CloseTag:3}}).call(eMa)});
+export {q$t};

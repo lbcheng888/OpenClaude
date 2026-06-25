@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Bhl=X((Nhl)=>{Nhl.render=function(e,t,n){let r=e.modules.size,o=e.modules.data,s="\x1B[40m  \x1B[0m",i="\x1B[47m  \x1B[0m",a="",l=Array(r+3).join("\x1B[47m  \x1B[0m"),c=Array(2).join("\x1B[47m  \x1B[0m");a+=l+`
-`;for(let u=0;u<r;++u){a+="\x1B[47m  \x1B[0m";for(let d=0;d<r;d++)a+=o[u*r+d]?"\x1B[40m  \x1B[0m":"\x1B[47m  \x1B[0m";a+=c+`
-`}if(a+=l+`
-`,typeof n==="function")n(null,a);return a}});
-export {Bhl};
+import {Q} from "../runtime.ts";
+import {DPe} from "./m4742.ts";
+var yCl=Q((crS,_Cl)=>{var wim=DPe();function Fht(e){this.mode=wim.NUMERIC,this.data=e.toString()}Fht.getBitsLength=function(t){return 10*Math.floor(t/3)+(t%3?t%3*3+1:0)};Fht.prototype.getLength=function(){return this.data.length};Fht.prototype.getBitsLength=function(){return Fht.getBitsLength(this.data.length)};Fht.prototype.write=function(t){let n,r,o;for(n=0;n+3<=this.data.length;n+=3)r=this.data.substr(n,3),o=parseInt(r,10),t.put(o,10);let s=this.data.length-n;if(s>0)r=this.data.substr(n),o=parseInt(r,10),t.put(o,s*3+1)};_Cl.exports=Fht});
+export {yCl};

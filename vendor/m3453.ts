@@ -1,6 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {MPn} from "./m3452.ts";
-import {mle} from "./m3449.ts";
-var ifa=X((z_g,sfa)=>{sfa.exports=e3e;var ofa=MPn();(e3e.prototype=Object.create(ofa.prototype)).constructor=e3e;var rfa=mle();function e3e(e){ofa.call(this,e)}e3e._configure=function(){if(rfa.Buffer)e3e.prototype._slice=rfa.Buffer.prototype.slice};e3e.prototype.string=function(){var t=this.uint32();return this.buf.utf8Slice?this.buf.utf8Slice(this.pos,this.pos=Math.min(this.pos+t,this.len)):this.buf.toString("utf-8",this.pos,this.pos=Math.min(this.pos+t,this.len))};e3e._configure()});
-export {ifa};
+import {Q} from "../runtime.ts";
+import {pg} from "./m2138.ts";
+import {TMn} from "./m3448.ts";
+import {xSa} from "./m3452.ts";
+import {xi} from "./m2096.ts";
+var dro=Q((EMn)=>{Object.defineProperty(EMn,"__esModule",{value:!0});EMn.createOtlpExportDelegate=void 0;var p4e=pg(),DSa=TMn(),zrp=xSa(),jrp=xi();class PSa{_transport;_serializer;_responseHandler;_promiseQueue;_timeout;_diagLogger;constructor(e,t,n,r,o){this._transport=e,this._serializer=t,this._responseHandler=n,this._promiseQueue=r,this._timeout=o,this._diagLogger=jrp.diag.createComponentLogger({namespace:"OTLPExportDelegate"})}export(e,t){if(this._diagLogger.debug("items to be sent",e),this._promiseQueue.hasReachedLimit()){t({code:p4e.ExportResultCode.FAILED,error:Error("Concurrent export limit reached")});return}let n=this._serializer.serializeRequest(e);if(n==null){t({code:p4e.ExportResultCode.FAILED,error:Error("Nothing to send")});return}this._promiseQueue.pushPromise(this._transport.send(n,this._timeout).then((r)=>{if(r.status==="success"){if(r.data!=null)try{this._responseHandler.handleResponse(this._serializer.deserializeResponse(r.data))}catch(o){this._diagLogger.warn("Export succeeded but could not deserialize response - is the response specification compliant?",o,r.data)}t({code:p4e.ExportResultCode.SUCCESS});return}else if(r.status==="failure"&&r.error){t({code:p4e.ExportResultCode.FAILED,error:r.error});return}else if(r.status==="retryable")t({code:p4e.ExportResultCode.FAILED,error:new DSa.OTLPExporterError("Export failed with retryable status")});else t({code:p4e.ExportResultCode.FAILED,error:new DSa.OTLPExporterError("Export failed with unknown error")})},(r)=>t({code:p4e.ExportResultCode.FAILED,error:r})))}forceFlush(){return this._promiseQueue.awaitAll()}async shutdown(){this._diagLogger.debug("shutdown started"),await this.forceFlush(),this._transport.shutdown()}}function Yrp(e,t){return new PSa(e.transport,e.serializer,(0,zrp.createLoggingPartialSuccessResponseHandler)(),e.promiseHandler,t.timeout)}EMn.createOtlpExportDelegate=Yrp});
+export {dro};

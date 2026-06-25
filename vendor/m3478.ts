@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Yfa} from "./m3477.ts";
-var Jfa=X((ZPn)=>{Object.defineProperty(ZPn,"__esModule",{value:!0});ZPn.JsonTraceSerializer=void 0;var Azd=Yfa();Object.defineProperty(ZPn,"JsonTraceSerializer",{enumerable:!0,get:function(){return Azd.JsonTraceSerializer}})});
-export {Jfa};
+import {Q} from "../runtime.ts";
+var PMn=Q((jj)=>{Object.defineProperty(jj,"__esModule",{value:!0});jj.toAnyValue=jj.toKeyValue=jj.toAttributes=jj.createInstrumentationScope=jj.createResource=void 0;function yop(e){let t={attributes:Fba(e.attributes),droppedAttributesCount:0},n=e.schemaUrl;if(n&&n!=="")t.schemaUrl=n;return t}jj.createResource=yop;function Top(e){return{name:e.name,version:e.version}}jj.createInstrumentationScope=Top;function Fba(e){return Object.keys(e).map((t)=>Pro(t,e[t]))}jj.toAttributes=Fba;function Pro(e,t){return{key:e,value:Oro(t)}}jj.toKeyValue=Pro;function Oro(e){let t=typeof e;if(t==="string")return{stringValue:e};if(t==="number"){if(!Number.isInteger(e))return{doubleValue:e};return{intValue:e}}if(t==="boolean")return{boolValue:e};if(e instanceof Uint8Array)return{bytesValue:e};if(Array.isArray(e))return{arrayValue:{values:e.map(Oro)}};if(t==="object"&&e!=null)return{kvlistValue:{values:Object.entries(e).map(([n,r])=>Pro(n,r))}};return{}}jj.toAnyValue=Oro});
+export {PMn};

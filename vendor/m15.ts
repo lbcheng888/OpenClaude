@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {wV,Gx} from "./m8.ts";
-var Ydc,B7t;
-var kBo=b(()=>{wV();Ydc=Gx["__core-js_shared__"],B7t=Ydc});
-export {Ydc,B7t,kBo};
+function Vbc(e){return this.__data__.get(e)}
+var A3o;
+var R3o=b(()=>{A3o=Vbc});
+export {Vbc,A3o,R3o};

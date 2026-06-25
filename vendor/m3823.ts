@@ -1,8 +1,12 @@
 // @ts-nocheck
-import {getActiveTimeCounter,lt} from "../src/session/0131_sent.ts";
-import {b} from "../runtime.ts";
-import {gUt} from "./m3822.ts";
-class Qle{activeOperations=new Set;lastUserActivityTime=0;lastCLIRecordedTime;isCLIActive=!1;USER_ACTIVITY_TIMEOUT_MS=5000;getNow;getActiveTimeCounter;static instance=null;constructor(e){this.getNow=e?.getNow??(()=>Date.now()),this.getActiveTimeCounter=e?.getActiveTimeCounter??getActiveTimeCounter,this.lastCLIRecordedTime=this.getNow()}static getInstance(){if(!Qle.instance)Qle.instance=new Qle;return Qle.instance}static resetInstance(){Qle.instance=null}static createInstance(e){return Qle.instance=new Qle(e),Qle.instance}recordUserActivity(){if(!this.isCLIActive&&this.lastUserActivityTime!==0){let t=(this.getNow()-this.lastUserActivityTime)/1000;if(t>0){let n=this.USER_ACTIVITY_TIMEOUT_MS/1000;if(t<n){let r=this.getActiveTimeCounter();if(r)r.add(t,{type:"user"})}}}this.lastUserActivityTime=this.getNow()}startCLIActivity(e){if(this.activeOperations.has(e))this.endCLIActivity(e);let t=this.activeOperations.size===0;if(this.activeOperations.add(e),t)this.isCLIActive=!0,this.lastCLIRecordedTime=this.getNow()}endCLIActivity(e){if(this.activeOperations.delete(e),this.activeOperations.size===0){let t=this.getNow(),n=(t-this.lastCLIRecordedTime)/1000;if(n>0){let r=this.getActiveTimeCounter();if(r)r.add(n,{type:"cli"})}this.lastCLIRecordedTime=t,this.isCLIActive=!1}}async trackOperation(e,t){this.startCLIActivity(e);try{return await t()}finally{this.endCLIActivity(e)}}getActivityStates(){return{isUserActive:(this.getNow()-this.lastUserActivityTime)/1000<this.USER_ACTIVITY_TIMEOUT_MS/1000,isCLIActive:this.isCLIActive,activeOperationCount:this.activeOperations.size}}}
-var DY;
-var CBn=b(()=>{lt();gUt();DY=Qle.getInstance()});
-export {Qle,DY,CBn};
+import {Q} from "../runtime.ts";
+import {zle} from "./m3791.ts";
+import {wlo} from "./m3792.ts";
+import {Dlo} from "./m3820.ts";
+import {uMa} from "./m3821.ts";
+import {l2n} from "./m3819.ts";
+import {mMa} from "./m3822.ts";
+import {LI} from "./m3796.ts";
+import {q$t} from "./m3817.ts";
+var hMa=Q((fMa,y0e)=>{(function(){var e,t,n,r,o,s,i,a,l;({assign:a,isFunction:l}=zle()),n=wlo(),r=Dlo(),o=uMa(),i=l2n(),s=mMa(),e=LI(),t=q$t(),y0e.exports.create=function(c,u,d,p){var m,f;if(c==null)throw Error("Root element needs a name.");if(p=a({},u,d,p),m=new r(p),f=m.element(c),!p.headless){if(m.declaration(p),p.pubID!=null||p.sysID!=null)m.dtd(p)}return f},y0e.exports.begin=function(c,u,d){if(l(c))[u,d]=[c,u],c={};if(u)return new o(c,u,d);else return new r(c)},y0e.exports.stringWriter=function(c){return new i(c)},y0e.exports.streamWriter=function(c,u){return new s(c,u)},y0e.exports.implementation=new n,y0e.exports.nodeType=e,y0e.exports.writerState=t}).call(fMa)});
+export {hMa};

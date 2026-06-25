@@ -1,8 +1,5 @@
 // @ts-nocheck
-import {qfe,GO} from "../src/telemetry/2241_GO.ts";
-import {a9e,Esa,y1t} from "../src/telemetry/3249_y1t.ts";
-import {SGe,tv} from "./m232.ts";
-import {b} from "../runtime.ts";
-function LIn(e,t){let n=qfe(e),r=!n&&a9e()&&Esa(e);if(!n&&!r)return null;let o=SGe(t);if(o.length===0)return null;let s=o.map((i)=>i.label).join(", ");if(n)return`Content contains potential secrets (${s}) and cannot be written to team memory. Team memory is shared with all repository collaborators. Remove the sensitive content and try again.`;return`Content contains potential secrets (${s}) and cannot be written to memory. Memory is synced to your account. Remove the sensitive content and try again.`}
-var fYr=b(()=>{y1t();GO();tv()});
-export {LIn,fYr};
+import {Q} from "../runtime.ts";
+import {cPn} from "./m3248.ts";
+var Ida=Q((Rit)=>{Object.defineProperty(Rit,"__esModule",{value:!0});Rit.SharedArrayReceiverStrategy=Rit.SharedArraySenderStrategy=void 0;var YYd=cPn(),GFt;(function(e){e.Continue=0,e.Cancelled=1})(GFt||(GFt={}));class vda{constructor(){this.buffers=new Map}enableCancellation(e){if(e.id===null)return;let t=new SharedArrayBuffer(4),n=new Int32Array(t,0,1);n[0]=GFt.Continue,this.buffers.set(e.id,t),e.$cancellationData=t}async sendCancellation(e,t){let n=this.buffers.get(t);if(n===void 0)return;let r=new Int32Array(n,0,1);Atomics.store(r,0,GFt.Cancelled)}cleanup(e){this.buffers.delete(e)}dispose(){this.buffers.clear()}}Rit.SharedArraySenderStrategy=vda;class wda{constructor(e){this.data=new Int32Array(e,0,1)}get isCancellationRequested(){return Atomics.load(this.data,0)===GFt.Cancelled}get onCancellationRequested(){throw Error("Cancellation over SharedArrayBuffer doesn't support cancellation events")}}class kda{constructor(e){this.token=new wda(e)}cancel(){}dispose(){}}class Hda{constructor(){this.kind="request"}createCancellationTokenSource(e){let t=e.$cancellationData;if(t===void 0)return new YYd.CancellationTokenSource;return new kda(t)}}Rit.SharedArrayReceiverStrategy=Hda});
+export {Ida};

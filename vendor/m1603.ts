@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var Lkr=function(){let e=Object.getPrototypeOf(this).constructor,n=new(Function.bind.apply(String,[null,...arguments]));return Object.setPrototypeOf(n,e.prototype),n};
-var b8s=b(()=>{Lkr.prototype=Object.create(String.prototype,{constructor:{value:Lkr,enumerable:!1,writable:!0,configurable:!0}});Object.setPrototypeOf(Lkr,String)});
-export {Lkr,b8s};
+import {cPr} from "./m1602.ts";
+var kLh,HLh,ILh,xLh,DLh;
+var pzs=b(()=>{cPr();kLh=new RegExp(/^(\d{4})-(\d{2})-(\d{2})[tT](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?[zZ]$/),HLh=new RegExp(/^(\d{4})-(\d{2})-(\d{2})[tT](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(([-+]\d{2}\:\d{2})|[zZ])$/),ILh=new RegExp(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d{2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? GMT$/),xLh=new RegExp(/^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (\d{2})-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d{2}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? GMT$/),DLh=new RegExp(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( [1-9]|\d{2}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? (\d{4})$/)});
+export {kLh,HLh,ILh,xLh,DLh,pzs};

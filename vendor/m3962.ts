@@ -1,15 +1,99 @@
 // @ts-nocheck
-import {Cn,dr} from "./m231.ts";
-import {truncateToWidth,EH} from "./m237.ts";
-import {formatSecondsShort,ps} from "./m238.ts";
+import {ov,NW} from "../src/config/3289_NW.ts";
+import {Yc,Zm} from "../src/config/2709_Zm.ts";
+import {su,ow} from "./m2257.ts";
+import {readRoster,XR} from "./m2707.ts";
+import {vs,dm} from "./m2256.ts";
+import {Zp,d1} from "./m2705.ts";
+import {Lk} from "../src/config/2259_R9r.ts";
 import {b} from "../runtime.ts";
-function f1a(e){if(!e.startsWith(m1a))return"";let t=e.slice(m1a.length),n=[];for(let r=0;r<t.length;r++){let o=t[r];if(o==='"')break;if(o!=="\\"){n.push(o);continue}let s=t[r+1];if(s===void 0)break;if(r++,s==="n")n.push(`
-`);else if(s==="t")n.push("\t");else if(s==="r")n.push("\r");else if(s==="u"){let i=t.slice(r+1,r+5);if(i.length<4)break;n.push(String.fromCharCode(parseInt(i,16))),r+=4}else n.push(s)}return n.join("")}
-function DUn(e,t,n){if(e.length<=t+n+1)return e.map((r)=>({line:r}));return[...e.slice(0,t).map((r)=>({line:r})),{line:`\u2026 ${e.length-t-n} lines \u2026`,folded:!0},...e.slice(-n).map((r)=>({line:r}))]}
-function A1a(e){let t=new Set,n=new Map;for(let r of e){if(t.has(r.data.toolUseId))continue;t.add(r.data.toolUseId),n.set(r.data.toolName,(n.get(r.data.toolName)??0)+1)}return[...n].map(([r,o])=>`${o} ${Cn(o,r,Lbp(r))}`).join(", ")}
-function Lbp(e){return/(?:s|sh|ch|x|z)$/i.test(e)?`${e}es`:`${e}s`}
-function h1a(e){if(!e||typeof e!=="object")return"";let t=Object.values(e).find((n)=>typeof n==="string");if(typeof t!=="string")return"";return truncateToWidth(t.replace(/\s+/g," "),40)}
-function g1a(e){let t=e[0]?.timestamp,n=e.at(-1)?.timestamp;if(!t||!n)return"";let r=Date.parse(n)-Date.parse(t);return Number.isFinite(r)&&r>=0?formatSecondsShort(r):""}
-var m1a='{"code":"';
-var nao=b(()=>{ps();dr();EH()});
-export {f1a,DUn,A1a,Lbp,h1a,g1a,m1a,nao};
+function eIp(){return`## What Happens in Plan Mode
+
+In plan mode, you'll:
+1. Thoroughly explore the codebase using ${ov()&&Yc()?`\`find\`/${su}, \`grep\`/${readRoster}, and ${vs}`:`${su}, ${readRoster}, and ${vs}`}
+2. Understand existing patterns and architecture
+3. Design an implementation approach
+4. Present your plan to the user for approval
+5. Use ${Zp} if you need to clarify approaches
+6. Exit plan mode with ${Lk} when ready to implement
+
+`}
+function tIp(){return`Use this tool proactively when you're about to start a non-trivial implementation task. Getting user sign-off on your approach before writing code prevents wasted effort and ensures alignment. This tool transitions you into plan mode where you can explore the codebase and design an implementation approach for user approval.
+
+## When to Use This Tool
+
+**Prefer using EnterPlanMode** for implementation tasks unless they're simple. Use it when ANY of these conditions apply:
+
+1. **New Feature Implementation**: Adding meaningful new functionality
+   - Example: "Add a logout button" - where should it go? What should happen on click?
+   - Example: "Add form validation" - what rules? What error messages?
+
+2. **Multiple Valid Approaches**: The task can be solved in several different ways
+   - Example: "Add caching to the API" - could use Redis, in-memory, file-based, etc.
+   - Example: "Improve performance" - many optimization strategies possible
+
+3. **Code Modifications**: Changes that affect existing behavior or structure
+   - Example: "Update the login flow" - what exactly should change?
+   - Example: "Refactor this component" - what's the target architecture?
+
+4. **Architectural Decisions**: The task requires choosing between patterns or technologies
+   - Example: "Add real-time updates" - WebSockets vs SSE vs polling
+   - Example: "Implement state management" - Redux vs Context vs custom solution
+
+5. **Multi-File Changes**: The task will likely touch more than 2-3 files
+   - Example: "Refactor the authentication system"
+   - Example: "Add a new API endpoint with tests"
+
+6. **Unclear Requirements**: You need to explore before understanding the full scope
+   - Example: "Make the app faster" - need to profile and identify bottlenecks
+   - Example: "Fix the bug in checkout" - need to investigate root cause
+
+7. **User Preferences Matter**: The implementation could reasonably go multiple ways
+   - If you would use ${Zp} to clarify the approach, use EnterPlanMode instead
+   - Plan mode lets you explore first, then present options with context
+
+## When NOT to Use This Tool
+
+Only skip EnterPlanMode for simple tasks:
+- Single-line or few-line fixes (typos, obvious bugs, small tweaks)
+- Adding a single function with clear requirements
+- Tasks where the user has given very specific, detailed instructions
+- Pure research/exploration tasks (use the Agent tool with explore agent instead)
+
+${eIp()}## Examples
+
+### GOOD - Use EnterPlanMode:
+User: "Add user authentication to the app"
+- Requires architectural decisions (session vs JWT, where to store tokens, middleware structure)
+
+User: "Optimize the database queries"
+- Multiple approaches possible, need to profile first, significant impact
+
+User: "Implement dark mode"
+- Architectural decision on theme system, affects many components
+
+User: "Add a delete button to the user profile"
+- Seems simple but involves: where to place it, confirmation dialog, API call, error handling, state updates
+
+User: "Update the error handling in the API"
+- Affects multiple files, user should approve the approach
+
+### BAD - Don't use EnterPlanMode:
+User: "Fix the typo in the README"
+- Straightforward, no planning needed
+
+User: "Add a console.log to debug this function"
+- Simple, obvious implementation
+
+User: "What files handle routing?"
+- Research task, not implementation planning
+
+## Important Notes
+
+- This tool REQUIRES user approval - they must consent to entering plan mode
+- If unsure whether to use it, err on the side of planning - it's better to get alignment upfront than to redo work
+- Users appreciate being consulted before significant changes are made to their codebase
+`}
+function K2a(){return tIp()}
+var z2a=b(()=>{NW();Zm();d1();dm();ow();XR()});
+export {eIp,tIp,K2a,z2a};

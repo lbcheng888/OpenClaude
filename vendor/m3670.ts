@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {aEa} from "./m3668.ts";
-import {dEa} from "./m3669.ts";
-import {t1n} from "./m3667.ts";
-var fEa=X((o1n)=>{Object.defineProperty(o1n,"__esModule",{value:!0});o1n.getMapping=void 0;var Yap=aEa(),Jap=dEa(),Xap=t1n(),pEa=-10,mEa=20,Qap=Array.from({length:31},(e,t)=>{if(t>10)return new Jap.LogarithmMapping(t-10);return new Yap.ExponentMapping(t-10)});function Zap(e){if(e>mEa||e<pEa)throw new Xap.MappingError(`expected scale >= ${pEa} && <= ${mEa}, got: ${e}`);return Qap[e+10]}o1n.getMapping=Zap});
-export {fEa};
+import {Q} from "../runtime.ts";
+import {rIa} from "./m3669.ts";
+var sIa=Q((NFn)=>{Object.defineProperty(NFn,"__esModule",{value:!0});NFn.BindOnceFuture=void 0;var Z_p=rIa();class oIa{_isCalled=!1;_deferred=new Z_p.Deferred;_callback;_that;constructor(e,t){this._callback=e,this._that=t}get isCalled(){return this._isCalled}get promise(){return this._deferred.promise}call(...e){if(!this._isCalled){this._isCalled=!0;try{Promise.resolve(this._callback.call(this._that,...e)).then((t)=>this._deferred.resolve(t),(t)=>this._deferred.reject(t))}catch(t){this._deferred.reject(t)}}return this._deferred.promise}}NFn.BindOnceFuture=oIa});
+export {sIa};

@@ -1,5 +1,12 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {cke} from "./m3230.ts";
-var bot=X((Sot)=>{Object.defineProperty(Sot,"__esModule",{value:!0});Sot.Emitter=Sot.Event=void 0;var o6d=cke(),goa;(function(e){let t={dispose(){}};e.None=function(){return t}})(goa||(Sot.Event=goa={}));class _oa{add(e,t=null,n){if(!this._callbacks)this._callbacks=[],this._contexts=[];if(this._callbacks.push(e),this._contexts.push(t),Array.isArray(n))n.push({dispose:()=>this.remove(e,t)})}remove(e,t=null){if(!this._callbacks)return;let n=!1;for(let r=0,o=this._callbacks.length;r<o;r++)if(this._callbacks[r]===e)if(this._contexts[r]===t){this._callbacks.splice(r,1),this._contexts.splice(r,1);return}else n=!0;if(n)throw Error("When adding a listener with a context, you should remove it with the same context")}invoke(...e){if(!this._callbacks)return[];let t=[],n=this._callbacks.slice(0),r=this._contexts.slice(0);for(let o=0,s=n.length;o<s;o++)try{t.push(n[o].apply(r[o],e))}catch(i){(0,o6d.default)().console.error(i)}return t}isEmpty(){return!this._callbacks||this._callbacks.length===0}dispose(){this._callbacks=void 0,this._contexts=void 0}}class gIn{constructor(e){this._options=e}get event(){if(!this._event)this._event=(e,t,n)=>{if(!this._callbacks)this._callbacks=new _oa;if(this._options&&this._options.onFirstListenerAdd&&this._callbacks.isEmpty())this._options.onFirstListenerAdd(this);this._callbacks.add(e,t);let r={dispose:()=>{if(!this._callbacks)return;if(this._callbacks.remove(e,t),r.dispose=gIn._noop,this._options&&this._options.onLastListenerRemove&&this._callbacks.isEmpty())this._options.onLastListenerRemove(this)}};if(Array.isArray(n))n.push(r);return r};return this._event}fire(e){if(this._callbacks)this._callbacks.invoke.call(this._callbacks,e)}dispose(){if(this._callbacks)this._callbacks.dispose(),this._callbacks=void 0}}Sot.Emitter=gIn;gIn._noop=function(){}});
-export {bot};
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {q7,Mfe} from "../src/computer-use/2198_iTerm_app.ts";
+import {createCliExecutor,YQr} from "../src/computer-use/3231_unhideComputerUseApps.ts";
+import {VDn,GDn,uit} from "../src/telemetry/3229_enabled.ts";
+import {L$} from "../src/computer-use/3227_level.ts";
+import {b} from "../runtime.ts";
+class nua{silly(e,...t){logForDebugging(pit.format(e,...t),{level:"debug"})}debug(e,...t){logForDebugging(pit.format(e,...t),{level:"debug"})}info(e,...t){logForDebugging(pit.format(e,...t),{level:"info"})}warn(e,...t){logForDebugging(pit.format(e,...t),{level:"warn"})}error(e,...t){logForDebugging(pit.format(e,...t),{level:"error"})}}
+function zDn(){if(KDn)return KDn;return KDn={serverName:q7,logger:new nua,executor:createCliExecutor({getMouseAnimationEnabled:()=>VDn().mouseAnimation,getHideBeforeActionEnabled:()=>VDn().hideBeforeAction}),ensureOsPermissions:async()=>{let e=L$(),t=e.tcc.checkAccessibility(),n=e.tcc.checkScreenRecording();return t&&n?{granted:!0}:{granted:!1,accessibility:t,screenRecording:n}},isDisabled:()=>!GDn(),getSubGates:VDn,getAutoUnhideEnabled:()=>!0,cropRawPatch:()=>null},KDn}
+var pit,KDn;
+var JQr=b(()=>{qe();Mfe();YQr();uit();pit=require("util")});
+export {nua,zDn,pit,KDn,JQr};

@@ -1,5 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Gni} from "./m2045.ts";
-var Vni=X((XBe)=>{var bVu=XBe&&XBe.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;Object.defineProperty(e,r,{enumerable:!0,get:function(){return t[n]}})}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),EVu=XBe&&XBe.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))bVu(t,e,n)};Object.defineProperty(XBe,"__esModule",{value:!0});EVu(Gni(),XBe)});
-export {Vni};
+import {b} from "../runtime.ts";
+import {Es,Yt} from "./m641.ts";
+function hxt(e=QBr){return`http://localhost:${e}/callback`}
+function Ptd(){let e=parseInt(process.env.MCP_OAUTH_CALLBACK_PORT||"",10);return e>0?e:void 0}
+async function cTn(e){let t=Ptd();if(t)return t;if(e&&await XBr(e))return e;let{min:n,max:r}=Dtd,o=r-n+1,s=Math.min(o,100);for(let i=0;i<s;i++){let a=n+Math.floor(Math.random()*o);if(await XBr(a))return a}if(await XBr(QBr))return QBr;throw Error("No available ports for OAuth redirect")}
+async function XBr(e){try{return await new Promise((t,n)=>{let r=kli.createServer();r.once("error",n),r.listen(e,"127.0.0.1",()=>{r.close(()=>t())})}),!0}catch{return!1}}
+var kli,Dtd,QBr=3118;
+var ZBr=b(()=>{Es();kli=require("http"),Dtd=Yt()==="windows"?{min:39152,max:49151}:{min:49152,max:65535}});
+export {hxt,Ptd,cTn,XBr,kli,Dtd,QBr,ZBr};

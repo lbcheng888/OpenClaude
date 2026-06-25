@@ -1,24 +1,47 @@
 // @ts-nocheck
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {qt,Xt} from "../src/config/0228_encoding.ts";
-import {b} from "../runtime.ts";
-import {iv} from "./m454.ts";
-import {kg} from "./m129.ts";
-import {ca} from "./m5.ts";
-import {we} from "./m455.ts";
-import {hn} from "./m251.ts";
-function kql(e){return e.find((t)=>t.type==="connected"&&t.name.includes("slack"))}
-async function Jkm(e,t){let n=kql(e);if(!n||n.type!=="connected")return[];try{let o=(await n.client.callTool({name:Ykm,arguments:{query:t,limit:20,channel_types:"public_channel,private_channel"}},void 0,{timeout:5000})).content;if(!Array.isArray(o))return[];let s=o.filter((i)=>i.type==="text").map((i)=>i.text).join(`
-`);return Zkm(Qkm(s))}catch(r){return logForDebugging(`Failed to fetch Slack channels: ${r}`),[]}}
-function Qkm(e){let t=e.trim();if(!t.startsWith("{"))return e;try{let n=Xkm().safeParse(qt(t));if(n.success)return n.data.results}catch{}return e}
-function Zkm(e){let t=[],n=new Set;for(let r of e.split(`
-`)){let o=r.match(/^Name:\s*#?([a-z0-9][a-z0-9_-]{0,79})\s*$/);if(o&&!n.has(o[1]))n.add(o[1]),t.push(o[1])}return t}
-function lJn(e){return kql(e)!==void 0}
-function Hql(){return wql}
-function Iql(e){let t=[],n=/(^|\s)#([a-z0-9][a-z0-9_-]{0,79})(?=\s|$)/g,r;while((r=n.exec(e))!==null){if(!aJn.has(r[2]))continue;let o=r.index+r[1].length;t.push({start:o,end:o+1+r[2].length})}return t}
-function eHm(e){let t=Math.max(e.lastIndexOf("-"),e.lastIndexOf("_"));return t>0?e.slice(0,t):e}
-function tHm(e,t){let n,r=0;for(let[o,s]of qAt)if(e.startsWith(o)&&o.length>r&&s.some((i)=>i.startsWith(t)))n=s,r=o.length;return n}
-async function Dql(e,t){if(!t)return[];let n=eHm(t),r=t.toLowerCase(),o=qAt.get(n)??tHm(n,r);if(!o)if(iJn===n&&oGt)o=await oGt;else{iJn=n,oGt=Jkm(e,n),o=await oGt,qAt.set(n,o);let s=aJn.size;for(let i of o)aJn.add(i);if(aJn.size!==s)wql++,Rql.emit();if(qAt.size>50)qAt.delete(qAt.keys().next().value);if(iJn===n)iJn=null,oGt=null}return o.filter((s)=>s.startsWith(r)).sort().slice(0,10).map((s)=>({id:`slack-channel-${s}`,displayText:`#${s}`}))}
-var Ykm="slack_search_channels",qAt,aJn,wql=0,Rql,xql,iJn=null,oGt=null,Xkm;
-var OPo=b(()=>{iv();qe();kg();Xt();qAt=new Map,aJn=new Set,Rql=ca(),xql=Rql.subscribe;Xkm=we(()=>hn.object({results:hn.string()}))});
-export {kql,Jkm,Qkm,Zkm,lJn,Hql,Iql,eHm,tHm,Dql,Ykm,qAt,aJn,wql,Rql,xql,iJn,oGt,Xkm,OPo};
+import {ft,b} from "../runtime.ts";
+import {setCseShimGate,toInfraSessionId} from "../src/core/2809_toInfraSessionId.ts";
+import {isCseShimEnabled,isBridgeEnabledBlocking,pH} from "../src/api/5227_isRunningInRemoteEnvironment.ts";
+import {gat,M3e} from "./m3341.ts";
+import {getAttestationFilterPolicy,Fj} from "../src/telemetry/3343_untrustedDeviceHint.ts";
+import {mIn,D_} from "../src/agent/2784_withFileTypes.ts";
+import {FKl,BKl} from "../src/agent/5321_isCompaction.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ce,Ct} from "./m197.ts";
+import {setInternalEventWriter,setInternalEventReader,clearInternalEventWriter,getCurrentSessionBridge,getCurrentSessionTitle,getCurrentSessionAiTitle,saveCustomTitle,getCurrentSessionAgentColor,_a} from "../src/permissions/5175_writeRemoteAgentMetadata.ts";
+import {nSe} from "../src/session/5045_request_id.ts";
+import {Nj,rle} from "../src/telemetry/3340_reason.ts";
+import {getBridgeAccessToken,getBridgeTokenOverride,getBridgeBaseUrl,getBridgeSessionNamePrefix,BY} from "./m4242.ts";
+import {BRIDGE_LOGIN_HINT} from "../src/core/4006_REMOTE_CONTROL_DISCONNECTED_MSG.ts";
+import {waitForPolicyLimitsToLoad,_B} from "../src/telemetry/5226_waitForPolicyLimitsToLoad.ts";
+import {isPolicyAllowed,Bu} from "./m2213.ts";
+import {getGlobalConfig,saveGlobalConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {getStoredOAuthTokenExpiresAt,checkAndRefreshOAuthTokenIfNeeded,handleOAuth401Error,readFreshOAuthAccessToken,lo} from "../src/config/2036_withOAuthRefreshLock.ts";
+import {aet,cet} from "./m2205.ts";
+import {getSessionId,lt} from "../src/session/0132_sent.ts";
+import {Iot,SW} from "../src/telemetry/2793_consumer.ts";
+import {Gye,CY,P_,po} from "../src/tools/5224_userPromptCount.ts";
+import {updateBridgeSessionTitle,getBridgeSession,updateBridgeSessionColorTag,ADe} from "./m4408.ts";
+import {Aue,kzn,RWe} from "../src/config/4798_systemPrompt.ts";
+import {getOrganizationUUID,aI} from "../src/config/1293_storeOAuthAccountInfo.ts";
+import {zYn,jYn} from "../src/config/5085_ISSUES_EXPLAINER.ts";
+import {getBranch,getRemoteUrlForBridge,ia} from "./m698.ts";
+import {XKl,QKl} from "../src/api/5327_Authorization.ts";
+import {c0l,VPe} from "../src/core/4898_type.ts";
+import {PKl,OKl} from "./m5319.ts";
+import {pae,oee} from "../src/session/2699_oee.ts";
+import {Vi,$d} from "../src/config/0620_$d.ts";
+import {Xpl,x8t} from "../src/telemetry/4531_agentPushNotifEnabled.ts";
+import {__,ix} from "./m3842.ts";
+import {generateFileSuggestions,globalFileIndexCache,Oft} from "../src/telemetry/4503_startBackgroundCacheRefresh.ts";
+import {readFileForRemote,s7t} from "./m5298.ts";
+import {KM,ri} from "../src/tools/2235_userFacingName.ts";
+import {uje,dje} from "./m618.ts";
+var NNo={};
+ft(NNo,{initReplBridge:()=>initReplBridge});
+async function initReplBridge(e){let{getToolPermissionContext:t,getTools:n,onInboundMessage:r,onPermissionResponse:o,onInterrupt:s,getInitializeState:i,onDialogKindsDeclared:a,onSetModel:l,onSetMaxThinkingTokens:c,onSetPermissionMode:u,onSetColor:d,onMcpAuthenticate:p,onMcpOauthCallbackUrl:m,onMcpReconnect:f,onMcpStatus:h,onGetContextUsage:g,onGetUsage:_,onStateChange:T,initialMessages:y,getMessages:S,initialName:E,outboundOnly:R,tags:w,reattachSessionId:H,reattachSequenceNum:k,enableSessionPersistence:I}=e??{};setCseShimGate(isCseShimEnabled),gat(getAttestationFilterPolicy);let D=0,O={onTransportPersistenceReady:(me,_e)=>{let de=++D;(async()=>{try{let ge=await mIn();await FKl(me,_e,ge)}catch(ge){logForDebugging(`[bridge:repl] Persistence sync failed: ${Ce(ge)}`,{level:"error"})}if(de!==D){logForDebugging("[bridge:repl] Transport torn down during sync \u2014 skipping writer install");return}setInternalEventWriter(me),setInternalEventReader(_e.readMain,_e.readSubagents),logForDebugging("[bridge:repl] Session persistence enabled \u2014 transcript writer + hydrate readers registered")})()},onTransportPersistenceTeardown:()=>{D++,clearInternalEventWriter()}},L=process.env.CLAUDE_BRIDGE_REATTACH_SESSION,P=L??H,M=process.env.CLAUDE_BRIDGE_REATTACH_SEQ;if(L)delete process.env.CLAUDE_BRIDGE_REATTACH_SESSION,delete process.env.CLAUDE_BRIDGE_REATTACH_SEQ,delete process.env.CLAUDE_BRIDGE_REATTACH_OUTBOUND_ONLY;let B=L?M?Number.parseInt(M,10)||void 0:void 0:k;if(!P){let me=getCurrentSessionBridge();if(me)P=me.id,B=me.seq,logForDebugging(`[bridge:repl] Reattaching to persisted bridge session ${me.id} at seq ${me.seq}`)}let N=nSe(getCurrentSessionBridge()?.declaredDialogKinds);if(N.length>0)a?.(N,"restored");if(!await isBridgeEnabledBlocking())return Nj("not_enabled","[bridge:repl] Skipping: bridge not enabled"),null;if(!getBridgeAccessToken())return Nj("no_oauth","[bridge:repl] Skipping: no OAuth tokens"),T?.("failed",BRIDGE_LOGIN_HINT),null;if(await waitForPolicyLimitsToLoad(),!isPolicyAllowed("allow_remote_control"))return Nj("policy_denied","[bridge:repl] Skipping: allow_remote_control policy not allowed"),T?.("failed","disabled by your organization's policy"),null;if(R&&!isPolicyAllowed("allow_remote_sessions"))return Nj("policy_denied","[bridge:repl] Skipping mirror: allow_remote_sessions policy not allowed"),T?.("failed","disabled by your organization's policy"),null;if(!getBridgeTokenOverride()){let me=getGlobalConfig();if(me.bridgeOauthDeadExpiresAt!=null&&(me.bridgeOauthDeadFailCount??0)>=3&&getStoredOAuthTokenExpiresAt()===me.bridgeOauthDeadExpiresAt)return logForDebugging(`[bridge:repl] Skipping: cross-process backoff (dead token seen ${me.bridgeOauthDeadFailCount} times)`),null;await checkAndRefreshOAuthTokenIfNeeded();let _e=getStoredOAuthTokenExpiresAt();if(_e!==null&&_e<=Date.now()){Nj("oauth_expired_unrefreshable","[bridge:repl] Skipping: OAuth token expired and refresh failed (re-login required)"),T?.("failed",BRIDGE_LOGIN_HINT);let de=_e;return saveGlobalConfig((ge)=>({...ge,bridgeOauthDeadExpiresAt:de,bridgeOauthDeadFailCount:ge.bridgeOauthDeadExpiresAt===de?(ge.bridgeOauthDeadFailCount??0)+1:1})),null}}let F=getBridgeBaseUrl(),V=`${getBridgeSessionNamePrefix()}-${aet()}`,G=!1,z=!1;if(E)V=E,G=!0,z=!0;else{let me=getSessionId(),_e=me?getCurrentSessionTitle(me):void 0,de=me?getCurrentSessionAiTitle(me):void 0;if(_e)V=_e,G=!0,z=!0;else if(de)V=de,G=!0;else if(y&&y.length>0)for(let ge=y.length-1;ge>=0;ge--){let Te=y[ge];if(!Iot(Te)||Gye(Te))continue;let he=CY(Te.message.content);if(!he)continue;let ye=LMm(he);if(!ye)continue;V=ye,G=!0;break}}let J=0,K,j=0,X,ee=new Set([V]),te=(me,_e,de)=>{G=!0,V=me,ee.add(me),logForDebugging(`[bridge:repl] derived title from message ${de}: ${me}`),updateBridgeSessionTitle(_e,me,{baseUrl:F,getAccessToken:getBridgeAccessToken}).catch(()=>{})},ne=(me,_e)=>{let de=++j,ge=J;Aue(me,AbortSignal.timeout(15000)).then(async(Te)=>{let he=()=>{let Oe=getCurrentSessionAiTitle(getSessionId());return Boolean(Oe&&!ee.has(Oe))},ye=()=>de!==j||K!==_e||z||getCurrentSessionTitle(getSessionId())||he();if(!Te||ye())return;let we=await getBridgeSession(_e,{baseUrl:F,getAccessToken:getBridgeAccessToken}).catch(()=>null);if(ye())return;if(we===null)return;if(we.title&&!ee.has(we.title)){X=_e;return}te(Te,_e,ge)})},se=(me)=>{let _e=me.trim();if(!_e)return{ok:!1,error:"title must be non-empty"};return V=_e,G=!0,z=!0,ee.add(_e),saveCustomTitle(getSessionId(),_e,void 0,"remote"),{ok:!0}},re=(me,_e)=>{if(z||X===_e)return!0;let de=getCurrentSessionTitle(getSessionId());if(de){if(!ee.has(de))getBridgeSession(_e,{baseUrl:F,getAccessToken:getBridgeAccessToken}).catch(()=>null).then((Te)=>{if(z||getCurrentSessionTitle(getSessionId())!==de)return;if(Te===null)return;if(Te.title&&!ee.has(Te.title)){X=_e;return}te(de,_e,J),z=!0});return!0}let ge=getCurrentSessionAiTitle(getSessionId());if(ge&&!ee.has(ge)){let Te=J;return getBridgeSession(_e,{baseUrl:F,getAccessToken:getBridgeAccessToken}).catch(()=>null).then((he)=>{if(z||getCurrentSessionTitle(getSessionId()))return;if(he===null)return;if(he.title&&!ee.has(he.title)){X=_e;return}te(ge,_e,Te)}),!0}if(K!==void 0&&K!==_e)J=0;if(K=_e,J++,J===1&&!G)ne(me,_e);else if(J===3){let Te=S?.(),he=Te?kzn(P_(Te)):me;ne(he,_e)}return J>=3},ue=200,le=await getOrganizationUUID();if(!le)return Nj("no_org_uuid","[bridge:repl] Skipping: no org UUID"),T?.("failed",BRIDGE_LOGIN_HINT),null;let ce=await zYn();if(ce)return Nj("version_too_old",`[bridge:repl] Skipping: ${ce}`,!0),T?.("failed","run `claude update` to upgrade"),null;let Se=await getBranch(),ie=await getRemoteUrlForBridge(),ae,pe=await XKl({reattachSessionId:P,reattachSequenceNum:B,baseUrl:F,orgUUID:le,title:V,getAccessToken:getBridgeAccessToken,onAuth401:handleOAuth401Error,onReadFreshOAuthToken:readFreshOAuthAccessToken,onProactiveRefresh:async()=>{await checkAndRefreshOAuthTokenIfNeeded()},toSDKMessages:(me)=>c0l(me,n?.()),initialHistoryCap:ue,initialMessages:y,gitRepoUrl:ie,branch:Se,onInboundMessage:r,onUserMessage:re,onSessionEstablished:(me)=>{if(ae?.teardown(),ae=PKl(toInfraSessionId(me),F,()=>{let de=getBridgeAccessToken();if(!de)return{};return{Authorization:`Bearer ${de}`}}),pae()&&!Vi())Xpl();let _e=getCurrentSessionAgentColor();if(_e&&_e!=="default")updateBridgeSessionColorTag(me,_e,__,{baseUrl:F,getAccessToken:getBridgeAccessToken})},onBeforePushTriggeringState:()=>ae?.pulseIfClientPresent(),onPermissionResponse:o,onInterrupt:s,getInitializeState:i,onDialogKindsDeclared:a,onSetModel:l,onSetMaxThinkingTokens:c,onSetPermissionMode:u,onRenameSession:se,onSetColor:d,async onFileSuggestions(me){return(await generateFileSuggestions(globalFileIndexCache,me,!0)).map((de)=>({path:de.displayText}))},onReadFile:(me,_e,de)=>readFileForRemote(me,_e,t?.()??KM(),de),onMcpAuthenticate:p,onMcpOauthCallbackUrl:m,onMcpReconnect:f,onMcpStatus:h,onGetContextUsage:g,onGetUsage:_,onStateChange:T,outboundOnly:R,tags:w,...I?O:{}});return OMm(pe,()=>ae)}
+function OMm(e,t){if(!e)return t()?.teardown(),null;let n=e.teardown.bind(e);return e.teardown=async(r)=>{t()?.teardown(),await n(r)},e}
+function LMm(e){let t=uje(e),r=(/^(.*?[.!?])\s/.exec(t)?.[1]??t).replace(/\s+/g," ").trim();if(!r)return;return r.length>ZKl?r.slice(0,ZKl-1)+"\u2026":r}
+var ZKl=50;
+var FNo=b(()=>{lt();Oft();OKl();x8t();aI();_B();Bu();ri();ix();oee();lo();tr();qe();dje();Ct();ia();SW();VPe();po();$d();s7t();D_();_a();RWe();cet();BY();pH();ADe();rle();M3e();BKl();QKl();jYn();Fj()});
+export {NNo,initReplBridge,OMm,LMm,ZKl,FNo};

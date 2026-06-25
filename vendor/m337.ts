@@ -1,11 +1,8 @@
 // @ts-nocheck
-import {ocr,og} from "./m325.ts";
-import {Yd,JI} from "./m347.ts";
+import {Ad,h0} from "./m349.ts";
 import {b} from "../runtime.ts";
-function ejo(e,t){let n={type:"number"};if(!e.checks)return n;for(let r of e.checks)switch(r.kind){case"int":n.type="integer",ocr(n,"type",r.message,t);break;case"min":if(t.target==="jsonSchema7")if(r.inclusive)og(n,"minimum",r.value,r.message,t);else og(n,"exclusiveMinimum",r.value,r.message,t);else{if(!r.inclusive)n.exclusiveMinimum=!0;og(n,"minimum",r.value,r.message,t)}break;case"max":if(t.target==="jsonSchema7")if(r.inclusive)og(n,"maximum",r.value,r.message,t);else og(n,"exclusiveMaximum",r.value,r.message,t);else{if(!r.inclusive)n.exclusiveMaximum=!0;og(n,"maximum",r.value,r.message,t)}break;case"multipleOf":og(n,"multipleOf",r.value,r.message,t);break}return n}
-var _cr=()=>{};
-function tjo(e,t){let n=t.target==="openAi",r={type:"object",properties:{}},o=[],s=e.shape();for(let a in s){let l=s[a];if(l===void 0||l._def===void 0)continue;let c=ICc(l);if(c&&n){if(l._def.typeName==="ZodOptional")l=l._def.innerType;if(!l.isNullable())l=l.nullable();c=!1}let u=Yd(l._def,{...t,currentPath:[...t.currentPath,"properties",a],propertyPath:[...t.currentPath,"properties",a]});if(u===void 0)continue;if(r.properties[a]=u,!c)o.push(a)}if(o.length)r.required=o;let i=HCc(e,t);if(i!==void 0)r.additionalProperties=i;return r}
-function HCc(e,t){if(e.catchall._def.typeName!=="ZodNever")return Yd(e.catchall._def,{...t,currentPath:[...t.currentPath,"additionalProperties"]});switch(e.unknownKeys){case"passthrough":return t.allowedAdditionalProperties;case"strict":return t.rejectedAdditionalProperties;case"strip":return t.removeAdditionalStrategy==="strict"?t.allowedAdditionalProperties:t.rejectedAdditionalProperties}}
-function ICc(e){try{return e.isOptional()}catch{return!0}}
-var ycr=b(()=>{JI()});
-export {ejo,_cr,tjo,HCc,ICc,ycr};
+function VKo(e){return e.target==="openApi3"?{enum:["null"],nullable:!0}:{type:"null"}}
+function zKo(e,t){if(t.target==="openApi3")return KKo(e,t);let n=e.options instanceof Map?Array.from(e.options.values()):e.options;if(n.every((r)=>(r._def.typeName in DCt)&&(!r._def.checks||!r._def.checks.length))){let r=n.reduce((o,s)=>{let i=DCt[s._def.typeName];return i&&!o.includes(i)?[...o,i]:o},[]);return{type:r.length>1?r:r[0]}}else if(n.every((r)=>r._def.typeName==="ZodLiteral"&&!r.description)){let r=n.reduce((o,s)=>{let i=typeof s._def.value;switch(i){case"string":case"number":case"boolean":return[...o,i];case"bigint":return[...o,"integer"];case"object":if(s._def.value===null)return[...o,"null"];case"symbol":case"undefined":case"function":default:return o}},[]);if(r.length===n.length){let o=r.filter((s,i,a)=>a.indexOf(s)===i);return{type:o.length>1?o:o[0],enum:n.reduce((s,i)=>s.includes(i._def.value)?s:[...s,i._def.value],[])}}}else if(n.every((r)=>r._def.typeName==="ZodEnum"))return{type:"string",enum:n.reduce((r,o)=>[...r,...o._def.values.filter((s)=>!r.includes(s))],[])};return KKo(e,t)}
+var DCt,KKo=(e,t)=>{let n=(e.options instanceof Map?Array.from(e.options.values()):e.options).map((r,o)=>Ad(r._def,{...t,currentPath:[...t.currentPath,"anyOf",`${o}`]})).filter((r)=>!!r&&(!t.strictUnions||typeof r==="object"&&Object.keys(r).length>0));return n.length?{anyOf:n}:void 0};
+var Zen=b(()=>{h0();DCt={ZodString:"string",ZodNumber:"number",ZodBigInt:"integer",ZodBoolean:"boolean",ZodNull:"null"}});
+export {VKo,zKo,DCt,KKo,Zen};

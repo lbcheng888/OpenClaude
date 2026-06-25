@@ -1,16 +1,12 @@
 // @ts-nocheck
-import {Wpn,Lme,Gpn} from "./m1699.ts";
-import {Mme,nRt} from "./m1702.ts";
-import {lJe} from "./m1689.ts";
 import {b} from "../runtime.ts";
-import {use} from "./m1698.ts";
-function ZGs(e={}){var t,n,r,o,s,i,a;let l=(n=(t=e.expectedContentTypes)===null||t===void 0?void 0:t.json)!==null&&n!==void 0?n:UNu,c=(o=(r=e.expectedContentTypes)===null||r===void 0?void 0:r.xml)!==null&&o!==void 0?o:$Nu,u=e.parseXML,d=e.serializerOptions,p={xml:{rootName:(s=d===null||d===void 0?void 0:d.xml.rootName)!==null&&s!==void 0?s:"",includeRoot:(i=d===null||d===void 0?void 0:d.xml.includeRoot)!==null&&i!==void 0?i:!1,xmlCharKey:(a=d===null||d===void 0?void 0:d.xml.xmlCharKey)!==null&&a!==void 0?a:Wpn}};return{name:qNu,async sendRequest(m,f){let A=await f(m);return GNu(l,c,A,p,u)}}}
-function jNu(e){let t,n=e.request,r=Mme(n),o=r===null||r===void 0?void 0:r.operationSpec;if(o)if(!(r===null||r===void 0?void 0:r.operationResponseGetter))t=o.responses[e.status];else t=r===null||r===void 0?void 0:r.operationResponseGetter(o,e);return t}
-function WNu(e){let t=e.request,n=Mme(t),r=n===null||n===void 0?void 0:n.shouldDeserialize,o;if(r===void 0)o=!0;else if(typeof r==="boolean")o=r;else o=r(e);return o}
-async function GNu(e,t,n,r,o){let s=await zNu(e,t,n,r,o);if(!WNu(s))return s;let i=Mme(s.request),a=i===null||i===void 0?void 0:i.operationSpec;if(!a||!a.responses)return s;let l=jNu(s),{error:c,shouldReturnResponse:u}=KNu(s,a,l,r);if(c)throw c;else if(u)return s;if(l){if(l.bodyMapper){let d=s.parsedBody;if(a.isXML&&l.bodyMapper.type.name===Lme.Sequence)d=typeof d==="object"?d[l.bodyMapper.xmlElementName]:[];try{s.parsedBody=a.serializer.deserialize(l.bodyMapper,d,"operationRes.parsedBody",r)}catch(p){throw new lJe(`Error ${p} occurred in deserializing the responseBody - ${s.bodyAsText}`,{statusCode:s.status,request:s.request,response:s})}}else if(a.httpMethod==="HEAD")s.parsedBody=n.status>=200&&n.status<300;if(l.headersMapper)s.parsedHeaders=a.serializer.deserialize(l.headersMapper,s.headers.toJSON(),"operationRes.parsedHeaders",{xml:{},ignoreUnknownProperties:!0})}return s}
-function VNu(e){let t=Object.keys(e.responses);return t.length===0||t.length===1&&t[0]==="default"}
-function KNu(e,t,n,r){var o,s,i,a,l;let c=200<=e.status&&e.status<300;if(VNu(t)?c:!!n)if(n){if(!n.isError)return{error:null,shouldReturnResponse:!1}}else return{error:null,shouldReturnResponse:!1};let d=n!==null&&n!==void 0?n:t.responses.default,p=((o=e.request.streamResponseStatusCodes)===null||o===void 0?void 0:o.has(e.status))?`Unexpected status code: ${e.status}`:e.bodyAsText,m=new lJe(p,{statusCode:e.status,request:e.request,response:e});if(!d&&!(((i=(s=e.parsedBody)===null||s===void 0?void 0:s.error)===null||i===void 0?void 0:i.code)&&((l=(a=e.parsedBody)===null||a===void 0?void 0:a.error)===null||l===void 0?void 0:l.message)))throw m;let f=d===null||d===void 0?void 0:d.bodyMapper,A=d===null||d===void 0?void 0:d.headersMapper;try{if(e.parsedBody){let h=e.parsedBody,g;if(f){let y=h;if(t.isXML&&f.type.name===Lme.Sequence){y=[];let T=f.xmlElementName;if(typeof h==="object"&&T)y=h[T]}g=t.serializer.deserialize(f,y,"error.response.parsedBody",r)}let _=h.error||g||h;if(m.code=_.code,_.message)m.message=_.message;if(f)m.response.parsedBody=g}if(e.headers&&A)m.response.parsedHeaders=t.serializer.deserialize(A,e.headers.toJSON(),"operationRes.parsedHeaders")}catch(h){m.message=`Error "${h.message}" occurred in deserializing the responseBody - "${e.bodyAsText}" for the default response.`}return{error:m,shouldReturnResponse:!1}}
-async function zNu(e,t,n,r,o){var s;if(!((s=n.request.streamResponseStatusCodes)===null||s===void 0?void 0:s.has(n.status))&&n.bodyAsText){let i=n.bodyAsText,a=n.headers.get("Content-Type")||"",l=!a?[]:a.split(";").map((c)=>c.toLowerCase());try{if(l.length===0||l.some((c)=>e.indexOf(c)!==-1))return n.parsedBody=JSON.parse(i),n;else if(l.some((c)=>t.indexOf(c)!==-1)){if(!o)throw Error("Parsing XML not supported.");let c=await o(i,r.xml);return n.parsedBody=c,n}}catch(c){let u=`Error "${c}" occurred while parsing the response body - ${n.bodyAsText}.`,d=c.code||lJe.PARSE_ERROR;throw new lJe(u,{code:d,statusCode:n.status,request:n.request,response:n})}}return n}
-var UNu,$Nu,qNu="deserializationPolicy";
-var eVs=b(()=>{use();Gpn();nRt();UNu=["application/json","text/json"],$Nu=["application/xml","application/atom+xml"]});
-export {ZGs,jNu,WNu,GNu,VNu,KNu,zNu,UNu,$Nu,qNu,eVs};
+import {KPr} from "./m1652.ts";
+import {fJs} from "./m1696.ts";
+import {hJs} from "./m1697.ts";
+import {gJs} from "./m1698.ts";
+import {_Js} from "./m1699.ts";
+import {Chn} from "./m1694.ts";
+import {yJs} from "./m1700.ts";
+import {RJs} from "./m1702.ts";
+var cse=b(()=>{KPr();fJs();hJs();gJs();_Js();Chn();yJs();RJs()});
+export {cse};

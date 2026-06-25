@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var vLn=X((wit)=>{Object.defineProperty(wit,"__esModule",{value:!0});wit.FilterStackFactory=wit.FilterStack=void 0;class Ueo{constructor(e){this.filters=e}sendMetadata(e){let t=e;for(let n=0;n<this.filters.length;n++)t=this.filters[n].sendMetadata(t);return t}receiveMetadata(e){let t=e;for(let n=this.filters.length-1;n>=0;n--)t=this.filters[n].receiveMetadata(t);return t}sendMessage(e){let t=e;for(let n=0;n<this.filters.length;n++)t=this.filters[n].sendMessage(t);return t}receiveMessage(e){let t=e;for(let n=this.filters.length-1;n>=0;n--)t=this.filters[n].receiveMessage(t);return t}receiveTrailers(e){let t=e;for(let n=this.filters.length-1;n>=0;n--)t=this.filters[n].receiveTrailers(t);return t}push(e){this.filters.unshift(...e)}getFilters(){return this.filters}}wit.FilterStack=Ueo;class $eo{constructor(e){this.factories=e}push(e){this.factories.unshift(...e)}clone(){return new $eo([...this.factories])}createFilter(){return new Ueo(this.factories.map((e)=>e.createFilter()))}}wit.FilterStackFactory=$eo});
-export {vLn};
+import {Q} from "../runtime.ts";
+import {IRa} from "./m3579.ts";
+var sNn=Q((BP_,xRa)=>{xRa.exports=IRa()});
+export {sNn};

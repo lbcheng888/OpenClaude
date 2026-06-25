@@ -1,7 +1,9 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function OCi(e){if(!e)return 0;let t=0,n=oad;n.length=0,n.push(e);while(n.length>0){let r=n.pop();if(t++,r.alternate)t++;if(r.sibling)n.push(r.sibling);if(r.child)n.push(r.child)}return n.length=0,t}
-function LCi(e){if(!e)return 0;let t=0,n=sad;n.length=0,n.push(e);while(n.length>0){let r=n.pop();if(t++,"childNodes"in r){let o=r.childNodes;for(let s=0;s<o.length;s++)n.push(o[s])}}return n.length=0,t}
-var oad,sad;
-var MCi=b(()=>{oad=[],sad=[]});
-export {OCi,LCi,oad,sad,MCi};
+import {uAn} from "./m2397.ts";
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function BaseText(e){let t=xIi.c(35),{color:n,backgroundColor:r,bold:o,dim:s,italic:i,underline:a,strikethrough:l,inverse:c,wrap:u,children:d,"aria-hidden":p,"aria-label":m,"aria-role":f,"aria-state":h}=e,g=i===void 0?!1:i,_=a===void 0?!1:a,T=l===void 0?!1:l,y=c===void 0?!1:c,S=u===void 0?"wrap":u;if(d===void 0||d===null)return null;let E;if(t[0]!==n)E=n&&{color:n},t[0]=n,t[1]=E;else E=t[1];let R;if(t[2]!==r)R=r&&{backgroundColor:r},t[2]=r,t[3]=R;else R=t[3];let w;if(t[4]!==s)w=s&&{dim:s},t[4]=s,t[5]=w;else w=t[5];let H;if(t[6]!==o)H=o&&{bold:o},t[6]=o,t[7]=H;else H=t[7];let k;if(t[8]!==g)k=g&&{italic:g},t[8]=g,t[9]=k;else k=t[9];let I;if(t[10]!==_)I=_&&{underline:_},t[10]=_,t[11]=I;else I=t[11];let D;if(t[12]!==T)D=T&&{strikethrough:T},t[12]=T,t[13]=D;else D=t[13];let O;if(t[14]!==y)O=y&&{inverse:y},t[14]=y,t[15]=O;else O=t[15];let L;if(t[16]!==k||t[17]!==I||t[18]!==D||t[19]!==O||t[20]!==E||t[21]!==R||t[22]!==w||t[23]!==H)L={...E,...R,...w,...H,...k,...I,...D,...O},t[16]=k,t[17]=I,t[18]=D,t[19]=O,t[20]=E,t[21]=R,t[22]=w,t[23]=H,t[24]=L;else L=t[24];let P=L,M=h_d[S],B;if(t[25]!==p||t[26]!==m||t[27]!==f||t[28]!==h)B=uAn(p,m,f,h),t[25]=p,t[26]=m,t[27]=f,t[28]=h,t[29]=B;else B=t[29];let N;if(t[30]!==d||t[31]!==M||t[32]!==B||t[33]!==P)N=DIi.jsx("ink-text",{style:M,textStyles:P,accessibility:B,children:d}),t[30]=d,t[31]=M,t[32]=B,t[33]=P,t[34]=N;else N=t[34];return N}
+var xIi,DIi,h_d;
+var u2e=b(()=>{xIi=x(tt(),1),DIi=x(oe(),1),h_d={wrap:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap"},"wrap-trim":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap-trim"},"wrap-stream":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"wrap-stream"},end:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"end"},middle:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"middle"},"truncate-end":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-end"},truncate:{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate"},"truncate-middle":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-middle"},"truncate-start":{flexGrow:0,flexShrink:1,flexDirection:"row",textWrap:"truncate-start"}}});
+export {BaseText,xIi,DIi,h_d,u2e};

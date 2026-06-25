@@ -1,6 +1,24 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {_Cl,gCl} from "./m4890.ts";
-var Ksm,kvo;
-var yCl=b(()=>{Ksm={type:"local-jsx",name:"theme",description:"Change the theme",requires:{ink:!0},load:()=>Promise.resolve().then(() => (_Cl(),gCl))},kvo=Ksm});
-export {Ksm,kvo,yCl};
+import {useTheme} from "./m2285.ts";
+import {gL,cx} from "../src/artifact/4323_cx.ts";
+import {KM,ri} from "../src/tools/2235_userFacingName.ts";
+import {SY,xdt} from "./m4031.ts";
+import {Oo,ss} from "./m2553.ts";
+import {fl,po} from "../src/tools/5224_userPromptCount.ts";
+import {Text} from "./m2433.ts";
+import {KIl,VIl,WTe} from "./m4890.ts";
+import {formatNumber,Xo} from "./m240.ts";
+import {at,Wo} from "./m2557.ts";
+import {bn,Is} from "./m2565.ts";
+import {Box} from "./m2432.ts";
+import {Pjn,TIo} from "../src/tools/4890_theme.ts";
+import {O3n,umo} from "./m4057.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function jIl(e){let t=zIl.c(63),{agent:n,onDone:r,onKillAgent:o,onBack:s,killAllAgentsShortcut:i}=e,[a]=useTheme(),l;if(t[0]===Symbol.for("react.memo_cache_sentinel"))l=gL(KM()),t[0]=l;else l=t[0];let c=l,u=SY(n.startTime,n.status==="running",1000,n.totalPausedMs??0,n.endTime),d;if(t[1]!==r)d={"confirm:yes":r},t[1]=r,t[2]=d;else d=t[2];let p;if(t[3]===Symbol.for("react.memo_cache_sentinel"))p={context:"Confirmation"},t[3]=p;else p=t[3];Oo(d,p);let m;if(t[4]!==n.status||t[5]!==s||t[6]!==r||t[7]!==o)m=(X)=>{if(X.key===" ")X.preventDefault(),r();else if(X.key==="left"&&s)X.preventDefault(),s();else if(X.key==="x"&&!X.ctrl&&!X.meta&&n.status==="running"&&o)X.preventDefault(),o()},t[4]=n.status,t[5]=s,t[6]=r,t[7]=o,t[8]=m;else m=t[8];let f=m,h;if(t[9]!==n.prompt)h=fl(n.prompt,"plan"),t[9]=n.prompt,t[10]=h;else h=t[10];let g=h,_=n.prompt.length>300?n.prompt.substring(0,297)+"\u2026":n.prompt,T=n.result?.totalTokens??n.progress?.tokenCount,y=n.result?.totalToolUseCount??n.progress?.toolUseCount,S=n.selectedAgent?.agentType??"agent",E=n.description||"Async agent",R;if(t[11]!==S||t[12]!==E)R=wT.jsxs(Text,{children:[S," \u203A"," ",E]}),t[11]=S,t[12]=E,t[13]=R;else R=t[13];let w=R,H;if(t[14]!==n.status)H=n.status!=="running"&&wT.jsxs(Text,{color:KIl(n.status),children:[VIl(n.status)," ",n.status==="completed"?"Completed":n.status==="failed"?"Failed":"Stopped"," \xB7 "]}),t[14]=n.status,t[15]=H;else H=t[15];let k;if(t[16]!==T)k=T!==void 0&&T>0&&wT.jsxs(wT.Fragment,{children:[" \xB7 ",formatNumber(T)," tokens"]}),t[16]=T,t[17]=k;else k=t[17];let I;if(t[18]!==y)I=y!==void 0&&y>0&&wT.jsxs(wT.Fragment,{children:[" ","\xB7 ",y," ",y===1?"tool":"tools"]}),t[18]=y,t[19]=I;else I=t[19];let D;if(t[20]!==u||t[21]!==k||t[22]!==I)D=wT.jsxs(Text,{dimColor:!0,children:[u,k,I]}),t[20]=u,t[21]=k,t[22]=I,t[23]=D;else D=t[23];let O;if(t[24]!==D||t[25]!==H)O=wT.jsxs(Text,{children:[H,D]}),t[24]=D,t[25]=H,t[26]=O;else O=t[26];let L=O,P;if(t[27]!==s)P=s&&wT.jsx(at,{chord:"left",action:"go back"}),t[27]=s,t[28]=P;else P=t[28];let M;if(t[29]===Symbol.for("react.memo_cache_sentinel"))M=wT.jsx(at,{chord:["escape","enter","space"],action:"close"}),t[29]=M;else M=t[29];let B;if(t[30]!==n.status||t[31]!==o)B=n.status==="running"&&o&&wT.jsx(at,{chord:"x",action:"stop"}),t[30]=n.status,t[31]=o,t[32]=B;else B=t[32];let N;if(t[33]!==n.status||t[34]!==i)N=n.status==="running"&&i&&wT.jsx(at,{chord:i,action:"stop all agents",format:{keyCase:"lower"}}),t[33]=n.status,t[34]=i,t[35]=N;else N=t[35];let F;if(t[36]!==P||t[37]!==B||t[38]!==N)F=wT.jsxs(bn,{children:[P,M,B,N]}),t[36]=P,t[37]=B,t[38]=N,t[39]=F;else F=t[39];let V;if(t[40]!==n.progress||t[41]!==n.status||t[42]!==a)V=n.status==="running"&&n.progress?.recentActivities&&n.progress.recentActivities.length>0&&wT.jsxs(Box,{flexDirection:"column",children:[wT.jsx(Text,{bold:!0,dimColor:!0,children:"Progress"}),n.progress.recentActivities.map((X,ee)=>wT.jsxs(Text,{dimColor:ee<n.progress.recentActivities.length-1,wrap:"truncate-end",children:[ee===n.progress.recentActivities.length-1?"\u203A ":"  ",Pjn(X,c,a)]},ee))]}),t[40]=n.progress,t[41]=n.status,t[42]=a,t[43]=V;else V=t[43];let G;if(t[44]!==_||t[45]!==g)G=g?wT.jsx(Box,{marginTop:1,children:wT.jsx(O3n,{addMargin:!1,planContent:g})}):wT.jsxs(Box,{flexDirection:"column",marginTop:1,children:[wT.jsx(Text,{bold:!0,dimColor:!0,children:"Prompt"}),wT.jsx(Text,{wrap:"wrap",children:_})]}),t[44]=_,t[45]=g,t[46]=G;else G=t[46];let z;if(t[47]!==n.error||t[48]!==n.status)z=n.status==="failed"&&n.error&&wT.jsxs(Box,{flexDirection:"column",marginTop:1,children:[wT.jsx(Text,{bold:!0,color:"error",children:"Error"}),wT.jsx(Text,{color:"error",wrap:"wrap",children:n.error})]}),t[47]=n.error,t[48]=n.status,t[49]=z;else z=t[49];let J;if(t[50]!==V||t[51]!==G||t[52]!==z)J=wT.jsxs(Box,{flexDirection:"column",children:[V,G,z]}),t[50]=V,t[51]=G,t[52]=z,t[53]=J;else J=t[53];let K;if(t[54]!==r||t[55]!==L||t[56]!==F||t[57]!==J||t[58]!==w)K=wT.jsx(preInitQueue,{title:w,subtitle:L,onCancel:r,color:"background",inputGuide:F,children:J}),t[54]=r,t[55]=L,t[56]=F,t[57]=J,t[58]=w,t[59]=K;else K=t[59];let j;if(t[60]!==f||t[61]!==K)j=wT.jsx(Box,{flexDirection:"column",tabIndex:0,autoFocus:!0,onKeyDown:f,children:K}),t[60]=f,t[61]=K,t[62]=j;else j=t[62];return j}
+var zIl,wT;
+var YIl=b(()=>{xdt();je();ss();ri();cx();Xo();po();Is();di();Wo();umo();TIo();WTe();zIl=x(tt(),1),wT=x(oe(),1)});
+export {jIl,zIl,wT,YIl};

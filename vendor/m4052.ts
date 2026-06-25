@@ -1,19 +1,18 @@
 // @ts-nocheck
-import {mr,ki} from "./m2453.ts";
-import {sG,vce} from "../src/telemetry/4046_oldStart.ts";
-import {zd,dr} from "./m231.ts";
-import {YSe} from "../src/api/0459_getOauthConfig.ts";
-import {wae,Wnt} from "./m3008.ts";
-import {mU,kIe} from "./m4051.ts";
-import {b9,lqe} from "./m3975.ts";
-import {NoSelect} from "./m2437.ts";
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function IUa(e){let t=HUa.c(15),{file_path:n,content:r,fileExists:o,oldContent:s}=e,{columns:i}=mr(),a;e:{if(!o){a=null;break e}let m;if(t[0]!==r||t[1]!==n||t[2]!==s)m=sG({filePath:n,fileContents:s,edits:[{old_string:s,new_string:r,replace_all:!1}]}),t[0]=r,t[1]=n,t[2]=s,t[3]=m;else m=t[3];a=m}let l=a,c;if(t[4]!==r)c=zd(r),t[4]=r,t[5]=c;else c=t[5];let u=c,d;if(t[6]!==i||t[7]!==r||t[8]!==n||t[9]!==u||t[10]!==l||t[11]!==s)d=l?YSe(l.map((m)=>jte.createElement(wae,{key:m.newStart,patch:m,dim:!1,filePath:n,firstLine:u,fileContent:s,width:i-2})),ewp):jte.createElement(mU,{code:r||"(No content)",filePath:n}),t[6]=i,t[7]=r,t[8]=n,t[9]=u,t[10]=l,t[11]=s,t[12]=d;else d=t[12];let p;if(t[13]!==d)p=jte.createElement(b9,{paddingX:1},d),t[13]=d,t[14]=p;else p=t[14];return p}
-function ewp(e){return jte.createElement(NoSelect,{fromLeftEdge:!0,key:`ellipsis-${e}`},jte.createElement(Text,{dimColor:!0},"..."))}
-var HUa,jte;
-var DUa=b(()=>{ki();ze();vce();dr();lqe();kIe();Wnt();HUa=M(rt(),1),jte=M(Te(),1)});
-export {IUa,ewp,HUa,jte,DUa};
+import {ZPn} from "../src/core/3298_result.ts";
+import {Yn,Pl} from "./m2465.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {S1,sHe} from "./m2816.ts";
+import {at,Wo} from "./m2557.ts";
+import {C3e,nOn} from "./m3299.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function EDp(e){if(!e.match(/<sandbox_violations>([\s\S]*?)<\/sandbox_violations>/))return{cleanedStderr:e};return{cleanedStderr:ZPn(e).trim()}}
+function CDp(e){let t=e.match(D4a);if(!t)return{cleanedStderr:e,cwdResetWarning:null};let n=t[1]??null;return{cleanedStderr:e.replace(D4a,"").trim(),cwdResetWarning:n}}
+function q6e(e){let t=P4a.c(34),{content:n,verbose:r,timeoutMs:o}=e,{stdout:s,stderr:i,isImage:a,returnCodeInterpretation:l,noOutputExpected:c,backgroundTaskId:u}=n,d=s===void 0?"":s,p=i===void 0?"":i,m,f,h,g,_,T,y;if(t[0]!==a||t[1]!==p||t[2]!==d||t[3]!==r){y=Symbol.for("react.early_return_sentinel");e:{let{cleanedStderr:H}=EDp(p);if({cleanedStderr:h,cwdResetWarning:f}=CDp(H),a){let k;if(t[11]===Symbol.for("react.memo_cache_sentinel"))k=K1.jsx(Yn,{height:1,children:K1.jsx(Text,{dimColor:!0,children:"[Image data detected and sent to Claude]"})}),t[11]=k;else k=t[11];y=k;break e}if(m=Box,g="column",t[12]!==d||t[13]!==r)_=d!==""?K1.jsx(S1,{content:d,verbose:r}):null,t[12]=d,t[13]=r,t[14]=_;else _=t[14];T=h.trim()!==""?K1.jsx(S1,{content:h,verbose:r,isError:!0}):null}t[0]=a,t[1]=p,t[2]=d,t[3]=r,t[4]=m,t[5]=f,t[6]=h,t[7]=g,t[8]=_,t[9]=T,t[10]=y}else m=t[4],f=t[5],h=t[6],g=t[7],_=t[8],T=t[9],y=t[10];if(y!==Symbol.for("react.early_return_sentinel"))return y;let S;if(t[15]!==f)S=f?K1.jsx(Yn,{children:K1.jsx(Text,{dimColor:!0,children:f})}):null,t[15]=f,t[16]=S;else S=t[16];let E;if(t[17]!==u||t[18]!==f||t[19]!==c||t[20]!==l||t[21]!==h||t[22]!==d)E=d===""&&h.trim()===""&&!f?K1.jsx(Yn,{height:1,children:K1.jsx(Text,{dimColor:!0,children:u?K1.jsxs(K1.Fragment,{children:["Running in the background"," ",K1.jsx(at,{chord:"down",action:"manage",parens:!0})]}):l||(c?"Done":"(No output)")})}):null,t[17]=u,t[18]=f,t[19]=c,t[20]=l,t[21]=h,t[22]=d,t[23]=E;else E=t[23];let R;if(t[24]!==o)R=o&&K1.jsx(Yn,{children:K1.jsx(C3e,{timeoutMs:o})}),t[24]=o,t[25]=R;else R=t[25];let w;if(t[26]!==m||t[27]!==R||t[28]!==g||t[29]!==_||t[30]!==T||t[31]!==S||t[32]!==E)w=K1.jsxs(m,{flexDirection:g,children:[_,T,S,E,R]}),t[26]=m,t[27]=R,t[28]=g,t[29]=_,t[30]=T,t[31]=S,t[32]=E,t[33]=w;else w=t[33];return w}
+var P4a,K1,D4a;
+var x3n=b(()=>{Wo();Pl();sHe();nOn();je();P4a=x(tt(),1),K1=x(oe(),1),D4a=/(?:^|\n)(Shell cwd was reset to .+)$/});
+export {EDp,CDp,q6e,P4a,K1,D4a,x3n};

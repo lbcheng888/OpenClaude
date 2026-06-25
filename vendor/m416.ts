@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var tWo=X((tZt)=>{Object.defineProperty(tZt,"__esModule",{value:!0});tZt.DiscrError=void 0;var eWo;(function(e){e.Tag="tag",e.Mapping="mapping"})(eWo||(tZt.DiscrError=eWo={}))});
-export {tWo};
+import {Q} from "../runtime.ts";
+var Kjo=Q((Aze)=>{Object.defineProperty(Aze,"__esModule",{value:!0});Aze.contentVocabulary=Aze.metadataVocabulary=void 0;Aze.metadataVocabulary=["title","description","default","deprecated","readOnly","writeOnly","examples"];Aze.contentVocabulary=["contentMediaType","contentEncoding","contentSchema"]});
+export {Kjo};

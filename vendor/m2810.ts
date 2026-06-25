@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {l3i,a3i} from "./m2809.ts";
-function c3i(e){for(let[t,n]of Object.entries(_Hd))if(!e.getLanguage(t))e.registerLanguage(t,n)}
-var _Hd;
-var u3i=b(()=>{l3i();_Hd={cedar:a3i}});
-export {c3i,_Hd,u3i};
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+var RWi,tHe;
+var L1t=b(()=>{RWi=x(et(),1),tHe=RWi.createContext(!1)});
+export {RWi,tHe,L1t};

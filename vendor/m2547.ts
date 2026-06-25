@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {qH,Iwe} from "../src/tui/2545_current.ts";
-import {at,rs} from "./m2546.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function lr(e){let t=cIi.c(5),{action:n,context:r,fallback:o,description:s,parens:i,bold:a}=e,l=qH(n,r,o),c;if(t[0]!==a||t[1]!==l||t[2]!==s||t[3]!==i)c=p3r.createElement(at,{chord:l,action:s,parens:i,bold:a}),t[0]=a,t[1]=l,t[2]=s,t[3]=i,t[4]=c;else c=t[4];return c}
-var cIi,p3r;
-var readRoster=b(()=>{Iwe();rs();cIi=M(rt(),1),p3r=M(Te(),1)});
-export {lr,cIi,p3r,readRoster};
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function x2e(e){let t=mMi.c(3),{char:n,index:r,glimmerIndex:o,messageColor:s,shimmerColor:i}=e,a=r===o,l=Math.abs(r-o)===1,u=a||l?i:s,d;if(t[0]!==n||t[1]!==u)d=fMi.jsx(Text,{color:u,children:n}),t[0]=n,t[1]=u,t[2]=d;else d=t[2];return d}
+var mMi,fMi;
+var TOt=b(()=>{je();mMi=x(tt(),1),fMi=x(oe(),1)});
+export {x2e,mMi,fMi,TOt};

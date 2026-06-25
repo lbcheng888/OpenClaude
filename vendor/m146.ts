@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {yzt,WorkloadIdentityError,cSe,gzt,s$o,Azt,OAUTH_API_BETA_HEADER,C3,_zt,XWe,SX} from "./m138.ts";
-import {bX} from "./m139.ts";
-import {MV} from "../src/core/0138_key.ts";
-import {Ezt,R_t} from "../src/core/0144_fromFile.ts";
+import {Qs,YH} from "./m137.ts";
 import {b} from "../runtime.ts";
-function S$o(e){return async(t)=>{let n=await import("fs");await yzt(e.credentialsPath,e.onSafetyWarning);let r;try{r=await n.promises.readFile(e.credentialsPath,"utf-8")}catch(h){throw new WorkloadIdentityError(`Credentials file not found at ${e.credentialsPath}: ${h}`)}let o;try{o=JSON.parse(r)}catch(h){throw new WorkloadIdentityError(`Credentials file at ${e.credentialsPath} is not valid JSON: ${h}`)}let s=o.access_token;if(!s)throw new WorkloadIdentityError(`Credentials file at ${e.credentialsPath} must include 'access_token'`);let i=o.expires_at;if(!t?.forceRefresh&&(i==null||bX()<i-cSe))return{token:s,expiresAt:i??null};let a=o.refresh_token;if(!e.clientId||!a)throw new WorkloadIdentityError(`Access token at ${e.credentialsPath} has expired and no refresh is available (client_id ${e.clientId?"set":"empty"}, refresh_token ${a?"set":"empty"})`);gzt(e.baseURL);let l={grant_type:s$o,refresh_token:a,client_id:e.clientId},c=`${e.baseURL}${Azt}`,u;try{u=await e.fetch(c,{method:"POST",headers:{"Content-Type":"application/json","anthropic-beta":OAUTH_API_BETA_HEADER,"User-Agent":e.userAgent||`anthropic-sdk-typescript/${MV} userOAuthProvider`},body:JSON.stringify(l)})}catch(h){throw new WorkloadIdentityError(`User OAuth refresh failed to reach token endpoint: ${h}`)}let d=u.headers.get("Request-Id");if(!u.ok){let h=await u.text().catch(()=>"");throw new WorkloadIdentityError(`User OAuth refresh failed (HTTP ${u.status}): ${C3(h)}`,u.status,C3(h),d)}let p=await _zt(u,d),m=Number(p.expires_in);if(!Number.isFinite(m))throw new WorkloadIdentityError(`User OAuth refresh response missing or invalid expires_in: ${JSON.stringify(C3(p))}`,u.status,C3(p),d);let f=bX()+m,A=p.refresh_token||a;return await XWe(e.credentialsPath,{...o,version:Ezt,type:"oauth_token",access_token:p.access_token,expires_at:f,refresh_token:A}),{token:p.access_token,expiresAt:f}}}
-var b$o=b(()=>{R_t();SX()});
-export {S$o,b$o};
+function dlr(e){if(!e)throw new Qs("Identity token file path is empty");return async()=>{let t=await import("fs"),n;try{n=await t.promises.readFile(e,"utf-8")}catch(o){throw new Qs(`Failed to read identity token file at ${e}: ${o}`)}let r=n.trim();if(!r)throw new Qs(`Identity token file at ${e} is empty`);return r}}
+function l5o(e){if(!e)throw new Qs("Identity token value is empty");return()=>e}
+var c5o=b(()=>{YH()});
+export {dlr,l5o,c5o};

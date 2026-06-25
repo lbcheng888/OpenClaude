@@ -1,10 +1,24 @@
 // @ts-nocheck
-import {executeHooksOutsideREPL,createBaseHookInput,yp} from "../src/tools/5171_shouldSkipHookDueToTrust.ts";
-import {Tnt,K2e} from "./m2764.ts";
-import {Ep} from "./m4028.ts";
+import {c1,formatPermissionRule} from "./m2695.ts";
 import {b} from "../runtime.ts";
-async function g1l(e,t){let n=await executeHooksOutsideREPL({hookInput:e,timeoutMs:t});if(n.length>0)Tnt();let r=n.flatMap((s)=>s.watchPaths??[]),o=n.map((s)=>s.systemMessage).filter((s)=>!!s);return{results:n,watchPaths:r,systemMessages:o}}
-function executeCwdChangedHooks(e,t,n=Ep){let r={...createBaseHookInput(void 0),hook_event_name:"CwdChanged",old_cwd:e,new_cwd:t};return g1l(r,n)}
-function executeFileChangedHooks(e,t,n=Ep){let r={...createBaseHookInput(void 0),hook_event_name:"FileChanged",file_path:e,event:t};return g1l(r,n)}
-var _1l=b(()=>{yp();K2e()});
-export {g1l,executeCwdChangedHooks,executeFileChangedHooks,_1l};
+function y$l(e){let t=[],n=[];for(let r of GVt(e.schedule))if(c1(r))n.push({type:"cron",expression:r});else t.push(`invalid cron expression "${r}" in schedule`);for(let r of _Po(e.on)){let{trigger:o,warnings:s}=mRm(r);if(t.push(...s),o)n.push(o)}return{triggers:n,warnings:t}}
+function mRm(e){if(typeof e==="string"){let t=e.trim();if(g$l.test(t))return{trigger:WVt(t,[]),warnings:[]};return yRm(t)}if(VVt(e)){let t=[],n=typeof e.event==="string"?e.event.trim():"";if(!g$l.test(n))return{trigger:null,warnings:[`invalid event "${n||"<missing>"}" in on: entry`]};let r=[],o=GVt(e.branches);if(o.length>0)r.push({field:"ref",op:"in",values:o});let s=GVt(e.paths);if(s.length>0)r.push({field:"paths",op:"glob_any",values:s});let i=GVt(e.labels);if(i.length>0)r.push({field:"labels",op:"in",values:i});if(typeof e.channel==="string"&&e.channel.trim()!=="")r.push({field:"channel",op:"eq",values:[SRm(e.channel)]});r.push(...fRm(e.where,t));for(let a of _Po(e.filter)){let l=TRm(a);if(l)r.push(l)}return{trigger:WVt(n,r),warnings:t}}return{trigger:null,warnings:["on: entry must be a string or {event: ...} mapping"]}}
+function fRm(e,t){if(e===void 0)return[];if(Array.isArray(e)){let n=[];for(let r of e){if(!VVt(r)||Object.keys(r).length!==1){t.push("where: list element must be a single-field map {field: predicate}");continue}n.push(..._$l(r,t))}return n}if(VVt(e))return _$l(e,t);return t.push("where: must be a map of field\u2192predicate, or a list of single-field maps"),[]}
+function _$l(e,t){let n=[];for(let[r,o]of Object.entries(e))if(o===null||o===void 0)t.push(`where: missing predicate for "${r}"`);else if(jJn(o))n.push({field:r,op:"eq",values:[YJn(o)]});else if(Array.isArray(o))if(o.length===0)t.push(`where: empty list for "${r}"`);else if(o.every(jJn))n.push({field:r,op:"in",values:o.map(YJn)});else t.push(`where: list for "${r}" mixes scalars and objects; use {one_of: [...]} or an op object`);else if(VVt(o)){let s=Object.keys(o);if(s.length===0)t.push(`where: empty predicate for "${r}"`);for(let i of s){let a=hRm(r,i,o[i],t);if(a)n.push(a)}}else t.push(`where: unsupported predicate for "${r}"`);return n}
+function hRm(e,t,n,r){let o=t.toLowerCase(),s=T$l[o];if(!s){let i=gRm(o);return r.push(`where: unknown op "${t}" on "${e}"${i?` (did you mean "${i}"?)`:""}; valid ops: ${S$l.join(", ")}`),null}if(s.list){if(!Array.isArray(n))return r.push(`where: "${t}" on "${e}" takes a list; use is/is_not for a single value`),null;if(n.length===0)return r.push(`where: "${t}" on "${e}" needs at least one value`),null;if(!n.every(jJn))return r.push(`where: "${t}" on "${e}" list must contain scalars`),null;return{field:e,op:s.op,values:n.map(YJn)}}if(Array.isArray(n))return r.push(`where: "${t}" on "${e}" takes a single value; use one_of/none_of for a list`),null;if(!jJn(n))return r.push(`where: "${t}" on "${e}" needs a scalar value`),null;return{field:e,op:s.op,values:[YJn(n)]}}
+function jJn(e){return typeof e==="string"||typeof e==="number"||typeof e==="boolean"}
+function YJn(e){return typeof e==="string"?e:String(e)}
+function gRm(e){let t,n=3;for(let r of S$l){let o=_Rm(e,r);if(o<n)n=o,t=r}return t}
+function _Rm(e,t){let n=Array.from({length:t.length+1},(r,o)=>o);for(let r=1;r<=e.length;r++){let o=n[0];n[0]=r;for(let s=1;s<=t.length;s++){let i=n[s];n[s]=Math.min(n[s]+1,n[s-1]+1,o+(e[r-1]===t[s-1]?0:1)),o=i}}return n[t.length]}
+function yRm(e){let t=e.match(/^cron\(\s*(.+?)\s*\)$/);if(t){let r=t[1];if(!c1(r))return{trigger:null,warnings:[`invalid cron expression in "${e}"`]};return{trigger:{type:"cron",expression:r},warnings:[`deprecated 'on: ${e}'; use top-level 'schedule: "${r}"'`]}}if(e==="github:pull-request-opened")return{trigger:WVt("github.pull_request.opened",[]),warnings:[`deprecated 'on: ${e}'; use 'on: github.pull_request.opened'`]};if(e==="github:pull-request-merged")return{trigger:WVt("github.pull_request.merged",[]),warnings:[`deprecated 'on: ${e}'; use 'on: github.pull_request.merged'`]};let n=e.match(/^slack:new-message\(\s*channel\s*:\s*#?([^\s)]+)\s*\)$/);if(n){let r=n[1];return{trigger:WVt("slack.message",[{field:"channel",op:"eq",values:[r]}]),warnings:[`deprecated 'on: ${e}'; use 'on: {event: slack.message, channel: ${r}}'`]}}return{trigger:null,warnings:[`invalid trigger "${e}"`]}}
+function WVt(e,t){let n=e.indexOf(".");return{type:"event",provider:e.slice(0,n),event:e,filter:t}}
+function TRm(e){if(!VVt(e))return null;let t=typeof e.field==="string"?e.field:"",n=typeof e.op==="string"?e.op:"";if(!t||!n)return null;return{field:t,op:n,values:GVt(e.values)}}
+function SRm(e){let t=e.trim();return t.startsWith("#")?t.slice(1):t}
+function VVt(e){return typeof e==="object"&&e!==null&&!Array.isArray(e)}
+function _Po(e){if(e===void 0||e===null)return[];return Array.isArray(e)?e:[e]}
+function GVt(e){return _Po(e).map((t)=>typeof t==="string"?t.trim():"").filter((t)=>t!=="")}
+function bRm(e){switch(e.type){case"cron":return`cron(${e.expression})`;case"event":{let t=e.filter.find((n)=>n.field==="channel")?.values[0];return t?`${e.event}#${t}`:e.event}}}
+function b$l(e){return e.map(bRm).join(", ")}
+var g$l,T$l,S$l;
+var JJn=b(()=>{formatPermissionRule();g$l=/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/;T$l={is:{op:"eq",list:!1},is_not:{op:"not_in",list:!1},one_of:{op:"in",list:!0},none_of:{op:"not_in",list:!0},starts_with:{op:"starts_with",list:!1},contains:{op:"contains",list:!1},matches:{op:"matches",list:!1},glob:{op:"glob",list:!1},eq:{op:"eq",list:!1},in:{op:"in",list:!0},not_in:{op:"not_in",list:!0}},S$l=Object.keys(T$l)});
+export {y$l,mRm,fRm,_$l,hRm,jJn,YJn,gRm,_Rm,yRm,WVt,TRm,SRm,VVt,_Po,GVt,bRm,b$l,g$l,T$l,S$l,JJn};

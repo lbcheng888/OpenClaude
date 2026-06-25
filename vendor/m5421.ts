@@ -1,9 +1,11 @@
 // @ts-nocheck
-import {dhe,Rnt,sA} from "./m2782.ts";
-import {IWl,DWl} from "./m5420.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function PWl({executeQueuedInput:e,hasActiveLocalJsxUI:t,queryGuard:n}){let r=IGt.useSyncExternalStore(n.subscribe,n.getSnapshot),o=IGt.useSyncExternalStore(dhe,Rnt);IGt.useEffect(()=>{if(r)return;if(t)return;if(o.length===0)return;IWl({executeInput:e})},[o,r,e,t,n])}
-var IGt;
-var OWl=b(()=>{sA();DWl();IGt=M(Te(),1)});
-export {PWl,IGt,OWl};
+import {gracefulShutdown,isAmberSentinelEnabled} from "../src/config/3348_flushAnalyticsSinks.ts";
+import {ttr,rBo} from "../src/tui/5420_adapter.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function wJl({session:e,setMessages:t,setIsLoading:n,requestDialog:r,toolPermissionContext:o,tools:s,permissionMode:i}){let a=vJl.useMemo(()=>{if(!e)return;return{label:"ssh",createManager:(l)=>e.createManager(l),onDisconnected:(l)=>{let c=e.getStderrTail().trim(),u=e.proc.exitCode,d=l?"Remote session ended.":"SSH session failed before connecting.";if(c&&(!l||u!==0))d+=`
+Remote stderr (exit ${u??"signal "+e.proc.signalCode}):
+${c}`;gracefulShutdown(1,"other",{finalMessage:d})},cleanup:()=>e.proxy?.stop()}},[e]);return ttr({adapter:a,setMessages:t,setIsLoading:n,requestDialog:r,toolPermissionContext:o,tools:s,permissionMode:i})}
+var vJl;
+var kJl=b(()=>{isAmberSentinelEnabled();rBo();vJl=x(et(),1)});
+export {wJl,vJl,kJl};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Ows} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Txs,GetAutomatedReasoningPolicyTestResultCommand;
-var iEr=b(()=>{ri();wi();xi();Txs=M(yo(),1);GetAutomatedReasoningPolicyTestResultCommand=class GetAutomatedReasoningPolicyTestResultCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Txs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetAutomatedReasoningPolicyTestResult",{}).n("BedrockClient","GetAutomatedReasoningPolicyTestResultCommand").sc(Ows).build(){}});
-export {Txs,GetAutomatedReasoningPolicyTestResultCommand,iEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Axs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var cPs,GetAutomatedReasoningPolicyBuildWorkflowCommand;
+var Iwr=b(()=>{$s();ai();ci();cPs=x(yo(),1);GetAutomatedReasoningPolicyBuildWorkflowCommand=class GetAutomatedReasoningPolicyBuildWorkflowCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[cPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetAutomatedReasoningPolicyBuildWorkflow",{}).n("BedrockClient","GetAutomatedReasoningPolicyBuildWorkflowCommand").sc(Axs).build(){}});
+export {cPs,GetAutomatedReasoningPolicyBuildWorkflowCommand,Iwr};

@@ -1,103 +1,20 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var hKl=X((QWS,p1m)=>{p1m.exports=`// Storybook-only CSS fallbacks \u2014 storybook-static's iframe.html is the source
-// for both the compiled-stylesheet fallback (when _ds_bundle.css is a
-// bundler-resolve-only stub) and remote webfont <link> scraping.
-
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, sep } from 'node:path';
-
-// Brand fonts shipped via .storybook/preview-head.html land inline in the
-// built iframe.html, often as base64 data-URI @font-face that no filename
-// search finds. Harvest faces that are FULLY self-contained (every src is a
-// data: URI \u2014 storybook's own UI fonts use file URLs and are skipped) for
-// families nothing else shipped.
-export function inlineFontFacesFromStorybook(sbStatic, existingRules) {
-  if (!sbStatic) return [];
-  let html;
-  try { html = readFileSync(join(sbStatic, 'iframe.html'), 'utf8'); } catch { return []; }
-  const familyOf = (block) => /font-family:\\s*['"]?([^'";}]+)/i.exec(block)?.[1].trim().toLowerCase();
-  const have = new Set(existingRules.map(familyOf).filter(Boolean));
-  const out = [];
-  for (const m of html.matchAll(/@font-face\\s*\\{[^}]*\\}/gi)) {
-    const block = m[0];
-    const urls = [...block.matchAll(/url\\(\\s*['"]?([^'")]+)/gi)].map((u) => u[1]);
-    if (!urls.length || !urls.every((u) => u.startsWith('data:'))) continue;
-    const fam = familyOf(block);
-    if (!fam || have.has(fam)) continue;
-    out.push(block);
-  }
-  if (out.length) console.error(\`  [FONTS_FROM_PREVIEW_HEAD] harvested \${out.length} data-URI @font-face rule(s) from the storybook reference\`);
-  return out;
-}
-
-// Utility-CSS / CSS-in-JS DSes often ship a dist/styles.css
-// that's a stub \`@import "@scope/styles"\` meant for a bundler to resolve.
-export function isPlaceholderCss(p) {
-  if (!existsSync(p)) return false;
-  const sz = statSync(p).size;
-  if (sz > 500) return false;
-  const txt = readFileSync(p, 'utf8');
-  // Only @import/@charset/comments/whitespace \u2192 no real rules.
-  const stripped = txt.replace(/\\/\\*[\\s\\S]*?\\*\\//g, '').replace(/@(import|charset)\\b[^;]*;/g, '').trim();
-  return stripped.length === 0;
-}
-
-// If bundleCss is a placeholder stub, replace it with storybook-static's own
-// compiled CSS (the largest local <link rel=stylesheet> in iframe.html).
-// Relative url()s are NOT rewritten \u2014 sbStatic isn't uploaded, so pointing
-// into it would break post-upload. They'll 404 in the preview (images missing)
-// but class rules still apply. Returns the new srcDir for extractFonts, which
-// DOES copy font files into the bundle.
-export function fallbackCssFromStorybook({ bundleCss, sbStatic, out }) {
-  // A MISSING _ds_bundle.css counts too \u2014 DSes that ship styles in a sibling
-  // package (compiled JS imports no CSS) emit no css file at all.
-  if ((existsSync(bundleCss) && !isPlaceholderCss(bundleCss)) || !sbStatic || !existsSync(join(sbStatic, 'iframe.html'))) return null;
-  const iframeHtml = readFileSync(join(sbStatic, 'iframe.html'), 'utf8');
-  const links = [...iframeHtml.matchAll(/<link\\b[^>]*>/gi)]
-    .map((m) => m[0])
-    .filter((t) => /\\brel\\s*=\\s*["']stylesheet["']/i.test(t))
-    .map((t) => t.match(/\\bhref\\s*=\\s*["']([^"']+)["']/i)?.[1])
-    .filter((h) => h && !/^(https?:|\\/\\/)/.test(h))
-    .map((h) => join(sbStatic, h.replace(/^\\.\\//, '')))
-    .filter((p) => p.startsWith(sbStatic + sep) && existsSync(p))
-    .sort((a, b) => statSync(b).size - statSync(a).size);
-  if (links[0]) {
-    const was = existsSync(bundleCss) ? \`a \${statSync(bundleCss).size}B placeholder\` : 'missing';
-    const kb = (statSync(links[0]).size / 1024).toFixed(0);
-    const srcDir = dirname(links[0]);
-    const css = readFileSync(links[0], 'utf8');
-    const assets = [...new Set([...css.matchAll(/url\\(\\s*(['"]?)(?!data:|https?:|\\/\\/|\\/)([^'")]+)\\1\\s*\\)/gi)].map((m) => m[2]))];
-    writeFileSync(bundleCss, css);
-    console.error(\`[CSS_FROM_STORYBOOK] _ds_bundle.css was \${was} \u2014 replaced with \${relative(out, links[0])} (\${kb} KB).\`);
-    if (assets.length) {
-      console.error(\`[CSS_ASSETS] \${assets.length} relative url() ref(s) in the fallback CSS won't resolve post-upload (fonts are copied separately via extractFonts; images will 404): \${assets.slice(0, 5).join(', ')}\${assets.length > 5 ? ', \u2026' : ''}\`);
-    }
-    return srcDir;
-  }
-  console.error(\`[CSS_PLACEHOLDER] _ds_bundle.css is missing or a stub (@import-only, <500B) and no storybook CSS found to fall back to \u2014 set cfg.cssEntry to the compiled stylesheet.\`);
-  return null;
-}
-
-// Remote stylesheet links (webfonts, etc.) from the storybook iframe. CSS-in-JS
-// DSes emit no static stylesheet, but commonly inject a remote webfont <link>
-// via .storybook/preview-head.html \u2014 that link
-// is then the ONLY static style source. Returns absolute URLs to @import url().
-export function scrapeRemoteImports(sbStatic) {
-  if (!sbStatic || !existsSync(join(sbStatic, 'iframe.html'))) return [];
-  const iframeHtml = readFileSync(join(sbStatic, 'iframe.html'), 'utf8');
-  const out = [...new Set(
-    [...iframeHtml.matchAll(/<link\\b[^>]*>/gi)]
-      .map((m) => m[0])
-      .filter((t) => /\\brel\\s*=\\s*["']stylesheet["']/i.test(t))
-      .map((t) => t.match(/\\bhref\\s*=\\s*["']([^"']+)["']/i)?.[1])
-      .filter((h) => h && /^(https?:|\\/\\/)/.test(h))
-      .map((h) => (h.startsWith('//') ? 'https:' + h : h)),
-  )];
-  if (out.length) {
-    console.error(\`  remote stylesheet(s) from storybook: \${out.length} \u2192 styles.css @import url(...)\`);
-  }
-  return out;
-}
-`});
-export {hKl};
+import {CE} from "../src/tools/2710_allErrors.ts";
+import {getOriginalCwd,lt} from "../src/session/0132_sent.ts";
+import {Text} from "./m2433.ts";
+import {Pi,vu} from "../src/mcp/2200_mcpServerName.ts";
+import {Box} from "./m2432.ts";
+import {gU,MSe} from "./m5444.ts";
+import {ZOe,pzt} from "../src/tui/5491_options.ts";
+import {hm,DI} from "./m3357.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function F9m(e,t,n){switch(e){case"yes":return{behavior:"allow",updatedInput:t.input,...n&&{feedback:n}};case"yes-exact":return{behavior:"allow",updatedInput:t.input,permissionUpdates:[{type:"addRules",rules:[{toolName:CE,ruleContent:t.skill}],behavior:"allow",destination:"localSettings"}]};case"yes-prefix":{let r=t.skill.indexOf(" "),o=r>0?t.skill.substring(0,r):t.skill;return{behavior:"allow",updatedInput:t.input,permissionUpdates:[{type:"addRules",rules:[{toolName:CE,ruleContent:`${o}:*`}],behavior:"allow",destination:"localSettings"}]}}case"no":return{behavior:"deny",...n&&{feedback:n}}}}
+function B9m(e){return e.showAlwaysAllow&&e.skill!==""}
+function U9m(e){if(!e.showAlwaysAllow)return!1;return e.skill.indexOf(" ")>0}
+function aec(e){let t=iec.c(51),{payload:n,answer:r}=e,o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o=getOriginalCwd(),t[0]=o;else o=t[0];let s=o,i;if(t[1]!==n)i=B9m(n),t[1]=n,t[2]=i;else i=t[2];let a=i,l;if(t[3]!==n)l=U9m(n),t[3]=n,t[4]=l;else l=t[4];let c=l,u;if(t[5]===Symbol.for("react.memo_cache_sentinel"))u={label:"Yes",value:"yes",feedbackConfig:{type:"accept"}},t[5]=u;else u=t[5];let d;if(t[6]!==n.skill||t[7]!==a||t[8]!==c){if(d=[u],a){let O;if(t[10]!==n.skill)O=C9.jsx(Text,{bold:!0,children:n.skill}),t[10]=n.skill,t[11]=O;else O=t[11];let L;if(t[12]===Symbol.for("react.memo_cache_sentinel"))L=C9.jsx(Text,{bold:!0,children:s}),t[12]=L;else L=t[12];let P;if(t[13]!==O)P={label:C9.jsxs(Text,{children:["Yes, and don't ask again for ",O," ","in ",L]}),value:"yes-exact"},t[13]=O,t[14]=P;else P=t[14];d.push(P)}if(c){let O;if(t[15]!==n.skill){let F=n.skill.indexOf(" ");O=n.skill.substring(0,F),t[15]=n.skill,t[16]=O}else O=t[16];let P=O+":*",M;if(t[17]!==P)M=C9.jsx(Text,{bold:!0,children:P}),t[17]=P,t[18]=M;else M=t[18];let B;if(t[19]===Symbol.for("react.memo_cache_sentinel"))B=C9.jsx(Text,{bold:!0,children:s}),t[19]=B;else B=t[19];let N;if(t[20]!==M)N={label:C9.jsxs(Text,{children:["Yes, and don't ask again for"," ",M," commands in"," ",B]}),value:"yes-prefix"},t[20]=M,t[21]=N;else N=t[21];d.push(N)}let D;if(t[22]===Symbol.for("react.memo_cache_sentinel"))D={label:"No",value:"no",feedbackConfig:{type:"reject"}},t[22]=D;else D=t[22];d.push(D),t[6]=n.skill,t[7]=a,t[8]=c,t[9]=d}else d=t[9];let p=d,m;if(t[23]!==n.toolName)m=Pi(n.toolName),t[23]=n.toolName,t[24]=m;else m=t[24];let f;if(t[25]!==n.isMcp||t[26]!==m)f={toolName:m,isMcp:n.isMcp},t[25]=n.isMcp,t[26]=m,t[27]=f;else f=t[27];let h=f,g;if(t[28]!==r||t[29]!==n)g=(D,O)=>{r(F9m(D,n,O))},t[28]=r,t[29]=n,t[30]=g;else g=t[30];let _=g,T;if(t[31]!==r)T=()=>{r({behavior:"deny"})},t[31]=r,t[32]=T;else T=t[32];let y=T,S=`Use skill "${n.skill}"?`,E;if(t[33]===Symbol.for("react.memo_cache_sentinel"))E=C9.jsx(Text,{children:"Claude may use instructions, code, or files from this Skill."}),t[33]=E;else E=t[33];let R;if(t[34]!==n.skillDescription)R=n.skillDescription?C9.jsx(Box,{flexDirection:"column",paddingX:2,paddingY:1,children:C9.jsx(Text,{dimColor:!0,children:n.skillDescription})}):null,t[34]=n.skillDescription,t[35]=R;else R=t[35];let w;if(t[36]!==n.permissionResult)w=C9.jsx(gU,{permissionResult:n.permissionResult,toolType:"tool"}),t[36]=n.permissionResult,t[37]=w;else w=t[37];let H;if(t[38]!==y||t[39]!==_||t[40]!==p||t[41]!==h)H=C9.jsx(ZOe,{options:p,onSelect:_,onCancel:y,toolAnalyticsContext:h}),t[38]=y,t[39]=_,t[40]=p,t[41]=h,t[42]=H;else H=t[42];let k;if(t[43]!==w||t[44]!==H)k=C9.jsxs(Box,{flexDirection:"column",children:[w,H]}),t[43]=w,t[44]=H,t[45]=k;else k=t[45];let I;if(t[46]!==n.requestSource||t[47]!==R||t[48]!==k||t[49]!==S)I=C9.jsxs(hm,{title:S,requestSource:n.requestSource,children:[E,R,k]}),t[46]=n.requestSource,t[47]=R,t[48]=k,t[49]=S,t[50]=I;else I=t[50];return I}
+var iec,C9;
+var lec=b(()=>{lt();DI();pzt();MSe();je();vu();iec=x(tt(),1),C9=x(oe(),1)});
+export {F9m,B9m,U9m,aec,iec,C9,lec};

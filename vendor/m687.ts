@@ -1,13 +1,19 @@
 // @ts-nocheck
-import {getCaps,getIsRemoteMode,lt} from "../src/session/0131_sent.ts";
-import {ges,_es} from "./m686.ts";
-import {b} from "../runtime.ts";
-function dd(){return getCaps().remote}
-function ec(){return getIsRemoteMode()||dd()!==null}
-function jb(){let e=dd();return e?.caps?.controlChannel===!0&&!e.viewerOnly}
-function YM(e){return dd()?.caps?.[e]===!0}
-function SJc(e){return Promise.reject(Error(`sendControlRequest not yet wired for ${e} transport`))}
-function Itn(e,t,n,r){if(!t.isRemoteMode)return Jfr;return{kind:e,isRemoteMode:!0,viewerOnly:n,caps:ges[e],sessionId:r,sendMessage:t.sendMessage,cancelRequest:t.cancelRequest,disconnect:t.disconnect,sendControlRequest:t.sendControlRequest??(()=>SJc(e))}}
-var Jfr;
-var Dd=b(()=>{lt();_es();Jfr={isRemoteMode:!1}});
-export {dd,ec,jb,YM,SJc,Itn,Jfr,Dd};
+import {hTr,gTr,_Tr,Zss} from "./m685.ts";
+import {yTr,nis,ris} from "./m686.ts";
+import {gss,hss,_ss,mss,fss,yss} from "./m674.ts";
+import {aRt,sss} from "./m670.ts";
+import {fTr,Kss,zss} from "./m684.ts";
+import {zos,jos} from "./m666.ts";
+import {Gss,qss,Wss,$ss,Vss} from "./m683.ts";
+import {bss,Ess} from "./m675.ts";
+import {Wos,jyr,Gos} from "./m664.ts";
+import {iss,ass} from "./m671.ts";
+import {b,x} from "../runtime.ts";
+import {zyr} from "./m663.ts";
+function $1e(e,t,n){let r=lis(e,t,n),o=hTr(e,t),s=gTr(e,t);yTr(s,r.options),gss(r.options);let i;try{i=uon.default.spawn(r.file,r.args,r.options)}catch(m){let f=new uon.default.ChildProcess,h=Promise.reject(aRt({error:m,stdout:"",stderr:"",all:"",command:o,escapedCommand:s,parsed:r,timedOut:!1,isCanceled:!1,killed:!1}));return fTr(f,h),f}let a=Kss(i),l=hss(i,r.options,a),c=_ss(i,r.options,l),u={isCanceled:!1};i.kill=mss.bind(null,i.kill.bind(i)),i.cancel=fss.bind(null,i,u);let p=zos(async()=>{let[{error:m,exitCode:f,signal:h,timedOut:g},_,T,y]=await Gss(i,r.options,c),S=dRt(r.options,_),E=dRt(r.options,T),R=dRt(r.options,y);if(m||f!==0||h!==null){let w=aRt({error:m,exitCode:f,signal:h,stdout:S,stderr:E,all:R,command:o,escapedCommand:s,parsed:r,timedOut:g,isCanceled:u.isCanceled||(r.options.signal?r.options.signal.aborted:!1),killed:i.killed});if(!r.options.reject)return w;throw w}return{command:o,escapedCommand:s,exitCode:0,stdout:S,stderr:E,all:R,failed:!1,timedOut:!1,isCanceled:!1,killed:!1}});return qss(i,r.options),i.all=Wss(i,r.options),bss(i),fTr(i,p),i}
+function TTr(e,t,n){let r=lis(e,t,n),o=hTr(e,t),s=gTr(e,t);yTr(s,r.options);let i=$ss(r.options),a;try{a=uon.default.spawnSync(r.file,r.args,{...r.options,input:i})}catch(u){throw aRt({error:u,stdout:"",stderr:"",all:"",command:o,escapedCommand:s,parsed:r,timedOut:!1,isCanceled:!1,killed:!1})}let l=dRt(r.options,a.stdout,a.error),c=dRt(r.options,a.stderr,a.error);if(a.error||a.status!==0||a.signal!==null){let u=aRt({stdout:l,stderr:c,error:a.error,signal:a.signal,exitCode:a.status,command:o,escapedCommand:s,parsed:r,timedOut:a.error&&a.error.code==="ETIMEDOUT",isCanceled:!1,killed:a.signal!==null});if(!r.options.reject)return u;throw u}return{command:o,escapedCommand:s,exitCode:0,stdout:l,stderr:c,failed:!1,timedOut:!1,isCanceled:!1,killed:!1}}
+function cis(e){function t(n,...r){if(!Array.isArray(n))return cis({...e,...n});let[o,...s]=_Tr(n,r);return $1e(o,s,ois(e))}return t.sync=(n,...r)=>{if(!Array.isArray(n))throw TypeError("Please use $(options).sync`command` instead of $.sync(options)`command`.");let[o,...s]=_Tr(n,r);return TTr(o,s,ois(e))},t}
+var sis,iis,uon,uRt,ais,Iiu=1e8,xiu=({env:e,extendEnv:t,preferLocal:n,localDir:r,execPath:o})=>{let s=t?{...uRt.default.env,...e}:e;if(n)return Wos({env:s,cwd:r,execPath:o});return s},lis=(e,t,n={})=>{let r=ais.default._parse(e,t,n);if(e=r.command,t=r.args,n=r.options,n={maxBuffer:Iiu,buffer:!0,stripFinalNewline:!0,extendEnv:!0,preferLocal:!1,localDir:n.cwd||uRt.default.cwd(),execPath:uRt.default.execPath,encoding:"utf8",reject:!0,cleanup:!0,all:!1,windowsHide:!0,verbose:nis,...n},n.env=xiu(n),n.stdio=iss(n),uRt.default.platform==="win32"&&iis.default.basename(e,".exe")==="cmd")t.unshift("/q");return{file:e,args:t,options:n,parsed:r}},dRt=(e,t,n)=>{if(typeof t!=="string"&&!sis.Buffer.isBuffer(t))return n===void 0?void 0:"";if(e.stripFinalNewline)return jyr(t);return t},Diu=({input:e,inputFile:t,stdio:n})=>e===void 0&&t===void 0&&n===void 0?{stdin:"inherit"}:{},ois=(e={})=>({preferLocal:!0,...Diu(e),...e}),RDf;
+var STr=b(()=>{Gos();jos();sss();ass();yss();Ess();Vss();zss();Zss();ris();sis=require("buffer"),iis=x(require("path")),uon=x(require("child_process")),uRt=x(require("process")),ais=x(zyr(),1);RDf=cis()});
+export {$1e,TTr,cis,sis,iis,uon,uRt,ais,Iiu,xiu,lis,dRt,Diu,ois,RDf,STr};

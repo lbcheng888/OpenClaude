@@ -1,6 +1,18 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-var aCi,Pid,ESn;
-var q2r=b(()=>{aCi=M(Te(),1),Pid=aCi.createContext(()=>{}),ESn=Pid});
-export {aCi,Pid,ESn,q2r};
+import {Lve,yHi} from "./m2381.ts";
+import {Zg,dhe} from "./m2362.ts";
+import {b} from "../runtime.ts";
+class FocusManager{activeElement=null;dispatchFocusEvent;focusStack=[];autoFocusStack=[];listeners=new Set;constructor(e){this.dispatchFocusEvent=e}subscribe=(e)=>(this.listeners.add(e),()=>this.listeners.delete(e));notify(){for(let e of this.listeners)e()}focus(e){if(e===this.activeElement)return;let t=this.activeElement;if(t){let n=this.focusStack.indexOf(t);if(n!==-1)this.focusStack.splice(n,1);if(this.focusStack.push(t),this.focusStack.length>THi)this.focusStack.shift();this.dispatchFocusEvent(t,new Lve("blur",e))}this.activeElement=e,this.dispatchFocusEvent(e,new Lve("focus",t)),this.notify()}blur(){if(!this.activeElement)return;let e=this.activeElement;this.activeElement=null,this.dispatchFocusEvent(e,new Lve("blur",null)),this.notify()}handleNodeRemoved(e,t){if(this.focusStack=this.focusStack.filter((o)=>o!==e&&RZ(o,t)),this.autoFocusStack=this.autoFocusStack.filter((o)=>o!==e&&RZ(o,t)),!this.activeElement)return;if(this.activeElement!==e&&RZ(this.activeElement,t))return;let n=this.activeElement;this.activeElement=null,this.dispatchFocusEvent(n,new Lve("blur",null));while(this.focusStack.length>0){let o=this.focusStack.pop();if(RZ(o,t)){this.activeElement=o,this.dispatchFocusEvent(o,new Lve("focus",n)),this.notify();return}}let r=this.autoFocusStack.at(-1);if(r)this.activeElement=r,this.dispatchFocusEvent(r,new Lve("focus",n));this.notify()}pushAutoFocusFallback(e){if(this.autoFocusStack.at(-1)===e)return;let t=this.autoFocusStack.indexOf(e);if(t!==-1)this.autoFocusStack.splice(t,1);if(this.autoFocusStack.push(e),this.autoFocusStack.length>THi)this.autoFocusStack.shift()}handleAutoFocus(e){this.pushAutoFocusFallback(e),this.focus(e)}handleClickFocus(e){if(typeof e.attributes.tabIndex!=="number")return;this.focus(e)}focusNext(e){this.moveFocus(1,e)}focusPrevious(e){this.moveFocus(-1,e)}focusDirection(e,t){if(!this.activeElement)return this.moveFocus(1,t),!0;let n=EHi(this.activeElement);if(!n)return!1;let r=null,o=1/0;for(let s of K4r(t)){if(s===this.activeElement)continue;let i=EHi(s);if(!i)continue;let a=fgd(n,i,e);if(a<o)o=a,r=s}if(r)return this.focus(r),!0;return!1}moveFocus(e,t){let n=K4r(t);if(n.length===0)return;let r=this.activeElement?n.indexOf(this.activeElement):-1,o=r===-1?e===1?0:n.length-1:(r+e+n.length)%n.length,s=n[o];if(s)this.focus(s)}}
+function K4r(e){let t=[];return CHi(e,t),t}
+function CHi(e,t){let n=e.attributes.tabIndex;if(typeof n==="number"&&n>=0)t.push(e);for(let r of e.childNodes)if(r.nodeName!=="#text")CHi(r,t)}
+function AHi(e){for(let t of e.childNodes){if(t.nodeName==="#text")continue;if(K4r(t).length>0)return!0}return!1}
+function fgd(e,t,n){let r=e.x+e.width/2,o=e.y+e.height/2,s=t.x+t.width/2,i=t.y+t.height/2,a=n==="left"||n==="right",l=n==="right"||n==="down"?1:-1,c=(a?s-r:i-o)*l;if(c<=0)return 1/0;let u=a?SHi(o,t.y,t.height):SHi(r,t.x,t.width),d=a?bHi(e.y,e.height,t.y,t.height):bHi(e.x,e.width,t.x,t.width);return c+(a?2:0.5)*u-d}
+function SHi(e,t,n){if(e<t)return t-e;if(e>t+n)return e-(t+n);return 0}
+function bHi(e,t,n,r){return Math.max(0,Math.min(e+t,n+r)-Math.max(e,n))}
+function EHi(e){let t=Zg.get(e);if(t)return t;let n=e.yogaNode;if(!n)return;let r=n.getComputedLeft(),o=n.getComputedTop(),s=e.parentNode;while(s){let i=Zg.get(s);if(i)return{x:i.x+r,y:i.y+o,width:n.getComputedWidth(),height:n.getComputedHeight()};if(s.yogaNode)r+=s.yogaNode.getComputedLeft(),o+=s.yogaNode.getComputedTop();s=s.parentNode}return}
+function RZ(e,t){let n=e;while(n){if(n===t)return!0;n=n.parentNode}return!1}
+function gtt(e){let t=e;while(t){if(t.focusManager)return t;t=t.parentNode}throw Error("Node is not in a tree with a FocusManager")}
+function vZ(e){return gtt(e).focusManager}
+var THi=32;
+var mhe=b(()=>{yHi();dhe()});
+export {FocusManager,K4r,CHi,AHi,fgd,SHi,bHi,EHi,RZ,gtt,vZ,THi,mhe};

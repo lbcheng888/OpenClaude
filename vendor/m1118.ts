@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,zws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var Oxs,GetModelInvocationLoggingConfigurationCommand;
-var TEr=b(()=>{ri();wi();xi();Oxs=M(yo(),1);GetModelInvocationLoggingConfigurationCommand=class GetModelInvocationLoggingConfigurationCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[Oxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetModelInvocationLoggingConfiguration",{}).n("BedrockClient","GetModelInvocationLoggingConfigurationCommand").sc(zws).build(){}});
-export {Oxs,GetModelInvocationLoggingConfigurationCommand,TEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Nxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var CPs,GetMarketplaceModelEndpointCommand;
+var Gwr=b(()=>{$s();ai();ci();CPs=x(yo(),1);GetMarketplaceModelEndpointCommand=class GetMarketplaceModelEndpointCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[CPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetMarketplaceModelEndpoint",{}).n("BedrockClient","GetMarketplaceModelEndpointCommand").sc(Nxs).build(){}});
+export {CPs,GetMarketplaceModelEndpointCommand,Gwr};

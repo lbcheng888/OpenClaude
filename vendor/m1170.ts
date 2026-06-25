@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {jan,ListMarketplaceModelEndpointsCommand} from "./m1134.ts";
-import {Sd} from "./m850.ts";
-var jks,paginateListMarketplaceModelEndpoints;
-var Wks=b(()=>{s0();jan();jks=M(Sd(),1),paginateListMarketplaceModelEndpoints=jks.createPaginator(BedrockClient,ListMarketplaceModelEndpointsCommand,"nextToken","nextToken","maxResults")});
-export {jks,paginateListMarketplaceModelEndpoints,Wks};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {Tun,ListCustomModelsCommand} from "./m1132.ts";
+import {Zu} from "./m855.ts";
+var wOs,paginateListCustomModels;
+var kOs=b(()=>{C0();Tun();wOs=x(Zu(),1),paginateListCustomModels=wOs.createPaginator(BedrockClient,ListCustomModelsCommand,"nextToken","nextToken","maxResults")});
+export {wOs,paginateListCustomModels,kOs};

@@ -1,19 +1,13 @@
 // @ts-nocheck
-import {y0t,E$,FZ} from "../src/telemetry/2465_bindings.ts";
-import {yEn,TEn,k$} from "./m2541.ts";
-import {WR} from "./m2207.ts";
-import {getDefaultAppState,kke} from "./m3301.ts";
-import {hat,_He} from "./m3752.ts";
-import {AppStateProvider,Jq} from "./m3354.ts";
-import {Qje,Ujt} from "../src/tui/4815_current.ts";
-import {Ec} from "./m2449.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function $cm({children:e}){let{bindings:t}=y0t(E$),n=Bne.useRef(null),r=Bne.useRef(new Map),o=Bne.useRef(new Set),s=Bne.useRef(new Set).current,i=Bne.useRef(yEn());return Bne.default.createElement(TEn,{bindings:t,pendingChordRef:n,pendingChord:null,setPendingChord:()=>{},activeContexts:s,registerActiveContext:()=>{},unregisterActiveContext:()=>{},handlerRegistryRef:r,preDispatchRef:o,keyHandlerRegistry:i.current},e)}
-function qcm(e){for(let t of e)if(t.type==="assistant"){let n=t.message.model;if(n&&n!==WR)return n}return}
-function jcm(e){if(!("message"in e))return 1;let t=e.message.content;return Array.isArray(t)?t.length:1}
-async function Wcm(e,t,n,{columns:r,verbose:o=!1,chunkSize:s=40,onProgress:i}={}){let a=qcm(e),l=a?{...getDefaultAppState(),mainLoopModel:a}:void 0,c=(d)=>hat(Bne.default.createElement(AppStateProvider,{initialState:l},Bne.default.createElement($cm,null,Bne.default.createElement(Qje,{messages:e,tools:t,commands:[],verbose:o,toolJSX:null,inProgressToolUseIDs:new Set,isMessageSelectorVisible:!1,conversationId:"export",screen:"prompt",latchAnnouncementSlot:!1,streamingToolUses:[],showAllInTranscript:!0,isLoading:!1,renderRange:d,disableRenderCap:!0}))),r),u=s;for(let d of e)u+=jcm(d);for(let d=0;d<u;d+=s){let p=await c([d,d+s]);if(Ec(p).trim()==="")break;await n(p),i?.(d+s)}}
-async function qVn(e,t=[],n){let r=[];return await Wcm(e,t,(o)=>void r.push(Ec(o)),{columns:n}),r.join("")}
-var Bne;
-var Gwo=b(()=>{Ujt();k$();FZ();Jq();kke();_He();Bne=M(Te(),1)});
-export {$cm,qcm,jcm,Wcm,qVn,Bne,Gwo};
+import {SandboxManager,shouldAllowManagedSandboxDomainsOnly,Uh} from "./m2682.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function jLl(){let e=zLl.c(3),t=SandboxManager.isSandboxingEnabled(),n;if(e[0]===Symbol.for("react.memo_cache_sentinel")){let s=SandboxManager.checkDependencies();n=s.warnings.length>0?bb.jsx(Box,{marginTop:1,flexDirection:"column",children:s.warnings.map(V_m)}):null,e[0]=n}else n=e[0];let r=n;if(!t){let s;if(e[1]===Symbol.for("react.memo_cache_sentinel"))s=bb.jsxs(Box,{flexDirection:"column",children:[bb.jsx(Text,{color:"subtle",children:"Sandbox is not enabled"}),r]}),e[1]=s;else s=e[1];return s}let o;if(e[2]===Symbol.for("react.memo_cache_sentinel")){let s=SandboxManager.getFsReadConfig(),i=SandboxManager.getFsWriteConfig(),a=SandboxManager.getNetworkRestrictionConfig(),l=SandboxManager.getAllowUnixSockets(),c=SandboxManager.getExcludedCommands(),u=SandboxManager.getLinuxGlobPatternWarnings();o=bb.jsxs(Box,{flexDirection:"column",children:[bb.jsxs(Box,{flexDirection:"column",children:[bb.jsx(Text,{bold:!0,color:"permission",children:"Excluded Commands:"}),bb.jsx(Text,{dimColor:!0,children:c.length>0?c.join(", "):"None"})]}),s.denyOnly.length>0&&bb.jsxs(Box,{marginTop:1,flexDirection:"column",children:[bb.jsx(Text,{bold:!0,color:"permission",children:"Filesystem Read Restrictions:"}),bb.jsxs(Text,{dimColor:!0,children:["Denied: ",s.denyOnly.join(", ")]}),s.allowWithinDeny&&s.allowWithinDeny.length>0&&bb.jsxs(Text,{dimColor:!0,children:["Allowed within denied: ",s.allowWithinDeny.join(", ")]})]}),i.allowOnly.length>0&&bb.jsxs(Box,{marginTop:1,flexDirection:"column",children:[bb.jsx(Text,{bold:!0,color:"permission",children:"Filesystem Write Restrictions:"}),bb.jsxs(Text,{dimColor:!0,children:["Allowed: ",i.allowOnly.join(", ")]}),i.denyWithinAllow.length>0&&bb.jsxs(Text,{dimColor:!0,children:["Denied within allowed: ",i.denyWithinAllow.join(", ")]})]}),(a.allowedHosts&&a.allowedHosts.length>0||a.deniedHosts&&a.deniedHosts.length>0)&&bb.jsxs(Box,{marginTop:1,flexDirection:"column",children:[bb.jsxs(Text,{bold:!0,color:"permission",children:["Network Restrictions",shouldAllowManagedSandboxDomainsOnly()?" (Managed)":"",":"]}),a.allowedHosts&&a.allowedHosts.length>0&&bb.jsxs(Text,{dimColor:!0,children:["Allowed: ",a.allowedHosts.join(", ")]}),a.deniedHosts&&a.deniedHosts.length>0&&bb.jsxs(Text,{dimColor:!0,children:["Denied: ",a.deniedHosts.join(", ")]})]}),l&&l.length>0&&bb.jsxs(Box,{marginTop:1,flexDirection:"column",children:[bb.jsx(Text,{bold:!0,color:"permission",children:"Allowed Unix Sockets:"}),bb.jsx(Text,{dimColor:!0,children:l.join(", ")})]}),u.length>0&&bb.jsxs(Box,{marginTop:1,flexDirection:"column",children:[bb.jsx(Text,{bold:!0,color:"warning",children:"\u26A0 Warning: Glob patterns not fully supported on Linux"}),bb.jsxs(Text,{dimColor:!0,children:["The following patterns will be ignored:"," ",u.slice(0,3).join(", "),u.length>3&&` (${u.length-3} more)`]})]}),r]}),e[2]=o}else o=e[2];return o}
+function V_m(e,t){return bb.jsx(Text,{dimColor:!0,children:e},t)}
+var zLl,bb;
+var YLl=b(()=>{je();Uh();zLl=x(tt(),1),bb=x(oe(),1)});
+export {jLl,V_m,zLl,bb,YLl};

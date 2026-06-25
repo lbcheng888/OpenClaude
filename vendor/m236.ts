@@ -1,10 +1,17 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function buildSystemPrompt(e,t,n){if(!(t>0))return e;let r=Bun.wrapAnsi(e,t,n);if(oyc.test(e)&&r.includes(`
-`))return ayc(r);return r}
-function ayc(e){let t="",n="",r="",o=0;Asr.lastIndex=0;let s;while((s=Asr.exec(e))!==null){t+=x3o(e.slice(o,s.index),n,r),t+=s[0],o=Asr.lastIndex;let i=s[1];if(i===""||i==="0")n="",r="";else if(i.startsWith("38;"))n=s[0];else if(syc.test(i))n="";else if(i.startsWith("48;"))r=s[0];else if(iyc.test(i))r=""}return t+=x3o(e.slice(o),n,r),t}
-function x3o(e,t,n){if(e===""||t===""&&n==="")return e;let r="",o=0;for(let s=0;s<e.length;s++)if(e.charCodeAt(s)===10){if(r+=e.slice(o,s),t)r+="\x1B[39m";if(n)r+="\x1B[49m";r+=`
-`+t+n,o=s+1}return r+=e.slice(o),r}
-var oyc,Asr,syc,iyc;
-var ope=b(()=>{oyc=/\x1b\[[34]8;[25];/;Asr=/\x1b\[([\d;]*)m/g,syc=/^(3[0-79]|9[0-7])$/,iyc=/^(4[0-79]|10[0-7])$/});
-export {buildSystemPrompt,ayc,x3o,oyc,Asr,syc,iyc,ope};
+function SWo(){if(!Ucr)Ucr=new Intl.DisplayNames(["en"],{type:"language"});return Ucr}
+function $T(){if(!Fcr)Fcr=new Intl.Segmenter(void 0,{granularity:"grapheme"});return Fcr}
+function Kbt(e){if(!e)return"";return $T().segment(e)[Symbol.iterator]().next().value?.segment??""}
+function fK(e){if(!e)return"";let t="";for(let{segment:n}of $T().segment(e))t=n;return t}
+function bMe(e){if(!e)return 0;let t=0;for(let n of $T().segment(e))t++;return t}
+function QXt(e){if(!e)return[];return Array.from($T().segment(e),(t)=>t.segment)}
+function bWo(){if(!Bcr)Bcr=new Intl.Segmenter(void 0,{granularity:"word"});return Bcr}
+function qcr(e,t){let n=`${e}:${t}`,r=_Wo.get(n);if(!r)r=new Intl.RelativeTimeFormat("en",{style:e,numeric:t}),_Wo.set(n,r);return r}
+function zbt(){if(!$cr)$cr=Intl.DateTimeFormat().resolvedOptions().timeZone;return $cr}
+function EWo(){if(XXt===null)try{let e=Intl.DateTimeFormat().resolvedOptions().locale;XXt=new Intl.Locale(e).language}catch{XXt=void 0}return XXt}
+function iHc(e){if(!e)return"";let t=yWo.get(e);if(t!==void 0)return t;let n=Object.entries(e).sort(([o],[s])=>o<s?-1:o>s?1:0),r="";for(let[o,s]of n)r+=`${o}=${String(s)};`;return yWo.set(e,r),r}
+function ZXt(e,t){let n=`${e??""}|${iHc(t)}`,r=TWo.get(n);if(!r)r=new Intl.DateTimeFormat(e,t),TWo.set(n,r);return r}
+var Fcr=null,Bcr=null,Ucr=null,_Wo,$cr=null,XXt=null,yWo,TWo;
+var p0=b(()=>{_Wo=new Map;yWo=new WeakMap;TWo=new Map});
+export {SWo,$T,Kbt,fK,bMe,QXt,bWo,qcr,zbt,EWo,iHc,ZXt,Fcr,Bcr,Ucr,_Wo,$cr,XXt,yWo,TWo,p0};

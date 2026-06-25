@@ -1,8 +1,12 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {initSessionMetadataPersistence} from "./m1845.ts";
-import {xxt} from "./m1846.ts";
-import {Hxt} from "./m1847.ts";
-import {sK} from "./m1830.ts";
-var MYs=X((iBA,LYs)=>{var IYs=initSessionMetadataPersistence(),wDr=xxt(),{ANY:vDr}=wDr,Ixt=Hxt(),RDr=sK(),y9u=(e,t,n={})=>{if(e===t)return!0;e=new IYs(e,n),t=new IYs(t,n);let r=!1;e:for(let o of e.set){for(let s of t.set){let i=S9u(o,s,n);if(r=r||i!==null,i)continue e}if(r)return!1}return!0},T9u=[new wDr(">=0.0.0-0")],DYs=[new wDr(">=0.0.0")],S9u=(e,t,n)=>{if(e===t)return!0;if(e.length===1&&e[0].semver===vDr)if(t.length===1&&t[0].semver===vDr)return!0;else if(n.includePrerelease)e=T9u;else e=DYs;if(t.length===1&&t[0].semver===vDr)if(n.includePrerelease)return!0;else t=DYs;let r=new Set,o,s;for(let m of e)if(m.operator===">"||m.operator===">=")o=PYs(o,m,n);else if(m.operator==="<"||m.operator==="<=")s=OYs(s,m,n);else r.add(m.semver);if(r.size>1)return null;let i;if(o&&s){if(i=RDr(o.semver,s.semver,n),i>0)return null;else if(i===0&&(o.operator!==">="||s.operator!=="<="))return null}for(let m of r){if(o&&!Ixt(m,String(o),n))return null;if(s&&!Ixt(m,String(s),n))return null;for(let f of t)if(!Ixt(m,String(f),n))return!1;return!0}let a,l,c,u,d=s&&!n.includePrerelease&&s.semver.prerelease.length?s.semver:!1,p=o&&!n.includePrerelease&&o.semver.prerelease.length?o.semver:!1;if(d&&d.prerelease.length===1&&s.operator==="<"&&d.prerelease[0]===0)d=!1;for(let m of t){if(u=u||m.operator===">"||m.operator===">=",c=c||m.operator==="<"||m.operator==="<=",o){if(p){if(m.semver.prerelease&&m.semver.prerelease.length&&m.semver.major===p.major&&m.semver.minor===p.minor&&m.semver.patch===p.patch)p=!1}if(m.operator===">"||m.operator===">="){if(a=PYs(o,m,n),a===m&&a!==o)return!1}else if(o.operator===">="&&!Ixt(o.semver,String(m),n))return!1}if(s){if(d){if(m.semver.prerelease&&m.semver.prerelease.length&&m.semver.major===d.major&&m.semver.minor===d.minor&&m.semver.patch===d.patch)d=!1}if(m.operator==="<"||m.operator==="<="){if(l=OYs(s,m,n),l===m&&l!==s)return!1}else if(s.operator==="<="&&!Ixt(s.semver,String(m),n))return!1}if(!m.operator&&(s||o)&&i!==0)return!1}if(o&&c&&!s&&i!==0)return!1;if(s&&u&&!o&&i!==0)return!1;if(p||d)return!1;return!0},PYs=(e,t,n)=>{if(!e)return t;let r=RDr(e.semver,t.semver,n);return r>0?e:r<0?t:t.operator===">"&&e.operator===">="?t:e},OYs=(e,t,n)=>{if(!e)return t;let r=RDr(e.semver,t.semver,n);return r<0?e:r>0?t:t.operator==="<"&&e.operator==="<="?t:e};LYs.exports=y9u});
-export {MYs};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+import {t0t} from "./m1851.ts";
+import {x7} from "./m1850.ts";
+import {r0t} from "./m1852.ts";
+import {ZIt} from "./m1841.ts";
+import {n_n} from "./m1842.ts";
+import {o_n} from "./m1846.ts";
+import {r_n} from "./m1845.ts";
+var l_n=Q((CWh,gti)=>{var AKu=TF(),hti=t0t(),{ANY:RKu}=hti,vKu=x7(),wKu=r0t(),mti=ZIt(),fti=n_n(),kKu=o_n(),HKu=r_n(),IKu=(e,t,n,r)=>{e=new AKu(e,r),t=new vKu(t,r);let o,s,i,a,l;switch(n){case">":o=mti,s=kKu,i=fti,a=">",l=">=";break;case"<":o=fti,s=HKu,i=mti,a="<",l="<=";break;default:throw TypeError('Must provide a hilo val of "<" or ">"')}if(wKu(e,t,r))return!1;for(let c=0;c<t.set.length;++c){let u=t.set[c],d=null,p=null;if(u.forEach((m)=>{if(m.semver===RKu)m=new hti(">=0.0.0");if(d=d||m,p=p||m,o(m.semver,d.semver,r))d=m;else if(i(m.semver,p.semver,r))p=m}),d.operator===a||d.operator===l)return!1;if((!p.operator||p.operator===a)&&s(e,p.semver))return!1;else if(p.operator===l&&i(e,p.semver))return!1}return!0};gti.exports=IKu});
+export {l_n};

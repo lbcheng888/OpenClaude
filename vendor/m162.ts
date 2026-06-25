@@ -1,8 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Yx,VT} from "./m152.ts";
-import {QC,Rp,Ss} from "./m156.ts";
-import {GI,Ta} from "./m157.ts";
-var M_t;
-var Xrr=b(()=>{Yx();QC();GI();M_t=class M_t extends Rp{create(e,t){let{betas:n,...r}=e;return this._client.post("/v1/user_profiles?beta=true",{body:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"user-profiles-2026-03-24"].toString()},t?.headers])})}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(Ta`/v1/user_profiles/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"user-profiles-2026-03-24"].toString()},n?.headers])})}update(e,t,n){let{betas:r,...o}=t;return this._client.post(Ta`/v1/user_profiles/${e}?beta=true`,{body:o,...n,headers:Ss([{"anthropic-beta":[...r??[],"user-profiles-2026-03-24"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/user_profiles?beta=true",VT,{query:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"user-profiles-2026-03-24"].toString()},t?.headers])})}createEnrollmentURL(e,t={},n){let{betas:r}=t??{};return this._client.post(Ta`/v1/user_profiles/${e}/enrollment_url?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"user-profiles-2026-03-24"].toString()},n?.headers])})}}});
-export {M_t,Xrr};
+import {dk,bX} from "./m154.ts";
+import {oA,Jd,is} from "./m158.ts";
+import {abt,C5o} from "./m161.ts";
+import {JKe,YKe} from "./m155.ts";
+import {u0,oa} from "./m159.ts";
+var lbt;
+var Alr=b(()=>{dk();oA();abt();JKe();u0();lbt=class lbt extends Jd{list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/files?beta=true",bX,{query:r,...t,headers:is([{"anthropic-beta":[...n??[],"files-api-2025-04-14"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(oa`/v1/files/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString()},n?.headers])})}download(e,t={},n){let{betas:r}=t??{};return this._client.get(oa`/v1/files/${e}/content?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString(),Accept:"application/binary"},n?.headers]),__binaryResponse:!0})}retrieveMetadata(e,t={},n){let{betas:r}=t??{};return this._client.get(oa`/v1/files/${e}?beta=true`,{...n,headers:is([{"anthropic-beta":[...r??[],"files-api-2025-04-14"].toString()},n?.headers])})}upload(e,t){let{betas:n,...r}=e;return this._client.post("/v1/files?beta=true",YKe({body:r,...t,headers:is([{"anthropic-beta":[...n??[],"files-api-2025-04-14"].toString()},C5o(r.file),t?.headers])},this._client))}}});
+export {lbt,Alr};

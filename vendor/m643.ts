@@ -1,17 +1,11 @@
 // @ts-nocheck
-import {Pt,Go} from "./m632.ts";
-import {jt,ws} from "./m228.ts";
-import {A_,ng} from "./m132.ts";
-import {zt,qs} from "./m635.ts";
-import {jMe,L2} from "../src/config/0640_existsSync.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {a3,yje} from "./m642.ts";
 import {b} from "../runtime.ts";
-import {QT} from "./m642.ts";
-function Ds(e,t){let n=t??Pt()??jt().cwd();if(typeof e!=="string")throw TypeError(`Path must be a string, received ${typeof e}`);if(typeof n!=="string")throw TypeError(`Base directory must be a string, received ${typeof n}`);if(e.includes("\x00")||n.includes("\x00"))throw Error("Path contains null bytes");let r=e.trim();if(!r)return A_(zM.normalize(n));if(r==="~")return A_(ptn.homedir());if(r.startsWith("~/"))return A_(zM.join(ptn.homedir(),r.slice(2)));let o=r;if(zt()==="windows"&&r.match(/^\/[a-z]\//i))try{o=jMe(r)}catch{o=r}if(zM.isAbsolute(o))return A_(zM.normalize(o));return A_(zM.resolve(n,o))}
-function w7e(e){let t=zM.relative(Pt(),e);return t.startsWith("..")?e:t}
-function EB(e){let t=Ds(e);if(t.startsWith("\\\\")||t.startsWith("//"))return zM.dirname(t);try{if(jt().statSync(t).isDirectory())return t}catch{}return zM.dirname(t)}
-function poe(e){return/(?:^|[\\/])\.\.(?:[\\/]|$)/.test(e)}
-function EO(e){let t=ptn.homedir();if(e===t)return"~";if(e.startsWith(t+zM.sep))return"~"+e.slice(t.length);return e}
-function u7(e){return zM.normalize(e).replaceAll("\\","/")}
-var ptn,zM;
-var Iu=b(()=>{ng();Go();ws();qs();L2();QT();ptn=require("os"),zM=require("path")});
-export {Ds,w7e,EB,poe,EO,u7,ptn,zM,Iu};
+function L1e(e,t=300000){let n=(i)=>typeof t==="function"?t(i):t,r=new Map,o=new Map,s=async(...i)=>{let a=TeamDeleteToolName(i),l=r.get(a),c=Date.now();if(!l){let u=o.get(a);if(u)return u;let d=e(...i);o.set(a,d);try{let p=await d;if(o.get(a)===d)r.set(a,{value:p,timestamp:Date.now(),refreshing:!1,lifetimeMs:n(p)});return p}finally{if(o.get(a)===d)o.delete(a)}}if(l&&c-l.timestamp>l.lifetimeMs&&!l.refreshing){l.refreshing=!0;let u=l;return e(...i).then((d)=>{if(r.get(a)===u)r.set(a,{value:d,timestamp:Date.now(),refreshing:!1,lifetimeMs:n(d)})}).catch((d)=>{if(logForDebugging(String(d),{level:"error"}),r.get(a)===u)r.delete(a)}),l.value}return r.get(a).value};return s.cache={clear:()=>{r.clear(),o.clear()}},s}
+function Lv(e,t,n=100){let r=new a3({max:n}),o=(...s)=>{let i=t(...s),a=r.get(i);if(a!==void 0)return a;let l=e(...s);return r.set(i,l),l};return o.cache={clear:()=>r.clear(),size:()=>r.size,delete:(s)=>r.delete(s),get:(s)=>r.peek(s),has:(s)=>r.has(s)},o}
+function nRt(e,t,n){let r=n?.maxSize??Dou,o=new Map;xou.add(o);function s(...i){let a=t?t(...i):i[0],l=o.get(a);if(l)return l;let c=e(...i);if(o.size>=r)o.delete(o.keys().next().value);return o.set(a,c),c.catch(()=>{if(o.get(a)===c)o.delete(a)}),c}return s.cache=o,s}
+var xou,Dou=128;
+var v5=b(()=>{yje();qe();tn();xou=new Set});
+export {L1e,Lv,nRt,xou,Dou,v5};

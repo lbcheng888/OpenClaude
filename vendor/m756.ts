@@ -1,6 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-var cos,rrn;
-var uos=b(()=>{cos=M(createDefaultGlobalConfig(),1);rrn=class rrn extends cos.CredentialsProviderError{tryNextLink;name="InstanceMetadataV1FallbackError";constructor(e,t=!0){super(e,t);this.tryNextLink=t,Object.setPrototypeOf(this,rrn.prototype)}}});
-export {cos,rrn,uos};
+import {Q} from "../runtime.ts";
+var b0=Q((hYe)=>{var Ibr={warningEmitted:!1},Zcu=(e)=>{if(e&&!Ibr.warningEmitted&&parseInt(e.substring(1,e.indexOf(".")))<18)Ibr.warningEmitted=!0,process.emitWarning(`NodeDeprecationWarning: The AWS SDK for JavaScript (v3) will
+no longer support Node.js 16.x on January 6, 2025.
+
+To continue receiving updates to AWS services, bug fixes, and security
+updates please upgrade to a supported Node.js LTS version.
+
+More information can be found at: https://a.co/74kJMmI`)};function euu(e,t,n){if(!e.$source)e.$source={};return e.$source[t]=n,e}function tuu(e,t,n){if(!e.__aws_sdk_context)e.__aws_sdk_context={features:{}};else if(!e.__aws_sdk_context.features)e.__aws_sdk_context.features={};e.__aws_sdk_context.features[t]=n}function nuu(e,t,n){if(!e.$source)e.$source={};return e.$source[t]=n,e}hYe.emitWarningIfUnsupportedVersion=Zcu;hYe.setCredentialFeature=euu;hYe.setFeature=tuu;hYe.setTokenFeature=nuu;hYe.state=Ibr});
+export {b0};

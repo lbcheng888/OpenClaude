@@ -1,8 +1,9 @@
 // @ts-nocheck
-import {ca} from "./m5.ts";
-import {b} from "../runtime.ts";
-import {kg} from "./m129.ts";
-class KD{static instance=null;status={isAuthenticating:!1,output:[]};changed=ca();dismissTimer=null;static getInstance(){if(!KD.instance)KD.instance=new KD;return KD.instance}getStatus(){return{...this.status,output:[...this.status.output]}}startAuthentication(){this.clearDismissTimer(),this.status={isAuthenticating:!0,output:[]},this.changed.emit(this.getStatus())}addOutput(e){this.status.output.push(e),this.changed.emit(this.getStatus())}setError(e){this.status.error=e,this.changed.emit(this.getStatus())}endAuthentication(e){if(this.clearDismissTimer(),e)this.status={isAuthenticating:!1,output:[]};else this.status.isAuthenticating=!1,this.dismissTimer=setTimeout(()=>this.dismiss(),BPu),this.dismissTimer.unref?.();this.changed.emit(this.getStatus())}dismiss(){this.clearDismissTimer(),this.status={isAuthenticating:!1,output:[]},this.changed.emit(this.getStatus())}subscribe=this.changed.subscribe;clearDismissTimer(){if(this.dismissTimer!==null)clearTimeout(this.dismissTimer),this.dismissTimer=null}static reset(){if(KD.instance)KD.instance.clearDismissTimer(),KD.instance.changed.clear(),KD.instance=null}}
-var BPu=15000;
-var vun=b(()=>{kg()});
-export {KD,BPu,vun};
+import {V6s,K6s} from "./m1443.ts";
+import {fromNodeProviderChain,U0r} from "./m1439.ts";
+import {b,x} from "../runtime.ts";
+import {yk} from "./m613.ts";
+import {$N} from "./m607.ts";
+var z6s,j6s,fromTemporaryCredentials=(e)=>V6s(e,fromNodeProviderChain,async({profile:t=process.env.AWS_PROFILE})=>j6s.loadConfig({environmentVariableSelector:(n)=>n.AWS_REGION,configFileSelector:(n)=>n.region,default:()=>{return}},{...z6s.NODE_REGION_CONFIG_FILE_OPTIONS,profile:t})());
+var Y6s=b(()=>{U0r();K6s();z6s=x(yk(),1),j6s=x($N(),1)});
+export {z6s,j6s,fromTemporaryCredentials,Y6s};

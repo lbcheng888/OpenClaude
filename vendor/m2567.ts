@@ -1,6 +1,9 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function FIi(e){if(e.startsWith("command:"))return{description:e.slice(8)};return SAd[e]}
-var SAd;
-var UIi=b(()=>{SAd={"confirm:yes":{description:"confirm"},"confirm:no":{description:"cancel"},"confirm:previous":{description:"navigate"},"confirm:next":{description:"navigate"},"confirm:nextField":{description:"next field"},"confirm:previousField":{description:"previous field"},"confirm:toggle":{description:"toggle"},"confirm:cycleMode":{description:"cycle mode"},"confirm:toggleExplanation":{description:"explanation"},"select:next":{description:"navigate"},"select:previous":{description:"navigate"},"select:pageUp":{description:"page up"},"select:pageDown":{description:"page down"},"select:first":{description:"first"},"select:last":{description:"last"},"select:accept":{description:"select"},"select:cancel":{description:"cancel"},"tabs:next":{description:"switch tab"},"tabs:previous":{description:"switch tab"},"app:toggleReplTab":{description:"switch tab"}}});
-export {FIi,SAd,UIi};
+import {bE,Pie} from "./m2566.ts";
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function ywe(e){let t=XMi.c(9),{isFocused:n,isSelected:r,children:o,description:s,shouldShowDownArrow:i,shouldShowUpArrow:a,declareCursor:l,onClick:c}=e,u;if(t[0]!==o||t[1]!==l||t[2]!==s||t[3]!==n||t[4]!==r||t[5]!==c||t[6]!==i||t[7]!==a)u=QMi.jsx(bE,{isFocused:n,isSelected:r,description:s,showScrollDown:i,showScrollUp:a,styled:!1,declareCursor:l,onClick:c,children:o}),t[0]=o,t[1]=l,t[2]=s,t[3]=n,t[4]=r,t[5]=c,t[6]=i,t[7]=a,t[8]=u;else u=t[8];return u}
+var XMi,QMi;
+var bvn=b(()=>{Pie();XMi=x(tt(),1),QMi=x(oe(),1)});
+export {ywe,XMi,QMi,bvn};

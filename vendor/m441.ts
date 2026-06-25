@@ -1,5 +1,28 @@
 // @ts-nocheck
+import {inn,pAt,BYo} from "./m440.ts";
 import {b} from "../runtime.ts";
-import {hGo} from "./m440.ts";
-var _Go=b(()=>{hGo()});
-export {_Go};
+function YYo(e){if(Object.assign(FN,e),!FN.backgroundSync)NBc()}
+async function JYo(e){let{instance:t,timeout:n,skipCache:r,allowStale:o,backgroundSync:s}=e;if(!s)FN.backgroundSync=!1;return PBc({instance:t,allowStale:o,timeout:n,skipCache:r})}
+function IBc(e){let t=mAt(e),n=Ize.get(t)||new Set;n.add(e),Ize.set(t,n)}
+function XYo(e){Ize.forEach((t)=>t.delete(e))}
+function xBc(){xze.forEach((e)=>{if(!e)return;e.state="idle",cgr(e)})}
+function DBc(){xze.forEach((e)=>{if(!e)return;if(e.state!=="idle")return;ugr(e)})}
+async function jYo(){try{if(!eoe.localStorage)return;await eoe.localStorage.setItem(FN.cacheKey,JSON.stringify(Array.from(Dpe.entries())))}catch(e){}}
+async function PBc(e){let{instance:t,allowStale:n,timeout:r,skipCache:o}=e,s=mAt(t),i=agr(t),a=new Date,l=new Date(a.getTime()-FN.maxAge+FN.staleTTL);await OBc();let c=!FN.disableCache&&!o?Dpe.get(i):void 0;if(c&&(n||c.staleAt>a)&&c.staleAt>l){if(c.sse)Dze.add(s);if(c.staleAt<a)igr(t);else lgr(t);return{data:c.data,success:!0,source:"cache"}}else return await inn(igr(t),r)||{data:null,success:!1,source:"timeout",error:Error("Timeout")}}
+function mAt(e){let[t,n]=e.getApiInfo();return`${t}||${n}`}
+function agr(e){let t=mAt(e);if(!("isRemoteEval"in e)||!e.isRemoteEval())return t;let n=e.getAttributes(),r=e.getCacheKeyAttributes()||Object.keys(e.getAttributes()),o={};r.forEach((a)=>{o[a]=n[a]});let s=e.getForcedVariations(),i=e.getUrl();return`${t}||${JSON.stringify({ca:o,fv:s,url:i})}`}
+async function OBc(){if(zYo)return;zYo=!0;try{if(eoe.localStorage){let e=await eoe.localStorage.getItem(FN.cacheKey);if(!FN.disableCache&&e){let t=JSON.parse(e);if(t&&Array.isArray(t))t.forEach((n)=>{let[r,o]=n;Dpe.set(r,{...o,staleAt:new Date(o.staleAt)})});QYo()}}}catch(e){}if(!FN.disableIdleStreams){let e=Hze.startIdleListener();if(e)Hze.stopIdleListener=e}}
+function QYo(){let e=Array.from(Dpe.entries()).map((n)=>{let[r,o]=n;return{key:r,staleAt:o.staleAt.getTime()}}).sort((n,r)=>n.staleAt-r.staleAt),t=Math.min(Math.max(0,Dpe.size-FN.maxEntries),Dpe.size);for(let n=0;n<t;n++)Dpe.delete(e[n].key)}
+function ZYo(e,t,n){let r=n.dateUpdated||"",o=new Date(Date.now()+FN.staleTTL),s=!FN.disableCache?Dpe.get(t):void 0;if(s&&r&&s.version===r){s.staleAt=o,jYo();return}if(!FN.disableCache)Dpe.set(t,{data:n,version:r,staleAt:o,sse:Dze.has(e)}),QYo();jYo();let i=Ize.get(e);i&&i.forEach((a)=>LBc(a,n))}
+async function LBc(e,t){await e.setPayload(t||e.getPayload())}
+async function igr(e){let{apiHost:t,apiRequestHeaders:n}=e.getApiHosts(),r=e.getClientKey(),o="isRemoteEval"in e&&e.isRemoteEval(),s=mAt(e),i=agr(e),a=ann.get(i);if(!a)a=(o?Hze.fetchRemoteEvalCall({host:t,clientKey:r,payload:{attributes:e.getAttributes(),forcedVariations:e.getForcedVariations(),forcedFeatures:Array.from(e.getForcedFeatures().entries()),url:e.getUrl()},headers:n}):Hze.fetchFeaturesCall({host:t,clientKey:r,headers:n})).then((c)=>{if(!c.ok)throw Error(`HTTP error: ${c.status}`);if(c.headers.get("x-sse-support")==="enabled")Dze.add(s);return c.json()}).then((c)=>(ZYo(s,i,c),lgr(e),ann.delete(i),{data:c,success:!0,source:"network"})).catch((c)=>(ann.delete(i),{data:null,source:"error",success:!1,error:c})),ann.set(i,a);return a}
+function lgr(e){let t=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!1,n=mAt(e),r=agr(e),{streamingHost:o,streamingHostRequestHeaders:s}=e.getApiHosts(),i=e.getClientKey();if(t)Dze.add(n);if(FN.backgroundSync&&Dze.has(n)&&eoe.EventSource){if(xze.has(n))return;let a={src:null,host:o,clientKey:i,headers:s,cb:(l)=>{try{if(l.type==="features-updated"){let c=Ize.get(n);c&&c.forEach((u)=>{igr(u)})}else if(l.type==="features"){let c=JSON.parse(l.data);ZYo(n,r,c)}a.errors=0}catch(c){eJo(a)}},errors:0,state:"active"};xze.set(n,a),ugr(a)}}
+function eJo(e){if(e.state==="idle")return;if(e.errors++,e.errors>3||e.src&&e.src.readyState===2){let t=Math.pow(3,e.errors-3)*(1000+Math.random()*1000);cgr(e),setTimeout(()=>{if(["idle","active"].includes(e.state))return;ugr(e)},Math.min(t,300000))}}
+function cgr(e){if(!e.src)return;if(e.src.onopen=null,e.src.onerror=null,e.src.close(),e.src=null,e.state==="active")e.state="disabled"}
+function ugr(e){e.src=Hze.eventSourceCall({host:e.host,clientKey:e.clientKey,headers:e.headers}),e.state="active",e.src.addEventListener("features",e.cb),e.src.addEventListener("features-updated",e.cb),e.src.onerror=()=>eJo(e),e.src.onopen=()=>{e.errors=0}}
+function MBc(e,t){cgr(e),xze.delete(t)}
+function NBc(){Dze.clear(),xze.forEach(MBc),Ize.clear(),Hze.stopIdleListener()}
+function lnn(e,t){if(t.streaming){if(!e.getClientKey())throw Error("Must specify clientKey to enable streaming");if(t.payload)lgr(e,!0);IBc(e)}}
+var FN,eoe,Hze,Ize,zYo=!1,Dpe,ann,xze,Dze;
+var tJo=b(()=>{pAt();FN={staleTTL:60000,maxAge:14400000,cacheKey:"gbFeaturesCache",backgroundSync:!0,maxEntries:10,disableIdleStreams:!1,idleStreamInterval:20000,disableCache:!1},eoe=BYo(),Hze={fetchFeaturesCall:(e)=>{let{host:t,clientKey:n,headers:r}=e;return eoe.fetch(`${t}/api/features/${n}`,{headers:r})},fetchRemoteEvalCall:(e)=>{let{host:t,clientKey:n,payload:r,headers:o}=e,s={method:"POST",headers:{"Content-Type":"application/json",...o},body:JSON.stringify(r)};return eoe.fetch(`${t}/api/eval/${n}`,s)},eventSourceCall:(e)=>{let{host:t,clientKey:n,headers:r}=e;if(r)return new eoe.EventSource(`${t}/sub/${n}`,{headers:r});return new eoe.EventSource(`${t}/sub/${n}`)},startIdleListener:()=>{let e;if(!(typeof window<"u"&&typeof document<"u"))return;let n=()=>{if(document.visibilityState==="visible")window.clearTimeout(e),DBc();else if(document.visibilityState==="hidden")e=window.setTimeout(xBc,FN.idleStreamInterval)};return document.addEventListener("visibilitychange",n),()=>document.removeEventListener("visibilitychange",n)},stopIdleListener:()=>{}};try{if(globalThis.localStorage)eoe.localStorage=globalThis.localStorage}catch(e){}Ize=new Map,Dpe=new Map,ann=new Map,xze=new Map,Dze=new Set});
+export {YYo,JYo,IBc,XYo,xBc,DBc,jYo,PBc,mAt,agr,OBc,QYo,ZYo,LBc,igr,lgr,eJo,cgr,ugr,MBc,NBc,lnn,FN,eoe,Hze,Ize,zYo,Dpe,ann,xze,Dze,tJo};

@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xi} from "./m2091.ts";
-var sba=X((Lle)=>{Object.defineProperty(Lle,"__esModule",{value:!0});Lle.getStringListFromEnv=Lle.getBooleanFromEnv=Lle.getStringFromEnv=Lle.getNumberFromEnv=void 0;var nba=Xi(),rba=require("util");function cip(e){let t=process.env[e];if(t==null||t.trim()==="")return;let n=Number(t);if(isNaN(n)){nba.diag.warn(`Unknown value ${(0,rba.inspect)(t)} for ${e}, expected a number, using defaults`);return}return n}Lle.getNumberFromEnv=cip;function oba(e){let t=process.env[e];if(t==null||t.trim()==="")return;return t}Lle.getStringFromEnv=oba;function uip(e){let t=process.env[e]?.trim().toLowerCase();if(t==null||t==="")return!1;if(t==="true")return!0;else if(t==="false")return!1;else return nba.diag.warn(`Unknown value ${(0,rba.inspect)(t)} for ${e}, expected 'true' or 'false', falling back to 'false' (default)`),!1}Lle.getBooleanFromEnv=uip;function dip(e){return oba(e)?.split(",").map((t)=>t.trim()).filter((t)=>t!=="")}Lle.getStringListFromEnv=dip});
-export {sba};
+import {Q} from "../runtime.ts";
+import {dle} from "./m3455.ts";
+import {P2t} from "./m3630.ts";
+var zka=Q((uFn)=>{Object.defineProperty(uFn,"__esModule",{value:!0});uFn.createOtlpGrpcExportDelegate=void 0;var Rgp=dle(),vgp=P2t();function wgp(e,t,n,r){return(0,Rgp.createOtlpNetworkExportDelegate)(e,t,(0,vgp.createOtlpGrpcExporterTransport)({address:e.url,compression:e.compression,credentials:e.credentials,metadata:e.metadata,userAgent:e.userAgent,grpcName:n,grpcPath:r}))}uFn.createOtlpGrpcExportDelegate=wgp});
+export {zka};

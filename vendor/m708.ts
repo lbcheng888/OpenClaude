@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {Sts,bts} from "./m707.ts";
-import {EWe,Y7t} from "./m63.ts";
 import {b} from "../runtime.ts";
-function Ets(e,t,n,r,o){var s=-1,i=e.length;n||(n=Sts),o||(o=[]);while(++s<i){var a=e[s];if(t>0&&n(a))if(t>1)Ets(a,t-1,n,r,o);else EWe(o,a);else if(!r)o[o.length]=a}return o}
-var Cts;
-var vts=b(()=>{Y7t();bts();Cts=Ets});
-export {Ets,Cts,vts};
+function aSr(e){von.set(e,Date.now())}
+function sas(e,t){let n=von.get(e);if(n!==void 0&&Date.now()-n<t)return von.delete(e),!0;return!1}
+function ias(){von.clear()}
+var von;
+var won=b(()=>{von=new Map});
+export {aSr,sas,ias,von,won};

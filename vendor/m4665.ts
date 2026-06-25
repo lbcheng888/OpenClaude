@@ -1,19 +1,14 @@
 // @ts-nocheck
-import {NP,V6,U0,hS} from "../src/config/4438_source.ts";
-import {JUe,jie,aDi,HAe} from "./m2596.ts";
-import {cP,gs,sh} from "./m2589.ts";
-import {Uv,nI} from "./m3252.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {vqt,tue} from "../src/config/4442_ref.ts";
-import {Se,bt} from "./m195.ts";
-import {loadAllPluginsCacheOnly,gg} from "../src/agent/4445_resolvePluginRoot.ts";
-import {q3r,N5} from "./m2583.ts";
-import {fs} from "../src/api/0459_getOauthConfig.ts";
-import {b} from "../runtime.ts";
-async function sye(e){let t=new Map;for(let a of e){if(a.type!=="dependency-unsatisfied"||a.reason!=="not-found")continue;let l=t.get(a.dependency);if(!l)l=new Set,t.set(a.dependency,l);l.add(a.source)}if(t.size===0)return{installed:[],stillUnresolved:[],marketplaceMissing:[]};let n=await NP(),r=lYp.map((a)=>[a,JUe(cP(a))]),o=[],s=[],i=[];for(let[a,l]of t){let c=gs(a).marketplace;if(!c||!n[c]){s.push(a),i.push(a);continue}if(!Uv(n[c].source)){logForDebugging(`resolveMissingDependencies: skipping "${a}" \u2014 marketplace "${c}" is blocked by enterprise policy`),s.push(a);continue}let u=!1;for(let d of l){let p=gs(d).marketplace;if(p===c){u=!0;break}if(!p)continue;if((await V6(p))?.allowCrossMarketplaceDependenciesOn?.includes(c)){u=!0;break}}if(!u){logForDebugging(`resolveMissingDependencies: skipping "${a}" \u2014 cross-marketplace dependency not in any declaring marketplace's allowlist`),s.push(a);continue}try{let d=await U0(a);if(!d){s.push(a);continue}let p=cYp(l,r),m=await vqt({pluginId:a,entry:d.entry,scope:p??"user",marketplaceInstallLocation:d.marketplaceInstallLocation,trigger:"dependency-resolution",auto:p!==void 0,requiredByEnabledDependent:!0});if(m.ok){for(let f of m.closure)if(!o.includes(f))o.push(f)}else logForDebugging(`resolveMissingDependencies: install of "${a}" did not complete (${m.reason})`,{level:"warn"}),s.push(a)}catch(d){logForDebugging(`resolveMissingDependencies: install of "${a}" threw: ${Se(d)}`,{level:"warn"}),s.push(a)}}return{installed:o,stillUnresolved:s,marketplaceMissing:i}}
-async function USo(e){let{errors:t}=await loadAllPluginsCacheOnly();return t.filter(q3r).filter((n)=>n.source===e)}
-async function cmt(e){let t=await USo(e);if(t.length===0)return null;let{installed:n,marketplaceMissing:r}=await sye(t),o=new Set(n),s=fs(t.map((i)=>i.dependency)).filter((i)=>!o.has(i));return{suffix:`${jie(n)}${aDi(s,r)}`,changed:n.length>0}}
-function cYp(e,t){for(let[n,r]of t)for(let o of e)if(r.has(o))return n;return}
-var lYp;
-var CDe=b(()=>{N5();qe();bt();HAe();hS();sh();tue();gg();nI();lYp=["user","project","local"]});
-export {sye,USo,cmt,cYp,lYp,CDe};
+import {Box} from "./m2432.ts";
+import {qE,BG} from "./m4563.ts";
+import {Text} from "./m2433.ts";
+import {hr} from "./m2573.ts";
+import {b,x} from "../runtime.ts";
+import {TS} from "./m4541.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function JTl(e){let t=YTl.c(8),{onSelect:n,onCancel:r}=e,o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o=[{label:"Set up GitHub Actions workflows",value:"setup"},{label:"Skip for now (you can run /install-github-app again later)",value:"skip"}],t[0]=o;else o=t[0];let s=o,i;if(t[1]!==n)i=(d)=>{n(d)},t[1]=n,t[2]=i;else i=t[2];let a=i,l;if(t[3]===Symbol.for("react.memo_cache_sentinel"))l=wTe.jsx(Box,{marginBottom:1,children:wTe.jsx(qE,{subtitle:"Set up GitHub Actions",children:"GitHub App installed!"})}),t[3]=l;else l=t[3];let c;if(t[4]===Symbol.for("react.memo_cache_sentinel"))c=wTe.jsx(Box,{flexDirection:"column",marginBottom:1,children:wTe.jsx(Text,{children:"The Claude GitHub App is now installed. You can optionally set up GitHub Actions workflows so Claude responds to @claude mentions in issues and PRs."})}),t[4]=c;else c=t[4];let u;if(t[5]!==a||t[6]!==r)u=wTe.jsxs(Box,{flexDirection:"column",borderStyle:"round",borderDimColor:!0,paddingX:1,children:[l,c,wTe.jsx(Box,{flexDirection:"column",children:wTe.jsx(hr,{options:s,onChange:a,onCancel:r})})]}),t[5]=a,t[6]=r,t[7]=u;else u=t[7];return u}
+var YTl,wTe;
+var XTl=b(()=>{TS();BG();je();YTl=x(tt(),1),wTe=x(oe(),1)});
+export {JTl,YTl,wTe,XTl};

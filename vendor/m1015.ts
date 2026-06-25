@@ -1,12 +1,7 @@
 // @ts-nocheck
-import {RSr,xSr,MSs} from "./m1011.ts";
-import {uTs,dTs,pTs} from "./m993.ts";
-import {WSs,GSs,VSs} from "./m1014.ts";
-import {kSs,HSs,ISs} from "./m1009.ts";
-import {PSs,DSs,OSs} from "./m1010.ts";
-import {hSs,gSs,_Ss} from "./m1004.ts";
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-var KSs,ISr=async(e,t,n,r={},o=!1)=>{let s=t[e];if(Object.keys(r).length>0&&RSr(s))return xSr(s,n);if(o||uTs(s,{profile:e,logger:n.logger}))return dTs(e,t,n,r,ISr);if(RSr(s))return xSr(s,n);if(WSs(s))return GSs(s,n);if(kSs(s))return HSs(n,e);if(PSs(s))return await DSs(e,s,n);if(hSs(s))return gSs(e,n);throw new KSs.CredentialsProviderError(`Could not resolve credentials using profile: [${e}] in configuration/credentials file(s).`,{logger:n.logger})};
-var zSs=b(()=>{pTs();_Ss();ISs();OSs();MSs();VSs();KSs=M(createDefaultGlobalConfig(),1)});
-export {KSs,ISr,zSs};
+import {nln,SRr} from "./m986.ts";
+import {b,x} from "../runtime.ts";
+import {b0} from "./m756.ts";
+var tvr,vws=async(e,t,n={})=>{let{fromSSO:r}=await Promise.resolve().then(() => (nln(),SRr));return r({profile:e,logger:n.logger,parentClientConfig:n.parentClientConfig,clientConfig:n.clientConfig})().then((o)=>{if(t.sso_session)return tvr.setCredentialFeature(o,"CREDENTIALS_PROFILE_SSO","r");else return tvr.setCredentialFeature(o,"CREDENTIALS_PROFILE_SSO_LEGACY","t")})},wws=(e)=>e&&(typeof e.sso_start_url==="string"||typeof e.sso_account_id==="string"||typeof e.sso_session==="string"||typeof e.sso_region==="string"||typeof e.sso_role_name==="string");
+var kws=b(()=>{tvr=x(b0(),1)});
+export {tvr,vws,wws,kws};

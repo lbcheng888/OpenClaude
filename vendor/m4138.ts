@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Aut} from "./m4119.ts";
-import {duo} from "./m4136.ts";
-import {Xk} from "./m4102.ts";
-import {B$n} from "./m4134.ts";
-var Auo=X((q$n)=>{var $3a=Aut(),gkp=duo(),_kp=Xk(),ykp=B$n(),Tkp=q$n.elements={},q3a=Object.create(null);q$n.createElement=function(e,t,n){var r=q3a[t]||fuo;return new r(e,t,n)};function muo(e){return gkp(e,fuo,Tkp,q3a)}var fuo=muo({superclass:$3a,name:"SVGElement",ctor:function(t,n,r){$3a.call(this,t,n,_kp.NAMESPACE.SVG,r)},props:{style:{get:function(){if(!this._style)this._style=new ykp(this);return this._style}}}});muo({name:"SVGSVGElement",ctor:function(t,n,r){fuo.call(this,t,n,r)},tag:"svg",props:{createSVGRect:{value:function(){return q$n.createElement(this.ownerDocument,"rect",null)}}}});muo({tags:["a","altGlyph","altGlyphDef","altGlyphItem","animate","animateColor","animateMotion","animateTransform","circle","clipPath","color-profile","cursor","defs","desc","ellipse","feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotLight","feTile","feTurbulence","filter","font","font-face","font-face-format","font-face-name","font-face-src","font-face-uri","foreignObject","g","glyph","glyphRef","hkern","image","line","linearGradient","marker","mask","metadata","missing-glyph","mpath","path","pattern","polygon","polyline","radialGradient","rect","script","set","stop","style","switch","symbol","text","textPath","title","tref","tspan","use","view","vkern"]})});
-export {Auo};
+import {Q} from "../runtime.ts";
+import {Y1} from "./m4119.ts";
+import {w4t} from "./m4134.ts";
+var qfo=Q((CAy,hWa)=>{hWa.exports=$fo;var TMp=Y1(),fWa=w4t();function $fo(e,t,n){fWa.call(this),this.nodeType=TMp.PROCESSING_INSTRUCTION_NODE,this.ownerDocument=e,this.target=t,this._data=n}var I4t={get:function(){return this._data},set:function(e){if(e===null||e===void 0)e="";else e=String(e);if(this._data=e,this.rooted)this.ownerDocument.mutateValue(this)}};$fo.prototype=Object.create(fWa.prototype,{nodeName:{get:function(){return this.target}},nodeValue:I4t,textContent:I4t,innerText:I4t,data:{get:I4t.get,set:function(e){I4t.set.call(this,e===null?"":String(e))}},clone:{value:function(){return new $fo(this.ownerDocument,this.target,this._data)}},isEqual:{value:function(t){return this.target===t.target&&this._data===t._data}}})});
+export {qfo};

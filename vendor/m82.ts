@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {yKe,HYt} from "./m72.ts";
+import {uKe,fYt} from "./m24.ts";
 import {b} from "../runtime.ts";
-function Sfc(e){var t=e&&e.constructor,n=typeof t=="function"&&t.prototype||Tfc;return e===n}
-var Tfc,xWe;
-var aKt=b(()=>{Tfc=Object.prototype;xWe=Sfc});
-export {Sfc,Tfc,xWe,aKt};
+function HAc(e){return e!=null&&yKe(e.length)&&!uKe(e)}
+var yre;
+var EKe=b(()=>{fYt();HYt();yre=HAc});
+export {HAc,yre,EKe};

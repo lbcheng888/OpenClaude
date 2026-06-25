@@ -1,14 +1,17 @@
 // @ts-nocheck
-import {truncate} from "./m237.ts";
-import {b} from "../runtime.ts";
-import {ps} from "./m238.ts";
-function OLm(e,t){let n=t;while(n<e.length&&/\s/.test(e[n]))n++;let r=e[n];if(r!=='"'&&r!=="'"&&r!=="`"){let i=Math.min(e.length,n+aht),a=0,l=n;while(l<i){let c=e[l];if(c==="("||c==="["||c==="{")a++;else if(c===")"||c==="]"||c==="}"){if(a===0)break;a--}else if(c===","&&a===0)break;else if(c==='"'||c==="'"||c==="`"){l++;while(l<i&&e[l]!==c){if(e[l]==="\\")l++;l++}}l++}return truncate(e.slice(n,l).trim(),kVl)}n++;let o=[];while(n<e.length){let i=e[n];if(i==="\\"){o.push(e[n+1]??""),n+=2;continue}if(i===r)break;if(r==="`"&&i==="$"&&e[n+1]==="{"){o.push("${\u2026}");let a=1;n+=2;while(n<e.length&&a>0){if(e[n]==="{")a++;if(e[n]==="}")a--;n++}continue}o.push(i),n++}let s=o.join("").replace(/\s+/g," ").trim();return truncate(s,kVl)}
-function HVl(e,t,n){if(e[t]!=="(")return;let r=Math.min(e.length,t+aht),o=0,s=t;while(s<r){let i=e[s];if(i==="(")o++;else if(i===")"){if(o--,o===0)return e.slice(t+1,s)}else if(n&&i===";"&&o===1)return e.slice(t+1,s);s++}return}
-function LLm(e,t,n){let r=0,o=t;while(o<n){let s=e[o];if(s==="("||s==="["||s==="{")r++;else if(s===")"||s==="]"||s==="}"){if(r===0)return o;r--}else if(r===0&&s===";")return o+1;else if(r===0&&s===`
-`){let i=o+1;while(i<n&&/\s/.test(e[i]??""))i++;if(e[i]!=="{")return o+1}o++}return-1}
-function iht(e){return e!=null&&/[A-Za-z0-9_]/.test(e)}
-function IVl(e){try{let t=[],n=0,r=0,o=!1,s,i=-1,a=[],l=[],c=e.length,u=0;while(u<c){if(i>=0&&u>=i)o=!1,s=void 0,i=-1;let m=e[u];if(m==="/"&&e[u+1]==="/")while(u<c&&e[u]!==`
-`)u++;else if(m==="/"&&e[u+1]==="*"){u+=2;while(u<c&&!(e[u]==="*"&&e[u+1]==="/"))u++;u++}else if(m==='"'||m==="'"||m==="`"){u++;while(u<c&&e[u]!==m){if(e[u]==="\\")u++;u++}}else if(m==="{"){if(n++,o&&r===0)a.push({braceDepth:n,cond:s}),o=!1,s=void 0,i=-1}else if(m==="}"){let f=a.at(-1);if(f&&f.braceDepth===n)a.pop();n--}else if(m==="(")r++;else if(m===")"){let f=l.at(-1);if(f!==void 0&&f===r)l.pop();if(r--,o&&r===0&&i<0){let A=u+1,h=Math.min(c,A+aht);while(A<h&&/\s/.test(e[A]??""))A++;if(e[A]!=="{"){let g=LLm(e,A,Math.min(c,A+aht));if(g>=0)i=g}}}else if(m==="w"&&e.startsWith("while",u)&&r===0&&!iht(e[u-1])&&!iht(e[u+5])){let f=e.indexOf("(",u);if(f===-1||f-u>aht){u++;continue}o=!0,i=-1,s=HVl(e,f,!1)}else if(m==="f"&&e.startsWith("for",u)&&r===0&&!iht(e[u-1])&&!iht(e[u+3])){let f=e.indexOf("(",u);if(f===-1||f-u>aht){u++;continue}o=!0,i=-1,s=HVl(e,f,!0)}else if(m==="p"&&e.startsWith("parallel(",u)&&!iht(e[u-1]))l.push(r+1),u+=7;else if(m==="a"&&e.startsWith("agent",u)&&!iht(e[u-1])){let f=u+5;while(f<c&&/\s/.test(e[f]??""))f++;if(e[f]==="("){let A=l.length>0?"parallel":o||a.length>0?"loop":"sequential",h=o?s:a.at(-1)?.cond,g=A==="loop"?h?.trim().slice(0,40):A==="parallel"?"\xD7 N":void 0;t.push({prompt:OLm(e,f+1),kind:A,annotation:g})}}u++}if(t.length===0)return null;let d=[];for(let m of t){let f=d.at(-1);if(f&&f.kind===m.kind&&f.annotation===m.annotation)f.agents.push({prompt:m.prompt});else d.push({kind:m.kind,agents:[{prompt:m.prompt}],annotation:m.annotation})}let p=0;for(let m of d){let f=m.agents.length;p+=m.kind==="sequential"?f:f*3}return{phases:d,estimatedAgents:p,hasReturn:/\breturn\b/.test(e)}}catch{return null}}
-var kVl=100,aht=5000;
-var DVl=b(()=>{ps()});
-export {OLm,HVl,LLm,iht,IVl,kVl,aht,DVl};
+import {_t,uo} from "./m2468.ts";
+import {_G,U6e} from "./m4040.ts";
+import {Text} from "./m2433.ts";
+import {at,Wo} from "./m2557.ts";
+import {Box} from "./m2432.ts";
+import {ND,s_e} from "./m3298.ts";
+import {IDe,w5t} from "./m4442.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function UQl(){let e=BQl.c(14),t=_t(_$m);if(!t)return null;let n;if(e[0]!==t.identity.color)n=_G(t.identity.color),e[0]=t.identity.color,e[1]=n;else n=e[1];let r=n,o;if(e[2]===Symbol.for("react.memo_cache_sentinel"))o=pde.jsx(Text,{children:"Viewing "}),e[2]=o;else o=e[2];let s;if(e[3]!==r||e[4]!==t.identity.agentName)s=pde.jsxs(Text,{color:r,bold:!0,children:["@",t.identity.agentName]}),e[3]=r,e[4]=t.identity.agentName,e[5]=s;else s=e[5];let i;if(e[6]===Symbol.for("react.memo_cache_sentinel"))i=pde.jsxs(Text,{dimColor:!0,children:[" \xB7 ",pde.jsx(at,{chord:"escape",action:"return",format:{keyCase:"lower"}})]}),e[6]=i;else i=e[6];let a;if(e[7]!==s)a=pde.jsxs(Box,{children:[o,s,i]}),e[7]=s,e[8]=a;else a=e[8];let l;if(e[9]!==t.prompt)l=pde.jsx(Text,{dimColor:!0,children:t.prompt}),e[9]=t.prompt,e[10]=l;else l=e[10];let c;if(e[11]!==a||e[12]!==l)c=pde.jsx(ND,{children:pde.jsxs(Box,{flexDirection:"column",marginBottom:1,children:[a,l]})}),e[11]=a,e[12]=l,e[13]=c;else c=e[13];return c}
+function _$m(e){return IDe(e)}
+var BQl,pde;
+var $Ql=b(()=>{je();uo();w5t();U6e();Wo();s_e();BQl=x(tt(),1),pde=x(oe(),1)});
+export {UQl,_$m,BQl,pde,$Ql};

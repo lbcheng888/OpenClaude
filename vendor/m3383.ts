@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {ag} from "./m2133.ts";
-import {eQr} from "./m3379.ts";
-var bda=X((zDn)=>{Object.defineProperty(zDn,"__esModule",{value:!0});zDn.ConsoleMetricExporter=void 0;var Sda=ag(),kVd=eQr();class rQr{_shutdown=!1;_temporalitySelector;constructor(e){this._temporalitySelector=e?.temporalitySelector??kVd.DEFAULT_AGGREGATION_TEMPORALITY_SELECTOR}export(e,t){if(this._shutdown){setImmediate(t,{code:Sda.ExportResultCode.FAILED});return}return rQr._sendMetrics(e,t)}forceFlush(){return Promise.resolve()}selectAggregationTemporality(e){return this._temporalitySelector(e)}shutdown(){return this._shutdown=!0,Promise.resolve()}static _sendMetrics(e,t){for(let n of e.scopeMetrics)for(let r of n.metrics)console.dir({descriptor:r.descriptor,dataPointType:r.dataPointType,dataPoints:r.dataPoints},{depth:null});t({code:Sda.ExportResultCode.SUCCESS})}}zDn.ConsoleMetricExporter=rQr});
-export {bda};
+import {Q} from "../runtime.ts";
+var xno=Q((mq)=>{Object.defineProperty(mq,"__esModule",{value:!0});mq.getSignificand=mq.getNormalBase2=mq.MIN_VALUE=mq.MAX_NORMAL_EXPONENT=mq.MIN_NORMAL_EXPONENT=mq.SIGNIFICAND_WIDTH=void 0;mq.SIGNIFICAND_WIDTH=52;var $tp=2146435072,qtp=1048575,Ino=1023;mq.MIN_NORMAL_EXPONENT=-Ino+1;mq.MAX_NORMAL_EXPONENT=Ino;mq.MIN_VALUE=Math.pow(2,-1022);function Wtp(e){let t=new DataView(new ArrayBuffer(8));return t.setFloat64(0,e),((t.getUint32(0)&$tp)>>20)-Ino}mq.getNormalBase2=Wtp;function Gtp(e){let t=new DataView(new ArrayBuffer(8));t.setFloat64(0,e);let n=t.getUint32(0),r=t.getUint32(4);return(n&qtp)*Math.pow(2,32)+r}mq.getSignificand=Gtp});
+export {xno};

@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {dno} from "./m3665.ts";
-import {ZMn} from "./m3666.ts";
-import {t1n} from "./m3667.ts";
-var dEa=X((r1n)=>{Object.defineProperty(r1n,"__esModule",{value:!0});r1n.LogarithmMapping=void 0;var Xit=dno(),lEa=ZMn(),cEa=t1n();class uEa{_scale;_scaleFactor;_inverseFactor;constructor(e){this._scale=e,this._scaleFactor=lEa.ldexp(Math.LOG2E,e),this._inverseFactor=lEa.ldexp(Math.LN2,-e)}mapToIndex(e){if(e<=Xit.MIN_VALUE)return this._minNormalLowerBoundaryIndex()-1;if(Xit.getSignificand(e)===0)return(Xit.getNormalBase2(e)<<this._scale)-1;let t=Math.floor(Math.log(e)*this._scaleFactor),n=this._maxNormalLowerBoundaryIndex();if(t>=n)return n;return t}lowerBoundary(e){let t=this._maxNormalLowerBoundaryIndex();if(e>=t){if(e===t)return 2*Math.exp((e-(1<<this._scale))/this._scaleFactor);throw new cEa.MappingError(`overflow: ${e} is > maximum lower boundary: ${t}`)}let n=this._minNormalLowerBoundaryIndex();if(e<=n){if(e===n)return Xit.MIN_VALUE;else if(e===n-1)return Math.exp((e+(1<<this._scale))/this._scaleFactor)/2;throw new cEa.MappingError(`overflow: ${e} is < minimum lower boundary: ${n}`)}return Math.exp(e*this._inverseFactor)}get scale(){return this._scale}_minNormalLowerBoundaryIndex(){return Xit.MIN_NORMAL_EXPONENT<<this._scale}_maxNormalLowerBoundaryIndex(){return(Xit.MAX_NORMAL_EXPONENT+1<<this._scale)-1}}r1n.LogarithmMapping=uEa});
-export {dEa};
+import {Q} from "../runtime.ts";
+var rIa=Q((MFn)=>{Object.defineProperty(MFn,"__esModule",{value:!0});MFn.Deferred=void 0;class nIa{_promise;_resolve;_reject;constructor(){this._promise=new Promise((e,t)=>{this._resolve=e,this._reject=t})}get promise(){return this._promise}resolve(e){this._resolve(e)}reject(e){this._reject(e)}}MFn.Deferred=nIa});
+export {rIa};

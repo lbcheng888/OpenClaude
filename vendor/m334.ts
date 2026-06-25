@@ -1,7 +1,11 @@
 // @ts-nocheck
-import {fw,QV} from "./m325.ts";
+import {ZodFirstPartyTypeKind} from "./m252.ts";
+import {Ad,h0} from "./m349.ts";
+import {bR,CK} from "./m327.ts";
+import {Yen,Jen} from "./m333.ts";
+import {zen,jen} from "./m328.ts";
 import {b} from "../runtime.ts";
-function z6o(e){let t=e.values,r=Object.keys(e.values).filter((s)=>typeof t[t[s]]!=="number").map((s)=>t[s]),o=Array.from(new Set(r.map((s)=>typeof s)));return{type:o.length===1?o[0]==="string"?"string":"number":["string","number"],enum:r}}
-function Y6o(e){return e.target==="openAi"?void 0:{not:fw({...e,currentPath:[...e.currentPath,"not"]})}}
-var hcr=b(()=>{QV()});
-export {z6o,Y6o,hcr};
+import {mEt} from "./m254.ts";
+function Xen(e,t){if(t.target==="openAi")console.warn("Warning: OpenAI may not support records in schemas! Try an array of key-value pairs instead.");if(t.target==="openApi3"&&e.keyType?._def.typeName===ZodFirstPartyTypeKind.ZodEnum)return{type:"object",required:e.keyType._def.values,properties:e.keyType._def.values.reduce((r,o)=>({...r,[o]:Ad(e.valueType._def,{...t,currentPath:[...t.currentPath,"properties",o]})??bR(t)}),{}),additionalProperties:t.rejectedAdditionalProperties};let n={type:"object",additionalProperties:Ad(e.valueType._def,{...t,currentPath:[...t.currentPath,"additionalProperties"]})??t.allowedAdditionalProperties};if(t.target==="openApi3")return n;if(e.keyType?._def.typeName===ZodFirstPartyTypeKind.ZodString&&e.keyType._def.checks?.length){let{type:r,...o}=Yen(e.keyType._def,t);return{...n,propertyNames:o}}else if(e.keyType?._def.typeName===ZodFirstPartyTypeKind.ZodEnum)return{...n,propertyNames:{enum:e.keyType._def.values}};else if(e.keyType?._def.typeName===ZodFirstPartyTypeKind.ZodBranded&&e.keyType._def.type._def.typeName===ZodFirstPartyTypeKind.ZodString&&e.keyType._def.type._def.checks?.length){let{type:r,...o}=zen(e.keyType._def,t);return{...n,propertyNames:o}}return n}
+var Qen=b(()=>{mEt();h0();Jen();jen();CK()});
+export {Xen,Qen};

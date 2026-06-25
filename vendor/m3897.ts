@@ -1,8 +1,48 @@
 // @ts-nocheck
-import {Le,Xt} from "../src/config/0228_encoding.ts";
-import {b} from "../runtime.ts";
-function Iyp(e){return e.replace(Hyp,(t)=>t==="\u2028"?"\\u2028":"\\u2029")}
-function I4e(e){return Iyp(Le(e))}
-var Hyp;
-var Nso=b(()=>{Xt();Hyp=/\u2028|\u2029/g});
-export {Iyp,I4e,Hyp,Nso};
+import {ft,b} from "../runtime.ts";
+import {qbe,dn} from "../src/config/0137_namespace.ts";
+import {qt,TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {cn,Ce,sp,Ta,Ct} from "./m197.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {zg} from "./m1479.ts";
+import {isTeammate,getTeamName,getAgentName,Op} from "../src/agent/1464_waitForTeammatesToBecomeIdle.ts";
+import {execFileNoThrowWithCwd,Ii} from "./m690.ts";
+import {gitExe,ia} from "./m698.ts";
+import {getSessionCreatedTeams,lt} from "../src/session/0132_sent.ts";
+import {Tl,mn} from "../src/telemetry/0600_feature_name.ts";
+import {Dd,wB} from "../src/config/3893_wB.ts";
+import {E9t,C9t} from "./m3896.ts";
+import {sye,ZFa} from "./m4227.ts";
+import {hte,Yco} from "./m3895.ts";
+var QFa={};
+ft(QFa,{writeTeamFileAsync:()=>writeTeamFileAsync,updateTeamFile:()=>updateTeamFile,teamMissingError:()=>teamMissingError,syncTeammateMode:()=>syncTeammateMode,setMultipleMemberModes:()=>setMultipleMemberModes,setMemberMode:()=>setMemberMode,setMemberActive:()=>setMemberActive,sanitizeName:()=>sanitizeName,sanitizeAgentName:()=>sanitizeAgentName,removeTeammateFromTeamFile:()=>removeTeammateFromTeamFile,removeTeamMember:()=>removeTeamMember,removeMemberFromTeam:()=>removeMemberFromTeam,removeMemberByAgentId:()=>removeMemberByAgentId,removeHiddenPaneId:()=>removeHiddenPaneId,registerTeamForSessionCleanup:()=>registerTeamForSessionCleanup,readTeamFileAsync:()=>readTeamFileAsync,readTeamFile:()=>readTeamFile,logTeamFileWriteFailure:()=>logTeamFileWriteFailure,getTeamFilePath:()=>getTeamFilePath,getTeamDir:()=>getTeamDir,cleanupTeamDirectories:()=>cleanupTeamDirectories,cleanupSessionTeams:()=>cleanupSessionTeams,addHiddenPaneId:()=>addHiddenPaneId});
+function sanitizeName(e){return e.replace(/[^a-zA-Z0-9]/g,"-").toLowerCase()}
+function sanitizeAgentName(e){return e.replaceAll("@","-")}
+function getTeamDir(e){return Eut.join(qbe(),sanitizeName(e))}
+function getTeamFilePath(e){return Eut.join(getTeamDir(e),"config.json")}
+function readTeamFile(e){try{let t=Cut.readFileSync(getTeamFilePath(e),"utf-8");return qt(t)}catch(t){if(cn(t)==="ENOENT")return null;return logForDebugging(`[TeammateTool] Failed to read team file for ${e}: ${Ce(t)}`),null}}
+async function readTeamFileAsync(e){try{let t=await nce.readFile(getTeamFilePath(e),"utf-8");return qt(t)}catch(t){if(cn(t)==="ENOENT")return null;return logForDebugging(`[TeammateTool] Failed to read team file for ${e}: ${Ce(t)}`),null}}
+function logTeamFileWriteFailure(e,t){if(sp(t))logForDebugging(`[TeammateTool] Failed to write team file for ${e} (${cn(t)}): ${Ce(t)}`,{level:"error"});else Ie(t)}
+function R9t(e,t){try{let n=getTeamDir(e);Cut.mkdirSync(n,{recursive:!0}),Cut.writeFileSync(getTeamFilePath(e),TeamDeleteToolName(t,null,2))}catch(n){logTeamFileWriteFailure(e,n)}}
+function teamMissingError(e){return new Ta(`Internal error: team file for "${e}" not found. The session team should have been initialized at startup.`,"Team file missing (session team not initialized)")}
+async function updateTeamFile(e,t){let n=getTeamFilePath(e),r;try{r=await zg(n,{lockfilePath:`${n}.lock`,...Lwp})}catch(o){if(cn(o)==="ENOENT")throw teamMissingError(e);throw o}try{let o=await readTeamFileAsync(e);if(!o)throw Error("Team config file unreadable (lock acquired, read failed)");let s=t(o);if(s===!1)return;return await writeTeamFileAsync(e,o),s}finally{try{await r()}catch(o){logForDebugging(`[TeammateTool] updateTeamFile lock release failed: ${Ce(o)}`)}}}
+async function removeTeamMember(e,t){try{await updateTeamFile(e,(n)=>{let r=n.members.findIndex((o)=>o.agentId===t);if(r===-1)return!1;n.members.splice(r,1)})}catch(n){logForDebugging(`[TeammateTool] removeTeamMember(${t}) failed: ${Ce(n)}`)}}
+async function writeTeamFileAsync(e,t){let n=getTeamDir(e);await nce.mkdir(n,{recursive:!0}),await nce.writeFile(getTeamFilePath(e),TeamDeleteToolName(t,null,2))}
+function removeTeammateFromTeamFile(e,t){let n=t.agentId||t.name;if(!n)return logForDebugging("[TeammateTool] removeTeammateFromTeamFile called with no identifier"),!1;let r=readTeamFile(e);if(!r)return logForDebugging(`[TeammateTool] Cannot remove teammate ${n}: failed to read team file for "${e}"`),!1;let o=r.members.length;if(r.members=r.members.filter((s)=>{if(t.agentId&&s.agentId===t.agentId)return!1;if(t.name&&s.name===t.name)return!1;return!0}),r.members.length===o)return logForDebugging(`[TeammateTool] Teammate ${n} not found in team file for "${e}"`),!1;return R9t(e,r),logForDebugging(`[TeammateTool] Removed teammate from team file: ${n}`),!0}
+function addHiddenPaneId(e,t){let n=readTeamFile(e);if(!n)return!1;let r=n.hiddenPaneIds??[];if(!r.includes(t))r.push(t),n.hiddenPaneIds=r,R9t(e,n),logForDebugging(`[TeammateTool] Added ${t} to hidden panes for team ${e}`);return!0}
+function removeHiddenPaneId(e,t){let n=readTeamFile(e);if(!n)return!1;let r=n.hiddenPaneIds??[],o=r.indexOf(t);if(o!==-1)r.splice(o,1),n.hiddenPaneIds=r,R9t(e,n),logForDebugging(`[TeammateTool] Removed ${t} from hidden panes for team ${e}`);return!0}
+function removeMemberFromTeam(e,t){let n=readTeamFile(e);if(!n)return!1;let r=n.members.findIndex((o)=>o.tmuxPaneId===t);if(r===-1)return!1;if(n.members.splice(r,1),n.hiddenPaneIds){let o=n.hiddenPaneIds.indexOf(t);if(o!==-1)n.hiddenPaneIds.splice(o,1)}return R9t(e,n),logForDebugging(`[TeammateTool] Removed member with pane ${t} from team ${e}`),!0}
+function removeMemberByAgentId(e,t){let n=readTeamFile(e);if(!n)return!1;let r=n.members.findIndex((o)=>o.agentId===t);if(r===-1)return!1;return n.members.splice(r,1),R9t(e,n),logForDebugging(`[TeammateTool] Removed member ${t} from team ${e}`),!0}
+async function setMemberMode(e,t,n){try{await updateTeamFile(e,(r)=>{let o=r.members.find((s)=>s.name===t);if(!o)return logForDebugging(`[TeammateTool] Cannot set member mode: member ${t} not found in team ${e}`),!1;if(o.mode===n)return!1;o.mode=n,logForDebugging(`[TeammateTool] Set member ${t} in team ${e} to mode: ${n}`)})}catch(r){logForDebugging(`[TeammateTool] Cannot set member mode: ${Ce(r)}`)}}
+async function syncTeammateMode(e,t){if(!isTeammate())return;let n=t??getTeamName(),r=getAgentName();if(n&&r)await setMemberMode(n,r,e)}
+async function setMultipleMemberModes(e,t){try{await updateTeamFile(e,(n)=>{let r=new Map(t.map((s)=>[s.memberName,s.mode])),o=!1;for(let s of n.members){let i=r.get(s.name);if(i!==void 0&&s.mode!==i)o=!0,s.mode=i}if(!o)return!1;logForDebugging(`[TeammateTool] Set ${t.length} member modes in team ${e}`)})}catch(n){logForDebugging(`[TeammateTool] Cannot set member modes: ${Ce(n)}`)}}
+async function setMemberActive(e,t,n){try{await updateTeamFile(e,(r)=>{let o=r.members.find((s)=>s.name===t);if(!o)return logForDebugging(`[TeammateTool] Cannot set member active: member ${t} not found in team ${e}`),!1;if(o.isActive===n)return!1;o.isActive=n,logForDebugging(`[TeammateTool] Set member ${t} in team ${e} to ${n?"active":"idle"}`)})}catch(r){logForDebugging(`[TeammateTool] Cannot set member active: ${Ce(r)}`)}}
+async function Uwp(e){let t=Eut.join(e,".git"),n=null;try{let o=(await nce.readFile(t,"utf-8")).trim().match(/^gitdir:\s*(.+)$/);if(o&&o[1]){let s=o[1],i=Eut.join(s,"..","..");n=Eut.join(i,"..")}}catch{}if(n){let r=await execFileNoThrowWithCwd(gitExe(),["worktree","remove","--force",e],{cwd:n});if(r.code===0){logForDebugging(`[TeammateTool] Removed worktree via git: ${e}`);return}if(r.stderr?.includes("not a working tree")){logForDebugging(`[TeammateTool] Worktree already removed: ${e}`);return}logForDebugging(`[TeammateTool] git worktree remove failed, falling back to rm: ${r.stderr}`)}try{await nce.rm(e,{recursive:!0,force:!0}),logForDebugging(`[TeammateTool] Removed worktree directory manually: ${e}`)}catch(r){logForDebugging(`[TeammateTool] Failed to remove worktree ${e}: ${Ce(r)}`)}}
+function registerTeamForSessionCleanup(e){getSessionCreatedTeams().add(e)}
+async function cleanupSessionTeams(){return Tl("swarm_session_cleanup",async()=>{let e=getSessionCreatedTeams();if(e.size===0)return;let t=Array.from(e);logForDebugging(`cleanupSessionTeams: removing ${t.length} orphan team dir(s): ${t.join(", ")}`),await Promise.allSettled(t.map((n)=>qwp(n))),await Promise.allSettled(t.map((n)=>cleanupTeamDirectories(n))),e.clear()})}
+async function qwp(e){let t=readTeamFile(e);if(!t)return;let n=t.members.filter((a)=>a.name!==Dd&&a.tmuxPaneId&&a.backendType&&E9t(a.backendType));if(n.length===0)return;let[{ensureBackendsRegistered:r,getBackendByType:o},{isInsideTmux:s}]=await Promise.all([Promise.resolve().then(() => (sye(),ZFa)),Promise.resolve().then(() => (hte(),Yco))]);await r();let i=!await s();await Promise.allSettled(n.map(async(a)=>{if(!a.tmuxPaneId||!a.backendType||!E9t(a.backendType))return;let l=await o(a.backendType).killPane(a.tmuxPaneId,i);logForDebugging(`cleanupSessionTeams: killPane ${a.name} (${a.backendType} ${a.tmuxPaneId}) \u2192 ${l}`)}))}
+async function cleanupTeamDirectories(e){return Tl("swarm_team_cleanup",async()=>{let t=readTeamFile(e),n=[];if(t){for(let o of t.members)if(o.worktreePath)n.push(o.worktreePath)}for(let o of n)await Uwp(o);let r=getTeamDir(e);try{await nce.rm(r,{recursive:!0,force:!0}),logForDebugging(`[TeammateTool] Cleaned up team directory: ${r}`)}catch(o){logForDebugging(`[TeammateTool] Failed to clean up team directory ${r}: ${Ce(o)}`)}})}
+var Cut,nce,Eut,Lwp;
+var sL=b(()=>{lt();mn();qe();dn();Ct();Ii();ia();vn();tn();Op();C9t();wB();Cut=require("fs"),nce=require("fs/promises"),Eut=require("path");Lwp={realpath:!1,retries:{retries:10,minTimeout:5,maxTimeout:100},onCompromised:()=>{}}});
+export {QFa,sanitizeName,sanitizeAgentName,getTeamDir,getTeamFilePath,readTeamFile,readTeamFileAsync,logTeamFileWriteFailure,R9t,teamMissingError,updateTeamFile,removeTeamMember,writeTeamFileAsync,removeTeammateFromTeamFile,addHiddenPaneId,removeHiddenPaneId,removeMemberFromTeam,removeMemberByAgentId,setMemberMode,syncTeammateMode,setMultipleMemberModes,setMemberActive,Uwp,registerTeamForSessionCleanup,cleanupSessionTeams,qwp,cleanupTeamDirectories,Cut,nce,Eut,Lwp,sL};

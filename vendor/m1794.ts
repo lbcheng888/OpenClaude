@@ -1,11 +1,9 @@
 // @ts-nocheck
-import {ABe,efn} from "./m1793.ts";
-import {Umn,S7s,_v} from "./m1778.ts";
-import {Ho,b1} from "./m1717.ts";
-import {g4,hxt} from "./m1792.ts";
-import {b,M} from "../runtime.ts";
-import {AT} from "./m1775.ts";
-class G0r{constructor(){this.hashUtils=new ABe}async generatePkceCodes(){let e=this.generateCodeVerifier(),t=this.generateCodeChallengeFromVerifier(e);return{verifier:e,challenge:t}}generateCodeVerifier(){let e=[],t=256-256%Umn.CV_CHARSET.length;while(e.length<=S7s){let r=W7s.default.randomBytes(1)[0];if(r>=t)continue;let o=r%Umn.CV_CHARSET.length;e.push(Umn.CV_CHARSET[o])}let n=e.join(Ho.EMPTY_STRING);return g4.base64EncodeUrl(n)}generateCodeChallengeFromVerifier(e){return g4.base64EncodeUrl(this.hashUtils.sha256(e).toString(b1.BASE64),b1.BASE64)}}
-var W7s;
-var G7s=b(()=>{AT();_v();hxt();efn();W7s=M(require("crypto"));/*! @azure/msal-node v3.8.1 2025-10-29 */});
-export {G0r,W7s,G7s};
+import {_Mr,xQs} from "./m1791.ts";
+import {yMr,PQs} from "./m1792.ts";
+import {OQs,LQs} from "./m1793.ts";
+import {b} from "../runtime.ts";
+function sWu(e,t,n){if(_Mr.randomUUID&&!t&&!e)return _Mr.randomUUID();e=e||{};let r=e.random??e.rng?.()??yMr();if(r.length<16)throw Error("Random bytes length must be >= 16");if(r[6]=r[6]&15|64,r[8]=r[8]&63|128,t){if(n=n||0,n<0||n+16>t.length)throw RangeError(`UUID byte range ${n}:${n+15} is out of buffer bounds`);for(let o=0;o<16;++o)t[n+o]=r[o];return t}return OQs(r)}
+var TMr;
+var MQs=b(()=>{xQs();PQs();LQs();TMr=sWu});
+export {sWu,TMr,MQs};

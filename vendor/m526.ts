@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {ZE,er} from "./m460.ts";
-var qUc,mKo=(e)=>{let t={},n,r,o;return e&&e.split(`
-`).forEach(function(i){if(o=i.indexOf(":"),n=i.substring(0,o).trim().toLowerCase(),r=i.substring(o+1).trim(),!n||t[n]&&qUc[n])return;if(n==="set-cookie")if(t[n])t[n].push(r);else t[n]=[r];else t[n]=t[n]?t[n]+", "+r:r}),t};
-var fKo=b(()=>{ZE();qUc=er.toObjectSet(["age","authorization","content-length","content-type","etag","expires","from","host","if-modified-since","if-unmodified-since","last-modified","location","max-forwards","proxy-authorization","referer","retry-after","user-agent"])});
-export {qUc,mKo,fKo};
+import {b,x} from "../runtime.ts";
+import {nZo,tZo} from "./m525.ts";
+import {Vgr,Mnn} from "./m519.ts";
+var oZo,Ygr="abcdefghijklmnopqrstuvwxyz",rZo="0123456789",sZo,$Wc=(e=16,t=sZo.ALPHA_DIGIT)=>{let n="",{length:r}=t,o=new Uint32Array(e);oZo.default.randomFillSync(o);for(let s=0;s<e;s++)n+=t[o[s]%r];return n},iZo;
+var aZo=b(()=>{nZo();Vgr();oZo=x(require("crypto")),sZo={DIGIT:rZo,ALPHA:Ygr,ALPHA_DIGIT:Ygr+Ygr.toUpperCase()+rZo},iZo={isNode:!0,classes:{URLSearchParams:tZo,FormData:Mnn,Blob:typeof Blob<"u"&&Blob||null},ALPHABET:sZo,generateString:$Wc,protocols:["http","https","file","data"]}});
+export {oZo,Ygr,rZo,sZo,$Wc,iZo,aZo};

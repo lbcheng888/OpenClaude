@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,dws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var XRs,CreatePromptRouterCommand;
-var Nbr=b(()=>{ri();wi();xi();XRs=M(yo(),1);CreatePromptRouterCommand=class CreatePromptRouterCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[XRs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreatePromptRouter",{}).n("BedrockClient","CreatePromptRouterCommand").sc(dws).build(){}});
-export {XRs,CreatePromptRouterCommand,Nbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,exs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var UDs,CreateMarketplaceModelEndpointCommand;
+var awr=b(()=>{$s();ai();ci();UDs=x(yo(),1);CreateMarketplaceModelEndpointCommand=class CreateMarketplaceModelEndpointCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[UDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateMarketplaceModelEndpoint",{}).n("BedrockClient","CreateMarketplaceModelEndpointCommand").sc(exs).build(){}});
+export {UDs,CreateMarketplaceModelEndpointCommand,awr};

@@ -1,19 +1,22 @@
 // @ts-nocheck
-import {dg,J4} from "./m2570.ts";
-import {sht,bXn} from "./m5441.ts";
-import {$ke,CNt} from "./m3340.ts";
-import {Box} from "./m2422.ts";
-import {GP,ljt} from "./m4675.ts";
-import {AS,Yz} from "./m3174.ts";
-import {Text} from "./m2423.ts";
-import {et,Ai} from "./m2208.ts";
-import {QU,oTe} from "./m5411.ts";
-import {ac,e_} from "./m3338.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function kGl(e){let t=xGl.c(24),{questions:n,currentQuestionIndex:r,answers:o,allQuestionsAnswered:s,permissionResult:i,onFinalResponse:a}=e,l;if(t[0]===Symbol.for("react.memo_cache_sentinel"))l=bM.default.createElement(dg,{color:"inactive"}),t[0]=l;else l=t[0];let c;if(t[1]!==o||t[2]!==r||t[3]!==n)c=bM.default.createElement(sht,{questions:n,currentQuestionIndex:r,answers:o}),t[1]=o,t[2]=r,t[3]=n,t[4]=c;else c=t[4];let u;if(t[5]===Symbol.for("react.memo_cache_sentinel"))u=bM.default.createElement($ke,{title:"Review your answers",color:"text"}),t[5]=u;else u=t[5];let d;if(t[6]!==s)d=!s&&bM.default.createElement(Box,{marginBottom:1},bM.default.createElement(GP,{status:"warning"},"You have not answered all questions")),t[6]=s,t[7]=d;else d=t[7];let p;if(t[8]!==o||t[9]!==n)p=Object.keys(o).length>0&&bM.default.createElement(Box,{flexDirection:"column",marginBottom:1},n.filter((_)=>_?.question&&o[_.question]).map((_)=>{let y=o[_?.question];return bM.default.createElement(Box,{key:_?.question||"answer",flexDirection:"column",marginLeft:1},bM.default.createElement(AS,null,_?.question||"Question"),bM.default.createElement(Box,{marginLeft:2},bM.default.createElement(Text,{color:"success"},et.arrowRight," ",y)))})),t[8]=o,t[9]=n,t[10]=p;else p=t[10];let m;if(t[11]!==i)m=bM.default.createElement(QU,{permissionResult:i,toolType:"tool"}),t[11]=i,t[12]=m;else m=t[12];let f;if(t[13]===Symbol.for("react.memo_cache_sentinel"))f=bM.default.createElement(Text,{color:"inactive"},"Ready to submit your answers?"),t[13]=f;else f=t[13];let A;if(t[14]!==a)A=bM.default.createElement(Box,{marginTop:1},bM.default.createElement(ac,{confirmLabel:"Submit answers",cancelLabel:"Cancel",onConfirm:()=>a("submit"),onCancel:()=>a("cancel")})),t[14]=a,t[15]=A;else A=t[15];let h;if(t[16]!==d||t[17]!==p||t[18]!==m||t[19]!==A)h=bM.default.createElement(Box,{flexDirection:"column",marginTop:1},d,p,m,f,A),t[16]=d,t[17]=p,t[18]=m,t[19]=A,t[20]=h;else h=t[20];let g;if(t[21]!==c||t[22]!==h)g=bM.default.createElement(Box,{flexDirection:"column",marginTop:1},l,bM.default.createElement(Box,{flexDirection:"column",borderTop:!0,borderColor:"inactive",paddingTop:0},c,u,h)),t[21]=c,t[22]=h,t[23]=g;else g=t[23];return g}
-var xGl,bM;
-var HGl=b(()=>{Ai();ze();Yz();e_();J4();ljt();CNt();oTe();bXn();xGl=M(rt(),1),bM=M(Te(),1)});
-export {kGl,xGl,bM,HGl};
+import {bt,Gc} from "./m588.ts";
+import {Gp,gA} from "../src/mcp/0733_serverName.ts";
+import {_t,uo} from "./m2468.ts";
+import {Text,zve} from "./m2433.ts";
+import {Ansi} from "./m2441.ts";
+import {Box} from "./m2432.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function T2m(e){if(e?.startsWith("plugin"))return"plugin hooks.json";if(e?.startsWith("skill"))return"SKILL.md";return"settings.json"}
+function zXl(e){if(e?.type==="rule"&&e.rule.ruleBehavior==="ask")return e.rule;if(e?.type==="subcommandResults"){for(let t of e.reasons.values())if(t.behavior==="ask"){let n=zXl(t.decisionReason);if(n)return n}}return}
+function jXl(e,t,n){if(!e)return null;if(e.type==="classifier"){if(e.classifier==="auto-mode")return{reasonString:`Auto mode classifier requires confirmation for this ${t}.
+${e.reason}`,configString:void 0,themeColor:"error"};return{reasonString:`Classifier ${bt.bold(e.classifier)} requires confirmation for this ${t}.
+${e.reason}`,configString:void 0}}if(e.type==="subcommandResults"){let r=zXl(e);if(r)return jXl({type:"rule",rule:r},t,n)}switch(e.type){case"rule":{let r=bt.bold(Gp(e.rule.ruleValue));if(n==="auto"&&e.rule.ruleBehavior==="ask"&&e.rule.source!=="policySettings")return{reasonString:`Ask rule ${r} overrides auto mode for this ${t}.`,configString:"/permissions to let auto mode decide"};return{reasonString:`Permission rule ${r} requires confirmation for this ${t}.`,configString:e.rule.source==="policySettings"?void 0:"/permissions to update rules"}}case"hook":{let r=e.reason?`:
+${e.reason}`:".",o=e.hookSource?` ${bt.dim(`[${e.hookSource}]`)}`:"";return{reasonString:`Hook ${bt.bold(e.hookName)} requires confirmation for this ${t}${r}${o}`,configString:`${T2m(e.hookSource)} to update hooks`}}case"safetyCheck":case"other":return{reasonString:e.reason,configString:void 0};case"workingDir":return{reasonString:e.reason,configString:"/permissions to update rules"};default:return null}}
+function gU(e){let t=KXl.c(12),{permissionResult:n,toolType:r}=e,o=_t(S2m),s=n?.decisionReason,i;if(t[0]!==o||t[1]!==s||t[2]!==r)i=jXl(s,r,o),t[0]=o,t[1]=s,t[2]=r,t[3]=i;else i=t[3];let a=i;if(!a)return null;let l=a.themeColor??(n?.decisionReason?.type==="hook"&&o==="auto"?"warning":void 0),c;if(t[4]!==a.reasonString||t[5]!==l)c=l?tVe.jsx(Text,{color:l,children:a.reasonString}):tVe.jsx(Text,{children:tVe.jsx(Ansi,{children:a.reasonString})}),t[4]=a.reasonString,t[5]=l,t[6]=c;else c=t[6];let u;if(t[7]!==a.configString)u=a.configString&&tVe.jsx(Text,{dimColor:!0,children:a.configString}),t[7]=a.configString,t[8]=u;else u=t[8];let d;if(t[9]!==c||t[10]!==u)d=tVe.jsxs(Box,{marginBottom:1,flexDirection:"column",children:[c,u]}),t[9]=c,t[10]=u,t[11]=d;else d=t[11];return d}
+function S2m(e){return e.toolPermissionContext.mode}
+var KXl,tVe;
+var MSe=b(()=>{Gc();je();uo();gA();zve();KXl=x(tt(),1),tVe=x(oe(),1)});
+export {T2m,zXl,jXl,gU,S2m,KXl,tVe,MSe};

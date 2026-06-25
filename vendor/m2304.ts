@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {dF} from "./m2298.ts";
-var ETi=X((Zth,bTi)=>{var pnd=dF(),mnd=(e,t)=>new pnd(e,t).major;bTi.exports=mnd});
-export {ETi};
+import {Q} from "../runtime.ts";
+var JDt=Q((Afg,uvi)=>{var _pd=typeof process==="object"&&process.env&&process.env.NODE_DEBUG&&/\bsemver\b/i.test(process.env.NODE_DEBUG)?(...e)=>console.error("SEMVER",...e):()=>{};uvi.exports=_pd});
+export {JDt};

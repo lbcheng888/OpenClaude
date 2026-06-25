@@ -1,7 +1,0 @@
-// @ts-nocheck
-import {X} from "../runtime.ts";
-import {YXr} from "./m3367.ts";
-import {PDn} from "./m3368.ts";
-import {LDn} from "./m3369.ts";
-var zua=X((NDn)=>{Object.defineProperty(NDn,"__esModule",{value:!0});NDn.LogarithmMapping=void 0;var Ost=YXr(),Gua=PDn(),Vua=LDn();class Kua{_scale;_scaleFactor;_inverseFactor;constructor(e){this._scale=e,this._scaleFactor=Gua.ldexp(Math.LOG2E,e),this._inverseFactor=Gua.ldexp(Math.LN2,-e)}mapToIndex(e){if(e<=Ost.MIN_VALUE)return this._minNormalLowerBoundaryIndex()-1;if(Ost.getSignificand(e)===0)return(Ost.getNormalBase2(e)<<this._scale)-1;let t=Math.floor(Math.log(e)*this._scaleFactor),n=this._maxNormalLowerBoundaryIndex();if(t>=n)return n;return t}lowerBoundary(e){let t=this._maxNormalLowerBoundaryIndex();if(e>=t){if(e===t)return 2*Math.exp((e-(1<<this._scale))/this._scaleFactor);throw new Vua.MappingError(`overflow: ${e} is > maximum lower boundary: ${t}`)}let n=this._minNormalLowerBoundaryIndex();if(e<=n){if(e===n)return Ost.MIN_VALUE;else if(e===n-1)return Math.exp((e+(1<<this._scale))/this._scaleFactor)/2;throw new Vua.MappingError(`overflow: ${e} is < minimum lower boundary: ${n}`)}return Math.exp(e*this._inverseFactor)}get scale(){return this._scale}_minNormalLowerBoundaryIndex(){return Ost.MIN_NORMAL_EXPONENT<<this._scale}_maxNormalLowerBoundaryIndex(){return(Ost.MAX_NORMAL_EXPONENT+1<<this._scale)-1}}NDn.LogarithmMapping=Kua});
-export {zua};

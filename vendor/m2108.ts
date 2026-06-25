@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Mdi} from "./m2107.ts";
-var Ndi=X((sFe)=>{var DKu=sFe&&sFe.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),PKu=sFe&&sFe.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))DKu(t,e,n)};Object.defineProperty(sFe,"__esModule",{value:!0});PKu(Mdi(),sFe)});
-export {Ndi};
+import {Q} from "../runtime.ts";
+var hui=Q((tSn)=>{Object.defineProperty(tSn,"__esModule",{value:!0});tSn.VERSION=void 0;tSn.VERSION="2.2.0"});
+export {hui};

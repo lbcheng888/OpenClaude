@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Nva} from "./m3735.ts";
-var Bva=b(()=>{Nva()});
-export {Bva};
+import {Q} from "../runtime.ts";
+var NBn=Q(($le)=>{Object.defineProperty($le,"__esModule",{value:!0});$le.createDenyListAttributesProcessor=$le.createAllowListAttributesProcessor=$le.createMultiAttributesProcessor=$le.createNoopAttributesProcessor=void 0;class gxa{process(e,t){return e}}class _xa{_processors;constructor(e){this._processors=e}process(e,t){let n=e;for(let r of this._processors)n=r.process(n,t);return n}}class yxa{_allowedAttributeNames;constructor(e){this._allowedAttributeNames=new Set(e)}process(e,t){let n={};for(let r in e)if(Object.prototype.hasOwnProperty.call(e,r)&&this._allowedAttributeNames.has(r))n[r]=e[r];return n}}class Txa{_deniedAttributeNames;constructor(e){this._deniedAttributeNames=new Set(e)}process(e,t){let n={};for(let r in e)if(Object.prototype.hasOwnProperty.call(e,r)&&!this._deniedAttributeNames.has(r))n[r]=e[r];return n}}function CSp(){return wSp}$le.createNoopAttributesProcessor=CSp;function ASp(e){return new _xa(e)}$le.createMultiAttributesProcessor=ASp;function RSp(e){return new yxa(e)}$le.createAllowListAttributesProcessor=RSp;function vSp(e){return new Txa(e)}$le.createDenyListAttributesProcessor=vSp;var wSp=new gxa});
+export {NBn};

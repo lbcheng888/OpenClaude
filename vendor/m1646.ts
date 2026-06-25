@@ -1,10 +1,9 @@
 // @ts-nocheck
+import {SFe,UPr,Ijs,Hjs} from "./m1644.ts";
 import {b} from "../runtime.ts";
-import {$wt} from "./m1635.ts";
-import {H5s} from "./m1637.ts";
-import {D5s} from "./m1638.ts";
-import {mHr} from "./m1641.ts";
-import {q5s} from "./m1645.ts";
-import {w5s,R5s} from "./m1636.ts";
-var tJe=b(()=>{$wt();H5s();D5s();mHr();q5s();w5s();R5s()});
-export {tJe};
+import {_Ht,ase} from "./m1645.ts";
+function qPr(e){if(e instanceof x3)return!0;return SFe(e)&&e.name==="RestError"}
+var Mqu,x3;
+var WPr=b(()=>{UPr();Ijs();_Ht();Mqu=new ase;x3=class x3 extends Error{constructor(e,t={}){super(e);this.name="RestError",this.code=t.code,this.statusCode=t.statusCode,Object.defineProperty(this,"request",{value:t.request,enumerable:!1}),Object.defineProperty(this,"response",{value:t.response,enumerable:!1}),Object.defineProperty(this,Hjs,{value:()=>`RestError: ${this.message} 
+ ${Mqu.sanitize(Object.assign(Object.assign({},this),{request:this.request,response:this.response}))}`,enumerable:!1}),Object.setPrototypeOf(this,x3.prototype)}};x3.REQUEST_SEND_ERROR="REQUEST_SEND_ERROR";x3.PARSE_ERROR="PARSE_ERROR"});
+export {qPr,Mqu,x3,WPr};

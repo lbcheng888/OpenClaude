@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {PO} from "./m1236.ts";
-import {initToolFactoryModule,a0} from "./m1238.ts";
-import {gQ,jPs} from "../src/tools/1263_error.ts";
-import {yo} from "./m887.ts";
-import {Ew} from "./m1228.ts";
-var ZPs,InvokeModelCommand;
-var KCr=b(()=>{PO();initToolFactoryModule();gQ();ZPs=M(yo(),1);InvokeModelCommand=class InvokeModelCommand extends Ew.classBuilder().ep(a0).m(function(e,t,n,r){return[ZPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockFrontendService","InvokeModel",{}).n("BedrockRuntimeClient","InvokeModelCommand").sc(jPs).build(){}});
-export {ZPs,InvokeModelCommand,KCr};
+import {b,x} from "../runtime.ts";
+import {QP} from "./m1241.ts";
+import {l7,R0} from "./m1243.ts";
+import {fQ,DFs} from "../src/tools/1268_error.ts";
+import {yo} from "./m892.ts";
+import {HR} from "./m1233.ts";
+var qFs,ApplyGuardrailCommand;
+var _Hr=b(()=>{QP();l7();fQ();qFs=x(yo(),1);ApplyGuardrailCommand=class ApplyGuardrailCommand extends HR.classBuilder().ep(R0).m(function(e,t,n,r){return[qFs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockFrontendService","ApplyGuardrail",{}).n("BedrockRuntimeClient","ApplyGuardrailCommand").sc(DFs).build(){}});
+export {qFs,ApplyGuardrailCommand,_Hr};

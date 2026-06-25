@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Sgl,Tgl} from "./m4760.ts";
-var TEo;
-var bgl=b(()=>{TEo={type:"local-jsx",name:"powerup",description:"Discover Claude Code features through quick interactive lessons",requires:{ink:!0},load:()=>Promise.resolve().then(() => (Sgl(),Tgl))}});
-export {TEo,bgl};
+import {Q} from "../runtime.ts";
+var yko=Q((RrS,jCl)=>{function cam(e,t,n,r,o){let s=0;for(let i=0;i<r;i++)for(let a=0;a<n;a++){let l=o[e[s]];if(!l)throw Error("index "+e[s]+" not in palette");for(let c=0;c<4;c++)t[s+c]=l[c];s+=4}}function uam(e,t,n,r,o){let s=0;for(let i=0;i<r;i++)for(let a=0;a<n;a++){let l=!1;if(o.length===1){if(o[0]===e[s])l=!0}else if(o[0]===e[s]&&o[1]===e[s+1]&&o[2]===e[s+2])l=!0;if(l)for(let c=0;c<4;c++)t[s+c]=0;s+=4}}function dam(e,t,n,r,o){let s=255,i=Math.pow(2,o)-1,a=0;for(let l=0;l<r;l++)for(let c=0;c<n;c++){for(let u=0;u<4;u++)t[a+u]=Math.floor(e[a+u]*s/i+0.5);a+=4}}jCl.exports=function(e,t){let{depth:n,width:r,height:o,colorType:s,transColor:i,palette:a}=t,l=e;if(s===3)cam(e,l,r,o,a);else{if(i)uam(e,l,r,o,i);if(n!==8){if(n===16)l=Buffer.alloc(r*o*4);dam(e,l,r,o,n)}}return l}});
+export {yko};

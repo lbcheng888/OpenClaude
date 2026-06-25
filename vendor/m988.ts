@@ -1,19 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EKe} from "./m819.ts";
-import {Oon} from "./m898.ts";
-import {nC} from "./m880.ts";
-import {ime} from "./m899.ts";
-import {nk} from "./m607.ts";
-import {Sd} from "./m850.ts";
-import {ame} from "./m902.ts";
-import {i1} from "./m894.ts";
-import {yB} from "./m601.ts";
-import {e4} from "./m750.ts";
-import {lme} from "./m903.ts";
-import {Ooe} from "./m889.ts";
-import {Tys} from "./m987.ts";
-import {V2} from "./m896.ts";
-import {pme} from "./m913.ts";
-var Cys=X((vsn)=>{Object.defineProperty(vsn,"__esModule",{value:!0});vsn.getRuntimeConfig=void 0;var Smu=EKe(),bmu=Smu.__importDefault(Oon()),tSr=nC(),Sys=ime(),Csn=nk(),Emu=Sd(),Cmu=ame(),bys=i1(),b1e=yB(),Eys=e4(),vmu=lme(),wmu=Ooe(),Rmu=Tys(),xmu=V2(),kmu=pme(),Hmu=V2(),Imu=(e)=>{(0,Hmu.emitWarningIfUnsupportedVersion)(process.version);let t=(0,kmu.resolveDefaultsModeConfig)(e),n=()=>t().then(xmu.loadConfigsForDefaultMode),r=(0,Rmu.getRuntimeConfig)(e);(0,tSr.emitWarningIfUnsupportedVersion)(process.version);let o={profile:e?.profile,logger:r.logger};return{...r,...e,runtime:"node",defaultsMode:t,authSchemePreference:e?.authSchemePreference??(0,b1e.loadConfig)(tSr.NODE_AUTH_SCHEME_PREFERENCE_OPTIONS,o),bodyLengthChecker:e?.bodyLengthChecker??vmu.calculateBodyLength,defaultUserAgentProvider:e?.defaultUserAgentProvider??(0,Sys.createDefaultUserAgentProvider)({serviceId:r.serviceId,clientVersion:bmu.default.version}),httpAuthSchemes:e?.httpAuthSchemes??[{schemeId:"aws.auth#sigv4",identityProvider:(s)=>s.getIdentityProvider("aws.auth#sigv4")||(async(i)=>await e.credentialDefaultProvider(i?.__config||{})()),signer:new tSr.AwsSdkSigV4Signer},{schemeId:"smithy.api#noAuth",identityProvider:(s)=>s.getIdentityProvider("smithy.api#noAuth")||(async()=>({})),signer:new Emu.NoAuthSigner}],maxAttempts:e?.maxAttempts??(0,b1e.loadConfig)(bys.NODE_MAX_ATTEMPT_CONFIG_OPTIONS,e),region:e?.region??(0,b1e.loadConfig)(Csn.NODE_REGION_CONFIG_OPTIONS,{...Csn.NODE_REGION_CONFIG_FILE_OPTIONS,...o}),requestHandler:Eys.NodeHttpHandler.create(e?.requestHandler??n),retryMode:e?.retryMode??(0,b1e.loadConfig)({...bys.NODE_RETRY_MODE_CONFIG_OPTIONS,default:async()=>(await n()).retryMode||wmu.DEFAULT_RETRY_MODE},e),sha256:e?.sha256??Cmu.Hash.bind(null,"sha256"),streamCollector:e?.streamCollector??Eys.streamCollector,useDualstackEndpoint:e?.useDualstackEndpoint??(0,b1e.loadConfig)(Csn.NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS,o),useFipsEndpoint:e?.useFipsEndpoint??(0,b1e.loadConfig)(Csn.NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS,o),userAgentAppId:e?.userAgentAppId??(0,b1e.loadConfig)(Sys.NODE_APP_ID_CONFIG_OPTIONS,o)}};vsn.getRuntimeConfig=Imu});
-export {Cys};
+import {Q} from "../runtime.ts";
+import {iC} from "./m885.ts";
+import {qN} from "./m610.ts";
+import {ARr} from "./m996.ts";
+var CRr=Q((uQ)=>{Object.defineProperty(uQ,"__esModule",{value:!0});uQ.resolveHttpAuthSchemeConfig=uQ.resolveStsAuthConfig=uQ.defaultSTSHttpAuthSchemeProvider=uQ.defaultSTSHttpAuthSchemeParametersProvider=void 0;var hCu=iC(),ERr=qN(),gCu=ARr(),_Cu=async(e,t,n)=>({operation:(0,ERr.getSmithyContext)(t).operation,region:await(0,ERr.normalizeProvider)(e.region)()||(()=>{throw Error("expected `region` to be configured for `aws.auth#sigv4`")})()});uQ.defaultSTSHttpAuthSchemeParametersProvider=_Cu;function yCu(e){return{schemeId:"aws.auth#sigv4",signingProperties:{name:"sts",region:e.region},propertiesExtractor:(t,n)=>({signingProperties:{config:t,context:n}})}}function TCu(e){return{schemeId:"smithy.api#noAuth"}}var SCu=(e)=>{let t=[];switch(e.operation){case"AssumeRoleWithWebIdentity":{t.push(TCu(e));break}default:t.push(yCu(e))}return t};uQ.defaultSTSHttpAuthSchemeProvider=SCu;var bCu=(e)=>Object.assign(e,{stsClientCtor:gCu.STSClient});uQ.resolveStsAuthConfig=bCu;var ECu=(e)=>{let t=(0,uQ.resolveStsAuthConfig)(e),n=(0,hCu.resolveAwsSdkSigV4Config)(t);return Object.assign(n,{authSchemePreference:(0,ERr.normalizeProvider)(e.authSchemePreference??[])})};uQ.resolveHttpAuthSchemeConfig=ECu});
+export {CRr};

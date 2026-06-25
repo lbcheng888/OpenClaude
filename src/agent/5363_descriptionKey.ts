@@ -1,0 +1,306 @@
+// @ts-nocheck
+import {getCommandName} from "../tools/4092_done.ts";
+import {gJ as RJ,Mzn as JWn} from "../../vendor/m4802.ts";
+import {looksLikeCommand,ept as Nct} from "../telemetry/4103_runUserPromptExpansionHook.ts";
+import {Ne as je} from "../../vendor/m583.ts";
+import {getFeatureValue_CACHED_MAY_BE_STALE,jn as zn} from "../api/2204_stopPeriodicGrowthBookRefresh.ts";
+import {vzl as _ql,Rzl as gql,wzl as yql} from "../../vendor/m5361.ts";
+import {formatDescriptionWithSource,dropShadowedBundledSkills,isSkillOff,getCommand,findCommand,Mm as Sf} from "../tools/5174_toSlashCommands.ts";
+import {c6e as Tqe,u6e as Sqe} from "../../vendor/m3968.ts";
+import {mdt as tct,fdt as nct} from "../../vendor/m3990.ts";
+import {mcpTools as B0,kee as Pee} from "../telemetry/3165_kee.ts";
+import {b} from "../../runtime.ts";
+import {Ir as Lr} from "../../vendor/m584.ts";
+function Bkm(e) {
+  if (RPo?.commands === e) return RPo.fuse;
+  let t = e.filter(r => !r.isHidden).map(r => {
+      let o = r.name,
+        s = getCommandName(r),
+        i = o.split(Tql).filter(Boolean),
+        a = s !== o ? s.split(Tql).filter(Boolean) : [];
+      return {
+        descriptionKey: (r.description ?? "").split(" ").map(l => Vkm(l)).filter(Boolean),
+        partKey: i.length > 1 ? i : void 0,
+        displayPartKey: a.length > 1 ? a : void 0,
+        commandName: o,
+        displayName: s,
+        command: r,
+        aliasKey: r.aliases
+      };
+    }),
+    n = new RJ(t, {
+      includeScore: !0,
+      threshold: 0.3,
+      location: 0,
+      distance: 100,
+      keys: [{
+        name: "commandName",
+        weight: 3
+      }, {
+        name: "displayName",
+        weight: 2
+      }, {
+        name: "partKey",
+        weight: 2
+      }, {
+        name: "aliasKey",
+        weight: 2
+      }, {
+        name: "displayPartKey",
+        weight: 1
+      }, {
+        name: "descriptionKey",
+        weight: 0.5
+      }]
+    });
+  return RPo = {
+    commands: e,
+    fuse: n
+  }, n;
+}
+function Sql(e) {
+  return typeof e === "object" && e !== null && "name" in e && typeof e.name === "string" && "type" in e;
+}
+function sJn(e, t) {
+  if (e.startsWith("/")) {
+    let l = e.indexOf(" "),
+      c = l === -1 ? e.slice(1) : e.slice(1, l);
+    if (Fkm.has(c)) return null;
+  }
+  let r = e.slice(0, t).match(/[\s\u3002\u3001\uFF1F\uFF01]\/([a-zA-Z0-9._:-]*)$/);
+  if (!r || r.index === void 0) return null;
+  let o = r.index + 1,
+    i = e.slice(o + 1).match(/^[a-zA-Z0-9._:-]*/),
+    a = i ? i[0] : "";
+  if (t > o + 1 + a.length) return null;
+  return {
+    token: "/" + a,
+    startPos: o,
+    partialCommand: a
+  };
+}
+function kPo(e, t) {
+  if (!e) return null;
+  let n = IPo("/" + e, t);
+  if (n.length === 0) return null;
+  let r = e.toLowerCase();
+  for (let o of n) {
+    if (!Sql(o.metadata)) continue;
+    for (let s of [o.metadata.name, getCommandName(o.metadata)]) if (s.toLowerCase().startsWith(r)) {
+      let i = s.slice(e.length);
+      if (i) return {
+        suffix: i,
+        fullCommand: s
+      };
+    }
+  }
+  return null;
+}
+function HPo(e) {
+  return !/[^a-zA-Z0-9.:\-_]/.test(e);
+}
+function Z8e(e) {
+  if (!e.startsWith("/")) return !1;
+  let t = e.indexOf(" "),
+    n = t === -1 ? e.slice(1) : e.slice(1, t);
+  if (HPo(n)) return !0;
+  let r = n.indexOf(":");
+  return r > 0 && looksLikeCommand(n.slice(0, r)) && n.slice(r + 1).includes("://");
+}
+function Ukm(e) {
+  if (!Z8e(e)) return !1;
+  if (!e.includes(" ")) return !1;
+  if (e.endsWith(" ")) return !1;
+  return !0;
+}
+function $km(e) {
+  return `/${e} `;
+}
+function oJn(e) {
+  let t = e.name;
+  if (e.type === "prompt") {
+    if (e.source === "plugin" && e.pluginInfo?.repository) return `${t}:${e.source}:${e.pluginInfo.repository}`;
+    return `${t}:${e.source}`;
+  }
+  return `${t}:${e.type}`;
+}
+function qkm(e, t) {
+  if (!t || t.length === 0 || e === "") return;
+  return t.find(n => n.toLowerCase().startsWith(e));
+}
+function jkm() {
+  return je.CLAUDE_CODE_ENABLE_MENU_KIND_LANES || getFeatureValue_CACHED_MAY_BE_STALE("tengu_mint_lanes", !1);
+}
+function Wkm(e) {
+  return !1;
+}
+function Gkm(e) {
+  if (e.type !== "prompt") return Wkm(e.name) ? "ANT" : void 0;
+  switch (_ql(e)) {
+    case "project":
+      return "project";
+    case "plugin":
+    case "managed":
+      return "org";
+    default:
+      return;
+  }
+}
+function xPo(e, t, n, r) {
+  let o = getCommandName(e),
+    s = n ? ` (${n})` : "",
+    i = e.type === "prompt" && e.kind === "workflow",
+    l = (t ? e.menuDescription ?? e.description : i ? e.description : formatDescriptionWithSource(e)) + (e.type === "prompt" && e.argNames?.length ? ` (arguments: ${e.argNames.join(", ")})` : "");
+  return {
+    id: oJn(e),
+    displayText: `/${o}${s}`,
+    tag: i ? "dynamic workflow" : void 0,
+    description: l,
+    metadata: e,
+    matchedAlias: n,
+    query: r,
+    ...(t && {
+      kind: gql(e),
+      sourceTag: Gkm(e)
+    })
+  };
+}
+function IPo(e, t) {
+  if (!Z8e(e)) return [];
+  if (Ukm(e)) return [];
+  t = dropShadowedBundledSkills(t);
+  let n = e.slice(1).toLowerCase().trim(),
+    r = jkm();
+  if (n === "") {
+    let d = t.filter(S => !S.isHidden && !isSkillOff(S)),
+      p = [],
+      m = d.filter(S => S.type === "prompt").map(S => ({
+        cmd: S,
+        score: Tqe(S.name)
+      })).filter(S => S.score > 0).sort((S, v) => v.score - S.score);
+    for (let S of m.slice(0, 5)) p.push(S.cmd);
+    let f = new Set(p.map(S => oJn(S))),
+      A = [],
+      h = [],
+      g = [],
+      _ = [],
+      y = [];
+    d.forEach(S => {
+      if (f.has(oJn(S))) return;
+      if (S.type === "local" || S.type === "local-jsx") A.push(S);else if (S.type === "prompt" && (S.source === "userSettings" || S.source === "localSettings")) h.push(S);else if (S.type === "prompt" && S.source === "projectSettings") g.push(S);else if (S.type === "prompt" && S.source === "policySettings") _.push(S);else y.push(S);
+    });
+    let T = (S, v) => getCommandName(S).localeCompare(getCommandName(v));
+    return A.sort(T), h.sort(T), g.sort(T), _.sort(T), y.sort(T), [...p, ...A, ...h, ...g, ..._, ...y].map(S => xPo(S, r));
+  }
+  let o = d => getCommandName(d).toLowerCase() === n || d.name.toLowerCase() === n,
+    s = t.find(d => d.isHidden && o(d));
+  if (s && t.some(d => !d.isHidden && o(d))) s = void 0;
+  let u = Bkm(t).search(n).filter(d => !isSkillOff(d.item.command)).map(d => {
+    let p = d.item.commandName.toLowerCase(),
+      m = d.item.displayName.toLowerCase(),
+      f = d.item.aliasKey?.map(h => h.toLowerCase()) ?? [],
+      A = d.item.command.type === "prompt" ? Tqe(d.item.command.name) : 0;
+    return {
+      r: d,
+      name: p,
+      display: m,
+      aliases: f,
+      usage: A
+    };
+  }).sort((d, p) => {
+    let m = d.name,
+      f = p.name,
+      A = d.aliases,
+      h = p.aliases,
+      g = m === n || d.display === n,
+      _ = f === n || p.display === n;
+    if (g && !_) return -1;
+    if (_ && !g) return 1;
+    let y = A.some(D => D === n),
+      T = h.some(D => D === n);
+    if (y && !T) return -1;
+    if (T && !y) return 1;
+    let S = (D, N) => Math.min(D.startsWith(n) ? D.length : 1 / 0, N.startsWith(n) ? N.length : 1 / 0),
+      v = S(m, d.display),
+      R = S(f, p.display),
+      k = v < 1 / 0,
+      x = R < 1 / 0;
+    if (k && !x) return -1;
+    if (x && !k) return 1;
+    if (k && x && v !== R) return v - R;
+    let H = A.find(D => D.startsWith(n)),
+      I = h.find(D => D.startsWith(n));
+    if (H && !I) return -1;
+    if (I && !H) return 1;
+    if (H && I && H.length !== I.length) return H.length - I.length;
+    let P = Math.floor((d.r.score ?? 0) * 10),
+      L = Math.floor((p.r.score ?? 0) * 10);
+    if (P !== L) return P - L;
+    return p.usage - d.usage;
+  }).map(d => {
+    let p = d.r.item.command,
+      m = qkm(n, p.aliases);
+    return xPo(p, r, m, n);
+  });
+  if (s) {
+    let d = oJn(s);
+    if (!u.some(p => p.id === d)) return [xPo(s, r, void 0, n), ...u];
+  }
+  return u;
+}
+function DPo(e, t, n, r, o, s) {
+  if (typeof e !== "string") {
+    let c = tct(e.metadata);
+    if (c) {
+      let u = c.replacement;
+      if (r(u), o(u.length), t && !c.partial) s(u.trim(), !0);
+      return {
+        newInput: u,
+        reSuggest: c.partial
+      };
+    }
+  }
+  let i, a;
+  if (typeof e === "string") i = e, a = t ? getCommand(i, n) : void 0;else {
+    if (!Sql(e.metadata)) return null;
+    let c = e.matchedAlias;
+    i = c && findCommand(c, n) === e.metadata ? c : e.metadata.name, a = e.metadata;
+  }
+  if (B0()) {
+    if (a?.type === "prompt" && a.urlTemplate) {
+      let c = `/${getCommandName(a)}`;
+      return r(c), o(c.length), {
+        newInput: c,
+        reSuggest: !0
+      };
+    }
+  }
+  let l = $km(i);
+  if (r(l), o(l.length), t && a) {
+    if (a.type !== "prompt" || (a.argNames ?? []).length === 0) s(l, !0);
+  }
+  return {
+    newInput: l,
+    reSuggest: !1
+  };
+}
+function Vkm(e) {
+  return e.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+var Tql,
+  RPo = null,
+  Fkm;
+var bql = b(() => {
+  JWn();
+  yql();
+  Sf();
+  zn();
+  Pee();
+  nct();
+  Lr();
+  Nct();
+  Sqe();
+  Tql = /[:_-]/g;
+  Fkm = new Set(["add-dir", "resume", "plugin", "plugins", "marketplace"]);
+});
+export {Bkm as mNm,Sql as Hzl,sJn as yer,kPo as iFo,HPo as aFo,Z8e as WGe,Ukm as hNm,$km as gNm,oJn as _er,qkm as _Nm,jkm as yNm,Wkm as TNm,Gkm as SNm,xPo as sFo,IPo as lFo,DPo as cFo,Vkm as bNm,Tql as kzl,RPo as oFo,Fkm as fNm,bql as Izl};

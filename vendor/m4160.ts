@@ -1,0 +1,26 @@
+// @ts-nocheck
+import {Q} from "../runtime.ts";
+import {agentMcpClients} from "./m4115.ts";
+import {M4n} from "./m4147.ts";
+import {w4t} from "./m4134.ts";
+import {Ffo} from "./m4136.ts";
+import {S4n} from "./m4113.ts";
+import {M4t} from "./m4156.ts";
+import {bfo} from "./m4127.ts";
+import {q4n} from "./m4153.ts";
+import {Ufo} from "./m4137.ts";
+import {G4n} from "./m4154.ts";
+import {ppt} from "./m4132.ts";
+import {X4n} from "./m4155.ts";
+import {wfo} from "./m4131.ts";
+import {Y1} from "./m4119.ts";
+import {r5e} from "./m4122.ts";
+import {x4t} from "./m4139.ts";
+import {qfo} from "./m4138.ts";
+import {Mfo} from "./m4135.ts";
+import {hho} from "./m4161.ts";
+import {Xfo} from "./m4145.ts";
+import {B4n} from "./m4150.ts";
+import {rho} from "./m4151.ts";
+var fho=Q((N4t,VGa)=>{var mho=agentMcpClients();N4t=VGa.exports={CSSStyleDeclaration:M4n(),CharacterData:w4t(),Comment:Ffo(),DOMException:S4n(),DOMImplementation:M4t(),DOMTokenList:bfo(),Document:q4n(),DocumentFragment:Ufo(),DocumentType:G4n(),Element:ppt(),HTMLParser:X4n(),NamedNodeMap:wfo(),Node:Y1(),NodeList:r5e(),NodeFilter:x4t(),ProcessingInstruction:qfo(),Text:Mfo(),Window:hho()};mho.merge(N4t,Xfo());mho.merge(N4t,B4n().elements);mho.merge(N4t,rho().elements)});
+export {fho};

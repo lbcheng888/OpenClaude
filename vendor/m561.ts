@@ -1,8 +1,13 @@
 // @ts-nocheck
-import {Ji,o8} from "./m461.ts";
+import {VX,Qnn} from "./m560.ts";
+import {rr,oC} from "./m466.ts";
+import {Iv,roe} from "./m533.ts";
+import {l1e,Nnn} from "./m522.ts";
+import {u1e,qnn} from "./m537.ts";
+import {X_,GX} from "./m528.ts";
+import {_es,yes} from "./m558.ts";
+import {Tes,Ses} from "./m559.ts";
 import {b} from "../runtime.ts";
-import {SMe} from "./m541.ts";
-function h$c(e,t,n){if(typeof e!=="object")throw new Ji("options must be an object",Ji.ERR_BAD_OPTION_VALUE);let r=Object.keys(e),o=r.length;while(o-- >0){let s=r[o],i=Object.prototype.hasOwnProperty.call(t,s)?t[s]:void 0;if(i){let a=e[s],l=a===void 0||i(a,s,e);if(l!==!0)throw new Ji("option "+s+" must be "+l,Ji.ERR_BAD_OPTION_VALUE);continue}if(n!==!0)throw new Ji("Unknown option "+s,Ji.ERR_BAD_OPTION)}}
-var ben,Mzo,pbt;
-var Nzo=b(()=>{o8();ben={};["object","boolean","number","function","string","symbol"].forEach((e,t)=>{ben[e]=function(r){return typeof r===e||"a"+(t<1?"n ":" ")+e}});Mzo={};ben.transitional=function(t,n,r){function o(s,i){return"[Axios v"+SMe+"] Transitional option '"+s+"'"+i+(r?". "+r:"")}return(s,i,a)=>{if(t===!1)throw new Ji(o(i," has been removed"+(n?" in "+n:"")),Ji.ERR_DEPRECATED);if(n&&!Mzo[i])Mzo[i]=!0,console.warn(o(i," has been deprecated since v"+n+" and will be removed in the near future"));return t?t(s,i,a):!0}};ben.spelling=function(t){return(n,r)=>(console.warn(`${r} is likely a misspelling of ${t}`),!0)};pbt={assertOptions:h$c,validators:ben}});
-export {h$c,ben,Mzo,pbt,Nzo};
+var Znn=(e)=>{let t=VX({},e),n=(p)=>rr.hasOwnProp(t,p)?t[p]:void 0,r=n("data"),o=n("withXSRFToken"),s=n("xsrfHeaderName"),i=n("xsrfCookieName"),a=n("headers"),l=n("auth"),c=n("baseURL"),u=n("allowAbsoluteUrls"),d=n("url");if(t.headers=a=Iv.from(a),t.url=l1e(u1e(c,d,u),e.params,e.paramsSerializer),l)a.set("Authorization","Basic "+btoa((l.username||"")+":"+(l.password?unescape(encodeURIComponent(l.password)):"")));if(rr.isFormData(r)){if(X_.hasStandardBrowserEnv||X_.hasStandardBrowserWebWorkerEnv)a.setContentType(void 0);else if(rr.isFunction(r.getHeaders)){let p=r.getHeaders(),m=["content-type","content-length"];Object.entries(p).forEach(([f,h])=>{if(m.includes(f.toLowerCase()))a.set(f,h)})}}if(X_.hasStandardBrowserEnv){if(rr.isFunction(o))o=o(t);if(o===!0||o==null&&_es(t.url)){let m=s&&i&&Tes.read(i);if(m)a.set(s,m)}}return t};
+var x_r=b(()=>{GX();oC();yes();Ses();qnn();Qnn();roe();Nnn()});
+export {Znn,x_r};

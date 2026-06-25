@@ -1,12 +1,16 @@
 // @ts-nocheck
+import {BU} from "./m192.ts";
+import {TR} from "./m187.ts";
 import {b} from "../runtime.ts";
-import {d5s,u5s} from "./m1626.ts";
-function eHr(e){m5s=e,Qkr=[],Zkr=[];let t=/\*/g,n=e.split(",").map((r)=>r.trim().replace(t,".*?"));for(let r of n)if(r.startsWith("-"))Zkr.push(new RegExp(`^${r.substr(1)}$`));else Qkr.push(new RegExp(`^${r}$`));for(let r of hpn)r.enabled=tHr(r.namespace)}
-function tHr(e){if(e.endsWith("*"))return!0;for(let t of Zkr)if(t.test(e))return!1;for(let t of Qkr)if(t.test(e))return!0;return!1}
-function l1u(){let e=m5s||"";return eHr(""),e}
-function A5s(e){let t=Object.assign(n,{enabled:tHr(e),destroy:c1u,log:f5s.log,namespace:e,extend:u1u});function n(...r){if(!t.enabled)return;if(r.length>0)r[0]=`${e} ${r[0]}`;t.log(...r)}return hpn.push(t),t}
-function c1u(){let e=hpn.indexOf(this);if(e>=0)return hpn.splice(e,1),!0;return!1}
-function u1u(e){let t=A5s(`${this.namespace}:${e}`);return t.log=this.log,t}
-var p5s,m5s,Qkr,Zkr,hpn,f5s,XYe;
-var h5s=b(()=>{d5s();p5s=typeof process<"u"&&process.env&&process.env.DEBUG||void 0,Qkr=[],Zkr=[],hpn=[];if(p5s)eHr(p5s);f5s=Object.assign((e)=>A5s(e),{enable:eHr,enabled:tHr,disable:l1u,log:u5s});XYe=f5s});
-export {eHr,tHr,l1u,A5s,c1u,u1u,p5s,m5s,Qkr,Zkr,hpn,f5s,XYe,h5s};
+import {$zs,CPr} from "./m1623.ts";
+import {zfn} from "./m1621.ts";
+import {Gzs} from "./m1626.ts";
+import {cK,UU} from "../src/api/0196_baseURL.ts";
+import {a7e} from "./m194.ts";
+import {Yfn} from "./m1625.ts";
+import {Qs} from "./m137.ts";
+function Aqu(e){let t=new BU(e);return delete t.batches,t}
+function Rqu(e){let t=new TR(e);return delete t.messages.batches,t}
+var AnthropicFoundry;
+var RPr=b(()=>{$zs();zfn();Gzs();cK();cK();a7e();AnthropicFoundry=class AnthropicFoundry extends UU{constructor({baseURL:e=Yfn("ANTHROPIC_FOUNDRY_BASE_URL"),apiKey:t=Yfn("ANTHROPIC_FOUNDRY_API_KEY"),resource:n=Yfn("ANTHROPIC_FOUNDRY_RESOURCE"),azureADTokenProvider:r,dangerouslyAllowBrowser:o,...s}={}){if(typeof r==="function")o=!0;if(!r&&!t)throw new Qs("Missing credentials. Please pass one of `apiKey` and `azureTokenProvider`, or set the `ANTHROPIC_FOUNDRY_API_KEY` environment variable.");if(r&&t)throw new Qs("The `apiKey` and `azureADTokenProvider` arguments are mutually exclusive; only one can be passed at a time.");if(!e){if(!n)throw new Qs("Must provide one of the `baseURL` or `resource` arguments, or the `ANTHROPIC_FOUNDRY_RESOURCE` environment variable");e=`https://${n}.services.ai.azure.com/anthropic/`}else if(n)throw new Qs("baseURL and resource are mutually exclusive");super({apiKey:r??t,baseURL:e,...s,...o!==void 0?{dangerouslyAllowBrowser:o}:{}});this.resource=null,this.messages=Aqu(this),this.beta=Rqu(this),this.models=void 0}async authHeaders(){if(typeof this._options.apiKey==="function"){let e;try{e=await this._options.apiKey()}catch(t){if(t instanceof Qs)throw t;throw new Qs(`Failed to get token from azureADTokenProvider: ${t.message}`,{cause:t})}if(typeof e!=="string"||!e)throw new Qs(`Expected azureADTokenProvider function argument to return a string but it returned ${e}`);return CPr([{Authorization:`Bearer ${e}`}])}if(typeof this._options.apiKey==="string")return CPr([{"x-api-key":this.apiKey}]);return}validateHeaders(){return}}});
+export {Aqu,Rqu,AnthropicFoundry,RPr};

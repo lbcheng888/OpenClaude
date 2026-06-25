@@ -1,8 +1,10 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {bBe,y4,SBe} from "./m1887.ts";
-import {_v,ManagedIdentitySourceNames,Qd,gv,h4,A0,qR} from "./m1778.ts";
-import {EBe,W8} from "./m1890.ts";
-var Uqu="2017-09-01",$qu,xBe;
-var nXs=b(()=>{bBe();_v();EBe();/*! @azure/msal-node v3.8.1 2025-10-29 */$qu=`Only client id is supported for user-assigned managed identity in ${ManagedIdentitySourceNames.MACHINE_LEARNING}.`;xBe=class xBe extends y4{constructor(e,t,n,r,o,s,i){super(e,t,n,r,o);this.msiEndpoint=s,this.secret=i}static getEnvironmentVariables(){let e=process.env[Qd.MSI_ENDPOINT],t=process.env[Qd.MSI_SECRET];return[e,t]}static tryCreate(e,t,n,r,o){let[s,i]=xBe.getEnvironmentVariables();if(!s||!i)return e.info(`[Managed Identity] ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity is unavailable because one or both of the '${Qd.MSI_ENDPOINT}' and '${Qd.MSI_SECRET}' environment variables are not defined.`),null;let a=xBe.getValidatedEnvVariableUrlString(Qd.MSI_ENDPOINT,s,ManagedIdentitySourceNames.MACHINE_LEARNING,e);return e.info(`[Managed Identity] Environment variables validation passed for ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity. Endpoint URI: ${a}. Creating ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity.`),new xBe(e,t,n,r,o,s,i)}createRequest(e,t){let n=new W8(gv.GET,this.msiEndpoint);if(n.headers[h4.METADATA_HEADER_NAME]="true",n.headers[h4.ML_AND_SF_SECRET_HEADER_NAME]=this.secret,n.queryParameters[A0.API_VERSION]=Uqu,n.queryParameters[A0.RESOURCE]=e,t.idType===qR.SYSTEM_ASSIGNED)n.queryParameters[SBe.MANAGED_IDENTITY_CLIENT_ID_2017]=process.env[Qd.DEFAULT_IDENTITY_CLIENT_ID];else if(t.idType===qR.USER_ASSIGNED_CLIENT_ID)n.queryParameters[this.getManagedIdentityUserAssignedIdQueryParameterKey(t.idType,!1,!0)]=t.id;else throw Error($qu);return n}}});
-export {Uqu,$qu,xBe,nXs};
+import {TBe,o8} from "./m1895.ts";
+import {yBe,F3} from "./m1892.ts";
+import {RA,wd,ManagedIdentitySourceNames,ew,AA,L3,P0} from "./m1783.ts";
+import {kQe,dI} from "./m1787.ts";
+import {uBe,Ign} from "./m1786.ts";
+var bBe;
+var Vni=b(()=>{TBe();yBe();RA();kQe();uBe();/*! @azure/msal-node v3.8.1 2025-10-29 */bBe=class bBe extends F3{constructor(e,t,n,r,o,s){super(e,t,n,r,o);this.msiEndpoint=s}static getEnvironmentVariables(){return[process.env[wd.MSI_ENDPOINT]]}static tryCreate(e,t,n,r,o,s){let[i]=bBe.getEnvironmentVariables();if(!i)return e.info(`[Managed Identity] ${ManagedIdentitySourceNames.CLOUD_SHELL} managed identity is unavailable because the '${wd.MSI_ENDPOINT} environment variable is not defined.`),null;let a=bBe.getValidatedEnvVariableUrlString(wd.MSI_ENDPOINT,i,ManagedIdentitySourceNames.CLOUD_SHELL,e);if(e.info(`[Managed Identity] Environment variable validation passed for ${ManagedIdentitySourceNames.CLOUD_SHELL} managed identity. Endpoint URI: ${a}. Creating ${ManagedIdentitySourceNames.CLOUD_SHELL} managed identity.`),s.idType!==ew.SYSTEM_ASSIGNED)throw dI(Ign);return new bBe(e,t,n,r,o,i)}createRequest(e){let t=new o8(AA.POST,this.msiEndpoint);return t.headers[L3.METADATA_HEADER_NAME]="true",t.bodyParameters[P0.RESOURCE]=e,t}}});
+export {bBe,Vni};

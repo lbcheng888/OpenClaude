@@ -1,10 +1,15 @@
 // @ts-nocheck
-import {HAi,GHt} from "../src/permissions/2218_cli.ts";
-import {getSettings_DEPRECATED,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {setMainLoopModelOverride,setInitialMainLoopModel,lt} from "../src/session/0131_sent.ts";
-import {Uwe,mg} from "../src/agent/2580_level.ts";
-import {Ie,ln} from "../src/telemetry/0594_feature_name.ts";
-import {b} from "../runtime.ts";
-function Ssc(e){let{effectiveModel:t,initialMainLoopModel:n,resolvedInitialModel:r,rawModelRequest:o,restrictedModel:s}=HAi({cli:{model:e.userSpecifiedModel},env:process.env,settings:getSettings_DEPRECATED()||{},agentFrontmatter:e.agentModel!==void 0?{model:e.agentModel}:void 0});return setMainLoopModelOverride(t),setInitialMainLoopModel(n),Uwe("--model",["-m"],n),Ie("startup_resolve_model"),{effectiveModel:t,initialMainLoopModel:n,resolvedInitialModel:r,rawModelRequest:o,restrictedModel:s}}
-var bsc=b(()=>{lt();GHt();mg();ln();yr()});
-export {Ssc,bsc};
+import {ft,b} from "../runtime.ts";
+import {getGlobalConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {isAutoModeFromFallback,bte} from "./m3960.ts";
+import {isAutoModeGateEnabled,cy} from "../src/permissions/5219_verifyAutoModeGateAccess.ts";
+var jdc={};
+ft(jdc,{shouldShowAutoDefaultNotice:()=>shouldShowAutoDefaultNotice,AUTO_DEFAULT_NOTICE_TEXT:()=>AUTO_DEFAULT_NOTICE_TEXT});
+function shouldShowAutoDefaultNotice(e){{let t=getGlobalConfig();return isAutoModeFromFallback()&&e==="auto"&&isAutoModeGateEnabled()&&t.hasCompletedOnboarding===!0&&!t.hasSeenAutoDefaultNotice}return!1}
+var AUTO_DEFAULT_NOTICE_TEXT=`Auto mode is now Claude Code's default permission mode.
+
+Auto mode lets Claude handle permission prompts automatically. Claude checks each tool call for risky actions and prompt injection before executing, runs the ones it assesses as lower-risk, and blocks the rest.
+
+https://code.claude.com/docs/en/permission-modes`;
+var Ydc=b(()=>{tr();bte();cy()});
+export {jdc,shouldShowAutoDefaultNotice,AUTO_DEFAULT_NOTICE_TEXT,Ydc};

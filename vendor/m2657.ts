@@ -1,0 +1,13 @@
+// @ts-nocheck
+import {KWr,rUi,oUi} from "./m2655.ts";
+import {Lo,Jvn,$8r} from "./m2612.ts";
+import {Vwe,_Lt} from "./m2656.ts";
+import {b} from "../runtime.ts";
+function lUi(e){return e.length>=3&&e[0]===22&&e[1]===3&&e[2]<=3}
+function pUi(e,t){if(t.length>=3)return Promise.resolve({isTLS:lUi(t),head:t});return new Promise((n)=>{let r=t,o=()=>{e.removeListener("data",s),e.removeListener("close",o),n({isTLS:lUi(r),head:r})},s=(i)=>{if(e.pause(),r=r.length?Buffer.concat([r,i]):i,r.length>=3)return o();e.resume()};e.on("data",s),e.once("close",o)})}
+function mUi(e,t,n,r,o){let s=KWr(e,o.hostname),i=Lwn.createServer({ALPNProtocols:["http/1.1"],cert:s.certPem,key:s.keyPem,SNICallback:(c,u)=>{try{u(null,rUi(e,c||o.hostname))}catch(d){u(d)}}});i.on("request",(c,u)=>{XId(t,c,u,o)}),i.on("tlsClientError",(c,u)=>{Lo(`[tls-terminate] client TLS error for ${o.hostname}: ${c.message}`,{level:"error"}),u.destroy()}),i.on("upgrade",(c,u)=>{Lo("[tls-terminate] upgrade request refused",{level:"warn"}),u.destroy()});let a=ZId(),l=()=>{i.close(),cUi.unlink(a,()=>{})};i.on("error",(c)=>{Lo(`[tls-terminate] inner server listen failed: ${c.message}`,{level:"error"}),n.destroy(),l()}),i.listen(a,()=>{let c=Mwn.connect({path:a});c.on("error",(u)=>{Lo(`[tls-terminate] inner loopback failed: ${u.message}`,{level:"error"}),n.destroy(),l()}),c.once("connect",()=>{if(r.length)c.write(r);n.pipe(c),c.pipe(n)}),n.on("error",()=>c.destroy()),n.once("close",()=>{c.destroy(),l()}),c.once("close",()=>n.destroy())}),i.unref()}
+async function XId(e,t,n,r){let o=t;if(e){let a=new AbortController;n.once("close",()=>a.abort());let l=r.port===443?r.hostname:`${r.hostname}:${r.port}`,c=await Jvn(e,t,n,`https://${l}${t.url??"/"}`,a.signal);if(c===null)return;o=c}let s=Vwe(t.headers);delete s.host;let i=Lwn.request({host:r.hostname,port:r.port,path:t.url,method:t.method,headers:s,...Mwn.isIP(r.hostname)?{}:{servername:r.hostname},...r.upstreamCA?{ca:r.upstreamCA}:{},agent:!1},(a)=>{n.writeHead(a.statusCode??502,Vwe(a.headers)),a.pipe(n)});i.on("error",(a)=>{if(Lo(`[tls-terminate] upstream ${r.hostname}:${r.port} failed: ${a.message}`,{level:"error"}),!n.headersSent)n.writeHead(502,{"Content-Type":"text/plain"}),n.end("Bad Gateway");else n.destroy()}),n.on("close",()=>i.destroy()),o.pipe(i)}
+function ZId(){return dUi.join(uUi.tmpdir(),`srt-tt-${process.pid}-${(QId++).toString(36)}.sock`)}
+var Lwn,Mwn,cUi,uUi,dUi,QId=0;
+var fUi=b(()=>{$8r();oUi();_Lt();Lwn=require("https"),Mwn=require("net"),cUi=require("fs"),uUi=require("os"),dUi=require("path")});
+export {lUi,pUi,mUi,XId,ZId,Lwn,Mwn,cUi,uUi,dUi,QId,fUi};

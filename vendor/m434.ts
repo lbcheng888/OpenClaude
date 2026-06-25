@@ -1,10 +1,11 @@
 // @ts-nocheck
-import {YTe,Tgt} from "./m106.ts";
-import {AGe,nYt} from "./m212.ts";
-import {T3,XTe} from "./m121.ts";
-import {fZt,Cdr} from "./m433.ts";
+import {zy,xU} from "./m23.ts";
+import {JV,FLe} from "./m106.ts";
+import {a5,BLe} from "./m107.ts";
+import {Rbe,qTt} from "./m71.ts";
+import {Qbe,Ubt} from "./m201.ts";
 import {b} from "../runtime.ts";
-function JHc(e,t){if(e==null)return{};var n=YTe(AGe(e),function(r){return[r]});return t=T3(t),fZt(e,n,function(r,o){return t(r,o[0])})}
-var sv;
-var Epe=b(()=>{Tgt();XTe();Cdr();nYt();sv=JHc});
-export {JHc,sv,Epe};
+function QFc(e,t,n,r){if(!zy(e))return e;t=JV(t,e);var o=-1,s=t.length,i=s-1,a=e;while(a!=null&&++o<s){var l=a5(t[o]),c=n;if(l==="__proto__"||l==="constructor"||l==="prototype")return e;if(o!=i){var u=a[l];if(c=r?r(u,l,a):void 0,c===void 0)c=zy(u)?u:Rbe(t[o+1])?[]:{}}Qbe(a,l,c),a=a[l]}return e}
+var CYo;
+var AYo=b(()=>{Ubt();FLe();qTt();xU();BLe();CYo=QFc});
+export {QFc,CYo,AYo};

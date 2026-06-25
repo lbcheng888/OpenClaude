@@ -1,7 +1,7 @@
 // @ts-nocheck
+import {Qyr,ess} from "./m668.ts";
+import {Xyr} from "./m667.ts";
 import {b} from "../runtime.ts";
-function btn(e){return e!==null&&typeof e==="object"&&typeof e.pipe==="function"}
-function xfr(e){return btn(e)&&e.writable!==!1&&typeof e._write==="function"&&typeof e._writableState==="object"}
-var bZo,EZo,BYc=(e)=>e instanceof EZo.ChildProcess&&typeof e.then==="function",kfr=(e,t,n)=>{if(typeof n==="string")return e[t].pipe(bZo.createWriteStream(n)),e;if(xfr(n))return e[t].pipe(n),e;if(!BYc(n))throw TypeError("The second argument must be a string, a stream or an Execa child process.");if(!xfr(n.stdin))throw TypeError("The target child process's stdin must be available.");return e[t].pipe(n.stdin),n},CZo=(e)=>{if(e.stdout!==null)e.pipeStdout=kfr.bind(void 0,e,"stdout");if(e.stderr!==null)e.pipeStderr=kfr.bind(void 0,e,"stderr");if(e.all!==void 0)e.pipeAll=kfr.bind(void 0,e,"all")};
-var vZo=b(()=>{bZo=require("fs"),EZo=require("child_process")});
-export {btn,xfr,bZo,EZo,BYc,kfr,CZo,vZo};
+var tss,Usu=()=>{let e=Qyr();return Object.fromEntries(e.map($su))},$su=({name:e,number:t,description:n,supported:r,action:o,forced:s,standard:i})=>[e,{name:e,number:t,description:n,supported:r,action:o,forced:s,standard:i}],nss,qsu=()=>{let e=Qyr(),t=Xyr+1,n=Array.from({length:t},(r,o)=>Wsu(o,e));return Object.assign({},...n)},Wsu=(e,t)=>{let n=Gsu(e,t);if(n===void 0)return{};let{name:r,description:o,supported:s,action:i,forced:a,standard:l}=n;return{[e]:{name:r,number:e,description:o,supported:s,action:i,forced:a,standard:l}}},Gsu=(e,t)=>{let n=t.find(({name:r})=>tss.constants.signals[r]===e);if(n!==void 0)return n;return t.find((r)=>r.number===e)},Axf;
+var rss=b(()=>{ess();tss=require("os"),nss=Usu(),Axf=qsu()});
+export {tss,Usu,$su,nss,qsu,Wsu,Gsu,Axf,rss};

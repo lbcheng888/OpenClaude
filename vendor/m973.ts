@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {gsn,DCt} from "./m968.ts";
-import {kCt,SSOClient} from "./m963.ts";
-import {Sd} from "./m850.ts";
-var D_s=()=>{};
-var P_s,ZLf;
-var O_s=b(()=>{gsn();kCt();P_s=M(Sd(),1),ZLf=P_s.createPaginator(SSOClient,DCt,"nextToken","nextToken","maxResults")});
-export {D_s,P_s,ZLf,O_s};
+import {b,x} from "../runtime.ts";
+import {n7} from "./m954.ts";
+import {zYe,KCe} from "./m956.ts";
+import {rwt,gAs} from "./m971.ts";
+import {yo} from "./m892.ts";
+import {cQ} from "./m946.ts";
+var SAs,swt;
+var eln=b(()=>{n7();zYe();rwt();SAs=x(yo(),1);swt=class swt extends cQ.classBuilder().ep(KCe).m(function(e,t,n,r){return[SAs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("SWBPortalService","ListAccountRoles",{}).n("SSOClient","ListAccountRolesCommand").sc(gAs).build(){}});
+export {SAs,swt,eln};

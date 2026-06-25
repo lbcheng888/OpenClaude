@@ -1,18 +1,18 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {jt,wX,ws} from "./m228.ts";
-import {_$,fsModule} from "./m2246.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {AI,Mce} from "./m4173.ts";
-import {ta,wn} from "./m45.ts";
-import {ln,Oe,Ie} from "../src/telemetry/0594_feature_name.ts";
-import {N5,TT} from "./m2583.ts";
-import {gg,loadAllPluginsCacheOnly} from "../src/agent/4445_resolvePluginRoot.ts";
-var N6a={};
-isFullscreenWithTTY(N6a,{loadPluginWorkflows:()=>loadPluginWorkflows,clearPluginWorkflowCache:()=>clearPluginWorkflowCache});
-async function O6a(e,t,n,r,o){let s=jt(),i;try{i=await s.readdir(e)}catch{return[]}return(await Promise.all(i.map(async(l)=>{if(!(l.isFile()||l.isSymbolicLink()))return null;if(!l.name.endsWith(".js"))return null;return M6a(L6a.join(e,l.name),t,n,r,o)}))).filter((l)=>l!==null)}
-async function M6a(e,t,n,r,o){let s=jt();if(wX(s,e,o))return null;try{let i=await s.readFile(e,{encoding:"utf-8"});if(i.length>_$)return logForDebugging(`Plugin workflow ${e} exceeds ${_$} bytes \u2014 skipping`,{level:"warn"}),null;let a=AI(i);if("error"in a)return logForDebugging(`Plugin workflow ${e} has invalid meta: ${a.error} \u2014 skipping`,{level:"warn"}),null;let l=`${t}:${a.meta.name}`;return{source:"plugin",plugin:n,pluginManifest:r,name:l,description:a.meta.description,whenToUse:a.meta.whenToUse,phases:a.meta.phases,script:i,filePath:e}}catch(i){return logForDebugging(`Failed to load workflow from ${e}: ${i}`,{level:"error"}),null}}
-function clearPluginWorkflowCache(){loadPluginWorkflows.cache?.clear?.()}
-var L6a,loadPluginWorkflows;
-var fdo=b(()=>{ta();ln();Mce();fsModule();N5();qe();ws();gg();L6a=require("path");loadPluginWorkflows=wn(async()=>{let{enabled:e,errors:t}=await loadAllPluginsCacheOnly(),n=[];if(t.length>0)logForDebugging(`Plugin loading errors: ${t.map((o)=>TT(o)).join(", ")}`);let r=null;for(let o of e){let s=new Set;if(o.workflowsPath)try{let i=await O6a(o.workflowsPath,o.name,o.source,o.manifest,s);if(n.push(...i),i.length>0)logForDebugging(`Loaded ${i.length} workflows from plugin ${o.name} default directory`)}catch(i){r="plugin_load_workflows_dir_failed",logForDebugging(`Failed to load workflows from plugin ${o.name} default directory: ${i}`,{level:"error"})}if(o.workflowsPaths)for(let i of o.workflowsPaths)try{let l=await jt().stat(i);if(l.isDirectory()){let c=await O6a(i,o.name,o.source,o.manifest,s);if(n.push(...c),c.length>0)logForDebugging(`Loaded ${c.length} workflows from plugin ${o.name} custom path: ${i}`)}else if(l.isFile()&&i.endsWith(".js")){let c=await M6a(i,o.name,o.source,o.manifest,s);if(c)n.push(c),logForDebugging(`Loaded workflow from plugin ${o.name} custom file: ${i}`)}}catch(a){r="plugin_load_workflows_path_failed",logForDebugging(`Failed to load workflows from plugin ${o.name} custom path ${i}: ${a}`,{level:"error"})}}if(logForDebugging(`Total plugin workflows loaded: ${n.length}`),r)Oe("plugin_load_workflows",r);else Ie("plugin_load_workflows");return n})});
-export {N6a,O6a,M6a,clearPluginWorkflowCache,L6a,loadPluginWorkflows,fdo};
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Mo} from "../src/mcp/2200_mcpServerName.ts";
+import {ws} from "../src/config/2709_Zm.ts";
+import {He,xe,mn} from "../src/telemetry/0600_feature_name.ts";
+import {Exe} from "../src/tui/4086_classifierApprovals.ts";
+import {hqn,gqn} from "../src/telemetry/4174_toolName.ts";
+import {rKa,sKa,oKa,qho} from "../src/telemetry/4180_onResponse.ts";
+import {getAllowedChannels,lt} from "../src/session/0132_sent.ts";
+import {findChannelEntry,CHANNEL_PERMISSION_REQUEST_METHOD,d5e} from "./m4178.ts";
+import {Ce,Ct} from "./m197.ts";
+import {Mr,xl} from "./m4427.ts";
+import {b} from "../runtime.ts";
+function lFp(e,t){if(t.length===0)return;let n=[];for(let r of t)if(r.type==="setMode"){let o=e.setModeFromBridge(r.mode);if(!o.ok)logForDebugging(`bridge setMode '${r.mode}' rejected (${o.error}); falling back to 'default'`),e.setModeFromBridge("default")}else n.push(r);if(n.length>0)e.persistPermissions(n)}
+function lKa(e){let{ctx:t,description:n,result:r,displayInput:o,permissionPromptStartTimeMs:s,awaitAutomatedChecksBeforeDialog:i,bridgeCallbacks:a,channelCallbacks:l,claim:c,isResolved:u,onWin:d,onReprompt:p}=e,{setClassifierApprovals:m}=t,f=a?aKa.randomUUID():void 0,h,g;function _(T){if(a&&f){if(T)a.sendResponse(f,T);a.cancelRequest(f)}h?.(),g?.()}if(a&&f){let T="";if(t.tool.name!==Mo&&t.tool.name!==ws)try{T=t.tool.getToolUseSummary?.(o)??t.tool.getActivityDescription?.(o)??""}catch{T=""}a.sendRequest(f,t.tool.name,o,t.toolUseID,T,r.suggestions,r.blockedPath);let y=t.toolUseContext.abortController.signal;h=a.onResponse(f,(S)=>{if(!c())return;if(He("permission_bridge_relay"),h)y.removeEventListener("abort",h);if(Exe(m,t.toolUseID),g?.(),S.behavior==="allow"){if(lFp(t,S.updatedPermissions??[]),S.updatedPermissions?.length)hqn(S.updatedPermissions);t.logDecision({decision:"accept",source:{type:"user",permanent:!!S.updatedPermissions?.length}},{input:S.updatedInput??o,permissionPromptStartTimeMs:s}),d(t.buildAllow(S.updatedInput??o))}else t.logDecision({decision:"reject",source:{type:"user_reject",hasFeedback:!!S.message}},{permissionPromptStartTimeMs:s}),d(t.cancelAndAbort(S.message))}),y.addEventListener("abort",h,{once:!0})}if(l&&!t.tool.requiresUserInteraction?.()){let T=rKa(t.toolUseID),y=getAllowedChannels(),S=sKa(t.toolUseContext.getMcp().clients,(E)=>findChannelEntry(E,y)!==void 0);if(S.length>0){let E={request_id:T,tool_name:t.tool.name,description:n,input_preview:oKa(o)};for(let H of S){if(H.type!=="connected")continue;H.client.notification({method:CHANNEL_PERMISSION_REQUEST_METHOD,params:E}).catch((k)=>{xe("permission_channel_relay","permission_channel_relay_send_failed"),logForDebugging(`Channel permission_request failed for ${H.name}: ${Ce(k)}`,{level:"error"})})}let R=t.toolUseContext.abortController.signal,w=l.onResponse(T,(H)=>{if(!c())return;if(He("permission_channel_relay"),g?.(),Exe(m,t.toolUseID),a&&f)a.cancelRequest(f);if(h?.(),H.behavior==="allow")t.logDecision({decision:"accept",source:{type:"user",permanent:!1}},{permissionPromptStartTimeMs:s}),d(t.buildAllow(o));else t.logDecision({decision:"reject",source:{type:"user_reject",hasFeedback:!1}},{permissionPromptStartTimeMs:s}),d(t.cancelAndAbort(`Denied via channel ${H.fromServer}`))});g=()=>{w(),R.removeEventListener("abort",g)},R.addEventListener("abort",g,{once:!0})}}if(!i)(async()=>{if(u())return;let T=await t.runHooks(Mr(t.toolUseContext).mode,r.suggestions,r.updatedInput,s);if(T&&"reprompted"in T){if(u())return;if(Exe(m,t.toolUseID),a&&f)a.cancelRequest(f),f=void 0;h?.(),g?.(),p(T.finalInput,T.reprompted.decisionReason,T.reprompted);return}if(!T||!c())return;if(a&&f)a.cancelRequest(f);h?.(),g?.(),d(T)})();return{notifyBridgeAndTeardown:_}}
+var aKa;
+var cKa=b(()=>{lt();mn();d5e();qho();xl();qe();Ct();gqn();aKa=require("crypto")});
+export {lFp,lKa,aKa,cKa};

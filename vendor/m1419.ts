@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {iun,CognitoIdentityClient} from "./m1390.ts";
-import {Tun,Jvt} from "./m1406.ts";
-import {Sd} from "./m850.ts";
-var v2s=()=>{};
-var w2s,ldA;
-var R2s=b(()=>{iun();Tun();w2s=M(Sd(),1),ldA=w2s.createPaginator(CognitoIdentityClient,Jvt,"NextToken","NextToken","MaxResults")});
-export {v2s,w2s,ldA,R2s};
+import {b,x} from "../runtime.ts";
+import {vy} from "./m1381.ts";
+import {SA,cp} from "./m1383.ts";
+import {IR,Vqs} from "./m1398.ts";
+import {yo} from "./m892.ts";
+import {Rd} from "./m1373.ts";
+var f6s,w0r;
+var k0r=b(()=>{vy();SA();IR();f6s=x(yo(),1);w0r=class w0r extends Rd.classBuilder().ep(cp).m(function(e,t,n,r){return[f6s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","UnlinkIdentity",{}).n("CognitoIdentityClient","UnlinkIdentityCommand").sc(Vqs).build(){}});
+export {f6s,w0r,k0r};

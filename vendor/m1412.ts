@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Ry} from "./m1376.ts";
-import {shouldUsePowerShellTool,Kp} from "./m1378.ts";
-import {vw,zUs} from "./m1393.ts";
-import {yo} from "./m887.ts";
-import {Jd} from "./m1368.ts";
-var g2s,zwr;
-var Ywr=b(()=>{Ry();shouldUsePowerShellTool();vw();g2s=M(yo(),1);zwr=class zwr extends Jd.classBuilder().ep(Kp).m(function(e,t,n,r){return[g2s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","TagResource",{}).n("CognitoIdentityClient","TagResourceCommand").sc(zUs).build(){}});
-export {g2s,zwr,Ywr};
+import {b,x} from "../runtime.ts";
+import {vy} from "./m1381.ts";
+import {SA,cp} from "./m1383.ts";
+import {IR,Fqs} from "./m1398.ts";
+import {yo} from "./m892.ts";
+import {Rd} from "./m1373.ts";
+var a6s,m0r;
+var f0r=b(()=>{vy();SA();IR();a6s=x(yo(),1);m0r=class m0r extends Rd.classBuilder().ep(cp).m(function(e,t,n,r){return[a6s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","ListTagsForResource",{}).n("CognitoIdentityClient","ListTagsForResourceCommand").sc(Fqs).build(){}});
+export {a6s,m0r,f0r};

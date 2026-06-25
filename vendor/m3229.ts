@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var hoa=X((hIn)=>{Object.defineProperty(hIn,"__esModule",{value:!0});hIn.Disposable=void 0;var Aoa;(function(e){function t(n){return{dispose:n}}e.create=t})(Aoa||(hIn.Disposable=Aoa={}))});
-export {hoa};
+import {Q} from "../runtime.ts";
+import {a3o} from "../src/computer-use/0003_exports.ts";
+var Xca=Q((td_,Jca)=>{var ed_=require("path");{let e=a3o();Jca.exports={isSupported:!0,...e}}});
+export {Xca};

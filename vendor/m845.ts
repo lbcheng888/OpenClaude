@@ -1,4 +1,18 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var m_r=X((Kb)=>{Kb.HttpAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(Kb.HttpAuthLocation||(Kb.HttpAuthLocation={}));Kb.HttpApiKeyAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(Kb.HttpApiKeyAuthLocation||(Kb.HttpApiKeyAuthLocation={}));Kb.EndpointURLScheme=void 0;(function(e){e.HTTP="http",e.HTTPS="https"})(Kb.EndpointURLScheme||(Kb.EndpointURLScheme={}));Kb.AlgorithmId=void 0;(function(e){e.MD5="md5",e.CRC32="crc32",e.CRC32C="crc32c",e.SHA1="sha1",e.SHA256="sha256"})(Kb.AlgorithmId||(Kb.AlgorithmId={}));var Oru=(e)=>{let t=[];if(e.sha256!==void 0)t.push({algorithmId:()=>Kb.AlgorithmId.SHA256,checksumConstructor:()=>e.sha256});if(e.md5!=null)t.push({algorithmId:()=>Kb.AlgorithmId.MD5,checksumConstructor:()=>e.md5});return{addChecksumAlgorithm(n){t.push(n)},checksumAlgorithms(){return t}}},Lru=(e)=>{let t={};return e.checksumAlgorithms().forEach((n)=>{t[n.algorithmId()]=n.checksumConstructor()}),t},Mru=(e)=>Oru(e),Nru=(e)=>Lru(e);Kb.FieldPosition=void 0;(function(e){e[e.HEADER=0]="HEADER",e[e.TRAILER=1]="TRAILER"})(Kb.FieldPosition||(Kb.FieldPosition={}));var Bru="__smithy_context";Kb.IniSectionType=void 0;(function(e){e.PROFILE="profile",e.SSO_SESSION="sso-session",e.SERVICES="services"})(Kb.IniSectionType||(Kb.IniSectionType={}));Kb.RequestHandlerProtocol=void 0;(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(Kb.RequestHandlerProtocol||(Kb.RequestHandlerProtocol={}));Kb.SMITHY_CONTEXT_KEY=Bru;Kb.getDefaultClientConfiguration=Mru;Kb.resolveDefaultRuntimeConfig=Nru});
-export {m_r};
+import {ft,b,autofixError,x} from "../runtime.ts";
+import {Hmu,Efs,Cfs} from "./m839.ts";
+import {Fmu,Bfs,Nfs,Mmu,Lfs,Lmu,Nmu,Mfs,Ufs} from "./m844.ts";
+import {Omu,Dfs,Pmu} from "./m842.ts";
+import {xmu,Rfs,Dmu,vfs} from "./m840.ts";
+import {MEr,kmu,vYe,wmu,NEr} from "./m838.ts";
+import {hfs,gfs} from "./m835.ts";
+import {LEr,bfs} from "./m837.ts";
+import {Jds,Xds} from "./m787.ts";
+import {Ofs} from "./m843.ts";
+import {b3} from "./m827.ts";
+var qmu=(e)=>{if(e!==e)return"NaN";switch(e){case 1/0:return"Infinity";case-1/0:return"-Infinity";default:return e}},Wmu=(e)=>e.toISOString().replace(".000Z","Z");
+var FEr=(e)=>{if(e==null)return{};if(Array.isArray(e))return e.filter((t)=>t!=null).map(FEr);if(typeof e==="object"){let t={};for(let n of Object.keys(e)){if(e[n]==null)continue;t[n]=FEr(e[n])}return t}return e};
+var yA={};
+ft(yA,{withBaseException:()=>Hmu,throwDefaultError:()=>Efs,take:()=>Fmu,serializeFloat:()=>qmu,serializeDateTime:()=>Wmu,resolvedPath:()=>Bfs.resolvedPath,resolveDefaultRuntimeConfig:()=>Omu,map:()=>Nfs,loadConfigsForDefaultMode:()=>xmu,isSerializableHeaderValue:()=>Mmu,getValueFromTextNode:()=>Lfs,getDefaultExtensionConfiguration:()=>Dfs,getDefaultClientConfiguration:()=>Pmu,getArrayIfSingleItem:()=>Lmu,extendedEncodeURIComponent:()=>Rfs.extendedEncodeURIComponent,emitWarningIfUnsupportedVersion:()=>Dmu,decorateServiceException:()=>MEr,createAggregatedClient:()=>kmu,convertMap:()=>Nmu,collectBody:()=>hfs.collectBody,_json:()=>FEr,ServiceException:()=>vYe,SENSITIVE_STRING:()=>wmu,NoOpLogger:()=>Mfs,Command:()=>LEr,Client:()=>Jds});
+var $fs=b(()=>{Xds();gfs();bfs();Cfs();NEr();vfs();Ofs();Ufs();autofixError(yA,x(b3(),1),module.exports)});
+export {qmu,Wmu,FEr,yA,$fs};

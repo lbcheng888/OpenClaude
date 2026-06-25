@@ -1,8 +1,16 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {OY} from "../src/tools/3871_allowBundle.ts";
-import {Ba} from "./m693.ts";
-import {RP} from "../src/tui/3870_validateSessionRepository.ts";
-import {EH} from "./m237.ts";
-var K6a=b(()=>{OY();Ba();RP();EH()});
-export {K6a};
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {NY,p5e,Rqn,Dpt,vqn,wqn,Hqn,kce,Uye} from "./m4181.ts";
+import {$xe,Ppt,Lqn,Mqn,m5e} from "./m4184.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {Bw,Nte} from "./m4186.ts";
+import {LUe,oz} from "./m2254.ts";
+import {J1e,Pa} from "./m720.ts";
+import {b,x} from "../runtime.ts";
+function Xho(e){function t(r){return r.map((o)=>{if(typeof o==="string")return o;try{return TeamDeleteToolName(o)}catch{return`[${typeof o}]`}}).join(" ")}let n=(r)=>NY((...o)=>e(r+t(o)));return{__proto__:null,log:n(""),info:n(""),debug:n(""),error:n("[error] "),warn:n("[warn] ")}}
+function AKa(e){let t=new Map;return $xe(async function(r,o){if(e.abortSignal?.aborted)return new Promise(()=>{});let s=e.intakeClone(r),i,a;if(typeof s==="string"){let f=await e.resolveWorkflow(s,isTmuxControlMode());if(!f){let g=(await e.getAllWorkflows(isTmuxControlMode())).map((_)=>_.name).join(", ");throw Error(`workflow('${s}'): no workflow with that name. Available: ${g||"(none)"}`)}let h=Bw(f.script);if("error"in h)throw Error(`workflow('${s}'): ${h.error}`);a=f.name,i=h.scriptBody}else if(s&&typeof s==="object"&&"scriptPath"in s&&typeof s.scriptPath==="string"){let f=await LUe(s.scriptPath);if("error"in f)throw Error(`workflow({scriptPath: '${s.scriptPath}'}): ${f.error}`);let h=Bw(f.script);if("error"in h)throw Error(`workflow({scriptPath: '${s.scriptPath}'}): ${h.error}`);a=h.meta.name,i=h.scriptBody}else throw TypeError("workflow() expects a workflow name (string) or {scriptPath: string}");let l=Ppt(i);if(!l.ok)throw Error(`workflow('${a}'): ${l.error}`);let c=(t.get(a)??0)+1;t.set(a,c);let u=`${J1e} ${a}${c>1?` #${c}`:""}`;e.hooks.resolvePhase(u,"child"),e.hooks.log(`${J1e} running dynamic workflow ${a}`);let d=`[${a}] `,p,m={__proto__:null,budget:e.budget,setTimeout:e.timers.setTimeout,clearTimeout:e.timers.clearTimeout,phase:NY((f)=>{}),log:NY((f)=>e.hooks.log(d+(typeof f==="string"?f:`[${typeof f}]`))),console:Xho((f)=>e.hooks.log(d+f))};try{let f=Uqn.createContext(m,{codeGeneration:{strings:!1,wasm:!1}});Lqn(f),p5e(f),p=Rqn(f);let h=Dpt(f),g=vqn(f),_=Uqn.runInContext('(o => { try { const s = o && typeof o === "object" ? o.schema : undefined; return s && typeof s === "object" ? s : undefined } catch { return undefined } })',f),T=new WeakMap,y={agent:(w,H)=>{let k=g(H),I=_(H);if(k&&typeof k==="object"&&I){let D=T.get(I);if(D!==void 0)k.schema=D;else if(k.schema!==void 0)T.set(I,k.schema)}return e.hooks.agent(w,{...k,phase:u})},parallel:e.hooks.parallel,pipeline:e.hooks.pipeline,workflow:()=>Promise.reject(Error("workflow() cannot be called from within a child workflow \u2014 nesting is limited to one level. Inline the inner script or call its agents directly."))},S=wqn(f);for(let[w,H]of Object.entries(y))Object.defineProperty(f,w,{value:S(Hqn(H)),writable:!0,enumerable:!0,configurable:!0});Object.defineProperty(f,"args",{value:o===void 0?void 0:g(o),writable:!0,enumerable:!0,configurable:!0});let E=await h(l.vmScript.runInContext(f,{timeout:Mqn})),R=g(E.v);return e.hooks.log(`${J1e} ${a} done`),R}catch(f){let h,g,_;if(p)({name:h,message:g,stack:_}=p(f));else h=f instanceof Error?f.name:"Error",g=f instanceof Error?f.message:"",_=f instanceof Error?f.stack:void 0;let T;if(_){let y=_.split(`
+`),S=y.slice(1).filter((E)=>E.trim().startsWith("at "));T=S.length<=5?_:[y[0]??"",...S.slice(0,5)].join(`
+`)}else T=g?`${h}: ${g}`:h;throw e.hooks.recordFailure(`${u}: ${T}`),e.hooks.log(`${J1e} ${a} failed: ${T}`),kce(T,h,_||void 0)}})}
+var Uqn;
+var RKa=b(()=>{Pa();Po();tn();Uye();m5e();Nte();oz();Uqn=x(require("vm"))});
+export {Xho,AKa,Uqn,RKa};

@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {hGe,rYt} from "./m214.ts";
 import {b} from "../runtime.ts";
-function Bgc(e,t){var n=t?hGe(e.buffer):e.buffer;return new e.constructor(n,e.byteOffset,e.length)}
-var oYt;
-var Wor=b(()=>{rYt();oYt=Bgc});
-export {Bgc,oYt,Wor};
+function Uwc(e){var t=new e.constructor(e.source,Bwc.exec(e));return t.lastIndex=e.lastIndex,t}
+var Bwc,C8o;
+var A8o=b(()=>{Bwc=/\w*$/;C8o=Uwc});
+export {Uwc,Bwc,C8o,A8o};

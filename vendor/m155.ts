@@ -1,5 +1,9 @@
 // @ts-nocheck
+import {zJt} from "../src/core/0140_key.ts";
 import {b} from "../runtime.ts";
-import {R$o} from "./m154.ts";
-var Vrr=b(()=>{R$o()});
-export {Vrr};
+function uMe(e,t,n){return ylr(),new File(e,t??"unknown_file",n)}
+function obt(e,t){let n=typeof e==="object"&&e!==null&&(("name"in e)&&e.name&&String(e.name)||("url"in e)&&e.url&&String(e.url)||("filename"in e)&&e.filename&&String(e.filename)||("path"in e)&&e.path&&String(e.path))||"";return t?n.split(/[\\/]/).pop()||void 0:n}
+function Hvc(e){let t=typeof e==="function"?e:e.fetch,n=g5o.get(t);if(n)return n;let r=(async()=>{try{let o="Response"in t?t.Response:(await t("data:,")).constructor,s=new FormData;if(s.toString()===await new o(s).text())return!1;return!0}catch{return!0}})();return g5o.set(t,r),r}
+var ylr=()=>{if(typeof File>"u"){let{process:e}=globalThis,t=typeof e?.versions?.node==="string"&&parseInt(e.versions.node.split("."))<20;throw Error("`File` is not defined as a global, which is required for file uploads."+(t?" Update to Node 20 LTS or newer, or set `globalThis.File` to `import('node:buffer').File`.":""))}},Tlr=(e)=>e!=null&&typeof e==="object"&&typeof e[Symbol.asyncIterator]==="function",YKe=async(e,t,n=!0)=>({...e,body:await Ivc(e.body,t,n)}),g5o,Ivc=async(e,t,n=!0)=>{if(!await Hvc(t))throw TypeError("The provided fetch function does not support file uploads with the current global FormData class.");let r=new FormData;return await Promise.all(Object.entries(e||{}).map(([o,s])=>_lr(r,o,s,n))),r},xvc=(e)=>e instanceof Blob&&("name"in e),_lr=async(e,t,n,r)=>{if(n===void 0)return;if(n==null)throw TypeError(`Received null for "${t}"; to pass null in FormData, you must use the string 'null'`);if(typeof n==="string"||typeof n==="number"||typeof n==="boolean")e.append(t,String(n));else if(n instanceof Response){let o={},s=n.headers.get("Content-Type");if(s)o={type:s};e.append(t,uMe([await n.blob()],obt(n,r),o))}else if(Tlr(n))e.append(t,uMe([await new Response(zJt(n)).blob()],obt(n,r)));else if(xvc(n))e.append(t,uMe([n],obt(n,r),{type:n.type}));else if(Array.isArray(n))await Promise.all(n.map((o)=>_lr(e,t+"[]",o,r)));else if(typeof n==="object")await Promise.all(Object.entries(n).map(([o,s])=>_lr(e,`${t}[${o}]`,s,r)));else throw TypeError(`Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${n} instead`)};
+var JKe=b(()=>{g5o=new WeakMap});
+export {uMe,obt,Hvc,ylr,Tlr,YKe,g5o,Ivc,xvc,_lr,JKe};

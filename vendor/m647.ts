@@ -1,6 +1,9 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {cQo} from "./m645.ts";
-import {fQo} from "./m646.ts";
-var hQo=X((Dyf,AQo)=>{var Iyf=require("fs"),gtn;if(global.TESTING_WINDOWS)gtn=cQo();else gtn=fQo();AQo.exports=dfr;dfr.sync=jzc;function dfr(e,t,n){if(typeof t==="function")n=t,t={};if(!n){if(typeof Promise!=="function")throw TypeError("callback not provided");return new Promise(function(r,o){dfr(e,t||{},function(s,i){if(s)o(s);else r(i)})})}gtn(e,t||{},function(r,o){if(r){if(r.code==="EACCES"||t&&t.ignoreErrors)r=null,o=!1}n(r,o)})}function jzc(e,t){try{return gtn.sync(e,t||{})}catch(n){if(t&&t.ignoreErrors||n.code==="EACCES")return!1;else throw n}}});
-export {hQo};
+import {Sje,bje} from "./m644.ts";
+import {A_,zf} from "./m133.ts";
+import {b} from "../runtime.ts";
+async function w5(e){let t=Sje("git");if(t===null)return[];try{let{stdout:n}=await Uou(t,["worktree","list","--porcelain"],{cwd:e,timeout:5000,windowsHide:!0});if(!n)return[];return n.split(`
+`).filter((r)=>r.startsWith("worktree ")).map((r)=>A_(r.slice(9)))}catch{return[]}}
+var Brs,Urs,Uou;
+var N1e=b(()=>{zf();bje();Brs=require("child_process"),Urs=require("util"),Uou=Urs.promisify(Brs.execFile)});
+export {w5,Brs,Urs,Uou,N1e};

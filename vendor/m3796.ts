@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {BW} from "./m3799.ts";
-import {aI} from "./m3780.ts";
-var Vro=X((Eka,Cka)=>{(function(){var e,t,n;n=BW(),e=aI(),Cka.exports=t=class extends n{constructor(o){super(o);this.type=e.Dummy}clone(){return Object.create(this)}toString(o){return""}}}).call(Eka)});
-export {Vro};
+import {Q} from "../runtime.ts";
+var LI=Q((uLa,dLa)=>{(function(){dLa.exports={Element:1,Attribute:2,Text:3,CData:4,EntityReference:5,EntityDeclaration:6,ProcessingInstruction:7,Comment:8,Document:9,DocType:10,DocumentFragment:11,NotationDeclaration:12,Declaration:201,Raw:202,AttributeDeclaration:203,ElementDeclaration:204,Dummy:205}}).call(uLa)});
+export {LI};

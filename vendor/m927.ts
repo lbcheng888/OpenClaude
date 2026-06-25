@@ -1,6 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var HAs=()=>{};
-var IAs;
-var DAs=b(()=>{(function(e){e.HEADER="header",e.QUERY="query"})(IAs||(IAs={}))});
-export {HAs,IAs,DAs};
+import {HYe,ggs,XAr,abs,lbs,ubs} from "./m924.ts";
+import {WCe,pbs} from "./m925.ts";
+import {hbs,gbs} from "./m926.ts";
+import {b,x} from "../runtime.ts";
+import {Vg} from "./m600.ts";
+import {ZU} from "./m606.ts";
+var GYe,GCe,_bs,xan=(e={})=>async({callerClientConfig:t}={})=>{let n={...e,parentClientConfig:{...t,...e.parentClientConfig}};n.logger?.debug("@aws-sdk/token-providers - fromSso");let r=await GCe.parseKnownFiles(n),o=GCe.getProfileName({profile:n.profile??t?.profile}),s=r[o];if(!s)throw new GYe.TokenProviderError(`Profile '${o}' could not be found in shared credentials file.`,!1);else if(!s.sso_session)throw new GYe.TokenProviderError(`Profile '${o}' is missing required property 'sso_session'.`);let i=s.sso_session,l=(await GCe.loadSsoSessionData(n))[i];if(!l)throw new GYe.TokenProviderError(`Sso session '${i}' could not be found in shared credentials file.`,!1);for(let h of["sso_start_url","sso_region"])if(!l[h])throw new GYe.TokenProviderError(`Sso session '${i}' is missing required property '${h}'.`,!1);let{sso_start_url:c,sso_region:u}=l,d;try{d=await GCe.getSSOTokenFromFile(i)}catch(h){throw new GYe.TokenProviderError(`The SSO session token associated with profile=${o} was not found or is invalid. ${HYe}`,!1)}WCe("accessToken",d.accessToken),WCe("expiresAt",d.expiresAt);let{accessToken:p,expiresAt:m}=d,f={token:p,expiration:new Date(m)};if(f.expiration.getTime()-Date.now()>ggs)return f;if(Date.now()-_bs.getTime()<30000)return XAr(f),f;WCe("clientId",d.clientId,!0),WCe("clientSecret",d.clientSecret,!0),WCe("refreshToken",d.refreshToken,!0);try{_bs.setTime(Date.now());let h=await abs(d,u,n);WCe("accessToken",h.accessToken),WCe("expiresIn",h.expiresIn);let g=new Date(Date.now()+h.expiresIn*1000);try{await hbs(i,{...d,accessToken:h.accessToken,expiresAt:g.toISOString(),refreshToken:h.refreshToken})}catch(_){}return{token:h.accessToken,expiration:g}}catch(h){return XAr(f),f}};
+var QAr=b(()=>{lbs();ubs();pbs();gbs();GYe=x(Vg(),1),GCe=x(ZU(),1),_bs=new Date(0)});
+export {GYe,GCe,_bs,xan,QAr};

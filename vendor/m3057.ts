@@ -1,4 +1,11 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var _7i=X((L6h,NGr)=>{var Qg=NGr.exports;NGr.exports.default=Qg;var ib="\x1B[",xLt="\x1B]",ert="\x07",Uxn=";",g7i=process.env.TERM_PROGRAM==="Apple_Terminal";Qg.cursorTo=(e,t)=>{if(typeof e!=="number")throw TypeError("The `x` argument is required");if(typeof t!=="number")return ib+(e+1)+"G";return ib+(t+1)+";"+(e+1)+"H"};Qg.cursorMove=(e,t)=>{if(typeof e!=="number")throw TypeError("The `x` argument is required");let n="";if(e<0)n+=ib+-e+"D";else if(e>0)n+=ib+e+"C";if(t<0)n+=ib+-t+"A";else if(t>0)n+=ib+t+"B";return n};Qg.cursorUp=(e=1)=>ib+e+"A";Qg.cursorDown=(e=1)=>ib+e+"B";Qg.cursorForward=(e=1)=>ib+e+"C";Qg.cursorBackward=(e=1)=>ib+e+"D";Qg.cursorLeft=ib+"G";Qg.cursorSavePosition=g7i?"\x1B7":ib+"s";Qg.cursorRestorePosition=g7i?"\x1B8":ib+"u";Qg.cursorGetPosition=ib+"6n";Qg.cursorNextLine=ib+"E";Qg.cursorPrevLine=ib+"F";Qg.cursorHide=ib+"?25l";Qg.cursorShow=ib+"?25h";Qg.eraseLines=(e)=>{let t="";for(let n=0;n<e;n++)t+=Qg.eraseLine+(n<e-1?Qg.cursorUp():"");if(e)t+=Qg.cursorLeft;return t};Qg.eraseEndLine=ib+"K";Qg.eraseStartLine=ib+"1K";Qg.eraseLine=ib+"2K";Qg.eraseDown=ib+"J";Qg.eraseUp=ib+"1J";Qg.eraseScreen=ib+"2J";Qg.scrollUp=ib+"S";Qg.scrollDown=ib+"T";Qg.clearScreen="\x1Bc";Qg.clearTerminal=`${Qg.eraseScreen}${ib}3J${ib}H`;Qg.beep=ert;Qg.link=(e,t)=>[xLt,"8",Uxn,Uxn,t,ert,e,xLt,"8",Uxn,Uxn,ert].join("");Qg.image=(e,t={})=>{let n=`${xLt}1337;File=inline=1`;if(t.width)n+=`;width=${t.width}`;if(t.height)n+=`;height=${t.height}`;if(t.preserveAspectRatio===!1)n+=";preserveAspectRatio=0";return n+":"+e.toString("base64")+ert};Qg.iTerm={setCwd:(e=process.cwd())=>`${xLt}50;CurrentDir=${e}${ert}`,annotation:(e,t={})=>{let n=`${xLt}1337;`,r=typeof t.x<"u",o=typeof t.y<"u";if((r||o)&&!(r&&o&&typeof t.length<"u"))throw Error("`x`, `y` and `length` must be defined when `x` or `y` is defined");if(e=e.replace(/\|/g,""),n+=t.isHidden?"AddHiddenAnnotation=":"AddAnnotation=",t.length>0)n+=(r?[e,t.length,t.x,t.y]:[t.length,e]).join("|");else n+=e;return n+ert}}});
-export {_7i};
+import {lHe,b0n} from "./m3039.ts";
+import {$Qi,qQi} from "./m3056.ts";
+import {A0n,R0n} from "./m3055.ts";
+import {b} from "../runtime.ts";
+function WQi({active:e,pageSize:t,total:n}){let r=Math.floor(t/2);if(n<=t||e<r)return e;if(e>=n-r)return e+t-n;return r}
+function GQi({active:e,lastActive:t,total:n,pageSize:r,pointer:o}){if(n<=r)return e;if(t<e&&e-t<r)return Math.min(Math.floor(r/2),o+e-t);return o}
+function hYr({items:e,active:t,renderItem:n,pageSize:r,loop:o=!0}){let s=lHe({position:0,lastActive:0}),i=o?GQi({active:t,lastActive:s.current.lastActive,total:e.length,pageSize:r,pointer:s.current.position}):WQi({active:t,total:e.length,pageSize:r});return s.current.position=i,s.current.lastActive=t,$Qi({items:e,width:A0n(),renderItem:n,active:t,position:i,pageSize:r}).join(`
+`)}
+var VQi=b(()=>{b0n();R0n();qQi()});
+export {WQi,GQi,hYr,VQi};

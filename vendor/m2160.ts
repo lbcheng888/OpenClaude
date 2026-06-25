@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {pHt,u_n} from "./m2159.ts";
-import {b} from "../runtime.ts";
-class dmi{getLogger(e,t,n){return new pHt}}
-var d_n;
-var q1r=b(()=>{u_n();d_n=new dmi});
-export {dmi,d_n,q1r};
+import {Q} from "../runtime.ts";
+import {nTi} from "./m2159.ts";
+var rTi=Q((Wse)=>{Object.defineProperty(Wse,"__esModule",{value:!0});Wse.serviceInstanceIdDetector=Wse.processDetector=Wse.osDetector=Wse.hostDetector=void 0;var $Sn=nTi();Object.defineProperty(Wse,"hostDetector",{enumerable:!0,get:function(){return $Sn.hostDetector}});Object.defineProperty(Wse,"osDetector",{enumerable:!0,get:function(){return $Sn.osDetector}});Object.defineProperty(Wse,"processDetector",{enumerable:!0,get:function(){return $Sn.processDetector}});Object.defineProperty(Wse,"serviceInstanceIdDetector",{enumerable:!0,get:function(){return $Sn.serviceInstanceIdDetector}})});
+export {rTi};

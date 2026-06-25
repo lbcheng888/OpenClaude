@@ -1,11 +1,11 @@
 // @ts-nocheck
-import {useResolvedTheme,SZ} from "./m2274.ts";
-import {BaseBox,LZ} from "./m2387.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function OZe(e,t){if(!e)return;if(e.startsWith("rgb(")||e.startsWith("#")||e.startsWith("ansi256(")||e.startsWith("ansi:"))return e;return t[e]}
-function nld(e){let t=kvi.c(26),n=useResolvedTheme(),r;if(t[0]!==e.borderColor||t[1]!==n)r=OZe(e.borderColor,n),t[0]=e.borderColor,t[1]=n,t[2]=r;else r=t[2];let o;if(t[3]!==e.borderTopColor||t[4]!==n)o=OZe(e.borderTopColor,n),t[3]=e.borderTopColor,t[4]=n,t[5]=o;else o=t[5];let s;if(t[6]!==e.borderBottomColor||t[7]!==n)s=OZe(e.borderBottomColor,n),t[6]=e.borderBottomColor,t[7]=n,t[8]=s;else s=t[8];let i;if(t[9]!==e.borderLeftColor||t[10]!==n)i=OZe(e.borderLeftColor,n),t[9]=e.borderLeftColor,t[10]=n,t[11]=i;else i=t[11];let a;if(t[12]!==e.borderRightColor||t[13]!==n)a=OZe(e.borderRightColor,n),t[12]=e.borderRightColor,t[13]=n,t[14]=a;else a=t[14];let l;if(t[15]!==e.backgroundColor||t[16]!==n)l=OZe(e.backgroundColor,n),t[15]=e.backgroundColor,t[16]=n,t[17]=l;else l=t[17];let c;if(t[18]!==e||t[19]!==r||t[20]!==o||t[21]!==s||t[22]!==i||t[23]!==a||t[24]!==l)c=Hvi.default.createElement(BaseBox,{...e,borderColor:r,borderTopColor:o,borderBottomColor:s,borderLeftColor:i,borderRightColor:a,backgroundColor:l}),t[18]=e,t[19]=r,t[20]=o,t[21]=s,t[22]=i,t[23]=a,t[24]=l,t[25]=c;else c=t[25];return c}
-var kvi,Hvi,Box;
-var BSn=b(()=>{LZ();SZ();kvi=M(rt(),1),Hvi=M(Te(),1);Box=nld});
-export {OZe,nld,kvi,Hvi,Box,BSn};
+import {p2e,R0i,m2e,LPt} from "./m2419.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {_z,o4} from "./m2386.ts";
+import {hhe,DPt} from "./m2413.ts";
+import {Wki,dhe} from "./m2362.ts";
+import {pO,mtt} from "./m2377.ts";
+import {b} from "../runtime.ts";
+function zqr(e,t){let n,r=p2e();return(o)=>{let{frontFrame:s,backFrame:i,isTTY:a,terminalWidth:l,terminalRows:c}=o,u=s.screen,d=i.screen,p=d.charPool,m=d.hyperlinkPool,f=e.yogaNode?.getComputedHeight(),h=e.yogaNode?.getComputedWidth(),g=f===void 0||!Number.isFinite(f)||f<0,_=h===void 0||!Number.isFinite(h)||h<0;if(!e.yogaNode||g||_){if(e.yogaNode&&(g||_))logForDebugging(`Invalid yoga dimensions: width=${h}, height=${f}, childNodes=${e.childNodes.length}, terminalWidth=${l}, terminalRows=${c}`);return{screen:_z(l,0,t,p,m),viewport:{width:l,height:c},cursor:{x:0,y:0,visible:!0}}}let T=Math.floor(e.yogaNode.getComputedWidth()),y=Math.floor(e.yogaNode.getComputedHeight()),S=o.altScreen?c:y;if(o.altScreen&&y>c)logForDebugging(`alt-screen: yoga height ${y} > terminalRows ${c} \u2014 `+"something is rendering outside <AlternateScreen>. Overflow clipped.",{level:"warn"});let E=d??_z(T,S,t,p,m);if(n)n.reset(T,S,E);else n=new hhe({width:T,height:S,stylePool:t,screen:E});R0i(r),r.overlayActive=o.overlayActive;let R=Wki();m2e(e,n,r,{prevScreen:R||o.prevFrameContaminated?void 0:u});let w=n.get(),H=r.scrollDrainNode;if(H)pO(H);return{scrollHint:o.altScreen?r.scrollHint:null,scrollDrainPending:H!==null,followScroll:r.followScroll,layoutShifted:r.layoutShifted,screen:w,viewport:{width:l,height:o.altScreen?c+1:c},cursor:{x:0,y:o.altScreen?Math.max(0,Math.min(E.height,c)-1):E.height,visible:!a||E.height===0}}}}
+var D0i=b(()=>{qe();mtt();dhe();DPt();LPt();o4()});
+export {zqr,D0i};

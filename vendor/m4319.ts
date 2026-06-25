@@ -1,31 +1,290 @@
 // @ts-nocheck
-import {zt,qs} from "./m635.ts";
-import {O4n,BA,kdt} from "./m4317.ts";
-import {XL,k_e,L6,S6e} from "./m4314.ts";
-import {Stt,$6r,yPt,qAe} from "./m2676.ts";
-import {MD,jp,jt,ws} from "./m228.ts";
-import {matchingRuleForInput,checkEditableInternalPath,untypeDenyReasonForAskPropagation,checkPathSafetyForAutoEdit,pathInAllowedWorkingPath,checkReadableInternalPath,matchingAllowRuleForAllPaths,normalizeCaseForComparison,allWorkingDirectories,nA} from "../src/permissions/5145_untypeDenyReasonForAskPropagation.ts";
-import {poe,EB,Iu} from "./m643.ts";
-import {efo,tfo,nfo} from "./m4316.ts";
-import {yke,Mot,Jae} from "../src/config/3258_errors.ts";
-import {Pt,Go} from "./m632.ts";
-import {J2e,lx} from "./m2777.ts";
+import {Gqn,Vqn} from "./m4194.ts";
+import {CODE_REVIEW_WORKFLOW_NAME} from "../src/config/2711_WORKFLOW_TOOL_NAME.ts";
+import {Eyo,Cyo,n6t,Ayo,F5n,pZa,Tmt,aDe,lDe,cDe,Smt} from "../src/agent/4319_F5n.ts";
 import {b} from "../runtime.ts";
-function M4n(e,t){for(let n of t)if(n===e||e.length>1&&n.startsWith(e))return!0;return!1}
-function dfo(e){if(zt()!=="windows")return e;return e.split(/([/\\])/).map((t,n)=>{if(n%2!==0)return t;return O4n(t)}).join("")}
-function U4n(e){return XL(k_e(e))}
-function cfo(e){if(/['"\u2018-\u201F]/.test(e))return!0;let t=U4n(e);return t.includes(",")||t.startsWith("(")||t.startsWith("[")||t.includes("`")||t.includes("@(")||t.startsWith("@")||t.includes("$")}
-function N4n(e){let t=e.length;if(t<=lfo)return e.map((r)=>`'${r}'`).join(", ");return`${e.slice(0,lfo).map((r)=>`'${r}'`).join(", ")}, and ${t-lfo} more`}
-function $4n(e){if(e==="~"||e.startsWith("~/")||e.startsWith("~\\"))return Hza.homedir()+e.slice(1);return e}
-function J3t(e){let t=XL(e),n=t.indexOf("::");if(n>=0)t=t.slice(n+2);if(t=$4n(t).replace(/\\/g,"/"),vU.isAbsolute(t))t=vU.normalize(t);return Stt(t)}
-function C6e(e){return{behavior:"deny",message:`Remove-Item on system path '${e}' is blocked. This path is protected from removal.`,decisionReason:{type:"safetyCheck",reason:"Removal targets a protected system path",classifierApprovable:!1}}}
-function xza(e,t,n,r){let o=n==="read"?"read":"edit",s=r??MD(e);for(let l of s){let c=matchingRuleForInput(l,t,o,"deny");if(c!==null)return{allowed:!1,decisionReason:{type:"rule",rule:c}}}if(n!=="read"){let l=checkEditableInternalPath(e,{},s);if(l.behavior==="deny")return{allowed:!1,decisionReason:untypeDenyReasonForAskPropagation(l.decisionReason)};if(l.behavior==="allow")return{allowed:!0,decisionReason:l.decisionReason}}if(n!=="read"){let l=checkPathSafetyForAutoEdit(e,s,void 0,t.isRemoteMode,t.trustedNetworkDirectories);if(!l.safe)return{allowed:!1,decisionReason:{type:"safetyCheck",reason:l.message,classifierApprovable:l.classifierApprovable}}}let i=pathInAllowedWorkingPath(e,t,s);if(i){if(n==="read"||t.mode==="acceptEdits")return{allowed:!0}}if(n==="read"){let l=checkReadableInternalPath(e,{},s);if(l.behavior==="deny")return{allowed:!1,decisionReason:untypeDenyReasonForAskPropagation(l.decisionReason)};if(l.behavior==="allow")return{allowed:!0,decisionReason:l.decisionReason}}if(n!=="read"&&!i&&$6r(e))return{allowed:!0,decisionReason:{type:"other",reason:"Path is in sandbox write allowlist"}};let a=matchingAllowRuleForAllPaths(s,t,o);if(a!==null)return{allowed:!0,decisionReason:{type:"rule",rule:a}};return{allowed:!1}}
-function ufo(e,t,n,r){if(!e||e.includes("\x00"))return null;let o=$4n(dfo(e)),s=vU.isAbsolute(o)?o:vU.resolve(t,o),{resolvedPath:i}=jp(jt(),s),l=matchingRuleForInput(i,n,r==="read"?"read":"edit","deny");return l?{resolvedPath:i,rule:l}:null}
-function B4n(e,t,n,r){let s=$4n(XL(e)).replaceAll("\\","/");if(/^~[^/]/.test(s))return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"Paths beginning with ~user cannot be statically validated and require manual approval"}};if(s.includes("`")){let d=L6(s),p=ufo(d,t,n,r);if(p)return{allowed:!1,resolvedPath:p.resolvedPath,decisionReason:{type:"rule",rule:p.rule}};return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"Backtick escape characters in paths cannot be statically validated and require manual approval"}}}if(s.includes("::")){let d=s.slice(s.indexOf("::")+2),p=ufo(d,t,n,r);if(p)return{allowed:!1,resolvedPath:p.resolvedPath,decisionReason:{type:"rule",rule:p.rule}};return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"Module-qualified provider paths (::) cannot be statically validated and require manual approval"}}}if(s=dfo(s),s.startsWith("//")||/DavWWWRoot/i.test(s)||/@SSL@/i.test(s))return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"UNC paths are blocked because they can trigger network requests and credential leakage"}};if(s.includes("$")||s.includes("%"))return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"Variable expansion syntax in paths requires manual approval"}};if((zt()==="windows"?/^[a-z0-9]{2,}:/i:/^[a-z0-9]+:/i).test(s))return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:`Path '${s}' uses a non-filesystem provider and requires manual approval`}};if(yPt(s)!==-1){if(r==="write"||r==="create")return{allowed:!1,resolvedPath:s,decisionReason:{type:"other",reason:"Glob patterns are not allowed in write operations. Please specify an exact file path."}};if(poe(s)){let h=vU.isAbsolute(s)?s:vU.resolve(t,s),{resolvedPath:g,isCanonical:_}=jp(jt(),h),y=xza(g,n,r,_?[g]:void 0);return{allowed:y.allowed,resolvedPath:g,decisionReason:y.decisionReason}}let d=rNp(s),p=vU.isAbsolute(d)?d:vU.resolve(t,d),{resolvedPath:m}=jp(jt(),p),A=matchingRuleForInput(m,n,r==="read"?"read":"edit","deny");if(A!==null)return{allowed:!1,resolvedPath:m,decisionReason:{type:"rule",rule:A}};return{allowed:!1,resolvedPath:m,decisionReason:{type:"other",reason:"Glob patterns in paths cannot be statically validated \u2014 symlinks inside the glob expansion are not examined. Requires manual approval."}}}let a=vU.isAbsolute(s)?s:vU.resolve(t,s),{resolvedPath:l,isCanonical:c}=jp(jt(),a),u=xza(l,n,r,c?[l]:void 0);return{allowed:u.allowed,resolvedPath:l,decisionReason:u.decisionReason}}
-function rNp(e){let t=yPt(e);if(t===-1)return e;let n=e.substring(0,t),r=Math.max(n.lastIndexOf("/"),n.lastIndexOf("\\"));if(r===-1)return".";return n.substring(0,r+1)||"/"}
-function kza(e){let t=BA(e.name),n=F4n[t];if(!n)return{paths:[],operationType:"read",hasUnvalidatablePathArg:!1,optionalWrite:!1};let r=[...n.knownSwitches,...efo],o=[...n.knownValueParams,...tfo],s=[],i=e.args,a=e.elementTypes,l=!1,c=0,u=n.positionalSkip??0;function d(p){if(!a)return;let m=a[p+1];if(m&&!oNp.has(m))l=!0}for(let p=0;p<i.length;p++){let m=i[p];if(!m)continue;let f=a?a[p+1]:void 0;if(yke(m,f)){let A="-"+m.slice(1),h=A.indexOf(":",1),_=(h>0?A.substring(0,h):A).toLowerCase();if(M4n(_,n.pathParams)){let y;if(h>0){let T=m.substring(h+1);if(cfo(T))l=!0;y=U4n(T)}else{let T=i[p+1],S=a?a[p+2]:void 0;if(T&&!yke(T,S))y=T,d(p+1),p++}if(y)s.push(y)}else if(n.leafOnlyPathParams&&M4n(_,n.leafOnlyPathParams)){let y;if(h>0){let T=m.substring(h+1);if(cfo(T))l=!0;y=U4n(T)}else{let T=i[p+1],S=a?a[p+2]:void 0;if(T&&!yke(T,S))y=T,d(p+1),p++}if(y!==void 0)if(y.includes("/")||y.includes("\\")||y==="."||y==="..")l=!0;else s.push(y)}else if(M4n(_,r));else if(M4n(_,o))if(h>0){if(cfo(m.substring(h+1)))l=!0}else{let y=i[p+1],T=a?a[p+2]:void 0;if(y&&!yke(y,T))d(p+1),p++}else if(l=!0,h>0){let y=m.substring(h+1);s.push(U4n(y))}continue}if(c<u){c++;continue}c++,d(p),s.push(m)}return{paths:s,operationType:n.operationType,hasUnvalidatablePathArg:l,optionalWrite:n.optionalWrite??!1}}
-function Iza(e,t,n,r=!1){if(!t.valid)return{behavior:"passthrough",message:"Cannot validate paths for unparsed command"};let o;for(let s of t.statements){let i=iNp(s,n,r);if(i.behavior==="deny")return i;if(i.behavior==="ask"&&!o)o=i}return o??{behavior:"passthrough",message:"All path constraints validated successfully"}}
-function iNp(e,t,n=!1){let r=Pt(),o;if(n)o={behavior:"ask",message:"Compound command changes working directory (Set-Location/Push-Location/Pop-Location/New-PSDrive) \u2014 relative paths cannot be validated against the original cwd and require manual approval",decisionReason:{type:"other",reason:"Compound command contains cd with path operation \u2014 manual approval required to prevent path resolution bypass"}};let s=!1,i,a=!1;for(let l of e.commands){if(l.elementType!=="CommandAst"){s=!0,i=l.text;continue}let{paths:c,operationType:u,hasUnvalidatablePathArg:d,optionalWrite:p}=kza(l),m=BA(l.name),f=F4n[m]!==void 0,A=a;if(!sNp.has(m))a=!0;if(s){let g=BA(l.name);if(i!==void 0){let _=XL(i),y=ufo(_,r,t,u);if(y)return{behavior:"deny",message:`${g} targeting '${y.resolvedPath}' was blocked by a deny rule`,decisionReason:{type:"rule",rule:y.rule}}}o??={behavior:"ask",message:`${g} receives its path from a pipeline expression source that cannot be statically validated and requires manual approval`}}if(d){let g=BA(l.name);o??={behavior:"ask",message:`${g} uses a parameter or complex path expression (array literal, subexpression, unknown parameter, etc.) that cannot be statically validated and requires manual approval`}}if(u!=="read"&&!p&&c.length===0&&F4n[BA(l.name)]){let g=BA(l.name);o??={behavior:"ask",message:`${g} is a write operation but no target path could be determined; requires manual approval`};continue}if(A&&f)o??={behavior:"ask",message:`${m} may receive a path from an upstream pipeline command whose output cannot be statically validated and requires manual approval`};let h=BA(l.name)==="remove-item";if(h){if(l.args.some((_)=>{let y=(_.length>0?"-"+_.slice(1):_).toLowerCase(),T=y.indexOf(":"),S=T>0?y.slice(0,T):y;return S.length>=2&&"-recurse".startsWith(S)})){let _=normalizeCaseForComparison(r);for(let y of c){let T=$4n(dfo(y)).replace(/\\/g,"/"),S=vU.isAbsolute(T)?vU.resolve(T):vU.resolve(r,T),v=normalizeCaseForComparison(S);if(v===_||_.startsWith(v+"/")||_.startsWith(v+"\\")){o??={behavior:"ask",message:`Remove-Item -Recurse targeting '${y}' would delete the working directory including .git and .claude \u2014 requires manual approval`};break}}}}for(let g of c){if(h&&J3t(g))return C6e(g);let{allowed:_,resolvedPath:y,decisionReason:T}=B4n(g,r,t,u);if(h&&Stt(y))return C6e(y);if(!_){let S=BA(l.name),v=Array.from(allWorkingDirectories(t)),R=N4n(v),k=T?.type==="other"||T?.type==="safetyCheck"?T.reason:`${S} targeting '${y}' was blocked. For security, Claude Code may only access files in the allowed working directories for this session: ${R}.`;if(T?.type==="rule")return{behavior:"deny",message:k,decisionReason:T};let x=[];if(y)if(u==="read"){let H=J2e(EB(y),"session");if(H)x.push(H)}else x.push({type:"addDirectories",directories:[EB(y)],destination:"session"});if((u==="write"||u==="create")&&(t.mode==="default"||t.mode==="plan"))x.push({type:"setMode",mode:"acceptEdits",destination:"session"});o??={behavior:"ask",message:k,blockedPath:y,decisionReason:T,suggestions:x}}}}if(e.nestedCommands)for(let l of e.nestedCommands){let{paths:c,operationType:u,hasUnvalidatablePathArg:d,optionalWrite:p}=kza(l);if(d){let f=BA(l.name);o??={behavior:"ask",message:`${f} uses a parameter or complex path expression (array literal, subexpression, unknown parameter, etc.) that cannot be statically validated and requires manual approval`}}if(u!=="read"&&!p&&c.length===0&&F4n[BA(l.name)]){let f=BA(l.name);o??={behavior:"ask",message:`${f} is a write operation but no target path could be determined; requires manual approval`};continue}let m=BA(l.name)==="remove-item";for(let f of c){if(m&&J3t(f))return C6e(f);let{allowed:A,resolvedPath:h,decisionReason:g}=B4n(f,r,t,u);if(m&&Stt(h))return C6e(h);if(!A){let _=BA(l.name),y=Array.from(allWorkingDirectories(t)),T=N4n(y),S=g?.type==="other"||g?.type==="safetyCheck"?g.reason:`${_} targeting '${h}' was blocked. For security, Claude Code may only access files in the allowed working directories for this session: ${T}.`;if(g?.type==="rule")return{behavior:"deny",message:S,decisionReason:g};let v=[];if(h)if(u==="read"){let R=J2e(EB(h),"session");if(R)v.push(R)}else v.push({type:"addDirectories",directories:[EB(h)],destination:"session"});if((u==="write"||u==="create")&&(t.mode==="default"||t.mode==="plan"))v.push({type:"setMode",mode:"acceptEdits",destination:"session"});o??={behavior:"ask",message:S,blockedPath:h,decisionReason:g,suggestions:v}}}if(s)o??={behavior:"ask",message:`${BA(l.name)} appears inside a control-flow or chain statement where piped expression sources cannot be statically validated and requires manual approval`}}if(e.nestedCommands){for(let l of e.nestedCommands)if(l.redirections)for(let c of l.redirections){if(c.isMerging)continue;if(!c.target)continue;if(Mot(c.target))continue;let{allowed:u,resolvedPath:d,decisionReason:p}=B4n(c.target,r,t,"create");if(!u){let m=Array.from(allWorkingDirectories(t)),f=N4n(m),A=p?.type==="other"||p?.type==="safetyCheck"?p.reason:`Output redirection to '${d}' was blocked. For security, Claude Code may only write to files in the allowed working directories for this session: ${f}.`;if(p?.type==="rule")return{behavior:"deny",message:A,decisionReason:p};o??={behavior:"ask",message:A,blockedPath:d,decisionReason:p,suggestions:[{type:"addDirectories",directories:[EB(d)],destination:"session"}]}}}}if(e.redirections)for(let l of e.redirections){if(l.isMerging)continue;if(!l.target)continue;if(Mot(l.target))continue;let{allowed:c,resolvedPath:u,decisionReason:d}=B4n(l.target,r,t,"create");if(!c){let p=Array.from(allWorkingDirectories(t)),m=N4n(p),f=d?.type==="other"||d?.type==="safetyCheck"?d.reason:`Output redirection to '${u}' was blocked. For security, Claude Code may only write to files in the allowed working directories for this session: ${m}.`;if(d?.type==="rule")return{behavior:"deny",message:f,decisionReason:d};o??={behavior:"ask",message:f,blockedPath:u,decisionReason:d,suggestions:[{type:"addDirectories",directories:[EB(u)],destination:"session"}]}}}return o??{behavior:"passthrough",message:"All path constraints validated successfully"}}
-var Hza,vU,lfo=5,F4n,oNp,sNp;
-var Dza=b(()=>{Go();ws();Iu();nA();lx();qAe();qs();Jae();nfo();kdt();S6e();Hza=require("os"),vU=require("path"),F4n={"set-content":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-passthru","-force","-whatif","-confirm","-usetransaction","-nonewline","-asbytestream"],knownValueParams:["-value","-filter","-include","-exclude","-credential","-encoding","-stream"]},"add-content":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-passthru","-force","-whatif","-confirm","-usetransaction","-nonewline","-asbytestream"],knownValueParams:["-value","-filter","-include","-exclude","-credential","-encoding","-stream"]},"remove-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-recurse","-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential","-stream"]},"clear-content":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential","-stream"]},"out-file":{operationType:"write",pathParams:["-filepath","-path","-literalpath","-pspath","-lp"],knownSwitches:["-append","-force","-noclobber","-nonewline","-whatif","-confirm"],knownValueParams:["-inputobject","-encoding","-width"]},"tee-object":{operationType:"write",pathParams:["-filepath","-path","-literalpath","-pspath","-lp"],knownSwitches:["-append"],knownValueParams:["-inputobject","-variable","-encoding"]},"export-csv":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-append","-force","-noclobber","-notypeinformation","-includetypeinformation","-useculture","-noheader","-whatif","-confirm"],knownValueParams:["-inputobject","-delimiter","-encoding","-quotefields","-usequotes"]},"export-clixml":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-noclobber","-whatif","-confirm"],knownValueParams:["-inputobject","-depth","-encoding"]},"new-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],leafOnlyPathParams:["-name"],knownSwitches:["-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-itemtype","-value","-credential","-type"]},"copy-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp","-destination"],knownSwitches:["-container","-force","-passthru","-recurse","-whatif","-confirm","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential","-fromsession","-tosession"]},"move-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp","-destination"],knownSwitches:["-force","-passthru","-whatif","-confirm","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential"]},"rename-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-passthru","-whatif","-confirm","-usetransaction"],knownValueParams:["-newname","-credential","-filter","-include","-exclude"]},"set-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-passthru","-whatif","-confirm","-usetransaction"],knownValueParams:["-value","-credential","-filter","-include","-exclude"]},"get-content":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-usetransaction","-wait","-raw","-asbytestream"],knownValueParams:["-readcount","-totalcount","-tail","-first","-head","-last","-filter","-include","-exclude","-credential","-delimiter","-encoding","-stream"]},"get-childitem":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-recurse","-force","-name","-usetransaction","-followsymlink","-directory","-file","-hidden","-readonly","-system"],knownValueParams:["-filter","-include","-exclude","-depth","-attributes","-credential"]},"get-item":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential","-stream"]},"get-itemproperty":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-usetransaction"],knownValueParams:["-name","-filter","-include","-exclude","-credential"]},"get-itempropertyvalue":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-usetransaction"],knownValueParams:["-name","-filter","-include","-exclude","-credential"]},"get-filehash":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:[],knownValueParams:["-algorithm","-inputstream"]},"get-acl":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-audit","-allcentralaccesspolicies","-usetransaction"],knownValueParams:["-inputobject","-filter","-include","-exclude"]},"get-module":{operationType:"read",pathParams:["-name","-fullyqualifiedname"],knownSwitches:["-listavailable","-all","-refresh","-skipeditioncheck"],knownValueParams:["-psedition","-pssession","-cimsession"]},"format-hex":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-raw"],knownValueParams:["-inputobject","-encoding","-count","-offset"]},"test-path":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-isvalid","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-pathtype","-credential","-olderthan","-newerthan"]},"resolve-path":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-relative","-usetransaction","-force"],knownValueParams:["-credential","-relativebasepath"]},"convert-path":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-usetransaction"],knownValueParams:[]},"select-string":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-simplematch","-casesensitive","-quiet","-list","-notmatch","-allmatches","-noemphasis","-raw"],knownValueParams:["-inputobject","-pattern","-include","-exclude","-encoding","-context","-culture"]},"set-location":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-passthru","-usetransaction"],knownValueParams:["-stackname"]},"push-location":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-passthru","-usetransaction"],knownValueParams:["-stackname"]},"pop-location":{operationType:"read",pathParams:[],knownSwitches:["-passthru","-usetransaction"],knownValueParams:["-stackname"]},"select-xml":{operationType:"read",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:[],knownValueParams:["-xml","-content","-xpath","-namespace"]},"get-winevent":{operationType:"read",pathParams:["-path"],knownSwitches:["-force","-oldest"],knownValueParams:["-listlog","-logname","-listprovider","-providername","-maxevents","-computername","-credential","-filterxpath","-filterxml","-filterhashtable"]},"invoke-webrequest":{operationType:"write",pathParams:["-outfile","-infile"],positionalSkip:1,optionalWrite:!0,knownSwitches:["-allowinsecureredirect","-allowunencryptedauthentication","-disablekeepalive","-nobodyprogress","-passthru","-preservefileauthorizationmetadata","-resume","-skipcertificatecheck","-skipheadervalidation","-skiphttperrorcheck","-usebasicparsing","-usedefaultcredentials"],knownValueParams:["-uri","-method","-body","-contenttype","-headers","-maximumredirection","-maximumretrycount","-proxy","-proxycredential","-retryintervalsec","-sessionvariable","-timeoutsec","-token","-transferencoding","-useragent","-websession","-credential","-authentication","-certificate","-certificatethumbprint","-form","-httpversion"]},"invoke-restmethod":{operationType:"write",pathParams:["-outfile","-infile"],positionalSkip:1,optionalWrite:!0,knownSwitches:["-allowinsecureredirect","-allowunencryptedauthentication","-disablekeepalive","-followrellink","-nobodyprogress","-passthru","-preservefileauthorizationmetadata","-resume","-skipcertificatecheck","-skipheadervalidation","-skiphttperrorcheck","-usebasicparsing","-usedefaultcredentials"],knownValueParams:["-uri","-method","-body","-contenttype","-headers","-maximumfollowrellink","-maximumredirection","-maximumretrycount","-proxy","-proxycredential","-responseheaderstvariable","-retryintervalsec","-sessionvariable","-statuscodevariable","-timeoutsec","-token","-transferencoding","-useragent","-websession","-credential","-authentication","-certificate","-certificatethumbprint","-form","-httpversion"]},"expand-archive":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp","-destinationpath"],knownSwitches:["-force","-passthru","-whatif","-confirm"],knownValueParams:[]},"compress-archive":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp","-destinationpath"],knownSwitches:["-force","-update","-passthru","-whatif","-confirm"],knownValueParams:["-compressionlevel"]},"set-itemproperty":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-passthru","-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-name","-value","-type","-filter","-include","-exclude","-credential","-inputobject"]},"new-itemproperty":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-name","-value","-propertytype","-type","-filter","-include","-exclude","-credential"]},"remove-itemproperty":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-name","-filter","-include","-exclude","-credential"]},"clear-item":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-force","-whatif","-confirm","-usetransaction"],knownValueParams:["-filter","-include","-exclude","-credential"]},"export-alias":{operationType:"write",pathParams:["-path","-literalpath","-pspath","-lp"],knownSwitches:["-append","-force","-noclobber","-passthru","-whatif","-confirm"],knownValueParams:["-name","-description","-scope","-as"]}};oNp=new Set(["StringConstant","Parameter"]),sNp=new Set(["get-childitem","get-item","get-itemproperty","resolve-path","convert-path","get-filehash","get-acl","test-path"])});
-export {M4n,dfo,U4n,cfo,N4n,$4n,J3t,C6e,xza,ufo,B4n,rNp,kza,Iza,iNp,Hza,vU,lfo,F4n,oNp,sNp,Dza};
+function EZa(){Gqn(`export const meta = {
+  name: ${JSON.stringify(CODE_REVIEW_WORKFLOW_NAME)},
+  description: ${JSON.stringify(TZa)},
+  whenToUse: ${JSON.stringify(SZa)},
+  phases: ${JSON.stringify(bZa)},
+}
+
+// code-review: Scope \u2192 pipeline(per-angle Find \u2192 Verify) \u2192 Sweep (xhigh/max) \u2192 Synthesize
+// Effort parameterization mirrors the inline /code-review cells:
+//   high  \u2192 3 correctness + 5 cleanup angles \xD7 6 \u2192 \u226410 findings
+//   xhigh \u2192 5 correctness + 5 cleanup angles \xD7 8 \u2192 sweep \u2192 \u226415 findings
+//   max   \u2192 same structure as xhigh (the API reasoning effort differs, not the fan-out)
+const LEVEL_PARAMS = {
+  high: { correctnessAngles: 3, perAngle: 6, maxFindings: 10, sweep: false },
+  xhigh: { correctnessAngles: 5, perAngle: 8, maxFindings: 15, sweep: true },
+  max: { correctnessAngles: 5, perAngle: 8, maxFindings: 15, sweep: true },
+}
+const SWEEP_MAX = 8
+
+const RAW_ARGS = (typeof args === "string" ? args : "").trim()
+const FIRST = RAW_ARGS.split(/\\s+/)[0] || ""
+// Own-property check so Object.prototype keys ("constructor", "toString") never parse as a level.
+const FIRST_IS_LEVEL = Object.prototype.hasOwnProperty.call(LEVEL_PARAMS, FIRST)
+const LEVEL = FIRST_IS_LEVEL ? FIRST : "high"
+const TARGET = FIRST_IS_LEVEL ? RAW_ARGS.slice(FIRST.length).trim() : RAW_ARGS
+const P = LEVEL_PARAMS[LEVEL]
+
+// Prompt fragments shared with the inline /code-review cells (one source of truth).
+const CORRECTNESS_ANGLES = ${JSON.stringify(a3p)}
+const CLEANUP_ANGLES = ${JSON.stringify(l3p)}
+const VERDICT_LADDER = ${JSON.stringify(Eyo)}
+const VERDICT_LADDER_RECALL = ${JSON.stringify(Cyo)}
+const CLEANUP_PRECEDENCE = ${JSON.stringify(n6t)}
+const SWEEP_GAP_FOCUS = ${JSON.stringify(Ayo)}
+
+// \u2500\u2500\u2500 Schemas \u2500\u2500\u2500
+const SCOPE_SCHEMA = {
+  type: "object", required: ["diffCommand", "files", "summary"],
+  properties: {
+    diffCommand: { type: "string" },
+    files: { type: "array", items: { type: "string" } },
+    claudeMdFiles: { type: "array", items: { type: "string" } },
+    summary: { type: "string" },
+    conventions: { type: "string" },
+  },
+}
+const CANDIDATES_SCHEMA = {
+  type: "object", required: ["candidates"],
+  properties: {
+    candidates: { type: "array", items: {
+      type: "object", required: ["file", "summary", "failure_scenario"],
+      properties: {
+        file: { type: "string" },
+        line: { type: "number" },
+        summary: { type: "string" },
+        failure_scenario: { type: "string" },
+      },
+    }},
+  },
+}
+const VERDICT_SCHEMA = {
+  type: "object", required: ["verdict", "evidence"],
+  properties: {
+    verdict: { enum: ["CONFIRMED", "PLAUSIBLE", "REFUTED"] },
+    evidence: { type: "string" },
+  },
+}
+const REPORT_SCHEMA = {
+  type: "object", required: ["summary", "decisions"],
+  properties: {
+    summary: { type: "string" },
+    decisions: { type: "array", items: {
+      type: "object", required: ["index"],
+      properties: {
+        index: { type: "number", description: "the [i] label of a finding to keep in the report" },
+        merge: { type: "array", items: { type: "number" }, description: "[i] labels of findings that describe the same root cause, folded into this one" },
+      },
+    }},
+  },
+}
+
+// \u2500\u2500\u2500 Phase 0: Scope \u2500\u2500\u2500
+phase("Scope")
+const scope = await agent(
+  "Establish the scope of a code review.\\n\\n" +
+  (TARGET
+    ? "Review target / instructions (passed by the user, verbatim): \\"" + TARGET + "\\". If it names a PR number, branch, ref range, or file path, build the matching git diff command for it; if it is a free-form instruction (e.g. only review certain files, focus on certain areas), honor any scope restriction when building the diff command and start from the current branch diff ('git diff @{upstream}...HEAD', falling back to 'git diff main...HEAD' or 'git diff HEAD~1') for whatever it does not narrow.\\n"
+    : "No explicit target \u2014 review the current branch: prefer 'git diff @{upstream}...HEAD' (fall back to 'git diff main...HEAD' or 'git diff HEAD~1'), and if there are uncommitted changes also include 'git diff HEAD'.\\n") +
+  "\\n1. Determine the exact diff command(s) for the review and run them to confirm they produce a non-empty diff.\\n" +
+  "2. List the changed files.\\n" +
+  "3. Summarize what changed in one paragraph.\\n" +
+  "4. List the CLAUDE.md files that apply to the changed files (the user-level ~/.claude/CLAUDE.md, the repo-root CLAUDE.md, plus any CLAUDE.md or CLAUDE.local.md in a directory that is an ancestor of a changed file). Read each one that exists and note conventions a reviewer should know.\\n\\n" +
+  "Return diffCommand exactly as a reviewer should run it. Structured output only.",
+  { label: "scope", schema: SCOPE_SCHEMA }
+)
+if (!scope) {
+  return { error: "Scope agent returned no result \u2014 cannot establish the review scope." }
+}
+if (!scope.files || scope.files.length === 0) {
+  return { level: LEVEL, target: TARGET || undefined, summary: "No changes found to review.", findings: [], stats: { finders: 0, candidates: 0, verified: 0 } }
+}
+log(LEVEL + " review: " + scope.files.length + " changed files")
+
+const claudeMdFiles = scope.claudeMdFiles || []
+const SCOPE_BLOCK =
+  "## Review scope\\n" +
+  "Diff command: " + scope.diffCommand + "\\n" +
+  "Changed files (" + scope.files.length + "):\\n" +
+  scope.files.map(f => "  - " + f).join("\\n") + "\\n" +
+  "Applicable CLAUDE.md files (" + claudeMdFiles.length + "):\\n" +
+  (claudeMdFiles.length > 0 ? claudeMdFiles.map(f => "  - " + f).join("\\n") : "  (none)") + "\\n\\n" +
+  "## What changed\\n" + scope.summary + "\\n\\n" +
+  "## Conventions\\n" + (scope.conventions || "(none noted)") + "\\n" +
+  // The user's verbatim target/instructions ride along to every finder,
+  // verifier, and sweep agent so focus areas and skip requests are honored,
+  // not just used for diff scoping.
+  (TARGET
+    ? "\\n## User instructions (verbatim)\\n" + TARGET + "\\nHonor any scope restrictions or focus areas stated above \u2014 they take precedence over your angle's default breadth. Do not surface findings the instructions ask to skip.\\n"
+    : "")
+
+// \u2500\u2500\u2500 Prompts \u2500\u2500\u2500
+const FINDER_PROMPT = f =>
+  "## Code-review finder \u2014 " + f.label + "\\n\\n" + SCOPE_BLOCK + "\\n" +
+  "Run the diff command above and review ONLY through the lens of your assigned angle:\\n\\n" +
+  f.text + "\\n" +
+  (f.kind === "cleanup" ? CLEANUP_PRECEDENCE + "\\n" : "") +
+  "Surface up to " + P.perAngle + " candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario \u2014 the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). " +
+  "Pass every candidate with a nameable failure scenario through \u2014 do not silently drop half-believed candidates; an independent verifier judges them next. " +
+  "If nothing qualifies, return an empty list.\\n\\nStructured output only."
+
+const VERIFIER_PROMPT = c =>
+  "## Code-review verifier\\n\\n" + SCOPE_BLOCK + "\\n" +
+  "## Candidate finding\\n" +
+  "File: " + c.file + (c.line != null ? ":" + c.line : "") + "\\n" +
+  "Summary: " + c.summary + "\\n" +
+  "Failure scenario: " + c.failure_scenario + "\\n\\n" +
+  "Run the diff command above, read the relevant file(s), and return exactly one verdict:\\n\\n" +
+  VERDICT_LADDER + "\\n\\n" + VERDICT_LADDER_RECALL + "\\n\\n" +
+  "Structured output only. Evidence must quote or cite the relevant line(s)."
+
+// \u2500\u2500\u2500 No pre-verify dedup \u2014 every candidate gets a verifier; dedup happens once at synthesis \u2500\u2500\u2500
+let candidatesSeen = 0
+
+function verifyCandidate(c) {
+  const short = (c.file || "").split("/").pop()
+  return agent(VERIFIER_PROMPT(c), { label: "verify:" + short, phase: "Verify", schema: VERDICT_SCHEMA })
+    .then(v => (v ? { ...c, verdict: v.verdict, evidence: v.evidence } : null))
+}
+
+// \u2500\u2500\u2500 Find \u2192 Verify, no barrier between finders \u2500\u2500\u2500
+const FINDERS = CORRECTNESS_ANGLES.slice(0, P.correctnessAngles)
+  .map(a => ({ ...a, kind: "correctness" }))
+  .concat(CLEANUP_ANGLES.map(a => ({ ...a, kind: "cleanup" })))
+
+const finderResults = await pipeline(
+  FINDERS,
+
+  f => agent(FINDER_PROMPT(f), { label: f.label, phase: "Find", schema: CANDIDATES_SCHEMA }).then(r => {
+    if (!r) return { finder: f, candidates: [] }
+    log(f.label + ": " + r.candidates.length + " candidates")
+    return { finder: f, candidates: r.candidates.slice(0, P.perAngle) }
+  }),
+
+  result => {
+    candidatesSeen += result.candidates.length
+    return parallel(result.candidates.map(c => () => verifyCandidate({ ...c, kind: result.finder.kind })))
+  }
+)
+
+let verified = finderResults.flat().filter(Boolean)
+
+// \u2500\u2500\u2500 Sweep (xhigh/max): one fresh finder hunting only for gaps \u2500\u2500\u2500
+if (P.sweep) {
+  phase("Sweep")
+  const knownBlock = verified.length > 0
+    ? verified.map(c => "- " + c.file + (c.line != null ? ":" + c.line : "") + " \u2014 " + c.summary).join("\\n")
+    : "(none)"
+  const sweep = await agent(
+    "## Code-review sweep \u2014 gaps only\\n\\n" + SCOPE_BLOCK + "\\n" +
+    "## Already-found candidates (do NOT re-derive or re-confirm these)\\n" + knownBlock + "\\n\\n" +
+    "Re-read the diff and the enclosing functions looking ONLY for defects not already listed. " +
+    "Focus on what the first pass tends to miss: " + SWEEP_GAP_FOCUS + "\\n\\n" +
+    "Surface up to " + SWEEP_MAX + " additional candidates. If nothing new, return an empty list \u2014 do not pad.\\n\\nStructured output only.",
+    { label: "sweep", phase: "Sweep", schema: CANDIDATES_SCHEMA }
+  )
+  if (sweep && sweep.candidates.length > 0) {
+    const sliced = sweep.candidates.slice(0, SWEEP_MAX)
+    candidatesSeen += sliced.length
+    log("sweep: " + sliced.length + " candidates")
+    const sweepVerified = await parallel(sliced.map(c => () => verifyCandidate({ ...c, kind: "correctness" })))
+    verified = verified.concat(sweepVerified.filter(Boolean))
+  }
+}
+
+const surviving = verified.filter(c => c.verdict !== "REFUTED")
+const refuted = verified.filter(c => c.verdict === "REFUTED")
+log("Verify done: " + verified.length + " verified \u2192 " + surviving.length + " kept, " + refuted.length + " refuted")
+
+const stats = {
+  level: LEVEL,
+  finders: FINDERS.length,
+  candidates: candidatesSeen,
+  verified: verified.length,
+  refuted: refuted.length,
+}
+
+if (surviving.length === 0) {
+  return {
+    level: LEVEL, target: TARGET || undefined,
+    summary: "No findings survived verification.",
+    findings: [],
+    stats,
+  }
+}
+
+// \u2500\u2500\u2500 Synthesize: rank, merge semantic dupes, cap \u2500\u2500\u2500
+phase("Synthesize")
+// Correctness bugs outrank cleanup findings when the cap forces a cut;
+// CONFIRMED outranks PLAUSIBLE within each group.
+const rank = c => (c.kind === "cleanup" ? 2 : 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0)
+const ranked = surviving.slice().sort((a, b) => rank(a) - rank(b))
+const block = ranked.map((c, i) =>
+  "### [" + i + "] " + c.file + (c.line != null ? ":" + c.line : "") + " (" + c.verdict + (c.kind === "cleanup" ? ", cleanup" : "") + ")\\n" +
+  c.summary + "\\nFailure scenario: " + c.failure_scenario + "\\nVerifier evidence: " + c.evidence + "\\n"
+).join("\\n")
+
+const report = await agent(
+  "## Synthesis: final code-review report\\n\\n" +
+  ranked.length + " findings survived independent verification (" + LEVEL + "-effort review). They are numbered [0]-[" + (ranked.length - 1) + "] below.\\n\\n" + block + "\\n" +
+  "## Instructions\\n" +
+  "Return decisions about findings BY INDEX \u2014 never re-emit finding text.\\n" +
+  "1. For each distinct defect, emit one decision with its index. When several findings describe the same defect (same root cause), keep one entry and list the others in its merge array.\\n" +
+  "2. Order decisions most-severe first. Correctness bugs always outrank cleanup findings.\\n" +
+  "3. Keep at most " + P.maxFindings + " decisions; omit the least severe beyond the cap.\\n" +
+  "4. Write a 2-3 sentence summary of the review.\\n\\nStructured output only.",
+  { label: "synthesize", schema: REPORT_SCHEMA }
+)
+
+// Assembler invariants:
+//   1. No silent drops while there is room: every verified finding either appears
+//      (as primary or merge note) or is omitted only because the cap is full.
+//   2. The displayed primary is the synthesizer's choice (d.index) \u2014 it picks the
+//      best-described representative; we only escalate the verdict label when a
+//      merged member is CONFIRMED.
+//   3. The summary describes the report actually returned.
+const decisions = report && Array.isArray(report.decisions) ? report.decisions : []
+const valid = i => Number.isInteger(i) && i >= 0 && i < ranked.length
+const loc = c => c.file + (c.line != null ? ":" + c.line : "")
+const seen = new Set()
+const claim = i => (valid(i) && !seen.has(i) ? (seen.add(i), true) : false)
+const findings = []
+for (const d of decisions) {
+  if (findings.length >= P.maxFindings) break
+  if (!claim(d.index)) continue
+  const c = ranked[d.index]
+  const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map(i => ranked[i])
+  const verdict = merged.some(m => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict
+  const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : ""
+  findings.push({ file: c.file, line: c.line, summary: c.summary + also, failure_scenario: c.failure_scenario, verdict })
+}
+const usedDecisions = findings.length > 0
+let backfilled = 0
+for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
+  if (seen.has(i)) continue
+  const c = ranked[i]
+  findings.push({ file: c.file, line: c.line, summary: c.summary, failure_scenario: c.failure_scenario, verdict: c.verdict })
+  backfilled++
+}
+const summary = usedDecisions && report
+  ? report.summary + (backfilled > 0 ? " (" + backfilled + " additional verified finding" + (backfilled === 1 ? "" : "s") + " appended unmerged.)" : "")
+  : "Synthesis step was skipped or its decisions were unusable \u2014 returning verified findings ranked, unmerged."
+
+return {
+  level: LEVEL,
+  target: TARGET || undefined,
+  summary,
+  findings,
+  refuted: refuted.map(c => ({ file: c.file, line: c.line, summary: c.summary })),
+  stats: { ...stats, reported: findings.length },
+}`,{name:CODE_REVIEW_WORKFLOW_NAME,description:TZa,whenToUse:SZa,phases:bZa},{hidden:!0})}
+var TZa="Workflow-backed code review \u2014 one finder agent per review angle, an independent verifier for every candidate, then a ranked, capped findings report.",SZa='Launched by the /code-review skill at high, xhigh, or max effort when workflows are enabled. Pass args as "<level> [target]" \u2014 level is high, xhigh, or max; target is an optional PR number, branch, ref range, path, or free-form review instructions (e.g. "only review src/foo.ts", "focus on error handling").',bZa,a3p,l3p;
+var CZa=b(()=>{F5n();Vqn();bZa=[{title:"Scope",detail:"Pin the diff command, changed files, applicable CLAUDE.md files, and conventions"},{title:"Find",detail:"One finder agent per review angle (correctness + cleanup + conventions), streaming into verify"},{title:"Verify",detail:"One independent verifier per candidate \u2014 CONFIRMED / PLAUSIBLE / REFUTED"},{title:"Sweep",detail:"Fresh finder hunting only for gaps (xhigh/max)"},{title:"Synthesize",detail:"Merge duplicates, rank, cap the report"}],a3p=pZa.map((e,t)=>({label:`angle-${"ABCDE"[t]}`,text:e})),l3p=[{label:"reuse",text:`### Reuse
+
+${Tmt}`},{label:"simplification",text:aDe},{label:"efficiency",text:lDe},{label:"altitude",text:cDe},{label:"conventions",text:Smt}]});
+export {EZa,TZa,SZa,bZa,a3p,l3p,CZa};

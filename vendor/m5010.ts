@@ -1,14 +1,13 @@
 // @ts-nocheck
-import {q0,Khe} from "./m3291.ts";
-import {gracefulShutdown,ym} from "../src/config/3332_flushAnalyticsSinks.ts";
-import {ykl,Tkl} from "../src/tui/5010_onDone.ts";
-import {Akl,hkl} from "../src/tui/5009_items.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function xcm(){return q0(Rcm)??"Goodbye!"}
-function LVn(e){let t=Skl.c(11),{showWorktree:n,backgroundItems:r,onDone:o,onCancel:s}=e,i;if(t[0]!==o)i=async function(c){o(c??xcm()),await gracefulShutdown(0,"prompt_input_exit")},t[0]=o,t[1]=i;else i=t[1];let a=i;if(n){let l;if(t[2]!==s||t[3]!==a)l=Owo.default.createElement(ykl,{onDone:a,onCancel:s}),t[2]=s,t[3]=a,t[4]=l;else l=t[4];return l}if(r.length>0){let l;if(t[5]!==a)l=()=>void a(),t[5]=a,t[6]=l;else l=t[6];let c=s??kcm,u;if(t[7]!==r||t[8]!==l||t[9]!==c)u=Owo.default.createElement(Akl,{items:r,onExit:l,onCancel:c}),t[7]=r,t[8]=l,t[9]=c,t[10]=u;else u=t[10];return u}return null}
-function kcm(){}
-var Skl,Owo,Rcm;
-var Lwo=b(()=>{Khe();ym();hkl();Tkl();Skl=M(rt(),1),Owo=M(Te(),1),Rcm=["Goodbye!","See ya!","Bye!","Catch you later!"]});
-export {xcm,LVn,kcm,Skl,Owo,Rcm,Lwo};
+import {ft,b} from "../runtime.ts";
+import {performHeapDump,D0o} from "../src/session/5010_performHeapDump.ts";
+var ILl={};
+ft(ILl,{call:()=>M_m});
+async function M_m(){let e=await performHeapDump();if(!e.success)return{type:"text",value:`Failed to create heap dump: ${e.error}`};let t=[e.heapPath,e.diagPath,"",N_m(e.diagnostics)];return t.push("","Open the .heapsnapshot in Chrome DevTools \u2192 Memory \u2192 Load to inspect retainers."),{type:"text",value:t.join(`
+`)}}
+function N_m(e){let{memoryUsage:t,resourceUsage:n,analysis:r}=e,o=t.external-t.arrayBuffers,s=Math.max(0,t.rss-t.heapTotal-t.external),i=t.heapTotal>t.external+s?"\u2014 most memory is JS heap (inspect the .heapsnapshot)":"\u2014 most memory is native (NOT in the .heapsnapshot)",a=r.potentialLeaks.length?r.potentialLeaks.map((l)=>`  \u26A0 ${l}`).join(`
+`):"  (no obvious leak indicators)";return[`RSS ${Ogt(t.rss)} (peak ${Ogt(n.maxRSS)}) ${i}`,`  JS heap        ${Ogt(t.heapTotal).padStart(8)}  in snapshot`,`  array buffers  ${Ogt(t.arrayBuffers).padStart(8)}  not in snapshot`,`  other external ${Ogt(o).padStart(8)}  not in snapshot`,`  unaccounted    ${Ogt(s).padStart(8)}  not in snapshot (code/JIT/stacks/allocator)`,a].join(`
+`)}
+function Ogt(e){return`${(e/1073741824).toFixed(2)} GB`}
+var xLl=b(()=>{D0o()});
+export {ILl,M_m,N_m,Ogt,xLl};

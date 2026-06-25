@@ -1,6 +1,18 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-async function wes(e,t){let n=Buffer.from(t,"utf-8"),r=n.length,o=Qfr;if(o)Qfr=null;else o=Buffer.allocUnsafe(bes+1);let s,i=0,a=0,l=0,c=0,u=0,d=0,p=0,m=0,f=0,A=0,h=0,g=0,_;try{s=await Ces.open(ves.join(e,"packed-refs"),"r"),i=(await s.stat()).size,l=i;while(a<l){if(c=a+Math.floor((l-a)/2),d=Math.max(a,c-xJc),p=(await s.read(o,0,Math.min(bes,i-d),d)).bytesRead,u=c-d,u>=p)return null;if(o[p]=YMe,m=u>0?o.lastIndexOf(YMe,u-1)+1:0,m>1&&o[m]===Ees)m=o.lastIndexOf(YMe,m-2)+1;if(o[m]===HJc){h=o.indexOf(YMe,m),a=d+(h<0||h>=p?p:h+1);continue}if(f===0)f=m+40<p&&o[m+40]===kJc?40:64;if(A=m+f+1,A>=p)return null;if(g=o.compare(n,0,r,A,Math.min(A+r,p)),g===0){if(A+r<p&&o[A+r]!==YMe){l=d+m;continue}return _=o.toString("ascii",m,m+f),IJc.test(_)?_:null}if(g<0){if(h=o.indexOf(YMe,u),h<0||h>=p)h=p-1;if(h+1<p&&o[h+1]===Ees){if(h=o.indexOf(YMe,h+1),h<0||h>=p)h=p-1}a=d+h+1}else l=d+m}return null}catch{return null}finally{Qfr=o,await s?.close()}}
-var Ces,ves,bes=65536,xJc=4096,YMe=10,kJc=32,Ees=94,HJc=35,IJc,Qfr=null;
-var Res=b(()=>{Ces=require("fs/promises"),ves=require("path"),IJc=/^[0-9a-f]+$/});
-export {wes,Ces,ves,bes,xJc,YMe,kJc,Ees,HJc,IJc,Qfr,Res};
+import {ft,b} from "../runtime.ts";
+import {execSyncWithDefaults_BLOCKS_EVENT_LOOP_WILL_FREEZE_UI_MAKE_SURE_YOU_KNOW_WHAT_YOU_ARE_DOING,bTr} from "./m689.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {cn,sp,Ct} from "./m197.ts";
+import {$1e,STr} from "./m687.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {bje} from "./m644.ts";
+var mis={};
+ft(mis,{execSyncWithDefaults_BLOCKS_EVENT_LOOP_WILL_FREEZE_UI_MAKE_SURE_YOU_KNOW_WHAT_YOU_ARE_DOING:()=>execSyncWithDefaults_BLOCKS_EVENT_LOOP_WILL_FREEZE_UI_MAKE_SURE_YOU_KNOW_WHAT_YOU_ARE_DOING,execFileNoThrowWithCwd:()=>execFileNoThrowWithCwd,execFileNoThrow:()=>execFileNoThrow});
+function execFileNoThrow(e,t,n={timeout:10*CTr*ETr,preserveOutputOnError:!0,useCwd:!0}){return execFileNoThrowWithCwd(e,t,{abortSignal:n.abortSignal,timeout:n.timeout,preserveOutputOnError:n.preserveOutputOnError,cwd:n.useCwd?isTmuxControlMode():void 0,env:n.env,stdin:n.stdin,input:n.input})}
+function Oiu(e){return cn(e)==="ERR_CHILD_PROCESS_STDIO_MAXBUFFER"||e?.isMaxBuffer===!0}
+function Liu(e,t){if(e.shortMessage)return e.shortMessage;if(typeof e.signal==="string")return e.signal;return String(t)}
+function execFileNoThrowWithCwd(e,t,{abortSignal:n,timeout:r=10*CTr*ETr,preserveOutputOnError:o=!0,cwd:s,env:i,maxBuffer:a,shell:l,stdin:c,input:u}={timeout:10*CTr*ETr,preserveOutputOnError:!0,maxBuffer:1e6}){let d=e;return new Promise((p)=>{$1e(d,t,{maxBuffer:a,signal:n,timeout:r,cwd:s,env:i,shell:l,stdin:c,input:u,reject:!1}).then((m)=>{if(m.failed)if(o){let f=m.exitCode??1;p({stdout:m.stdout||"",stderr:m.stderr||"",code:f,error:Liu(m,f)})}else p({stdout:"",stderr:"",code:m.exitCode??1});else p({stdout:m.stdout,stderr:m.stderr,code:0})}).catch((m)=>{let f=m.message;if(sp(m))logForDebugging(`execFileNoThrow spawn failed: ${cn(m)} ${f}`,{level:"error"});else if(Oiu(m))logForDebugging(`execFileNoThrow maxBuffer exceeded: ${f}`,{level:"error"});else Ie(m);p({stdout:"",stderr:"",code:1})})})}
+var ETr=1000,CTr=60;
+var Ii=b(()=>{STr();Po();qe();Ct();vn();bje();bTr()});
+export {mis,execFileNoThrow,Oiu,Liu,execFileNoThrowWithCwd,ETr,CTr,Ii};

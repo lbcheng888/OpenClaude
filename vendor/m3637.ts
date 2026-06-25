@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var lba=X((RMn)=>{Object.defineProperty(RMn,"__esModule",{value:!0});RMn.ATTR_PROCESS_RUNTIME_NAME=void 0;RMn.ATTR_PROCESS_RUNTIME_NAME="process.runtime.name"});
-export {lba};
+import {Q} from "../runtime.ts";
+import {Jka} from "./m3636.ts";
+var Xka=Q((mFn)=>{Object.defineProperty(mFn,"__esModule",{value:!0});mFn.OTLPMetricExporter=void 0;var Dgp=Jka();Object.defineProperty(mFn,"OTLPMetricExporter",{enumerable:!0,get:function(){return Dgp.OTLPMetricExporter}})});
+export {Xka};

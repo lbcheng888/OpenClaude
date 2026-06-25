@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {H7} from "./m949.ts";
-import {YKe,uEe} from "./m951.ts";
-import {HCt,C_s} from "./m966.ts";
-import {yo} from "./m887.ts";
-import {pQ} from "./m941.ts";
-var x_s,BTr;
-var FTr=b(()=>{H7();YKe();HCt();x_s=M(yo(),1);BTr=class BTr extends pQ.classBuilder().ep(uEe).m(function(e,t,n,r){return[x_s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("SWBPortalService","Logout",{}).n("SSOClient","LogoutCommand").sc(C_s).build(){}});
-export {x_s,BTr,FTr};
+import {b} from "../runtime.ts";
+import {uRr,Eme} from "./m969.ts";
+var Yan,Jan,Xan,Qan;
+var dRr=b(()=>{uRr();Yan=class Yan extends Eme{name="InvalidRequestException";$fault="client";constructor(e){super({name:"InvalidRequestException",$fault:"client",...e});Object.setPrototypeOf(this,Yan.prototype)}};Jan=class Jan extends Eme{name="ResourceNotFoundException";$fault="client";constructor(e){super({name:"ResourceNotFoundException",$fault:"client",...e});Object.setPrototypeOf(this,Jan.prototype)}};Xan=class Xan extends Eme{name="TooManyRequestsException";$fault="client";constructor(e){super({name:"TooManyRequestsException",$fault:"client",...e});Object.setPrototypeOf(this,Xan.prototype)}};Qan=class Qan extends Eme{name="UnauthorizedException";$fault="client";constructor(e){super({name:"UnauthorizedException",$fault:"client",...e});Object.setPrototypeOf(this,Qan.prototype)}}});
+export {Yan,Jan,Xan,Qan,dRr};

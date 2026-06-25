@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {VCn,KCn} from "./m2367.ts";
 import {b} from "../runtime.ts";
-import {Event} from "./m2256.ts";
-var kZ;
-var fZe=b(()=>{kZ=class kZ extends Event{type;timeStamp;bubbles;cancelable;_target=null;_currentTarget=null;_eventPhase="none";_propagationStopped=!1;_defaultPrevented=!1;constructor(e,t){super();this.type=e,this.timeStamp=performance.now(),this.bubbles=t?.bubbles??!0,this.cancelable=t?.cancelable??!0}get target(){return this._target}get currentTarget(){return this._currentTarget}get eventPhase(){return this._eventPhase}get defaultPrevented(){return this._defaultPrevented}stopPropagation(){this._propagationStopped=!0}stopImmediatePropagation(){super.stopImmediatePropagation(),this._propagationStopped=!0}preventDefault(){if(this.cancelable)this._defaultPrevented=!0}consume(){this.preventDefault(),this.stopImmediatePropagation()}_setTarget(e){this._target=e}_setCurrentTarget(e){this._currentTarget=e}_setEventPhase(e){this._eventPhase=e}_isPropagationStopped(){return this._propagationStopped}_isImmediatePropagationStopped(){return this.didStopImmediatePropagation()}_prepareForTarget(e){}}});
-export {kZ,fZe};
+import {fPt} from "./m2366.ts";
+import {D4r} from "./m2369.ts";
+function eHi(e){let t=[],n=[];for(let r of e)if(r.type==="ansi")t=VCn(t,[r]);else if(r.type==="char")n.push({...r,styles:[...t]});return n}
+var tHi=b(()=>{fPt();D4r();KCn()});
+export {eHi,tHi};

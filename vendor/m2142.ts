@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Xgn=X((Jgn)=>{Object.defineProperty(Jgn,"__esModule",{value:!0});Jgn.execAsync=void 0;var pYu=require("child_process"),mYu=require("util");Jgn.execAsync=mYu.promisify(pYu.exec)});
-export {Xgn};
+import {Q} from "../runtime.ts";
+var Iyi=Q((GZe)=>{Object.defineProperty(GZe,"__esModule",{value:!0});GZe.identity=GZe.isPromiseLike=void 0;var bsd=(e)=>e!==null&&typeof e==="object"&&typeof e.then==="function";GZe.isPromiseLike=bsd;function Esd(e){return e}GZe.identity=Esd});
+export {Iyi};

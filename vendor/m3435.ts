@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var xQr=X((RPn)=>{Object.defineProperty(RPn,"__esModule",{value:!0});RPn.createBoundedQueueExportPromiseHandler=void 0;class Ama{_concurrencyLimit;_sendingPromises=[];constructor(e){this._concurrencyLimit=e}pushPromise(e){if(this.hasReachedLimit())throw Error("Concurrency Limit reached");this._sendingPromises.push(e);let t=()=>{let n=this._sendingPromises.indexOf(e);this._sendingPromises.splice(n,1)};e.then(t,t)}hasReachedLimit(){return this._sendingPromises.length>=this._concurrencyLimit}async awaitAll(){await Promise.all(this._sendingPromises)}}function nKd(e){return new Ama(e.concurrencyLimit)}RPn.createBoundedQueueExportPromiseHandler=nKd});
-export {xQr};
+import {b} from "../runtime.ts";
+class Vat{generateTraceId=nSa(16);generateSpanId=nSa(8)}
+function nSa(e){return function(){for(let n=0;n<e/4;n++)hMn.writeUInt32BE(Math.random()*4294967296>>>0,n*4);for(let n=0;n<e;n++)if(hMn[n]>0)break;else if(n===e-1)hMn[e-1]=1;return hMn.toString("hex",0,e)}}
+var hMn;
+var rSa=b(()=>{hMn=Buffer.allocUnsafe(16)});
+export {Vat,nSa,hMn,rSa};

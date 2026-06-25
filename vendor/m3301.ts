@@ -1,19 +1,14 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,ro,b} from "../runtime.ts";
-import {Am,QRr} from "../src/agent/1459_waitForTeammatesToBecomeIdle.ts";
-import {getInitialSettings,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {O1,Ri} from "../src/tools/2227_userFacingName.ts";
-import {Jot,vW} from "../src/config/3301_fileStates.ts";
-import {Rse,isFastModeEligible} from "../src/telemetry/2027_word.ts";
-import {b0n,h9e} from "../src/permissions/3299_enabled.ts";
-import {zot,m9e} from "../src/permissions/3296_recap.ts";
-var fJr={};
-isFullscreenWithTTY(fJr,{makeSetWebBrowserSlice:()=>makeSetWebBrowserSlice,getDefaultWebBrowserState:()=>getDefaultWebBrowserState});
-function getDefaultWebBrowserState(){return{view:void 0,logs:[],unreadErrors:0,unreadWarnings:0,cleanupRegistered:!1}}
-function makeSetWebBrowserSlice(e){return(t)=>e((n)=>{let r={webBrowser:n.webBrowser,bagelActive:n.bagelActive,bagelUrl:n.bagelUrl,bagelPanelVisible:n.bagelPanelVisible},o=t(r);if(o===r)return n;return{...n,...o}})}
-var Haa={};
-isFullscreenWithTTY(Haa,{getDefaultAppState:()=>getDefaultAppState,IDLE_SPECULATION_STATE:()=>IDLE_SPECULATION_STATE});
-function getDefaultAppState(){let e=(Am(),ro(QRr)),t=e.isTeammate()&&e.isPlanModeRequired()?"plan":"default";return{settings:getInitialSettings(),tasks:{},transcripts:{},taskDecorations:{},agentNameRegistry:new Map,agentTypesInvokedThisSession:new Set,verbose:!1,showMessageTimestamps:!1,mainLoopModel:null,mainLoopModelForSession:null,statusLineText:void 0,prStatus:null,prNeedsAuth:!1,expandedView:"none",replTab:"convo",isBriefOnly:!1,briefTranscript:!1,coordinatorTaskIndex:-1,workflowFooterIndex:0,viewSelectionMode:"none",queueEditIndex:null,footerSelection:null,footerLinks:[],remoteSessionUrl:void 0,remoteConnectionStatus:"connecting",remoteBackgroundTaskCount:0,replBridgeEnabled:!1,replBridgeExplicit:!1,replBridgeOutboundOnly:!1,replBridgeConnected:!1,replBridgeSessionActive:!1,replBridgeSkipNextArchive:!1,replBridgeReconnecting:!1,replBridgeConnectUrl:void 0,replBridgeSessionUrl:void 0,replBridgeEnvironmentId:void 0,replBridgeSessionId:void 0,replBridgeError:void 0,replBridgeInitialName:void 0,showRemoteCallout:!1,toolPermissionContext:{...O1(),mode:t},agent:void 0,agentDefinitions:{activeAgents:[],allAgents:[]},skillTruncationStats:null,skillTools:[],fileHistory:{snapshots:[],trackedFiles:new Set,snapshotSequence:0},attribution:Jot(),mcp:{clients:[],tools:[],commands:[],resources:{},resourceTemplates:{},suppressedClaudeAiConnectors:[],pluginReconnectKey:0},plugins:{enabled:[],disabled:[],commands:[],errors:[],warnings:[],installationStatus:{marketplaces:[],plugins:[]},needsRefresh:!1},setupIssues:{settingsErrorCount:0,lspFailedCount:0,installBrokenMessages:[],installPathCount:0,marketplaceIssueCount:0,chromeExtensionIssueCount:0,npmInstallDeprecated:!1,sandboxIssueCount:0,statuslineIssueCount:0,flaggedPluginCount:0,modelDeprecationWarning:null,modelRestrictedWarning:null,existingClaudeSubscription:null},todos:{},replContexts:{},notifications:{current:null,queue:[],pinned:[]},autoUpdaterResult:null,frameUrls:{},frameNavPath:null,frameExpanded:!1,elicitation:{queue:[]},thinkingEnabled:Rse(),promptSuggestionEnabled:b0n(),awaySummaryEnabled:zot(),displayedMessageContent:{},sessionHooks:new Map,inbox:{messages:[]},workerSandboxPermissions:{queue:[],selectedIndex:0},pendingMemoryUpdates:[],pendingWorkerRequest:null,pendingSandboxRequest:null,promptSuggestion:{text:null,promptId:null,shownAt:0,acceptedAt:0,generationRequestId:null},speculation:IDLE_SPECULATION_STATE,speculationSessionTimeSavedMs:0,authVersion:0,policyVersion:0,initialMessage:null,effortValue:void 0,ultracode:void 0,cacheMissAckedAtOutputTokens:-1,activeOverlays:new Set,fastMode:!1,storedImagePaths:new Map,imageDescriptions:new Map,classifierApprovals:{approvals:new Map,checking:new Set},teammateColors:{assignments:new Map,index:0},webBrowser:ro(fJr).getDefaultWebBrowserState()}}
-var IDLE_SPECULATION_STATE;
-var kke=b(()=>{m9e();h9e();Ri();vW();yr();isFastModeEligible();IDLE_SPECULATION_STATE={status:"idle"}});
-export {fJr,getDefaultWebBrowserState,makeSetWebBrowserSlice,Haa,getDefaultAppState,IDLE_SPECULATION_STATE,kke};
+import {Az,p4} from "./m2471.ts";
+import {g4,wnt} from "../src/config/2576_wnt.ts";
+import {wu,$k} from "../src/tui/2575_current.ts";
+import {QS,Q2} from "./m2552.ts";
+import {Ne} from "./m583.ts";
+import {b,x} from "../runtime.ts";
+import {Ir} from "./m584.ts";
+import {et} from "./m2261.ts";
+function ZXd(e){for(let t of e){if(t.context!=="Task")continue;let n=Az(t.chord);if(t.action==="task:background"){if(!efa.has(n))return!0}else if(t.action===null&&efa.has(n))return!0}return!1}
+function oOn({handler:e,isActive:t}){let n=g4(),r=wu("task:background","Task",mBt),o=QS(),s=o?.bindings,i=Vit.useMemo(()=>s?ZXd(s):!1,[s]),a=Vit.useRef(e);a.current=e;let l=!(n&&!i);Vit.useEffect(()=>{if(!o||!t)return;return o.registerHandler({action:"task:background",context:"Task",handler:()=>a.current(),singleKey:l})},[o,t,l]);let c=i?r:tfa,u=r===""?"":Ne.terminal==="tmux"?c.split(" ").map((d)=>d===mBt?`${mBt} ${mBt}`:d).join(" "):c;return{cohesionFixes:n,gateOnShortcut:u,resolvedShortcut:r}}
+var Vit,mBt="ctrl+b",tfa="ctrl+x ctrl+b",efa;
+var Ieo=b(()=>{Q2();$k();Ir();wnt();Vit=x(et(),1),efa=new Set([mBt,tfa].map((e)=>Az(p4(e))))});
+export {ZXd,oOn,Vit,mBt,tfa,efa,Ieo};

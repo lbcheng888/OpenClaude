@@ -1,23 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {KQr} from "./m3457.ts";
-import {leo} from "./m3558.ts";
-import {XZr} from "./m3546.ts";
-import {eeo} from "./m3547.ts";
-import {reo} from "./m3548.ts";
-import {tHe} from "./m3556.ts";
-import {hit} from "./m3541.ts";
-import {aLn} from "./m3551.ts";
-import {rte} from "./m3557.ts";
-import {rLn} from "./m3550.ts";
-import {eHe} from "./m3554.ts";
-import {a3e} from "./m3555.ts";
-import {XOn} from "./m3542.ts";
-import {ZOn} from "./m3544.ts";
-import {QOn} from "./m3543.ts";
-import {eLn} from "./m3545.ts";
-import {oeo} from "./m3549.ts";
-import {l3e} from "./m3553.ts";
-import {PL} from "./m3552.ts";
-var t_a=X((JTg,e_a)=>{var logFeatureSad=e_a.exports=KQr();logFeatureSad.build="light";function CZd(e,t,n){if(typeof t==="function")n=t,t=new logFeatureSad.Root;else if(!t)t=new logFeatureSad.Root;return t.load(e,n)}logFeatureSad.load=CZd;function vZd(e,t){if(!t)t=new logFeatureSad.Root;return t.loadSync(e)}logFeatureSad.loadSync=vZd;logFeatureSad.encoder=leo();logFeatureSad.decoder=XZr();logFeatureSad.verifier=eeo();logFeatureSad.converter=reo();logFeatureSad.ReflectionObject=tHe();logFeatureSad.Namespace=hit();logFeatureSad.Root=aLn();logFeatureSad.Enum=rte();logFeatureSad.Type=rLn();logFeatureSad.Field=eHe();logFeatureSad.OneOf=a3e();logFeatureSad.MapField=XOn();logFeatureSad.Service=ZOn();logFeatureSad.Method=QOn();logFeatureSad.Message=eLn();logFeatureSad.wrappers=oeo();logFeatureSad.types=l3e();logFeatureSad.util=PL();logFeatureSad.ReflectionObject._configure(logFeatureSad.Root);logFeatureSad.Namespace._configure(logFeatureSad.Type,logFeatureSad.Service,logFeatureSad.Enum);logFeatureSad.Root._configure(logFeatureSad.Type);logFeatureSad.Field._configure(logFeatureSad.Type)});
-export {t_a};
+import {Q} from "../runtime.ts";
+import {qIe} from "./m3572.ts";
+import {XO} from "./m3568.ts";
+var V1n=Q((yP_,UAa)=>{UAa.exports=C4e;var xoo=qIe();((C4e.prototype=Object.create(xoo.prototype)).constructor=C4e).className="Method";var flt=XO();function C4e(e,t,n,r,o,s,i,a,l){if(flt.isObject(o))i=o,o=s=void 0;else if(flt.isObject(s))i=s,s=void 0;if(!(t===void 0||flt.isString(t)))throw TypeError("type must be a string");if(!flt.isString(n))throw TypeError("requestType must be a string");if(!flt.isString(r))throw TypeError("responseType must be a string");xoo.call(this,e,i),this.type=t||"rpc",this.requestType=n,this.requestStream=o?!0:void 0,this.responseType=r,this.responseStream=s?!0:void 0,this.resolvedRequestType=null,this.resolvedResponseType=null,this.comment=a,this.parsedOptions=l}C4e.fromJSON=function(t,n){return new C4e(t,n.type,n.requestType,n.responseType,n.requestStream,n.responseStream,n.options,n.comment,n.parsedOptions)};C4e.prototype.toJSON=function(t){var n=t?Boolean(t.keepComments):!1;return flt.toObject(["type",this.type!=="rpc"&&this.type||void 0,"requestType",this.requestType,"requestStream",this.requestStream,"responseType",this.responseType,"responseStream",this.responseStream,"options",this.options,"comment",n?this.comment:void 0,"parsedOptions",this.parsedOptions])};C4e.prototype.resolve=function(){if(this.resolved)return this;return this.resolvedRequestType=this.parent.lookupType(this.requestType),this.resolvedResponseType=this.parent.lookupType(this.responseType),xoo.prototype.resolve.call(this)}});
+export {V1n};

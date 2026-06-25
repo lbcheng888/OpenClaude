@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {OQo} from "./m653.ts";
-var MQo=X((Fyf,LQo)=>{var Afr=require("fs"),Qzc=OQo();function Zzc(e){let n=Buffer.alloc(150),r;try{r=Afr.openSync(e,"r"),Afr.readSync(r,n,0,150,0),Afr.closeSync(r)}catch(o){}return Qzc(n.toString())}LQo.exports=Zzc});
-export {MQo};
+import {Q} from "../runtime.ts";
+import {mos} from "./m653.ts";
+var Sos=Q((exf,Tos)=>{var Hje=process.env.OSTYPE==="cygwin"||process.env.OSTYPE==="msys",fos=require("path"),asu=Hje?";":":",hos=mos(),gos=(e)=>Object.assign(Error(`not found: ${e}`),{code:"ENOENT"}),_os=(e,t)=>{let n=t.colon||asu,r=e.match(/\//)||Hje&&e.match(/\\/)?[""]:[...Hje?[process.cwd()]:[],...(t.path||process.env.PATH||"").split(n)],o=Hje?t.pathExt||process.env.PATHEXT||".EXE;.CMD;.BAT;.COM":"",s=Hje?o.split(n):[""];if(Hje){if(e.indexOf(".")!==-1&&s[0]!=="")s.unshift("")}return{pathEnv:r,pathExt:s,pathExtExe:o}},yos=(e,t,n)=>{if(typeof t==="function")n=t,t={};if(!t)t={};let{pathEnv:r,pathExt:o,pathExtExe:s}=_os(e,t),i=[],a=(c)=>new Promise((u,d)=>{if(c===r.length)return t.all&&i.length?u(i):d(gos(e));let p=r[c],m=/^".*"$/.test(p)?p.slice(1,-1):p,f=fos.join(m,e),h=!m&&/^\.[\\\/]/.test(e)?e.slice(0,2)+f:f;u(l(h,c,0))}),l=(c,u,d)=>new Promise((p,m)=>{if(d===o.length)return p(a(u+1));let f=o[d];hos(c+f,{pathExt:s},(h,g)=>{if(!h&&g)if(t.all)i.push(c+f);else return p(c+f);return p(l(c,u,d+1))})});return n?a(0).then((c)=>n(null,c),n):a(0)},lsu=(e,t)=>{t=t||{};let{pathEnv:n,pathExt:r,pathExtExe:o}=_os(e,t),s=[];for(let i=0;i<n.length;i++){let a=n[i],l=/^".*"$/.test(a)?a.slice(1,-1):a,c=fos.join(l,e),u=!l&&/^\.[\\\/]/.test(e)?e.slice(0,2)+c:c;for(let d=0;d<r.length;d++){let p=u+r[d];try{if(hos.sync(p,{pathExt:o}))if(t.all)s.push(p);else return p}catch(m){}}}if(t.all&&s.length)return s;if(t.nothrow)return null;throw gos(e)};Tos.exports=yos;yos.sync=lsu});
+export {Sos};

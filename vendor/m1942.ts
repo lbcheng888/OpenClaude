@@ -1,5 +1,22 @@
 // @ts-nocheck
+import {CredentialUnavailableError,AuthenticationError,cD} from "./m1637.ts";
+import {dse,DHt} from "./m1718.ts";
+import {I0,uD} from "./m1639.ts";
+import {ClientAssertionCredential,w_n} from "./m1924.ts";
+import {t8} from "./m1699.ts";
+import {Wme} from "./m1698.ts";
 import {b} from "../runtime.ts";
-import {SH} from "./m135.ts";
-var Zxt=b(()=>{SH()});
-export {Zxt};
+import {cse} from "./m1703.ts";
+import {VS,Lp} from "./m1636.ts";
+class AzurePipelinesCredential{constructor(e,t,n,r,o={}){var s,i;if(!t)throw new CredentialUnavailableError(`${MQ}: is unavailable. clientId is a required parameter.`);if(!e)throw new CredentialUnavailableError(`${MQ}: is unavailable. tenantId is a required parameter.`);if(!n)throw new CredentialUnavailableError(`${MQ}: is unavailable. serviceConnectionId is a required parameter.`);if(!r)throw new CredentialUnavailableError(`${MQ}: is unavailable. systemAccessToken is a required parameter.`);if(o.loggingOptions=Object.assign(Object.assign({},o===null||o===void 0?void 0:o.loggingOptions),{additionalAllowedHeaderNames:[...(i=(s=o.loggingOptions)===null||s===void 0?void 0:s.additionalAllowedHeaderNames)!==null&&i!==void 0?i:[],"x-vss-e2eid","x-msedge-ref"]}),this.identityClient=new dse(o),I0(D7,e),D7.info(`Invoking AzurePipelinesCredential with tenant ID: ${e}, client ID: ${t}, and service connection ID: ${n}`),!process.env.SYSTEM_OIDCREQUESTURI)throw new CredentialUnavailableError(`${MQ}: is unavailable. Ensure that you're running this task in an Azure Pipeline, so that following missing system variable(s) can be defined- "SYSTEM_OIDCREQUESTURI"`);let a=`${process.env.SYSTEM_OIDCREQUESTURI}?api-version=${zYu}&serviceConnectionId=${n}`;D7.info(`Invoking ClientAssertionCredential with tenant ID: ${e}, client ID: ${t} and service connection ID: ${n}`),this.clientAssertionCredential=new ClientAssertionCredential(e,t,this.requestOidcToken.bind(this,a,r),o)}async getToken(e,t){if(!this.clientAssertionCredential){let n=`${MQ}: is unavailable. To use Federation Identity in Azure Pipelines, the following parameters are required - 
+      tenantId,
+      clientId,
+      serviceConnectionId,
+      systemAccessToken,
+      "SYSTEM_OIDCREQUESTURI".      
+      See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/azurepipelinescredential/troubleshoot`;throw D7.error(n),new CredentialUnavailableError(n)}return D7.info("Invoking getToken() of Client Assertion Credential"),this.clientAssertionCredential.getToken(e,t)}async requestOidcToken(e,t){D7.info("Requesting OIDC token from Azure Pipelines..."),D7.info(e);let n=t8({url:e,method:"POST",headers:Wme({"Content-Type":"application/json",Authorization:`Bearer ${t}`,"X-TFS-FedAuthRedirect":"Suppress"})}),r=await this.identityClient.sendRequest(n);return jYu(r)}}
+function jYu(e){let t=e.bodyAsText;if(!t)throw D7.error(`${MQ}: Authentication Failed. Received null token from OIDC request. Response status- ${e.status}. Complete response - ${JSON.stringify(e)}`),new AuthenticationError(e.status,{error:`${MQ}: Authentication Failed. Received null token from OIDC request.`,error_description:`${JSON.stringify(e)}. See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/azurepipelinescredential/troubleshoot`});try{let n=JSON.parse(t);if(n===null||n===void 0?void 0:n.oidcToken)return n.oidcToken;else{let r=`${MQ}: Authentication Failed. oidcToken field not detected in the response.`,o="";if(e.status!==200)o=`Response body = ${t}. Response Headers ["x-vss-e2eid"] = ${e.headers.get("x-vss-e2eid")} and ["x-msedge-ref"] = ${e.headers.get("x-msedge-ref")}. See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/azurepipelinescredential/troubleshoot`;throw D7.error(r),D7.error(o),new AuthenticationError(e.status,{error:r,error_description:o})}}catch(n){let r=`${MQ}: Authentication Failed. oidcToken field not detected in the response.`;throw D7.error(`Response from service = ${t}, Response Headers ["x-vss-e2eid"] = ${e.headers.get("x-vss-e2eid")} 
+      and ["x-msedge-ref"] = ${e.headers.get("x-msedge-ref")}, error message = ${n.message}`),D7.error(r),new AuthenticationError(e.status,{error:r,error_description:`Response = ${t}. Response headers ["x-vss-e2eid"] = ${e.headers.get("x-vss-e2eid")} and ["x-msedge-ref"] =  ${e.headers.get("x-msedge-ref")}. See the troubleshooting guide for more information: https://aka.ms/azsdk/js/identity/azurepipelinescredential/troubleshoot`})}}
+var MQ="AzurePipelinesCredential",D7,zYu="7.1";
+var coi=b(()=>{cD();cse();w_n();DHt();uD();VS();D7=Lp(MQ)});
+export {AzurePipelinesCredential,jYu,MQ,D7,zYu,coi};

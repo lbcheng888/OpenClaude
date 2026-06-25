@@ -1,6 +1,36 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function y9d(e){return e.match(_9d)||[]}
-var bZi="\\ud800-\\udfff",a9d="\\u0300-\\u036f",l9d="\\ufe20-\\ufe2f",c9d="\\u20d0-\\u20ff",u9d,d9d="\\ufe0e\\ufe0f",p9d,V7r,K7r="\\ud83c[\\udffb-\\udfff]",m9d,EZi,CZi="(?:\\ud83c[\\udde6-\\uddff]){2}",vZi="[\\ud800-\\udbff][\\udc00-\\udfff]",f9d="\\u200d",wZi,RZi,A9d,h9d,g9d,_9d,xZi;
-var kZi=b(()=>{u9d=a9d+l9d+c9d,p9d="["+bZi+"]",V7r="["+u9d+"]",m9d="(?:"+V7r+"|"+K7r+")",EZi="[^"+bZi+"]",wZi=m9d+"?",RZi="["+d9d+"]?",A9d="(?:"+f9d+"(?:"+[EZi,CZi,vZi].join("|")+")"+RZi+wZi+")*",h9d=RZi+wZi+A9d,g9d="(?:"+[EZi+V7r+"?",V7r,CZi,vZi,p9d].join("|")+")",_9d=RegExp(K7r+"(?="+K7r+")|"+g9d+h9d,"g");xZi=y9d});
-export {y9d,bZi,a9d,l9d,c9d,u9d,d9d,p9d,V7r,K7r,m9d,EZi,CZi,vZi,f9d,wZi,RZi,A9d,h9d,g9d,_9d,xZi,kZi};
+import {VNt,GNt} from "./m3166.ts";
+var Nae="ReadMcpResourceTool",Gsa=`
+Reads a specific resource from an MCP server.
+- server: The name of the MCP server to read from
+- uri: The URI of the resource to read
+
+Usage examples:
+- Read a resource from a server: \`readMcpResource({ server: "myserver", uri: "my-resource-uri" })\`
+`,Vsa=`
+Reads a specific resource from an MCP server, identified by server name and resource URI.
+
+Parameters:
+- server (required): The name of the MCP server from which to read the resource
+- uri (required): The URI of the resource to read
+`;
+var Aj="ReadMcpResourceDirTool",Ksa=`
+List the direct children of a directory resource on an MCP server.
+- server: The name of the MCP server to read from
+- uri: The URI of the directory resource
+
+Only usable against a server that has declared support for directory listing. The listing is not recursive.
+`,zsa;
+var G9e=b(()=>{VNt();zsa=`
+List the direct children of a directory resource on an MCP server (\`resources/directory/read\`).
+
+Parameters:
+- server (required): The name of the MCP server to read from
+- uri (required): The URI of the directory resource
+
+The listing is not recursive. Each entry carries its own \`uri\`; subdirectories appear with mimeType "${GNt}" \u2014 call this tool again on a subdirectory's \`uri\` to descend.
+
+Only usable against a server that has declared support for directory listing; other servers return an error.
+`});
+export {Nae,Gsa,Vsa,Aj,Ksa,zsa,G9e};

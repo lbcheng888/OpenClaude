@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JB} from "./m1820.ts";
-var Ezs=X((HNA,bzs)=>{var q2u=JB(),j2u=(e,t)=>new q2u(e,t).patch;bzs.exports=j2u});
-export {Ezs};
+import {Q} from "../runtime.ts";
+import {fBe} from "./m1826.ts";
+var iei=Q((z8h,sei)=>{var ZGu=fBe(),eVu=(e,t)=>{let n=ZGu(e.trim().replace(/^[=v]+/,""),t);return n?n.version:null};sei.exports=eVu});
+export {iei};

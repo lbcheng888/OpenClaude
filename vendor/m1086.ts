@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,hws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var nxs,DeleteCustomModelCommand;
-var qbr=b(()=>{ri();wi();xi();nxs=M(yo(),1);DeleteCustomModelCommand=class DeleteCustomModelCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[nxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteCustomModel",{}).n("BedrockClient","DeleteCustomModelCommand").sc(hws).build(){}});
-export {nxs,DeleteCustomModelCommand,qbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,sxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var VDs,CreatePromptRouterCommand;
+var pwr=b(()=>{$s();ai();ci();VDs=x(yo(),1);CreatePromptRouterCommand=class CreatePromptRouterCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[VDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreatePromptRouter",{}).n("BedrockClient","CreatePromptRouterCommand").sc(sxs).build(){}});
+export {VDs,CreatePromptRouterCommand,pwr};

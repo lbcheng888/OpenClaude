@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {toInfraSessionId} from "../src/core/2797_toInfraSessionId.ts";
 import {b} from "../runtime.ts";
-function z0n(e,t,n,r){if(!r)return{url:`${e}/v1/sessions/${t}/events`,body:{events:n}};let o=toInfraSessionId(t);return{url:`${e}/v1/code/sessions/${encodeURIComponent(o)}/events`,body:{events:n.map((s)=>({payload:typeof s.uuid==="string"&&s.uuid?s:{...s,uuid:ica.randomUUID()}}))}}}
-var ica;
-var jJr=b(()=>{ica=require("crypto")});
-export {z0n,ica,jJr};
+function fha(e){for(let t of EZd)if(t.pattern.test(e))return t;return null}
+function hha(e){return fha(e)?.warning??null}
+function RBt(e){return fha(e)?.category??null}
+var EZd;
+var AOn=b(()=>{EZd=[{pattern:/(?:^|[|;&\n({])\s*(Remove-Item|rm|del|rd|rmdir|ri)\b[^|;&\n}]*-Recurse\b[^|;&\n}]*-Force\b/i,category:"remove_item_recursive_force",warning:"Note: may recursively force-remove files"},{pattern:/(?:^|[|;&\n({])\s*(Remove-Item|rm|del|rd|rmdir|ri)\b[^|;&\n}]*-Force\b[^|;&\n}]*-Recurse\b/i,category:"remove_item_recursive_force",warning:"Note: may recursively force-remove files"},{pattern:/(?:^|[|;&\n({])\s*(Remove-Item|rm|del|rd|rmdir|ri)\b[^|;&\n}]*-Recurse\b/i,category:"remove_item_recursive",warning:"Note: may recursively remove files"},{pattern:/(?:^|[|;&\n({])\s*(Remove-Item|rm|del|rd|rmdir|ri)\b[^|;&\n}]*-Force\b/i,category:"remove_item_force",warning:"Note: may force-remove files"},{pattern:/\bClear-Content\b[^|;&\n]*\*/i,category:"clear_content_glob",warning:"Note: may clear content of multiple files"},{pattern:/\bFormat-Volume\b/i,category:"format_volume",warning:"Note: may format a disk volume"},{pattern:/\bClear-Disk\b/i,category:"clear_disk",warning:"Note: may clear a disk"},{pattern:/\bgit\s+reset\s+--hard\b/i,category:"git_reset_hard",warning:"Note: may discard uncommitted changes"},{pattern:/\bgit\s+push\b[^|;&\n]*\s+(--force|--force-with-lease|-f)\b/i,category:"git_force_push",warning:"Note: may overwrite remote history"},{pattern:/\bgit\s+clean\b(?![^|;&\n]*(?:-[a-zA-Z]*n|--dry-run))[^|;&\n]*-[a-zA-Z]*f/i,category:"git_clean_force",warning:"Note: may permanently delete untracked files"},{pattern:/\bgit\s+stash\s+(drop|clear)\b/i,category:"git_stash_drop",warning:"Note: may permanently remove stashed changes"},{pattern:/\b(DROP|TRUNCATE)\s+(TABLE|DATABASE|SCHEMA)\b/i,category:"sql_drop_truncate",warning:"Note: may drop or truncate database objects"},{pattern:/\bStop-Computer\b/i,category:"stop_computer",warning:"Note: will shut down the computer"},{pattern:/\bRestart-Computer\b/i,category:"restart_computer",warning:"Note: will restart the computer"},{pattern:/\bClear-RecycleBin\b/i,category:"clear_recycle_bin",warning:"Note: permanently deletes recycled files"}]});
+export {fha,hha,RBt,EZd,AOn};

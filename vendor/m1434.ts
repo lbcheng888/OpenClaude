@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {defaultProvider} from "./m1018.ts";
+import {fromContainerMetadata} from "./m760.ts";
 import {b} from "../runtime.ts";
-import {H1e} from "./m1019.ts";
-var fromNodeProviderChain=(e={})=>defaultProvider({...e});
-var dRr=b(()=>{H1e()});
-export {fromNodeProviderChain,dRr};
+import {sNe} from "./m770.ts";
+var G$u=(e)=>(e?.logger?.debug("@smithy/credential-provider-imds","fromContainerMetadata"),fromContainerMetadata(e));
+var P6s=b(()=>{sNe()});
+export {G$u,P6s};

@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {MDs,NDs} from "./m1253.ts";
-import {b,M} from "../runtime.ts";
-import {Ioe} from "./m866.ts";
-import {JX} from "./m606.ts";
-var BDs,Fze,MRu,FDs=(e,t={})=>MRu.get(e,()=>Fze.resolveEndpoint(MDs,{endpointParams:e,logger:t.logger}));
-var UDs=b(()=>{NDs();BDs=M(Ioe(),1),Fze=M(JX(),1),MRu=new Fze.EndpointCache({size:50,params:["Endpoint","Region","UseDualStack","UseFIPS"]});Fze.customEndpointFunctions.aws=BDs.awsEndpointFunctions});
-export {BDs,Fze,MRu,FDs,UDs};
+import {b} from "../runtime.ts";
+var dNs=(e)=>typeof ArrayBuffer==="function"&&e instanceof ArrayBuffer||Object.prototype.toString.call(e)==="[object ArrayBuffer]";
+var rdn,pNs=(e,t=0,n=e.byteLength-t)=>{if(!dNs(e))throw TypeError(`The "input" argument must be ArrayBuffer. Received type ${typeof e} (${e})`);return rdn.Buffer.from(e,t,n)},mNs=(e,t)=>{if(typeof e!=="string")throw TypeError(`The "input" argument must be of type string. Received type ${typeof e} (${e})`);return t?rdn.Buffer.from(e,t):rdn.Buffer.from(e)};
+var iHr=b(()=>{rdn=require("buffer")});
+export {dNs,rdn,pNs,mNs,iHr};

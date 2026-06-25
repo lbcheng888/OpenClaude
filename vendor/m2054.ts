@@ -1,8 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Qni} from "./m2051.ts";
-import {Zni} from "./m2053.ts";
-import {$hn} from "./m2052.ts";
-import {ZBe} from "./m2050.ts";
-var eFe=X((Whn)=>{Object.defineProperty(Whn,"__esModule",{value:!0});Whn.DiagAPI=void 0;var MVu=Qni(),NVu=Zni(),eri=$hn(),jhn=ZBe(),BVu="diag";class HMr{constructor(){function e(r){return function(...o){let s=(0,jhn.getGlobal)("diag");if(!s)return;return s[r](...o)}}let t=this,n=(r,o={logLevel:eri.DiagLogLevel.INFO})=>{var s,i,a;if(r===t){let u=Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");return t.error((s=u.stack)!==null&&s!==void 0?s:u.message),!1}if(typeof o==="number")o={logLevel:o};let l=(0,jhn.getGlobal)("diag"),c=(0,NVu.createLogLevelDiagLogger)((i=o.logLevel)!==null&&i!==void 0?i:eri.DiagLogLevel.INFO,r);if(l&&!o.suppressOverrideMessage){let u=(a=Error().stack)!==null&&a!==void 0?a:"<failed to generate stacktrace>";l.warn(`Current logger will be overwritten from ${u}`),c.warn(`Current logger will overwrite one already registered from ${u}`)}return(0,jhn.registerGlobal)("diag",c,t,!0)};t.setLogger=n,t.disable=()=>{(0,jhn.unregisterGlobal)(BVu,t)},t.createComponentLogger=(r)=>new MVu.DiagComponentLogger(r),t.verbose=e("verbose"),t.debug=e("debug"),t.info=e("info"),t.warn=e("warn"),t.error=e("error")}static instance(){if(!this._instance)this._instance=new HMr;return this._instance}}Whn.DiagAPI=HMr});
-export {eFe};
+import {Q} from "../runtime.ts";
+import {nUr} from "./m2053.ts";
+var Vli=Q((IZe)=>{Object.defineProperty(IZe,"__esModule",{value:!0});IZe.isCompatible=IZe._makeCompatibilityCheck=void 0;var Vtd=nUr(),Wli=/^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;function Gli(e){let t=new Set([e]),n=new Set,r=e.match(Wli);if(!r)return()=>!1;let o={major:+r[1],minor:+r[2],patch:+r[3],prerelease:r[4]};if(o.prerelease!=null)return function(l){return l===e};function s(a){return n.add(a),!1}function i(a){return t.add(a),!0}return function(l){if(t.has(l))return!0;if(n.has(l))return!1;let c=l.match(Wli);if(!c)return s(l);let u={major:+c[1],minor:+c[2],patch:+c[3],prerelease:c[4]};if(u.prerelease!=null)return s(l);if(o.major!==u.major)return s(l);if(o.major===0){if(o.minor===u.minor&&o.patch<=u.patch)return i(l);return s(l)}if(o.minor<=u.minor)return i(l);return s(l)}}IZe._makeCompatibilityCheck=Gli;IZe.isCompatible=Gli(Vtd.VERSION)});
+export {Vli};

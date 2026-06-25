@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Dba=X((BMn)=>{Object.defineProperty(BMn,"__esModule",{value:!0});BMn.isPlainObject=void 0;var Yip="[object Object]",Jip="[object Null]",Xip="[object Undefined]",Qip=Function.prototype,xba=Qip.toString,Zip=xba.call(Object),eap=Object.getPrototypeOf,kba=Object.prototype,Hba=kba.hasOwnProperty,b3e=Symbol?Symbol.toStringTag:void 0,Iba=kba.toString;function tap(e){if(!nap(e)||rap(e)!==Yip)return!1;let t=eap(e);if(t===null)return!0;let n=Hba.call(t,"constructor")&&t.constructor;return typeof n=="function"&&n instanceof n&&xba.call(n)===Zip}BMn.isPlainObject=tap;function nap(e){return e!=null&&typeof e=="object"}function rap(e){if(e==null)return e===void 0?Xip:Jip;return b3e&&b3e in Object(e)?oap(e):sap(e)}function oap(e){let t=Hba.call(e,b3e),n=e[b3e],r=!1;try{e[b3e]=void 0,r=!0}catch{}let o=Iba.call(e);if(r)if(t)e[b3e]=n;else delete e[b3e];return o}function sap(e){return Iba.call(e)}});
-export {Dba};
+import {Q} from "../runtime.ts";
+import {Lio} from "./m3648.ts";
+var gHa=Q((Ult)=>{Object.defineProperty(Ult,"__esModule",{value:!0});Ult.globalErrorHandler=Ult.setGlobalErrorHandler=void 0;var jgp=Lio(),hHa=(0,jgp.loggingErrorHandler)();function Ygp(e){hHa=e}Ult.setGlobalErrorHandler=Ygp;function Jgp(e){try{hHa(e)}catch{}}Ult.globalErrorHandler=Jgp});
+export {gHa};

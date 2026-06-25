@@ -1,6 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {D_s,O_s} from "./m973.ts";
-import {M_s} from "./m974.ts";
-var N_s=b(()=>{D_s();O_s();M_s()});
-export {N_s};
+import {b,x} from "../runtime.ts";
+import {n7} from "./m954.ts";
+import {zYe,KCe} from "./m956.ts";
+import {rwt,yAs} from "./m971.ts";
+import {yo} from "./m892.ts";
+import {cQ} from "./m946.ts";
+var EAs,mRr;
+var fRr=b(()=>{n7();zYe();rwt();EAs=x(yo(),1);mRr=class mRr extends cQ.classBuilder().ep(KCe).m(function(e,t,n,r){return[EAs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("SWBPortalService","Logout",{}).n("SSOClient","LogoutCommand").sc(yAs).build(){}});
+export {EAs,mRr,fRr};

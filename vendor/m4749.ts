@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {iEo} from "./m4748.ts";
-var Khl=X((DWn)=>{var tZp=iEo();DWn.render=tZp.render;DWn.renderToFile=function(t,n,r,o){if(typeof o>"u")o=r,r=void 0;let s=require("fs"),a='<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'+DWn.render(n,r);s.writeFile(t,a,o)}});
-export {Khl};
+import {Q} from "../runtime.ts";
+var RCl=Q((mrS,eko)=>{var $Wt={single_source_shortest_paths:function(e,t,n){var r={},o={};o[t]=0;var s=$Wt.PriorityQueue.make();s.push(t,0);var i,a,l,c,u,d,p,m,f;while(!s.empty()){i=s.pop(),a=i.value,c=i.cost,u=e[a]||{};for(l in u)if(u.hasOwnProperty(l)){if(d=u[l],p=c+d,m=o[l],f=typeof o[l]>"u",f||m>p)o[l]=p,s.push(l,p),r[l]=a}}if(typeof n<"u"&&typeof o[n]>"u"){var h=["Could not find a path from ",t," to ",n,"."].join("");throw Error(h)}return r},extract_shortest_path_from_predecessor_list:function(e,t){var n=[],r=t,o;while(r)n.push(r),o=e[r],r=e[r];return n.reverse(),n},find_path:function(e,t,n){var r=$Wt.single_source_shortest_paths(e,t,n);return $Wt.extract_shortest_path_from_predecessor_list(r,n)},PriorityQueue:{make:function(e){var t=$Wt.PriorityQueue,n={},r;e=e||{};for(r in t)if(t.hasOwnProperty(r))n[r]=t[r];return n.queue=[],n.sorter=e.sorter||t.default_sorter,n},default_sorter:function(e,t){return e.cost-t.cost},push:function(e,t){var n={value:e,cost:t};this.queue.push(n),this.queue.sort(this.sorter)},pop:function(){return this.queue.shift()},empty:function(){return this.queue.length===0}}};if(typeof eko<"u")eko.exports=$Wt});
+export {RCl};

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {bBo} from "./m5.ts";
-var Rde=b(()=>{bBo()});
-export {Rde};
+function Lbc(e,t){return e===t||e!==e&&t!==t}
+var mre;
+var lKe=b(()=>{mre=Lbc});
+export {Lbc,mre,lKe};

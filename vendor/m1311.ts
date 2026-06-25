@@ -1,6 +1,19 @@
 // @ts-nocheck
-import {Pvr,Ovr} from "./m1310.ts";
 import {b} from "../runtime.ts";
-var mMs=({output:e,parsedBody:t,exceptionCtor:n,errorCode:r})=>{let o=MIu(e),s=o.httpStatusCode?o.httpStatusCode+"":void 0,i=new n({name:t?.code||t?.Code||r||s||"UnknownError",$fault:"client",$metadata:o});throw Pvr(i,t)},LIu=(e)=>({output:t,parsedBody:n,errorCode:r})=>{mMs({output:t,parsedBody:n,exceptionCtor:e,errorCode:r})},MIu=(e)=>({httpStatusCode:e.statusCode,requestId:e.headers["x-amzn-requestid"]??e.headers["x-amzn-request-id"]??e.headers["x-amz-request-id"],extendedRequestId:e.headers["x-amz-id-2"],cfId:e.headers["x-amz-cf-id"]});
-var fMs=b(()=>{Ovr()});
-export {mMs,LIu,MIu,fMs};
+var OUs=()=>{};
+var LUs=()=>{};
+var MUs=()=>{};
+var NUs=()=>{};
+var FUs=()=>{};
+var BUs=()=>{};
+var UUs=()=>{};
+var $Us=()=>{};
+var qUs=()=>{};
+var WUs=()=>{};
+var GUs=()=>{};
+var VUs=()=>{};
+var KUs=()=>{};
+var zUs=()=>{};
+var jUs;
+var YUs=b(()=>{(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(jUs||(jUs={}))});
+export {OUs,LUs,MUs,NUs,FUs,BUs,UUs,$Us,qUs,WUs,GUs,VUs,KUs,zUs,jUs,YUs};

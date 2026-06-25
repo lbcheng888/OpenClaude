@@ -1,11 +1,12 @@
 // @ts-nocheck
-import {zt,qs} from "./m635.ts";
-import {getOriginalCwd,lt} from "../src/session/0131_sent.ts";
-import {getSessionIdFromLog,ja} from "../src/permissions/5143_writeRemoteAgentMetadata.ts";
-import {Xa} from "./m2509.ts";
-import {b} from "../runtime.ts";
-function ICo(){return zt()==="windows"?";":"&&"}
-function DGn(e,t,n){let r=getOriginalCwd();if(!t||!e.projectPath||e.projectPath===r)return{isCrossProject:!1};if(n.some((a)=>e.projectPath===a||e.projectPath.startsWith(a+mSl.sep)))return{isCrossProject:!0,isSameRepoWorktree:!0,projectPath:e.projectPath};let s=getSessionIdFromLog(e);return{isCrossProject:!0,isSameRepoWorktree:!1,command:`cd ${Xa([e.projectPath])} ${ICo()} claude --resume ${s}`,projectPath:e.projectPath}}
-var mSl;
-var DCo=b(()=>{lt();qs();ja();mSl=require("path")});
-export {ICo,DGn,mSl,DCo};
+import {Sdt,V1} from "./m4006.ts";
+import {getModelSourceAnnotation,renderModelSetting,Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {t7n,n7n} from "./m4623.ts";
+import {FPe,Qzn} from "./m4822.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function Twl(){let e=Sdt(),t=ywl.useMemo(getModelSourceAnnotation,[e]),n=t7n();if(!t&&!n)return null;let r=t&&n?`${t.slice(0,-1)}, auto-updated)`:n?" (auto-updated)":t;return Swl.jsxs(FPe,{command:"/model",children:["Using ",renderModelSetting(e),r]})}
+var ywl,Swl;
+var bwl=b(()=>{V1();Ro();n7n();Qzn();ywl=x(et(),1),Swl=x(oe(),1)});
+export {Twl,ywl,Swl,bwl};

@@ -1,13 +1,20 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function gVp(e){if(!e||typeof e!=="object")return!1;let t=e,n=typeof t.filePath==="string",r=Array.isArray(t.structuredPatch)&&t.structuredPatch.length>0,o=t.type==="create"&&typeof t.content==="string";return n&&(r||o)}
-function _Vp(e){return"type"in e&&(e.type==="create"||e.type==="update")}
-function yVp(e){let t=0,n=0;for(let r of e)for(let o of r.lines)if(o.startsWith("+"))t++;else if(o.startsWith("-"))n++;return{added:t,removed:n}}
-function TVp(e){if(e.type!=="user")return"";let t=e.message.content,n=typeof t==="string"?t:"";if(n.length<=30)return n;return n.slice(0,29)+"\u2026"}
-function Hll(e){let t=0,n=0;for(let r of e.files.values())t+=r.linesAdded,n+=r.linesRemoved;e.stats={filesChanged:e.files.size,linesAdded:t,linesRemoved:n}}
-function Ill(e){let t=G8n.useRef({completedTurns:[],currentTurn:null,lastProcessedIndex:0,lastTurnIndex:0});return G8n.useMemo(()=>{let n=t.current;if(e.length<n.lastProcessedIndex)n.completedTurns=[],n.currentTurn=null,n.lastProcessedIndex=0,n.lastTurnIndex=0;for(let o=n.lastProcessedIndex;o<e.length;o++){let s=e[o];if(!s||s.type!=="user")continue;if(!(s.toolUseResult||Array.isArray(s.message.content)&&s.message.content[0]?.type==="tool_result")&&!s.isMeta){if(n.currentTurn&&n.currentTurn.files.size>0)Hll(n.currentTurn),n.completedTurns.push(n.currentTurn);n.lastTurnIndex++,n.currentTurn={turnIndex:n.lastTurnIndex,userPromptPreview:TVp(s),timestamp:s.timestamp,files:new Map,stats:{filesChanged:0,linesAdded:0,linesRemoved:0}}}else if(n.currentTurn&&s.toolUseResult){let a=s.toolUseResult;if(gVp(a)){let{filePath:l,structuredPatch:c}=a,u="type"in a&&a.type==="create",d=n.currentTurn.files.get(l);if(!d)d={filePath:l,hunks:[],isNewFile:u,linesAdded:0,linesRemoved:0},n.currentTurn.files.set(l,d);if(u&&c.length===0&&_Vp(a)){let m=a.content.split(`
-`),f={oldStart:0,oldLines:0,newStart:1,newLines:m.length,lines:m.map((A)=>"+"+A)};d.hunks.push(f),d.linesAdded+=m.length}else{d.hunks.push(...c);let{added:p,removed:m}=yVp(c);d.linesAdded+=p,d.linesRemoved+=m}if(u)d.isNewFile=!0}}}n.lastProcessedIndex=e.length;let r=[...n.completedTurns];if(n.currentTurn&&n.currentTurn.files.size>0)Hll(n.currentTurn),r.push(n.currentTurn);return r.reverse()},[e])}
-var G8n;
-var Dll=b(()=>{G8n=M(Te(),1)});
-export {gVp,_Vp,yVp,TVp,Hll,Ill,G8n,Dll};
+import {ft,b} from "../runtime.ts";
+import {e1t,nB} from "../src/api/2752_status.ts";
+import {bae,cot,Mke,_ge} from "../src/telemetry/2750_title.ts";
+import {isClaudeAISubscriber,Vv,getSubscriptionType,lo} from "../src/config/2036_withOAuthRefreshLock.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {__export,Ce,Ct} from "./m197.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
+import {cKn,sRo} from "../src/agent/4562_day.ts";
+import {getTotalCostUSD,getTotalAPIDuration,getTotalDuration,getTotalLinesAdded,getTotalLinesRemoved,getModelUsage,lt} from "../src/session/0132_sent.ts";
+var Ufl={};
+ft(Ufl,{seedUtilization:()=>seedUtilization,loadPlanRateLimits:()=>loadPlanRateLimits,collectUsageData:()=>collectUsageData,MIN_BEHAVIOR_PCT:()=>MIN_BEHAVIOR_PCT});
+function seedUtilization(){let e=e1t();if(!e.five_hour&&!e.seven_day)return null;let t=(n)=>n?{utilization:n.utilization*100,resets_at:new Date(n.resets_at*1000).toISOString()}:void 0;return{five_hour:t(e.five_hour),seven_day:t(e.seven_day)}}
+async function loadPlanRateLimits(){try{let e=await bae();if(!e)return{status:"empty_response"};if(isClaudeAISubscriber()&&Vv()&&!hQp.some((n)=>(n in e))){logForDebugging("Usage fetch returned a fieldless body (in-band error envelope)",{level:"error"});let n="error"in e?e.error:void 0,r=typeof n==="object"&&n!==null&&"type"in n&&n.type==="rate_limit_error",o=seedUtilization();if(o)return{status:"seeded",utilization:o,isRateLimited:r};return{status:"unavailable",isRateLimited:r,responseBody:TeamDeleteToolName(e)}}return{status:"ok",utilization:e}}catch(e){if(__export(e))logForDebugging(`Failed to load usage data: ${Ce(e)}`,{level:"error"});else Ie(e);let t=e,n=t.response?.status===429,r=seedUtilization();if(r)return{status:"seeded",utilization:r,isRateLimited:n};return{status:"unavailable",isRateLimited:n,responseBody:t.response?.data?TeamDeleteToolName(t.response.data):void 0}}}
+function Bfl(e){return{request_count:e.requestCount,session_count:e.sessionCount,behaviors:e.behaviors.filter((t)=>e.totalCost>0&&t.cost/e.totalCost*100>=MIN_BEHAVIOR_PCT).map((t)=>({key:t.key,pct:Math.round(t.cost/e.totalCost*100),count:t.count})),agents:e.agents,skills:e.skills,plugins:e.plugins,mcp_servers:e.mcpServers}}
+async function collectUsageData({includeBehaviors:e=!0}={}){let t=isClaudeAISubscriber(),n=t&&Vv(),[r,o]=await Promise.all([n?loadPlanRateLimits().then((i)=>i.status==="ok"||i.status==="seeded"?i.utilization:null):Promise.resolve(null),e&&t?cKn().then((i)=>({day:Bfl(i.day),week:Bfl(i.week)}),(i)=>(Ie(i),null)):Promise.resolve(null)]),s;if(r!==null)try{s=cot(r.limits,Mke()).map((i)=>({display_name:i.title.replace(/^Current week \((.+)\)$/,"$1"),utilization:i.limit.utilization??null,resets_at:typeof i.limit.resets_at==="number"?new Date(i.limit.resets_at*1000).toISOString():i.limit.resets_at??null}))}catch(i){logForDebugging(`model_scoped projection failed: ${Ce(i)}`,{level:"error"})}return{session:{total_cost_usd:getTotalCostUSD(),total_api_duration_ms:getTotalAPIDuration(),total_duration_ms:getTotalDuration(),total_lines_added:getTotalLinesAdded(),total_lines_removed:getTotalLinesRemoved(),model_usage:getModelUsage()},subscription_type:getSubscriptionType(),rate_limits_available:n,rate_limits:r===null?null:s!==void 0&&s.length>0?{...r,model_scoped:s}:r,behaviors:o}}
+var hQp,MIN_BEHAVIOR_PCT=10;
+var G8t=b(()=>{lt();_ge();nB();lo();sRo();qe();Ct();vn();tn();hQp=["five_hour","seven_day","seven_day_oauth_apps","seven_day_opus","seven_day_sonnet","cinder_cove","extra_usage","limits"]});
+export {Ufl,seedUtilization,loadPlanRateLimits,Bfl,collectUsageData,hQp,MIN_BEHAVIOR_PCT,G8t};

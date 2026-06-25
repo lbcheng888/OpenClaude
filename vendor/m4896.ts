@@ -1,6 +1,24 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Pvo,xCl} from "../src/tui/4896_relaunchInto.ts";
-var Zsm,kCl;
-var HCl=b(()=>{Zsm={type:"local-jsx",name:"tui",description:"Set the terminal UI renderer (default | fullscreen)",argumentHint:"[default|fullscreen]",load:()=>Promise.resolve().then(() => (Pvo(),xCl))},kCl=Zsm});
-export {Zsm,kCl,HCl};
+import {useTheme} from "./m2285.ts";
+import {gL,cx} from "../src/artifact/4323_cx.ts";
+import {KM,ri} from "../src/tools/2235_userFacingName.ts";
+import {SY,xdt} from "./m4031.ts";
+import {Oo,ss} from "./m2553.ts";
+import {fgt,WTe} from "./m4890.ts";
+import {truncateToWidth} from "./m239.ts";
+import {_G,U6e} from "./m4040.ts";
+import {Text} from "./m2433.ts";
+import {formatNumber,Xo} from "./m240.ts";
+import {at,Wo} from "./m2557.ts";
+import {bn,Is} from "./m2565.ts";
+import {Box} from "./m2432.ts";
+import {Pjn,TIo} from "../src/tools/4890_theme.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function i0l(e){let t=s0l.c(71),{teammate:n,onDone:r,onKill:o,onBack:s,onForeground:i}=e,[a]=useTheme(),l;if(t[0]===Symbol.for("react.memo_cache_sentinel"))l=gL(KM()),t[0]=l;else l=t[0];let c=l,u=SY(n.startTime,n.status==="running",1000,n.totalPausedMs??0,n.endTime),d;if(t[1]!==r)d={"confirm:yes":r},t[1]=r,t[2]=d;else d=t[2];let p;if(t[3]===Symbol.for("react.memo_cache_sentinel"))p={context:"Confirmation"},t[3]=p;else p=t[3];Oo(d,p);let m;if(t[4]!==s||t[5]!==r||t[6]!==i||t[7]!==o||t[8]!==n.status)m=(te)=>{if(te.key===" ")te.preventDefault(),r();else if(te.key==="left"&&s)te.preventDefault(),s();else if(te.key==="x"&&!te.ctrl&&!te.meta&&n.status==="running"&&o)te.preventDefault(),o();else if(te.key==="f"&&!te.ctrl&&!te.meta&&n.status==="running"&&i)te.preventDefault(),i()},t[4]=s,t[5]=r,t[6]=i,t[7]=o,t[8]=n.status,t[9]=m;else m=t[9];let f=m,h;if(t[10]!==n)h=fgt(n),t[10]=n,t[11]=h;else h=t[11];let g=h,_=n.result?.totalTokens??n.progress?.tokenCount,T=n.result?.totalToolUseCount??n.progress?.toolUseCount,y;if(t[12]!==n.prompt)y=truncateToWidth(n.prompt,300),t[12]=n.prompt,t[13]=y;else y=t[13];let S=y,E;if(t[14]!==n.identity.color)E=_G(n.identity.color),t[14]=n.identity.color,t[15]=E;else E=t[15];let R;if(t[16]!==E||t[17]!==n.identity.agentName)R=ES.jsxs(Text,{color:E,children:["@",n.identity.agentName]}),t[16]=E,t[17]=n.identity.agentName,t[18]=R;else R=t[18];let w;if(t[19]!==g)w=g&&ES.jsxs(Text,{dimColor:!0,children:[" (",g,")"]}),t[19]=g,t[20]=w;else w=t[20];let H;if(t[21]!==R||t[22]!==w)H=ES.jsxs(Text,{children:[R,w]}),t[21]=R,t[22]=w,t[23]=H;else H=t[23];let k=H,I;if(t[24]!==n.status)I=n.status!=="running"&&ES.jsxs(Text,{color:n.status==="completed"?"success":n.status==="killed"?"warning":"error",children:[n.status==="completed"?"Completed":n.status==="failed"?"Failed":"Stopped"," \xB7 "]}),t[24]=n.status,t[25]=I;else I=t[25];let D;if(t[26]!==_)D=_!==void 0&&_>0&&ES.jsxs(ES.Fragment,{children:[" \xB7 ",formatNumber(_)," tokens"]}),t[26]=_,t[27]=D;else D=t[27];let O;if(t[28]!==T)O=T!==void 0&&T>0&&ES.jsxs(ES.Fragment,{children:[" ","\xB7 ",T," ",T===1?"tool":"tools"]}),t[28]=T,t[29]=O;else O=t[29];let L;if(t[30]!==u||t[31]!==D||t[32]!==O)L=ES.jsxs(Text,{dimColor:!0,children:[u,D,O]}),t[30]=u,t[31]=D,t[32]=O,t[33]=L;else L=t[33];let P;if(t[34]!==I||t[35]!==L)P=ES.jsxs(Text,{children:[I,L]}),t[34]=I,t[35]=L,t[36]=P;else P=t[36];let M=P,B;if(t[37]!==s)B=s&&ES.jsx(at,{chord:"left",action:"go back"}),t[37]=s,t[38]=B;else B=t[38];let N;if(t[39]===Symbol.for("react.memo_cache_sentinel"))N=ES.jsx(at,{chord:["escape","enter","space"],action:"close"}),t[39]=N;else N=t[39];let F;if(t[40]!==o||t[41]!==n.status)F=n.status==="running"&&o&&ES.jsx(at,{chord:"x",action:"stop"}),t[40]=o,t[41]=n.status,t[42]=F;else F=t[42];let V;if(t[43]!==i||t[44]!==n.status)V=n.status==="running"&&i&&ES.jsx(at,{chord:"f",action:"foreground"}),t[43]=i,t[44]=n.status,t[45]=V;else V=t[45];let G;if(t[46]!==B||t[47]!==F||t[48]!==V)G=ES.jsxs(bn,{children:[B,N,F,V]}),t[46]=B,t[47]=F,t[48]=V,t[49]=G;else G=t[49];let z;if(t[50]!==n.progress||t[51]!==n.status||t[52]!==a)z=n.status==="running"&&n.progress?.recentActivities&&n.progress.recentActivities.length>0&&ES.jsxs(Box,{flexDirection:"column",children:[ES.jsx(Text,{bold:!0,dimColor:!0,children:"Progress"}),n.progress.recentActivities.map((te,ne)=>ES.jsxs(Text,{dimColor:ne<n.progress.recentActivities.length-1,wrap:"truncate-end",children:[ne===n.progress.recentActivities.length-1?"\u203A ":"  ",Pjn(te,c,a)]},ne))]}),t[50]=n.progress,t[51]=n.status,t[52]=a,t[53]=z;else z=t[53];let J;if(t[54]===Symbol.for("react.memo_cache_sentinel"))J=ES.jsx(Text,{bold:!0,dimColor:!0,children:"Prompt"}),t[54]=J;else J=t[54];let K;if(t[55]!==S)K=ES.jsxs(Box,{flexDirection:"column",marginTop:1,children:[J,ES.jsx(Text,{wrap:"wrap",children:S})]}),t[55]=S,t[56]=K;else K=t[56];let j;if(t[57]!==n.error||t[58]!==n.status)j=n.status==="failed"&&n.error&&ES.jsxs(Box,{flexDirection:"column",marginTop:1,children:[ES.jsx(Text,{bold:!0,color:"error",children:"Error"}),ES.jsx(Text,{color:"error",wrap:"wrap",children:n.error})]}),t[57]=n.error,t[58]=n.status,t[59]=j;else j=t[59];let X;if(t[60]!==r||t[61]!==M||t[62]!==G||t[63]!==z||t[64]!==K||t[65]!==j||t[66]!==k)X=ES.jsxs(preInitQueue,{title:k,subtitle:M,onCancel:r,color:"background",inputGuide:G,children:[z,K,j]}),t[60]=r,t[61]=M,t[62]=G,t[63]=z,t[64]=K,t[65]=j,t[66]=k,t[67]=X;else X=t[67];let ee;if(t[68]!==f||t[69]!==X)ee=ES.jsx(Box,{flexDirection:"column",tabIndex:0,autoFocus:!0,onKeyDown:f,children:X}),t[68]=f,t[69]=X,t[70]=ee;else ee=t[70];return ee}
+var s0l,ES;
+var a0l=b(()=>{xdt();je();ss();ri();cx();Xo();U6e();Is();di();Wo();TIo();WTe();s0l=x(tt(),1),ES=x(oe(),1)});
+export {i0l,s0l,ES,a0l};

@@ -1,6 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var Fbs=()=>{};
-var dze;
-var Ubs=b(()=>{(function(e){e.MD5="md5",e.CRC32="crc32",e.CRC32C="crc32c",e.SHA1="sha1",e.SHA256="sha256"})(dze||(dze={}))});
-export {Fbs,dze,Ubs};
+var lks;
+var cks=b(()=>{(function(e){e.HEADER="header",e.QUERY="query"})(lks||(lks={}))});
+export {lks,cks};

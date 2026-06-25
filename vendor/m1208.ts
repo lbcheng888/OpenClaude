@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {YHs,JHs,XHs} from "./m1207.ts";
-import {qHs,jHs,WHs} from "./m1205.ts";
 import {b} from "../runtime.ts";
-var QHs=(e,t)=>({applyToStack:(n)=>{n.addRelativeTo(YHs(e,t),JHs),n.add(qHs(),jHs)}});
-var ZHs=b(()=>{WHs();XHs()});
-export {QHs,ZHs};
+var Bkr;
+var OLs=b(()=>{Bkr=class Bkr{options;constructor(e){this.options=e}[Symbol.asyncIterator](){return this.asyncIterator()}async*asyncIterator(){for await(let e of this.options.inputStream)yield this.options.serializer(e)}}});
+export {Bkr,OLs};

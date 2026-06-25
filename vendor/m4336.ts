@@ -1,14 +1,6 @@
 // @ts-nocheck
-import {qut,N3t} from "../src/tui/4327_detectBlockedSleepPattern.ts";
-import {ro,b} from "../runtime.ts";
-import {gh,Rce} from "../src/tools/4419_tabAwareSeparator.ts";
-import {_b,wce} from "../src/tools/4066_file_path.ts";
-import {IE,MIe} from "../src/tools/4336_content.ts";
-import {T9,$4e} from "../src/tools/3920_pattern.ts";
-import {UL,Jge} from "../src/tools/3918_items.ts";
-import {Rl,TU} from "../src/tui/4359_isSearch.ts";
-import {k6,rut} from "../src/tools/4070_notebook_path.ts";
-function o_e(){if(Lfo)return Lfo;let{PowerShellTool:e}=(qut(),ro(N3t));return Lfo=[gh,_b,IE,T9,UL,Rl,e,k6]}
-var Lfo;
-var u$t=b(()=>{TU();MIe();Rce();wce();$4e();Jge();rut()});
-export {o_e,Lfo,u$t};
+import {b} from "../runtime.ts";
+function Uel(e){if(e.length<2)return!1;return Bel.includes(e)||Fel.some((t)=>t.startsWith(e))}
+var Qyo,Zyo,Nel,Fel,Bel,rzy,$el;
+var eTo=b(()=>{Qyo=["-verbose","-debug"],Zyo=["-erroraction","-warningaction","-informationaction","-progressaction","-errorvariable","-warningvariable","-informationvariable","-outvariable","-outbuffer","-pipelinevariable","-ea","-wa","-infa","-proga"],Nel=new Set([...Qyo,...Zyo]),Fel=["-erroraction","-warningaction","-informationaction","-progressaction"],Bel=["-ea","-wa","-infa","-proga"];rzy=new Set([...Fel,...Bel]),$el=new Set(["silentlycontinue","0","stop","1","continue","2","ignore","4"])});
+export {Uel,Qyo,Zyo,Nel,Fel,Bel,rzy,$el,eTo};

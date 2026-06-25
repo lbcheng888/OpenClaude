@@ -1,11 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {OPn} from "./m3450.ts";
-import {Xma} from "./m3451.ts";
-import {MPn} from "./m3452.ts";
-import {ifa} from "./m3453.ts";
-import {mle} from "./m3449.ts";
-import {GQr} from "./m3455.ts";
-import {VQr} from "./m3456.ts";
-var KQr=X((pfa)=>{var n6=pfa;n6.build="minimal";n6.Writer=OPn();n6.BufferWriter=Xma();n6.Reader=MPn();n6.BufferReader=ifa();n6.util=mle();n6.rpc=GQr();n6.roots=VQr();n6.configure=dfa;function dfa(){n6.util._configure(),n6.Writer._configure(n6.BufferWriter),n6.Reader._configure(n6.BufferReader)}dfa()});
-export {KQr};
+import {Q} from "../runtime.ts";
+var USa=Q((BSa)=>{var AMn=BSa;AMn.length=function(t){var n=t.length;if(!n)return 0;var r=0;while(--n%4>1&&t.charAt(n)==="=")++r;return Math.ceil(t.length*3)/4-r};var zat=Array(64),FSa=Array(123);for(Gj=0;Gj<64;)FSa[zat[Gj]=Gj<26?Gj+65:Gj<52?Gj+71:Gj<62?Gj-4:Gj-59|43]=Gj++;var Gj;AMn.encode=function(t,n,r){var o=null,s=[],i=0,a=0,l;while(n<r){var c=t[n++];switch(a){case 0:s[i++]=zat[c>>2],l=(c&3)<<4,a=1;break;case 1:s[i++]=zat[l|c>>4],l=(c&15)<<2,a=2;break;case 2:s[i++]=zat[l|c>>6],s[i++]=zat[c&63],a=0;break}if(i>8191)(o||(o=[])).push(String.fromCharCode.apply(String,s)),i=0}if(a){if(s[i++]=zat[l],s[i++]=61,a===1)s[i++]=61}if(o){if(i)o.push(String.fromCharCode.apply(String,s.slice(0,i)));return o.join("")}return String.fromCharCode.apply(String,s.slice(0,i))};var NSa="invalid encoding";AMn.decode=function(t,n,r){var o=r,s=0,i;for(var a=0;a<t.length;){var l=t.charCodeAt(a++);if(l===61&&s>1)break;if((l=FSa[l])===void 0)throw Error(NSa);switch(s){case 0:i=l,s=1;break;case 1:n[r++]=i<<2|(l&48)>>4,i=l,s=2;break;case 2:n[r++]=(i&15)<<4|(l&60)>>2,i=l,s=3;break;case 3:n[r++]=(i&3)<<6|l,s=0;break}}if(s===1)throw Error(NSa);return r-o};AMn.test=function(t){return/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(t)}});
+export {USa};

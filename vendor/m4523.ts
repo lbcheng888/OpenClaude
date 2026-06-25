@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {getGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {parseUserSpecifiedModel,getCanonicalName,Mo} from "../src/permissions/1453_swapShrinksContextWindow.ts";
 import {b} from "../runtime.ts";
-function c5p(){let e=getGlobalConfig().clientDataCache?.model_notices;if(typeof e!=="object"||e===null||Array.isArray(e))return{};let t={};for(let[n,r]of Object.entries(e))if(n.trim().length>0&&typeof r==="string"&&r.length>0)t[n]=r;return t}
-function wil(e){let t=c5p();if(Object.keys(t).length===0)return;let n=e.toLowerCase(),r=parseUserSpecifiedModel(e).toLowerCase(),o=getCanonicalName(r).toLowerCase();for(let[s,i]of Object.entries(t)){let a=s.toLowerCase();if(a===n||a===r||a===o||r.includes(a))return i}return}
-var Ril=b(()=>{Qn();Mo()});
-export {c5p,wil,Ril};
+import {Ir} from "./m584.ts";
+import {Ne} from "./m583.ts";
+import {Dpl,xpl} from "../src/core/4523_call.ts";
+var VYp,kVn;
+var Ppl=b(()=>{Ir();VYp={type:"local",name:"compact",description:"Free up context by summarizing the conversation so far",isEnabled:()=>!Ne.DISABLE_COMPACT,supportsNonInteractive:!0,argumentHint:"<optional custom summarization instructions>",thinClientDispatch:"post-text",load:()=>Promise.resolve().then(() => (Dpl(),xpl))},kVn=VYp});
+export {VYp,kVn,Ppl};

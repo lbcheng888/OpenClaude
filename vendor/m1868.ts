@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var cJs=X((hBA,lJs)=>{var x4u="[object Number]",k4u=Object.prototype,H4u=k4u.toString;function I4u(e){return!!e&&typeof e=="object"}function D4u(e){return typeof e=="number"||I4u(e)&&H4u.call(e)==x4u}lJs.exports=D4u});
-export {cJs};
+import {Q} from "../runtime.ts";
+import {c_n} from "./m1864.ts";
+var i1r=Q((PWh,Uti)=>{var x7u=c_n();Uti.exports=x7u.satisfies(process.version,"^6.12.0 || >=8.0.0")});
+export {i1r};

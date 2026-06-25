@@ -1,16 +1,13 @@
 // @ts-nocheck
-import {Text} from "./m2423.ts";
-import {ybe,sl} from "./m715.ts";
-import {H4,Yfe} from "./m2265.ts";
-import {bc,Ug} from "./m2264.ts";
-import {_t,cu} from "./m582.ts";
-import {No,lwe} from "./m2421.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function cvl(e){let t=lvl.c(2),{cooldown:n}=e;if(n){let o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o=p8t.createElement(Text,{color:"promptBorder",dimColor:!0},ybe),t[0]=o;else o=t[0];return o}let r;if(t[1]===Symbol.for("react.memo_cache_sentinel"))r=p8t.createElement(Text,{color:"fastMode"},ybe),t[1]=r;else r=t[1];return r}
-function XDe(e=!0,t=!1){if(!e)return ybe;let n=H4(bc("theme","dark").value);if(t)return _t.dim(No("promptBorder",n)(ybe));return No("fastMode",n)(ybe)}
-var lvl,p8t;
-var mVn=b(()=>{cu();sl();ze();Ug();Yfe();lwe();lvl=M(rt(),1),p8t=M(Te(),1)});
-export {cvl,XDe,lvl,p8t,mVn};
+import {ft,b,x} from "../runtime.ts";
+import {gc,uo} from "./m2468.ts";
+import {TeleportResumeWrapper,BIo} from "../src/tui/4910_TeleportResumeWrapper.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+var exl={};
+ft(exl,{call:()=>Bfm,Teleport:()=>Teleport});
+function Teleport(e){let t=X0l.c(16),{onExit:n,context:r}=e,o=gc(),s;if(t[0]!==o)s=()=>Boolean(o.getState().replBridgeSessionId),t[0]=o,t[1]=s;else s=t[1];let[i]=Q0l.useState(s),a;if(t[6]!==r||t[7]!==n)a=(d)=>{r.applyMessageOp({type:"replace-all",messages:d.log}),n("Session resumed successfully",{display:"system"})},t[6]=r,t[7]=n,t[8]=a;else a=t[8];let l,c;if(t[9]!==n)l=()=>{n("Teleport cancelled",{display:"system"})},c=(d,p)=>{n(d,{display:"system"})},t[9]=n,t[10]=l,t[11]=c;else l=t[10],c=t[11];let u;if(t[12]!==a||t[13]!==l||t[14]!==c)u=UIo.jsx(TeleportResumeWrapper,{onComplete:a,onCancel:l,onError:c,isEmbedded:!0,source:"localCommand"}),t[12]=a,t[13]=l,t[14]=c,t[15]=u;else u=t[15];return u}
+var X0l,Q0l,UIo,Bfm=async(e,t)=>UIo.jsx(Teleport,{onExit:e,context:t});
+var txl=b(()=>{BIo();uo();X0l=x(tt(),1),Q0l=x(et(),1),UIo=x(oe(),1)});
+export {exl,Teleport,X0l,Q0l,UIo,Bfm,txl};

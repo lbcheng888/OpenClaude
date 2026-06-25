@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {$ur} from "./m396.ts";
-var C5o=X((qur)=>{Object.defineProperty(qur,"__esModule",{value:!0});var nkc=$ur(),rkc={keyword:"prefixItems",type:"array",schemaType:["array"],before:"uniqueItems",code:(e)=>(0,nkc.validateTuple)(e,"items")};qur.default=rkc});
-export {C5o};
+import {Q} from "../runtime.ts";
+import {Km} from "./m356.ts";
+import {apiKeyHelperCache} from "./m357.ts";
+var mhr=Q((eAt)=>{Object.defineProperty(eAt,"__esModule",{value:!0});eAt.validateAdditionalItems=void 0;var e1e=Km(),phr=apiKeyHelperCache(),nNc={message:({params:{len:e}})=>e1e.str`must NOT have more than ${e} items`,params:({params:{len:e}})=>e1e._`{limit: ${e}}`},rNc={keyword:"additionalItems",type:"array",schemaType:["boolean","object"],before:"uniqueItems",error:nNc,code(e){let{parentSchema:t,it:n}=e,{items:r}=t;if(!Array.isArray(r)){(0,phr.checkStrictMode)(n,'"additionalItems" is ignored when "items" is not an array of schemas');return}gjo(e,r)}};function gjo(e,t){let{gen:n,schema:r,data:o,keyword:s,it:i}=e;i.items=!0;let a=n.const("len",e1e._`${o}.length`);if(r===!1)e.setParams({len:t.length}),e.pass(e1e._`${a} <= ${t.length}`);else if(typeof r=="object"&&!(0,phr.alwaysValidSchema)(i,r)){let c=n.var("valid",e1e._`${a} <= ${t.length}`);n.if((0,e1e.not)(c),()=>l(c)),e.ok(c)}function l(c){n.forRange("i",t.length,a,(u)=>{if(e.subschema({keyword:s,dataProp:u,dataPropType:phr.Type.Num},c),!i.allErrors)n.if((0,e1e.not)(c),()=>n.break())})}}eAt.validateAdditionalItems=gjo;eAt.default=rNc});
+export {mhr};

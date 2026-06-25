@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {NZt,Wdr} from "./m449.ts";
-import {b} from "../runtime.ts";
-function NMd(e,t){var n=[];return NZt(e,function(r,o,s){if(t(r,o,s))n.push(r)}),n}
-var JGi;
-var XGi=b(()=>{Wdr();JGi=NMd});
-export {NMd,JGi,XGi};
+import {Q} from "../runtime.ts";
+var $Ji=Q((wYg,UJi)=>{function z3d(e){var t="true false yes no null",n="[\\w#;/?:@&=+$,.~*'()[\\]]+",r={className:"attr",variants:[{begin:"\\w[\\w :\\/.-]*:(?=[ \t]|$)"},{begin:'"\\w[\\w :\\/.-]*":(?=[ \t]|$)'},{begin:"'\\w[\\w :\\/.-]*':(?=[ \t]|$)"}]},o={className:"template-variable",variants:[{begin:/\{\{/,end:/\}\}/},{begin:/%\{/,end:/\}/}]},s={className:"string",relevance:0,variants:[{begin:/'/,end:/'/},{begin:/"/,end:/"/},{begin:/\S+/}],contains:[e.BACKSLASH_ESCAPE,o]},i=e.inherit(s,{variants:[{begin:/'/,end:/'/},{begin:/"/,end:/"/},{begin:/[^\s,{}[\]]+/}]}),a="[0-9]{4}(-[0-9][0-9]){0,2}",l="([Tt \\t][0-9][0-9]?(:[0-9][0-9]){2})?",c="(\\.[0-9]*)?",u="([ \\t])*(Z|[-+][0-9][0-9]?(:[0-9][0-9])?)?",d={className:"number",begin:"\\b"+a+l+c+u+"\\b"},p={end:",",endsWithParent:!0,excludeEnd:!0,keywords:t,relevance:0},m={begin:/\{/,end:/\}/,contains:[p],illegal:"\\n",relevance:0},f={begin:"\\[",end:"\\]",contains:[p],illegal:"\\n",relevance:0},h=[r,{className:"meta",begin:"^---\\s*$",relevance:10},{className:"string",begin:"[\\|>]([1-9]?[+-])?[ ]*\\n( +)[^ ][^\\n]*\\n(\\2[^\\n]+\\n?)*"},{begin:"<%[%=-]?",end:"[%-]?%>",subLanguage:"ruby",excludeBegin:!0,excludeEnd:!0,relevance:0},{className:"type",begin:"!\\w+!"+n},{className:"type",begin:"!<"+n+">"},{className:"type",begin:"!"+n},{className:"type",begin:"!!"+n},{className:"meta",begin:"&"+e.UNDERSCORE_IDENT_RE+"$"},{className:"meta",begin:"\\*"+e.UNDERSCORE_IDENT_RE+"$"},{className:"bullet",begin:"-(?=[ ]|$)",relevance:0},e.HASH_COMMENT_MODE,{beginKeywords:t,keywords:{literal:t}},d,{className:"number",begin:e.C_NUMBER_RE+"\\b",relevance:0},m,f,s],g=[...h];return g.pop(),g.push(i),p.contains=g,{name:"YAML",case_insensitive:!0,aliases:["yml"],contains:h}}UJi.exports=z3d});
+export {$Ji};

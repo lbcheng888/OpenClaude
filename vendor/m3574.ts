@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var SLn=X((Oeo)=>{Object.defineProperty(Oeo,"__esModule",{value:!0});Oeo.getNextCallNumber=Kep;var Vep=0;function Kep(){return Vep++}});
-export {SLn};
+import {Q} from "../runtime.ts";
+import {Xee} from "./m3573.ts";
+import {E4e} from "./m3569.ts";
+import {XO} from "./m3568.ts";
+var Goo=Q((PP_,fRa)=>{fRa.exports=dup;var uup=Xee(),Qoo=E4e(),Zoo=XO();function mRa(e,t,n,r){return t.delimited?e("types[%i].encode(%s,w.uint32(%i)).uint32(%i)",n,r,(t.id<<3|3)>>>0,(t.id<<3|4)>>>0):e("types[%i].encode(%s,w.uint32(%i).fork()).ldelim()",n,r,(t.id<<3|2)>>>0)}function dup(e){var t=Zoo.codegen(["m","w"],e.name+"$encode")("if(!w)")("w=Writer.create()"),n,r,o=e.fieldsArray.slice().sort(Zoo.compareFieldsById);for(var n=0;n<o.length;++n){var s=o[n].resolve(),i=e._fieldsArray.indexOf(s),a=s.resolvedType instanceof uup?"int32":s.type,l=Qoo.basic[a];if(r="m"+Zoo.safeProp(s.name),s.map){if(t("if(%s!=null&&Object.hasOwnProperty.call(m,%j)){",r,s.name)("for(var ks=Object.keys(%s),i=0;i<ks.length;++i){",r)("w.uint32(%i).fork().uint32(%i).%s(ks[i])",(s.id<<3|2)>>>0,8|Qoo.mapKey[s.keyType],s.keyType),l===void 0)t("types[%i].encode(%s[ks[i]],w.uint32(18).fork()).ldelim().ldelim()",i,r);else t(".uint32(%i).%s(%s[ks[i]]).ldelim()",16|l,a,r);t("}")("}")}else if(s.repeated){if(t("if(%s!=null&&%s.length){",r,r),s.packed&&Qoo.packed[a]!==void 0)t("w.uint32(%i).fork()",(s.id<<3|2)>>>0)("for(var i=0;i<%s.length;++i)",r)("w.%s(%s[i])",a,r)("w.ldelim()");else if(t("for(var i=0;i<%s.length;++i)",r),l===void 0)mRa(t,s,i,r+"[i]");else t("w.uint32(%i).%s(%s[i])",(s.id<<3|l)>>>0,a,r);t("}")}else{if(s.optional)t("if(%s!=null&&Object.hasOwnProperty.call(m,%j))",r,s.name);if(l===void 0)mRa(t,s,i,r);else t("w.uint32(%i).%s(%s)",(s.id<<3|l)>>>0,a,r)}}return t("return w")}});
+export {Goo};

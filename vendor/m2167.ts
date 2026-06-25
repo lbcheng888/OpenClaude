@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {p_n,mmi} from "./m2162.ts";
-import {YXe,fHt,gmi,W1r,_mi} from "./m2166.ts";
-import {d_n,q1r} from "./m2160.ts";
+import {g2r,aTi} from "./m2166.ts";
+import {GSn,h2r} from "./m2165.ts";
 import {b} from "../runtime.ts";
-class f_n{constructor(){this._proxyLoggerProvider=new p_n}static getInstance(){if(!this._instance)this._instance=new f_n;return this._instance}setGlobalLoggerProvider(e){if(YXe[fHt])return this.getLoggerProvider();return YXe[fHt]=gmi(W1r,e,d_n),this._proxyLoggerProvider._setDelegate(e),e}getLoggerProvider(){var e,t;return(t=(e=YXe[fHt])===null||e===void 0?void 0:e.call(YXe,W1r))!==null&&t!==void 0?t:this._proxyLoggerProvider}getLogger(e,t,n){return this.getLoggerProvider().getLogger(e,t,n)}disable(){delete YXe[fHt],this._proxyLoggerProvider=new p_n}}
-var ymi=b(()=>{_mi();q1r();mmi()});
-export {f_n,ymi};
+class VSn{getLogger(e,t,n){var r;return(r=this._getDelegateLogger(e,t,n))!==null&&r!==void 0?r:new g2r(this,e,t,n)}_getDelegate(){var e;return(e=this._delegate)!==null&&e!==void 0?e:GSn}_setDelegate(e){this._delegate=e}_getDelegateLogger(e,t,n){var r;return(r=this._delegate)===null||r===void 0?void 0:r.getLogger(e,t,n)}}
+var lTi=b(()=>{h2r();aTi()});
+export {VSn,lTi};

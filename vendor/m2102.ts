@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var yoi=X((Sgn)=>{Object.defineProperty(Sgn,"__esModule",{value:!0});Sgn.otperformance=void 0;var xKu=require("perf_hooks");Sgn.otperformance=xKu.performance});
-export {yoi};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+var iui=Q((GRe)=>{Object.defineProperty(GRe,"__esModule",{value:!0});GRe.isAttributeValue=GRe.isAttributeKey=GRe.sanitizeAttributes=void 0;var nui=xi();function Lrd(e){let t={};if(typeof e!=="object"||e==null)return t;for(let n in e){if(!Object.prototype.hasOwnProperty.call(e,n))continue;if(!rui(n)){nui.diag.warn(`Invalid attribute key: ${n}`);continue}let r=e[n];if(!oui(r)){nui.diag.warn(`Invalid attribute value set for key: ${n}`);continue}if(Array.isArray(r))t[n]=r.slice();else t[n]=r}return t}GRe.sanitizeAttributes=Lrd;function rui(e){return typeof e==="string"&&e!==""}GRe.isAttributeKey=rui;function oui(e){if(e==null)return!0;if(Array.isArray(e))return Mrd(e);return sui(typeof e)}GRe.isAttributeValue=oui;function Mrd(e){let t;for(let n of e){if(n==null)continue;let r=typeof n;if(r===t)continue;if(!t){if(sui(r)){t=r;continue}return!1}return!1}return!0}function sui(e){switch(e){case"number":case"boolean":case"string":return!0}return!1}});
+export {iui};

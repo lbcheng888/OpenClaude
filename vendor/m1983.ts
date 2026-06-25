@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {LJe} from "./m1809.ts";
-var XZs=X((dAn)=>{Object.defineProperty(dAn,"__esModule",{value:!0});dAn.buildPayloadForJwsSign=JZs;dAn.getJwsSign=T8u;var g8u=LJe(),_8u="RS256",y8u="https://oauth2.googleapis.com/token";function JZs(e){let t=Math.floor(new Date().getTime()/1000);return{iss:e.iss,scope:e.scope,aud:y8u,exp:t+3600,iat:t,sub:e.sub,...e.additionalClaims}}function T8u(e){let t=JZs(e);return(0,g8u.sign)({header:{alg:_8u},payload:t,secret:e.key})}});
-export {XZs};
+import {Q} from "../runtime.ts";
+var VNr=Q((G_n)=>{Object.defineProperty(G_n,"__esModule",{value:!0});G_n.LoginTicket=void 0;class Nsi{envelope;payload;constructor(e,t){this.envelope=e,this.payload=t}getEnvelope(){return this.envelope}getPayload(){return this.payload}getUserId(){let e=this.getPayload();if(e&&e.sub)return e.sub;return null}getAttributes(){return{envelope:this.getEnvelope(),payload:this.getPayload()}}}G_n.LoginTicket=Nsi});
+export {VNr};

@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Xgn} from "./m2142.ts";
-import {Xi} from "./m2091.ts";
-var Gpi=X((e_n)=>{Object.defineProperty(e_n,"__esModule",{value:!0});e_n.getMachineId=void 0;var TYu=require("fs"),SYu=Xgn(),Wpi=Xi();async function bYu(){try{return(await TYu.promises.readFile("/etc/hostid",{encoding:"utf8"})).trim()}catch(e){Wpi.diag.debug(`error reading machine id: ${e}`)}try{return(await(0,SYu.execAsync)("kenv -q smbios.system.uuid")).stdout.trim()}catch(e){Wpi.diag.debug(`error reading machine id: ${e}`)}return}e_n.getMachineId=bYu});
-export {Gpi};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {jQ} from "./m2117.ts";
+import {pg} from "./m2138.ts";
+var Myi=Q((kSn)=>{Object.defineProperty(kSn,"__esModule",{value:!0});kSn.envDetector=void 0;var Isd=xi(),xsd=jQ(),Oyi=pg();class Lyi{_MAX_LENGTH=255;_COMMA_SEPARATOR=",";_LABEL_KEY_VALUE_SPLITTER="=";_ERROR_MESSAGE_INVALID_CHARS="should be a ASCII string with a length greater than 0 and not exceed "+this._MAX_LENGTH+" characters.";_ERROR_MESSAGE_INVALID_VALUE="should be a ASCII string with a length not exceed "+this._MAX_LENGTH+" characters.";detect(e){let t={},n=(0,Oyi.getStringFromEnv)("OTEL_RESOURCE_ATTRIBUTES"),r=(0,Oyi.getStringFromEnv)("OTEL_SERVICE_NAME");if(n)try{let o=this._parseResourceAttributes(n);Object.assign(t,o)}catch(o){Isd.diag.debug(`EnvDetector failed: ${o.message}`)}if(r)t[xsd.ATTR_SERVICE_NAME]=r;return{attributes:t}}_parseResourceAttributes(e){if(!e)return{};let t={},n=e.split(this._COMMA_SEPARATOR,-1);for(let r of n){let o=r.split(this._LABEL_KEY_VALUE_SPLITTER,-1);if(o.length!==2)continue;let[s,i]=o;if(s=s.trim(),i=i.trim().split(/^"|"$/).join(""),!this._isValidAndNotEmpty(s))throw Error(`Attribute key ${this._ERROR_MESSAGE_INVALID_CHARS}`);if(!this._isValid(i))throw Error(`Attribute value ${this._ERROR_MESSAGE_INVALID_VALUE}`);t[s]=decodeURIComponent(i)}return t}_isValid(e){return e.length<=this._MAX_LENGTH&&this._isBaggageOctetString(e)}_isBaggageOctetString(e){for(let t=0;t<e.length;t++){let n=e.charCodeAt(t);if(n<33||n===44||n===59||n===92||n>126)return!1}return!0}_isValidAndNotEmpty(e){return e.length>0&&this._isValid(e)}}kSn.envDetector=new Lyi});
+export {Myi};

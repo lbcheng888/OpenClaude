@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {RVi} from "./m3037.ts";
-var xGr=X((qqh,xVi)=>{var i1d=RVi();xVi.exports=(e)=>typeof e==="string"?e.replace(i1d(),""):e});
-export {xGr};
+import {Qot,y9e} from "./m3030.ts";
+import {b} from "../runtime.ts";
+function X1t(e,t){return Qot((n)=>{let r=n.get();if(!r||r.dependencies.length!==t.length||r.dependencies.some((o,s)=>o!==t[s])){let o=e();return n.set({value:o,dependencies:t}),o}return r.value})}
+var sQi=b(()=>{y9e()});
+export {X1t,sQi};

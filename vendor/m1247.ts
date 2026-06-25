@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {kCr,HCr} from "./m1246.ts";
+import {tHr,Q1s} from "./m1246.ts";
 import {b} from "../runtime.ts";
-var fDs=(e)=>new kCr(e);
-var ADs=b(()=>{HCr()});
-export {fDs,ADs};
+var nHr=(e)=>new tHr(e);
+var Z1s=b(()=>{Q1s()});
+export {nHr,Z1s};

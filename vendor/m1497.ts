@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Dxr} from "./m1485.ts";
-import {L3s} from "./m1496.ts";
-var Mdn=X((Mxr)=>{Object.defineProperty(Mxr,"__esModule",{value:!0});var BLu=Dxr();BLu.__exportStar(L3s(),Mxr)});
-export {Mdn};
+import {Q} from "../runtime.ts";
+var RWs=Q((pfn)=>{Object.defineProperty(pfn,"__esModule",{value:!0});pfn.isEmptyData=void 0;function j3u(e){if(typeof e==="string")return e.length===0;return e.byteLength===0}pfn.isEmptyData=j3u});
+export {RWs};

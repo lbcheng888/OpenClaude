@@ -1,7 +1,9 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Hst} from "./m3363.ts";
-import {Gke} from "./m3361.ts";
-import {Yee} from "./m3362.ts";
-var Fua=X((Ist)=>{Object.defineProperty(Ist,"__esModule",{value:!0});Ist.HistogramAggregator=Ist.HistogramAccumulation=void 0;var XGd=Hst(),DNt=Gke(),QGd=Yee();function ZGd(e){let t=e.map(()=>0);return t.push(0),{buckets:{boundaries:e,counts:t},sum:0,count:0,hasMinMax:!1,min:1/0,max:-1/0}}class PNt{startTime;_boundaries;_recordMinMax;_current;constructor(e,t,n=!0,r=ZGd(t)){this.startTime=e,this._boundaries=t,this._recordMinMax=n,this._current=r}record(e){if(Number.isNaN(e))return;if(this._current.count+=1,this._current.sum+=e,this._recordMinMax)this._current.min=Math.min(e,this._current.min),this._current.max=Math.max(e,this._current.max),this._current.hasMinMax=!0;let t=(0,QGd.binarySearchUB)(this._boundaries,e);this._current.buckets.counts[t]+=1}setStartTime(e){this.startTime=e}toPointValue(){return this._current}}Ist.HistogramAccumulation=PNt;class Bua{_boundaries;_recordMinMax;kind=XGd.AggregatorKind.HISTOGRAM;constructor(e,t){this._boundaries=e,this._recordMinMax=t}createAccumulation(e){return new PNt(e,this._boundaries,this._recordMinMax)}merge(e,t){let n=e.toPointValue(),r=t.toPointValue(),o=n.buckets.counts,s=r.buckets.counts,i=Array(o.length);for(let c=0;c<o.length;c++)i[c]=o[c]+s[c];let a=1/0,l=-1/0;if(this._recordMinMax){if(n.hasMinMax&&r.hasMinMax)a=Math.min(n.min,r.min),l=Math.max(n.max,r.max);else if(n.hasMinMax)a=n.min,l=n.max;else if(r.hasMinMax)a=r.min,l=r.max}return new PNt(e.startTime,n.buckets.boundaries,this._recordMinMax,{buckets:{boundaries:n.buckets.boundaries,counts:i},count:n.count+r.count,sum:n.sum+r.sum,hasMinMax:this._recordMinMax&&(n.hasMinMax||r.hasMinMax),min:a,max:l})}diff(e,t){let n=e.toPointValue(),r=t.toPointValue(),o=n.buckets.counts,s=r.buckets.counts,i=Array(o.length);for(let a=0;a<o.length;a++)i[a]=s[a]-o[a];return new PNt(t.startTime,n.buckets.boundaries,this._recordMinMax,{buckets:{boundaries:n.buckets.boundaries,counts:i},count:r.count-n.count,sum:r.sum-n.sum,hasMinMax:!1,min:1/0,max:-1/0})}toMetricData(e,t,n,r){return{descriptor:e,aggregationTemporality:t,dataPointType:DNt.DataPointType.HISTOGRAM,dataPoints:n.map(([o,s])=>{let i=s.toPointValue(),a=e.type===DNt.InstrumentType.GAUGE||e.type===DNt.InstrumentType.UP_DOWN_COUNTER||e.type===DNt.InstrumentType.OBSERVABLE_GAUGE||e.type===DNt.InstrumentType.OBSERVABLE_UP_DOWN_COUNTER;return{attributes:o,startTime:s.startTime,endTime:r,value:{min:i.hasMinMax?i.min:void 0,max:i.hasMinMax?i.max:void 0,sum:!a?i.sum:void 0,buckets:i.buckets,count:i.count}}})}}}Ist.HistogramAggregator=Bua});
-export {Fua};
+import {xO,Xie} from "./m2677.ts";
+import {getSettings_DEPRECATED,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function Aat(e){let t=cLn.useRef(e);t.current=e,cLn.useEffect(()=>xO.subscribe((n)=>{let r=getSettings_DEPRECATED();t.current(n,r)}),[])}
+var cLn;
+var uLn=b(()=>{Xie();br();cLn=x(et(),1)});
+export {Aat,cLn,uLn};

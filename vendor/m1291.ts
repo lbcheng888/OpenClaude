@@ -1,12 +1,16 @@
 // @ts-nocheck
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {getOauthConfig,Dc} from "../src/api/0459_getOauthConfig.ts";
+import {getGlobalConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {getAnthropicApiKey,lo} from "../src/config/2036_withOAuthRefreshLock.ts";
+import {getOauthConfig,OAUTH_BETA_HEADER,Sc} from "../src/api/0465_getOauthConfig.ts";
+import {ho} from "./m572.ts";
+import {He,Pt,mn} from "../src/telemetry/0600_feature_name.ts";
+import {__export,Ct} from "./m197.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {Ie,vn} from "../src/session/0621_length.ts";
 import {b} from "../runtime.ts";
-function B7(){let e=process.env.CLAUDE_SECURESTORAGE_CONFIG_DIR;if(e!==void 0)return(e||FOs.join(hcn.homedir(),".claude")).normalize("NFC");return tr()}
-function m1(e=""){let t=process.env.CLAUDE_SECURESTORAGE_CONFIG_DIR,n=t!==void 0?!t:!process.env.CLAUDE_CONFIG_DIR,r=t!==void 0?t.normalize("NFC"):tr(),o=n?"":`-${BOs.createHash("sha256").update(r).digest("hex").substring(0,8)}`;return`Claude Code${getOauthConfig().OAUTH_FILE_SUFFIX}${e}${o}`}
-function OO(){let e;try{e=process.env.USER||hcn.userInfo().username}catch{e="claude-code-user"}if(!DIu.test(e))return"claude-code-user";return e}
-function F7(){rC.cache={data:null,cachedAt:0},rC.generation++,rC.readInFlight=null}
-function UOs(e,t){if(rC.cache.cachedAt!==0||rC.generation!==t)return;let n=null;if(e)try{n=JSON.parse(e)}catch{return}rC.cache={data:n,cachedAt:Date.now()}}
-var BOs,hcn,FOs,joe="-credentials",DIu,gcn=30000,rC;
-var k8=b(()=>{Dc();sn();BOs=require("crypto"),hcn=require("os"),FOs=require("path");DIu=/^[a-zA-Z0-9._-]+$/;rC={cache:{data:null,cachedAt:0},generation:0,readInFlight:null}});
-export {B7,m1,OO,F7,UOs,BOs,hcn,FOs,joe,DIu,gcn,rC,k8};
+import {ap} from "./m573.ts";
+async function CBs(){let t=getGlobalConfig().oauthAccount?.accountUuid,n=getAnthropicApiKey();if(!t||!n)return;let r=`${getOauthConfig().BASE_API_URL}/api/claude_cli_profile`;try{let o=await ho.get(r,{headers:{"x-api-key":n,"anthropic-beta":OAUTH_BETA_HEADER},params:{account_uuid:t},timeout:1e4});return He("oauth_profile_fetch"),o.data}catch(o){if(Pt("oauth_profile_fetch","oauth_profile_api_key_failed"),__export(o))logForDebugging(`Failed to fetch oauth profile from API key: ${o}`,{level:"error"});else Ie(o)}}
+async function bAe(e){let t=`${getOauthConfig().BASE_API_URL}/api/oauth/profile`;try{let n=await ho.get(t,{headers:{Authorization:`Bearer ${e}`,"Content-Type":"application/json"},timeout:1e4});return He("oauth_profile_fetch"),n.data}catch(n){if(Pt("oauth_profile_fetch","oauth_profile_token_failed"),__export(n))logForDebugging(`Failed to fetch oauth profile from OAuth token: ${n}`,{level:"error"});else Ie(n)}}
+async function qdn(e){let t=`${getOauthConfig().BASE_API_URL}/api/oauth/validate`;try{let n=await ho.post(t,null,{headers:{Authorization:`Bearer ${e}`,"Content-Type":"application/json"},timeout:1e4});return He("oauth_token_validate"),n.data}catch(n){if(Pt("oauth_token_validate","oauth_validate_failed"),__export(n))logForDebugging(`Failed to validate OAuth token: ${n}`,{level:"error"});else Ie(n)}}
+var BNe=b(()=>{ap();Sc();mn();lo();tr();qe();Ct();vn()});
+export {CBs,bAe,qdn,BNe};

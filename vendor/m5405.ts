@@ -1,12 +1,18 @@
 // @ts-nocheck
-import {readTeamFile,setMemberActive,BL} from "./m3879.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Yg,lx} from "./m2777.ts";
-import {Dct,x9} from "./m4033.ts";
-import {createIdleNotification,getLastPeerDmSummary,writeToMailbox,Tx} from "../src/permissions/3886_writeToMailbox.ts";
-import {Le,Xt} from "../src/config/0228_encoding.ts";
-import {getTeammateColor,Am} from "../src/agent/1459_waitForTeammatesToBecomeIdle.ts";
-import {b} from "../runtime.ts";
-function rLo(e,t,n){let{teamName:r,agentId:o,agentName:s}=n,i=readTeamFile(r);if(!i){logForDebugging(`[TeammateInit] Team file not found for team: ${r}`);return}let a=i.leadAgentId;if(i.teamAllowedPaths&&i.teamAllowedPaths.length>0){logForDebugging(`[TeammateInit] Found ${i.teamAllowedPaths.length} team-wide allowed path(s)`);for(let u of i.teamAllowedPaths){let d=u.path.startsWith("/")?`/${u.path}/**`:`${u.path}/**`;logForDebugging(`[TeammateInit] Applying team permission: ${u.toolName} allowed in ${u.path} (rule: ${d})`),e((p)=>({...p,toolPermissionContext:Yg(p.toolPermissionContext,{type:"addRules",rules:[{toolName:u.toolName,ruleContent:d}],behavior:"allow",destination:"session"})}))}}let c=i.members.find((u)=>u.agentId===a)?.name||"team-lead";if(o===a){logForDebugging("[TeammateInit] This agent is the team leader - skipping idle notification hook");return}logForDebugging(`[TeammateInit] Registering Stop hook for teammate ${s} to notify leader ${c}`),Dct(e,t,"Stop","",async(u,d)=>{setMemberActive(r,s,!1);let p=createIdleNotification(s,{idleReason:"available",summary:getLastPeerDmSummary(u)});return await writeToMailbox(c,{from:s,text:Le(p),timestamp:new Date().toISOString(),color:getTeammateColor()}),logForDebugging(`[TeammateInit] Sent idle notification to leader ${c}`),!0},"Failed to send idle notification to team leader",{timeout:1e4})}
-var Y5l=b(()=>{qe();x9();lx();Xt();Am();Tx();BL()});
-export {rLo,Y5l};
+import {_t,gc,uo} from "./m2468.ts";
+import {useTheme,gZ} from "./m2285.ts";
+import {isInsideTmux,hte} from "./m3895.ts";
+import {isTeammate,getAgentName,getTeamName,getTeammateColor,Op} from "../src/agent/1464_waitForTeammatesToBecomeIdle.ts";
+import {isInProcessTeammate,b2} from "./m1462.ts";
+import {IDe,v5t,w5t} from "./m4442.ts";
+import {isInProcessEnabled,getCachedDetectionResult,sye} from "./m4227.ts";
+import {T9t,wB} from "../src/config/3893_wB.ts";
+import {j_e,eut,__,tL,ix} from "./m3842.ts";
+import {Bdl,EVn} from "./m4507.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function Ger(){let e=_t((h)=>h.teamContext),t=_t((h)=>h.standaloneAgentContext),n=_t((h)=>h.agent);_t((h)=>h.viewingAgentTaskId);let r=gc(),[o]=useTheme(),[s,i]=fyt.useState(null),a=t?.prideGradient,l=fyt.useMemo(()=>a&&KYl?KYl(a,o):a,[a,o]);fyt.useEffect(()=>{isInsideTmux().then(i)},[]);let c=r.getState();if(isTeammate()&&!isInProcessTeammate()){let h=getAgentName();if(h&&getTeamName())return{text:`@${h}`,bgColor:Wer(e?.selfAgentColor??getTeammateColor())}}if(e?.teammates&&Object.keys(e.teammates).length>1){let h=IDe(c),g=Wer(h?.identity.color),_=isInProcessEnabled(),T=getCachedDetectionResult()?.isNative??!1;if(s===!1&&!_&&!T)return{text:`View teammates: \`tmux -L ${T9t()} a\``,bgColor:g};if((s===!0||_||T)&&h)return{text:`@${h.identity.agentName}`,bgColor:g}}let d=v5t(c);if(d.type==="named_agent"){let h=d.task,g;for(let[_,T]of c.agentNameRegistry)if(T===h.id){g=_;break}return{text:g?`@${g}`:h.description,bgColor:j_e(h.agentType)??"cyan_FOR_SUBAGENTS_ONLY"}}let p=n?c.agentDefinitions.activeAgents.find((h)=>h.agentType===n):void 0,m=Bdl(c),f=t?.color;if(m||f||l)return{text:m||n||"",bgColor:Wer(eut({userOverride:f,agentDefinitionColor:p?.color})),gradient:l};if(n)return{text:n,bgColor:Wer(p?.color,"promptBorder")};return null}
+function Wer(e,t="cyan_FOR_SUBAGENTS_ONLY"){return e&&__.includes(e)?tL[e]:t}
+var fyt,KYl=void 0;
+var XFo=b(()=>{uo();w5t();ix();EVn();hte();sye();wB();Op();b2();gZ();fyt=x(et(),1)});
+export {Ger,Wer,fyt,KYl,XFo};

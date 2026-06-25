@@ -1,6 +1,19 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-var vNs,createCredentialChain=(...e)=>{let t=-1,r=Object.assign(async(o)=>{let s=await propertyProviderChain(...e)(o);if(!s.expiration&&t!==-1)s.expiration=new Date(Date.now()+t);return s},{expireAfter(o){if(o<300000)throw Error("@aws-sdk/credential-providers - createCredentialChain(...).expireAfter(ms) may not be called with a duration lower than five minutes.");return t=o,r}});return r},propertyProviderChain=(...e)=>async(t)=>{if(e.length===0)throw new vNs.ProviderError("No providers in chain",{tryNextLink:!1});let n;for(let r of e)try{return await r(t)}catch(o){if(n=o,o?.tryNextLink)continue;throw o}throw n};
-var RNs=b(()=>{vNs=M(createDefaultGlobalConfig(),1)});
-export {vNs,createCredentialChain,propertyProviderChain,RNs};
+import {b} from "../runtime.ts";
+import {rD} from "./m1322.ts";
+import {gpn,AssumeRoleCommand} from "./m1340.ts";
+import {SIr,AssumeRoleWithSAMLCommand} from "./m1341.ts";
+import {ypn,AssumeRoleWithWebIdentityCommand} from "./m1342.ts";
+import {bIr,AssumeRootCommand} from "./m1343.ts";
+import {EIr,DecodeAuthorizationMessageCommand} from "./m1344.ts";
+import {CIr,GetAccessKeyInfoCommand} from "./m1345.ts";
+import {AIr,GetCallerIdentityCommand} from "./m1346.ts";
+import {RIr,GetDelegatedAccessTokenCommand} from "./m1347.ts";
+import {vIr,GetFederationTokenCommand} from "./m1348.ts";
+import {wIr,GetSessionTokenCommand} from "./m1349.ts";
+import {kIr,GetWebIdentityTokenCommand} from "./m1350.ts";
+import {okt,STSClient} from "./m1336.ts";
+import {aIr} from "./m1315.ts";
+var i2u,STS;
+var a9s=b(()=>{rD();gpn();SIr();ypn();bIr();EIr();CIr();AIr();RIr();vIr();wIr();kIr();okt();i2u={AssumeRoleCommand:AssumeRoleCommand,AssumeRoleWithSAMLCommand:AssumeRoleWithSAMLCommand,AssumeRoleWithWebIdentityCommand:AssumeRoleWithWebIdentityCommand,AssumeRootCommand:AssumeRootCommand,DecodeAuthorizationMessageCommand:DecodeAuthorizationMessageCommand,GetAccessKeyInfoCommand:GetAccessKeyInfoCommand,GetCallerIdentityCommand:GetCallerIdentityCommand,GetDelegatedAccessTokenCommand:GetDelegatedAccessTokenCommand,GetFederationTokenCommand:GetFederationTokenCommand,GetSessionTokenCommand:GetSessionTokenCommand,GetWebIdentityTokenCommand:GetWebIdentityTokenCommand};STS=class STS extends STSClient{};aIr(i2u,STS)});
+export {i2u,STS,a9s};

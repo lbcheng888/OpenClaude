@@ -1,10 +1,8 @@
 // @ts-nocheck
+import {P_,po} from "../src/tools/5224_userPromptCount.ts";
 import {b} from "../runtime.ts";
-function isAmberSentinelEnabled(e){return e.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
-function Tp(e){return isAmberSentinelEnabled(e).replaceAll('"',"&quot;").replaceAll("'","&apos;")}
-function xnt(e,t){return t.replace(new RegExp(`</(?=${e}[>\\s/])`,"gi"),"<\\/")}
-function oWr(e){return e.replace(Nkd,(t)=>c9i[t]??t)}
-function mxe(e){return e.replace(Bkd,(t)=>Fkd[t]??t)}
-var Nkd,c9i,Bkd,Fkd;
-var QH=b(()=>{Nkd=/&(?:amp|lt|gt);/g,c9i={"&amp;":"&","&lt;":"<","&gt;":">"};Bkd=/&(?:amp|lt|gt|quot|apos);/g,Fkd={...c9i,"&quot;":'"',"&apos;":"'"}});
-export {isAmberSentinelEnabled,Tp,xnt,oWr,mxe,Nkd,c9i,Bkd,Fkd,QH};
+function kot(e){let t=[],n=[],r;for(let o of e){if(o.type==="assistant"&&o.message.id!==r&&n.length>0)t.push(n),n=[o];else n.push(o);if(o.type==="assistant")r=o.message.id}if(n.length>0)t.push(n);return t}
+function y1t(e){let t=P_(e).filter((n)=>n.type!=="progress");return kot(t)}
+function p8i(e){return y1t(e).length<2}
+var Szr=b(()=>{po()});
+export {kot,y1t,p8i,Szr};

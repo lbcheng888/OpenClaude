@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Pgl,Dgl} from "./m4763.ts";
-var MZp,CEo;
-var Ogl=b(()=>{MZp={description:"View release notes",name:"release-notes",type:"local-jsx",requires:{ink:!0},load:()=>Promise.resolve().then(() => (Pgl(),Dgl))},CEo=MZp});
-export {MZp,CEo,Ogl};
+import {Q} from "../runtime.ts";
+import {dko} from "./m4754.ts";
+var nAl=Q((krS,tAl)=>{var eAl=dko();function _am(e,t,n,r,o){for(let s=0;s<n;s++)r[o+s]=e[t+s]}function yam(e,t,n){let r=0,o=t+n;for(let s=t;s<o;s++)r+=Math.abs(e[s]);return r}function Tam(e,t,n,r,o,s){for(let i=0;i<n;i++){let a=i>=s?e[t+i-s]:0,l=e[t+i]-a;r[o+i]=l}}function Sam(e,t,n,r){let o=0;for(let s=0;s<n;s++){let i=s>=r?e[t+s-r]:0,a=e[t+s]-i;o+=Math.abs(a)}return o}function bam(e,t,n,r,o){for(let s=0;s<n;s++){let i=t>0?e[t+s-n]:0,a=e[t+s]-i;r[o+s]=a}}function Eam(e,t,n){let r=0,o=t+n;for(let s=t;s<o;s++){let i=t>0?e[s-n]:0,a=e[s]-i;r+=Math.abs(a)}return r}function Cam(e,t,n,r,o,s){for(let i=0;i<n;i++){let a=i>=s?e[t+i-s]:0,l=t>0?e[t+i-n]:0,c=e[t+i]-(a+l>>1);r[o+i]=c}}function Aam(e,t,n,r){let o=0;for(let s=0;s<n;s++){let i=s>=r?e[t+s-r]:0,a=t>0?e[t+s-n]:0,l=e[t+s]-(i+a>>1);o+=Math.abs(l)}return o}function Ram(e,t,n,r,o,s){for(let i=0;i<n;i++){let a=i>=s?e[t+i-s]:0,l=t>0?e[t+i-n]:0,c=t>0&&i>=s?e[t+i-(n+s)]:0,u=e[t+i]-eAl(a,l,c);r[o+i]=u}}function vam(e,t,n,r){let o=0;for(let s=0;s<n;s++){let i=s>=r?e[t+s-r]:0,a=t>0?e[t+s-n]:0,l=t>0&&s>=r?e[t+s-(n+r)]:0,c=e[t+s]-eAl(i,a,l);o+=Math.abs(c)}return o}var wam={0:_am,1:Tam,2:bam,3:Cam,4:Ram},kam={0:yam,1:Sam,2:Eam,3:Aam,4:vam};tAl.exports=function(e,t,n,r,o){let s;if(!("filterType"in r)||r.filterType===-1)s=[0,1,2,3,4];else if(typeof r.filterType==="number")s=[r.filterType];else throw Error("unrecognised filter types");if(r.bitDepth===16)o*=2;let i=t*o,a=0,l=0,c=Buffer.alloc((i+1)*n),u=s[0];for(let d=0;d<n;d++){if(s.length>1){let p=1/0;for(let m=0;m<s.length;m++){let f=kam[s[m]](e,l,i,o);if(f<p)u=s[m],p=f}}c[a]=u,a++,wam[u](e,l,i,c,a,o),a+=i,l+=i}return c}});
+export {nAl};

@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {QQo,eZo,tZo} from "./m661.ts";
-import {b} from "../runtime.ts";
-var nZo,Efr=()=>{let e=QQo();return[...eZo,...e].map(bYc)},bYc=({name:e,number:t,description:n,action:r,forced:o=!1,standard:s})=>{let{signals:{[e]:i}}=nZo.constants,a=i!==void 0;return{name:e,number:a?i:t,description:n,supported:a,action:r,forced:o,standard:s}};
-var rZo=b(()=>{tZo();nZo=require("os")});
-export {nZo,Efr,bYc,rZo};
+import {Q} from "../runtime.ts";
+var Uos=Q((lxf,Bos)=>{function Asu(e,t){return Object.assign(Error(`${t} ${e.command} ENOENT`),{code:"ENOENT",errno:"ENOENT",syscall:`${t} ${e.command}`,path:e.command,spawnargs:e.args})}function Rsu(e,t){return}function Fos(e,t){return null}function vsu(e,t){return null}Bos.exports={hookChildProcess:Rsu,verifyENOENT:Fos,verifyENOENTSync:vsu,notFoundError:Asu}});
+export {Uos};

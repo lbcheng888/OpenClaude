@@ -1,9 +1,7 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var xLs=()=>{};
-var kLs=()=>{};
-var HLs=()=>{};
-var ILs=()=>{};
-var DLs=()=>{};
-var PLs=b(()=>{kLs();HLs();ILs();DLs()});
-export {xLs,kLs,HLs,ILs,DLs,PLs};
+var sUs=()=>{};
+var iUs=()=>{};
+var aUs;
+var lUs=b(()=>{(function(e){e.HTTP="http",e.HTTPS="https"})(aUs||(aUs={}))});
+export {sUs,iUs,aUs,lUs};

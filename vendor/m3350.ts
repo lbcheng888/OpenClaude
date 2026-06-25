@@ -1,9 +1,9 @@
 // @ts-nocheck
-import {Bh,bC} from "../src/session/2784_uuid.ts";
-import {iy,vC} from "./m5145.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {b} from "../runtime.ts";
-function oI(e){return typeof e==="object"&&e!==null&&"type"in e&&e.type==="local_bash"}
-function _Dn(e){for(let t of Object.values(e)){if(t.status!=="running")continue;try{if(oI(t))t.shellCommand?.kill(),t.shellCommand?.cleanup();else if("abortController"in t)t.abortController?.abort();Bh(t.id,"stopped",{toolUseId:t.toolUseId,summary:t.description}),iy(t.id)}catch(n){De(n)}}}
-var PXr=b(()=>{Rn();bC();vC()});
-export {oI,_Dn,PXr};
+import {zga,jga} from "./m3349.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function K3e(){return Tat.useContext(tno)}
+function Bj(e,t,{enabled:n=!0}={}){let r=K3e();Tat.useEffect(()=>{if(!n||!r)return;if(zga(e))t()},[n,r,e,t])}
+var Tat,tno;
+var __e=b(()=>{jga();Tat=x(et(),1),tno=Tat.createContext(!0)});
+export {K3e,Bj,Tat,tno,__e};

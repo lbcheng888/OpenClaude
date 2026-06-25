@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {eFe} from "./m2054.ts";
-import {tri} from "./m2055.ts";
-import {nri} from "./m2056.ts";
-var IMr=X((OXe)=>{Object.defineProperty(OXe,"__esModule",{value:!0});OXe.baggageEntryMetadataFromString=OXe.createBaggage=void 0;var FVu=eFe(),UVu=tri(),$Vu=nri(),qVu=FVu.DiagAPI.instance();function jVu(e={}){return new UVu.BaggageImpl(new Map(Object.entries(e)))}OXe.createBaggage=jVu;function WVu(e){if(typeof e!=="string")qVu.error(`Cannot create baggage metadata from unknown type: ${typeof e}`),e="";return{__TYPE__:$Vu.baggageEntryMetadataSymbol,toString(){return e}}}OXe.baggageEntryMetadataFromString=WVu});
-export {IMr};
+import {Q} from "../runtime.ts";
+var STn=Q((Sxt)=>{Object.defineProperty(Sxt,"__esModule",{value:!0});Sxt.DiagLogLevel=void 0;var Ztd;(function(e){e[e.NONE=0]="NONE",e[e.ERROR=30]="ERROR",e[e.WARN=50]="WARN",e[e.INFO=60]="INFO",e[e.DEBUG=70]="DEBUG",e[e.VERBOSE=80]="VERBOSE",e[e.ALL=9999]="ALL"})(Ztd=Sxt.DiagLogLevel||(Sxt.DiagLogLevel={}))});
+export {STn};

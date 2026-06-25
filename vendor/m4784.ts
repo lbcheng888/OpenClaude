@@ -1,13 +1,11 @@
 // @ts-nocheck
-import {Box} from "./m2422.ts";
-import {tn,Hc} from "./m235.ts";
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function oyl(e){let t=ryl.c(10),{message:n,isTranscriptMode:r,showMessageTimestamps:o}=e,s=o===void 0?!1:o;if(!(n.timestamp&&n.type==="assistant"&&(s||r&&n.message.content.some(jem))))return null;let a,l,c;if(t[0]!==n.timestamp)l=new Date(n.timestamp).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:!0}),a=Box,c=tn(l),t[0]=n.timestamp,t[1]=a,t[2]=l,t[3]=c;else a=t[1],l=t[2],c=t[3];let u;if(t[4]!==l)u=zEo.default.createElement(Text,{dimColor:!0},l),t[4]=l,t[5]=u;else u=t[5];let d;if(t[6]!==a||t[7]!==c||t[8]!==u)d=zEo.default.createElement(a,{minWidth:c},u),t[6]=a,t[7]=c,t[8]=u,t[9]=d;else d=t[9];return d}
-function jem(e){return e.type==="text"}
-var ryl,zEo;
-var syl=b(()=>{Hc();ze();ryl=M(rt(),1),zEo=M(Te(),1)});
-export {oyl,jem,ryl,zEo,syl};
+import {Q} from "../runtime.ts";
+import {qwo} from "./m4728.ts";
+import {ako} from "./m4751.ts";
+import {xAl} from "./m4775.ts";
+import {DAl} from "./m4776.ts";
+import {UAl} from "./m4779.ts";
+import {WAl} from "./m4781.ts";
+import {KAl} from "./m4783.ts";
+var JAl=Q((MPe)=>{var zAl=qwo(),Hko=ako(),Tlm=xAl(),jAl=DAl(),Slm=UAl(),YAl=WAl();function zWt(e,t,n){if(typeof e>"u")throw Error("String required as first argument");if(typeof n>"u")n=t,t={};if(typeof n!=="function")if(!zAl())throw Error("Callback required as last argument");else t=n||{},n=null;return{opts:t,cb:n}}function blm(e){return e.slice((e.lastIndexOf(".")-1>>>0)+2).toLowerCase()}function Szn(e){switch(e){case"svg":return YAl;case"txt":case"utf8":return jAl;case"png":case"image/png":default:return Tlm}}function Elm(e){switch(e){case"svg":return YAl;case"terminal":return Slm;case"utf8":default:return jAl}}function jWt(e,t,n){if(!n.cb)return new Promise(function(r,o){try{let s=Hko.create(t,n.opts);return e(s,n.opts,function(i,a){return i?o(i):r(a)})}catch(s){o(s)}});try{let r=Hko.create(t,n.opts);return e(r,n.opts,n.cb)}catch(r){n.cb(r)}}MPe.create=Hko.create;MPe.toCanvas=KAl().toCanvas;MPe.toString=function(t,n,r){let o=zWt(t,n,r),s=o.opts?o.opts.type:void 0,i=Elm(s);return jWt(i.render,t,o)};MPe.toDataURL=function(t,n,r){let o=zWt(t,n,r),s=Szn(o.opts.type);return jWt(s.renderToDataURL,t,o)};MPe.toBuffer=function(t,n,r){let o=zWt(t,n,r),s=Szn(o.opts.type);return jWt(s.renderToBuffer,t,o)};MPe.toFile=function(t,n,r,o){if(typeof t!=="string"||!(typeof n==="string"||typeof n==="object"))throw Error("Invalid argument");if(arguments.length<3&&!zAl())throw Error("Too few arguments provided");let s=zWt(n,r,o),i=s.opts.type||blm(t),l=Szn(i).renderToFile.bind(null,t);return jWt(l,n,s)};MPe.toFileStream=function(t,n,r){if(arguments.length<2)throw Error("Too few arguments provided");let o=zWt(n,r,t.emit.bind(t,"error")),i=Szn("png").renderToFileStream.bind(null,t);jWt(i,n,o)}});
+export {JAl};

@@ -1,20 +1,8 @@
 // @ts-nocheck
-import {av,oQo,mc} from "../src/config/0645_maxBytes.ts";
-import {Nee,O0} from "../src/tools/3222_name.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {qt,Xt} from "../src/config/0228_encoding.ts";
-import {Lq,ab} from "../src/config/3178_path.ts";
-import {et,Ai} from "./m2208.ts";
 import {b} from "../runtime.ts";
-import {bt,uyt} from "./m195.ts";
-class Uq{static instance;baseline=new Map;initialized=!1;mcpClient;lastProcessedTimestamps=new Map;rightFileDiagnosticsState=new Map;static getInstance(){if(!Uq.instance)Uq.instance=new Uq;return Uq.instance}initialize(e){if(this.initialized)return;this.mcpClient=e,this.initialized=!0}async shutdown(){this.initialized=!1,this.baseline.clear(),this.rightFileDiagnosticsState.clear(),this.lastProcessedTimestamps.clear()}reset(){this.baseline.clear(),this.rightFileDiagnosticsState.clear(),this.lastProcessedTimestamps.clear()}normalizeFileUri(e){let t=["file://","_claude_fs_right:","_claude_fs_left:"],n=e;for(let r of t)if(e.startsWith(r)){n=e.slice(r.length);break}return av(n)}async ensureFileOpened(e){if(!this.initialized||!this.mcpClient||this.mcpClient.type!=="connected")return;try{await Nee("openFile",{filePath:e,preview:!1,startText:"",endText:"",selectToEndOfLine:!1,makeFrontmost:!1},this.mcpClient)}catch(t){logForDebugging(`Failed to open file in IDE via MCP: ${t}`,{level:"error"})}}async beforeFileEdited(e){if(!this.initialized||!this.mcpClient||this.mcpClient.type!=="connected")return;let t=Date.now();try{let n=await Nee("getDiagnostics",{uri:`file://${e}`},this.mcpClient),r=this.parseDiagnosticResult(n)[0];if(r){if(!oQo(this.normalizeFileUri(e),this.normalizeFileUri(r.uri))){De(new Hra(`Diagnostics file path mismatch: expected ${e}, got ${r.uri})`));return}let o=this.normalizeFileUri(e);this.baseline.set(o,r.diagnostics),this.lastProcessedTimestamps.set(o,t)}else{let o=this.normalizeFileUri(e);this.baseline.set(o,[]),this.lastProcessedTimestamps.set(o,t)}}catch(n){}}async getNewDiagnostics(){if(!this.initialized||!this.mcpClient||this.mcpClient.type!=="connected")return[];let e=[];try{let o=await Nee("getDiagnostics",{},this.mcpClient);e=this.parseDiagnosticResult(o)}catch(o){return[]}let t=e.filter((o)=>this.baseline.has(this.normalizeFileUri(o.uri))).filter((o)=>o.uri.startsWith("file://")),n=new Map;e.filter((o)=>this.baseline.has(this.normalizeFileUri(o.uri))).filter((o)=>o.uri.startsWith("_claude_fs_right:")).forEach((o)=>{n.set(this.normalizeFileUri(o.uri),o)});let r=[];for(let o of t){let s=this.normalizeFileUri(o.uri),i=this.baseline.get(s)||[],a=n.get(s),l=o;if(a){let u=this.rightFileDiagnosticsState.get(s);if(!u||!this.areDiagnosticArraysEqual(u,a.diagnostics))l=a;this.rightFileDiagnosticsState.set(s,a.diagnostics)}let c=l.diagnostics.filter((u)=>!i.some((d)=>this.areDiagnosticsEqual(u,d)));if(c.length>0)r.push({uri:o.uri,diagnostics:c});this.baseline.set(s,l.diagnostics)}return r}parseDiagnosticResult(e){if(Array.isArray(e)){let t=e.find((n)=>n.type==="text");if(t&&"text"in t)return qt(t.text)}return[]}areDiagnosticsEqual(e,t){return e.message===t.message&&e.severity===t.severity&&e.source===t.source&&e.code===t.code&&e.range.start.line===t.range.start.line&&e.range.start.character===t.range.start.character&&e.range.end.line===t.range.end.line&&e.range.end.character===t.range.end.character}areDiagnosticArraysEqual(e,t){if(e.length!==t.length)return!1;return e.every((n)=>t.some((r)=>this.areDiagnosticsEqual(n,r)))&&t.every((n)=>e.some((r)=>this.areDiagnosticsEqual(r,n)))}async handleQueryStart(e){if(!this.initialized){let t=Lq(e);if(t)this.initialize(t)}else this.reset()}static formatDiagnosticsSummary(e){let n=e.map((r)=>{let o=r.uri.split("/").pop()||r.uri,s=r.diagnostics.map((i)=>`  ${Uq.getSeveritySymbol(i.severity)} [Line ${i.range.start.line+1}:${i.range.start.character+1}] ${i.message}${i.code?` [${i.code}]`:""}${i.source?` (${i.source})`:""}`).join(`
-`);return`${o}:
-${s}`}).join(`
-
-`);if(n.length>kra)return n.slice(0,kra-12)+"\u2026[truncated]";return n}static formatDiagnosticsBlock(e){return`<new-diagnostics>The following new diagnostic issues were detected:
-
-${Uq.formatDiagnosticsSummary(e)}</new-diagnostics>`}static getSeveritySymbol(e){return{Error:et.cross,Warning:et.warning,Info:et.info,Hint:et.star}[e]||et.bullet}}
-var Hra,kra=4000,Uhe;
-var r9e=b(()=>{Ai();Rn();O0();qe();bt();mc();ab();Xt();Hra=class Hra extends uyt{};Uhe=Uq.getInstance()});
-export {Uq,Hra,kra,Uhe,r9e};
+import {xDn} from "./m3214.ts";
+import {Qla} from "./m3215.ts";
+import {kca} from "../src/computer-use/3222_apps.ts";
+import {DQr} from "../src/tools/3221_type.ts";
+var ait=b(()=>{xDn();Qla();kca();DQr()});
+export {ait};

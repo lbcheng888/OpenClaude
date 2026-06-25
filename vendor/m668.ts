@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {isBundledSkillsDisabled,M7e} from "./m667.ts";
-import {b,M} from "../runtime.ts";
-var AZo,DYc=5000,hZo=(e,t="SIGTERM",n={})=>{let r=e(t);return PYc(e,t,n,r),r},PYc=(e,t,n,r)=>{if(!OYc(t,n,r))return;let o=MYc(n),s=setTimeout(()=>{e("SIGKILL")},o);if(s.unref)s.unref()},OYc=(e,{forceKillAfterTimeout:t},n)=>LYc(e)&&t!==!1&&n,LYc=(e)=>e===AZo.default.constants.signals.SIGTERM||typeof e==="string"&&e.toUpperCase()==="SIGTERM",MYc=({forceKillAfterTimeout:e=!0})=>{if(e===!0)return DYc;if(!Number.isFinite(e)||e<0)throw TypeError(`Expected the \`forceKillAfterTimeout\` option to be a non-negative integer, got \`${e}\` (${typeof e})`);return e},gZo=(e,t)=>{if(e.kill())t.isCanceled=!0},NYc=(e,t,n)=>{e.kill(t),n(Object.assign(Error("Timed out"),{timedOut:!0,signal:t}))},_Zo=(e,{timeout:t,killSignal:n="SIGTERM"},r)=>{if(t===0||t===void 0)return r;let o,s=new Promise((a,l)=>{o=setTimeout(()=>{NYc(e,n,l)},t)}),i=r.finally(()=>{clearTimeout(o)});return Promise.race([s,i])},yZo=({timeout:e})=>{if(e!==void 0&&(!Number.isFinite(e)||e<0))throw TypeError(`Expected the \`timeout\` option to be a non-negative integer, got \`${e}\` (${typeof e})`)},TZo=async(e,{cleanup:t,detached:n},r)=>{if(!t||n)return r;let o=isBundledSkillsDisabled(()=>{e.kill()});return r.finally(()=>{o()})};
-var SZo=b(()=>{M7e();AZo=M(require("os"))});
-export {AZo,DYc,hZo,PYc,OYc,LYc,MYc,gZo,NYc,_Zo,yZo,TZo,SZo};
+import {Yos,Xos,Qos} from "./m667.ts";
+import {b} from "../runtime.ts";
+var Zos,Qyr=()=>{let e=Yos();return[...Xos,...e].map(Bsu)},Bsu=({name:e,number:t,description:n,action:r,forced:o=!1,standard:s})=>{let{signals:{[e]:i}}=Zos.constants,a=i!==void 0;return{name:e,number:a?i:t,description:n,supported:a,action:r,forced:o,standard:s}};
+var ess=b(()=>{Qos();Zos=require("os")});
+export {Zos,Qyr,Bsu,ess};

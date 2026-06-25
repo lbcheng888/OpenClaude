@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,sws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var GRs,CreateInferenceProfileCommand;
-var Ibr=b(()=>{ri();wi();xi();GRs=M(yo(),1);CreateInferenceProfileCommand=class CreateInferenceProfileCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[GRs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateInferenceProfile",{}).n("BedrockClient","CreateInferenceProfileCommand").sc(sws).build(){}});
-export {GRs,CreateInferenceProfileCommand,Ibr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,j0s} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var ODs,CreateCustomModelDeploymentCommand;
+var twr=b(()=>{$s();ai();ci();ODs=x(yo(),1);CreateCustomModelDeploymentCommand=class CreateCustomModelDeploymentCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[ODs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateCustomModelDeployment",{}).n("BedrockClient","CreateCustomModelDeploymentCommand").sc(j0s).build(){}});
+export {ODs,CreateCustomModelDeploymentCommand,twr};

@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EC} from "./m3064.ts";
-import {sYi} from "./m3086.ts";
-import {uYi} from "./m3088.ts";
-import {pYi} from "./m3089.ts";
-var fYi=X((Sjh,mYi)=>{var jBd=EC().fromPromise,s9=sYi();s9.outputJson=jBd(uYi());s9.outputJsonSync=pYi();s9.outputJSON=s9.outputJson;s9.outputJSONSync=s9.outputJsonSync;s9.writeJSON=s9.writeJson;s9.writeJSONSync=s9.writeJsonSync;s9.readJSON=s9.readJson;s9.readJSONSync=s9.readJsonSync;mYi.exports=s9});
-export {fYi};
+import {Q} from "../runtime.ts";
+import {oT} from "./m1469.ts";
+import {gHe} from "./m3079.ts";
+var wta=Q((eZg,vta)=>{var THe=require("path"),TNt=oT(),G5d=gHe().pathExists;function V5d(e,t,n){if(THe.isAbsolute(e))return TNt.lstat(e,(r)=>{if(r)return r.message=r.message.replace("lstat","ensureSymlink"),n(r);return n(null,{toCwd:e,toDst:e})});else{let r=THe.dirname(t),o=THe.join(r,e);return G5d(o,(s,i)=>{if(s)return n(s);if(i)return n(null,{toCwd:o,toDst:e});else return TNt.lstat(e,(a)=>{if(a)return a.message=a.message.replace("lstat","ensureSymlink"),n(a);return n(null,{toCwd:e,toDst:THe.relative(r,e)})})})}}function K5d(e,t){let n;if(THe.isAbsolute(e)){if(n=TNt.existsSync(e),!n)throw Error("absolute srcpath does not exist");return{toCwd:e,toDst:e}}else{let r=THe.dirname(t),o=THe.join(r,e);if(n=TNt.existsSync(o),n)return{toCwd:o,toDst:e};else{if(n=TNt.existsSync(e),!n)throw Error("relative srcpath does not exist");return{toCwd:e,toDst:THe.relative(r,e)}}}}vta.exports={symlinkPaths:V5d,symlinkPathsSync:K5d}});
+export {wta};

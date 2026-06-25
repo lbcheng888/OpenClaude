@@ -1,6 +1,11 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {EKe} from "./m819.ts";
-var hHs,zGf,YGf,JGf,XGf,QGf,ZGf,eVf,tVf,nVf,rVf,gHs,_Hs,oVf,sVf,yHs,iVf,aVf,lVf,cVf,L1e,zEr,uVf,THs,dVf,pVf,mVf,fVf,AVf,hVf,gVf,_Vf,yVf;
-var mln=b(()=>{hHs=M(EKe(),1),{__extends:zGf,__assign:YGf,__rest:JGf,__decorate:XGf,__param:QGf,__esDecorate:ZGf,__runInitializers:eVf,__propKey:tVf,__setFunctionName:nVf,__metadata:rVf,__awaiter:gHs,__generator:_Hs,__exportStar:oVf,__createBinding:sVf,__values:yHs,__read:iVf,__spread:aVf,__spreadArrays:lVf,__spreadArray:cVf,__await:L1e,__asyncGenerator:zEr,__asyncDelegator:uVf,__asyncValues:THs,__makeTemplateObject:dVf,__importStar:pVf,__importDefault:mVf,__classPrivateFieldGet:fVf,__classPrivateFieldSet:AVf,__classPrivateFieldIn:hVf,__addDisposableResource:gVf,__disposeResources:_Vf,__rewriteRelativeImportExtension:yVf}=hHs.default});
-export {hHs,zGf,YGf,JGf,XGf,QGf,ZGf,eVf,tVf,nVf,rVf,gHs,_Hs,oVf,sVf,yHs,iVf,aVf,lVf,cVf,L1e,zEr,uVf,THs,dVf,pVf,mVf,fVf,AVf,hVf,gVf,_Vf,yVf,mln};
+import {b} from "../runtime.ts";
+function ZOs(e){let{signer:t,signer:n}=e,r=Object.assign(e,{eventSigner:t,messageSigner:n}),o=r.eventStreamPayloadHandlerProvider(r);return Object.assign(r,{eventStreamPayloadHandler:o})}
+var eLs=()=>{};
+var tLs=()=>{};
+var nLs=()=>{};
+class wNe{method;protocol;hostname;port;path;query;headers;username;password;fragment;body;constructor(e){this.method=e.method||"GET",this.hostname=e.hostname||"localhost",this.port=e.port,this.query=e.query||{},this.headers=e.headers||{},this.body=e.body,this.protocol=e.protocol?e.protocol.slice(-1)!==":"?`${e.protocol}:`:e.protocol:"https:",this.path=e.path?e.path.charAt(0)!=="/"?`/${e.path}`:e.path:"/",this.username=e.username,this.password=e.password,this.fragment=e.fragment}static clone(e){let t=new wNe({...e,headers:{...e.headers}});if(t.query)t.query=gMu(t.query);return t}static isInstance(e){if(!e)return!1;let t=e;return"method"in t&&"protocol"in t&&"hostname"in t&&"path"in t&&typeof t.query==="object"&&typeof t.headers==="object"}clone(){return wNe.clone(this)}}
+function gMu(e){return Object.keys(e).reduce((t,n)=>{let r=e[n];return{...t,[n]:Array.isArray(r)?[...r]:r}},{})}
+var rLs=()=>{};
+var Tkr=b(()=>{eLs();tLs();nLs();rLs()});
+export {ZOs,eLs,tLs,nLs,wNe,gMu,rLs,Tkr};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {iun} from "./m1390.ts";
-import {E2s} from "./m1417.ts";
-import {C2s} from "./m1418.ts";
-import {x2s} from "./m1420.ts";
-import {Awr} from "./m1392.ts";
-var k2s=()=>{};
-var H2s=b(()=>{iun();E2s();C2s();x2s();k2s();Awr()});
-export {k2s,H2s};
+import {b,x} from "../runtime.ts";
+import {vy} from "./m1381.ts";
+import {SA,cp} from "./m1383.ts";
+import {IR,zqs} from "./m1398.ts";
+import {yo} from "./m892.ts";
+import {Rd} from "./m1373.ts";
+var g6s,x0r;
+var D0r=b(()=>{vy();SA();IR();g6s=x(yo(),1);x0r=class x0r extends Rd.classBuilder().ep(cp).m(function(e,t,n,r){return[g6s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","UpdateIdentityPool",{}).n("CognitoIdentityClient","UpdateIdentityPoolCommand").sc(zqs).build(){}});
+export {g6s,x0r,D0r};

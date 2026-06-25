@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {Ry} from "./m1376.ts";
-import {shouldUsePowerShellTool,Kp} from "./m1378.ts";
-import {vw,PUs} from "./m1393.ts";
-import {yo} from "./m887.ts";
-import {Jd} from "./m1368.ts";
-var n2s,bwr;
-var Ewr=b(()=>{Ry();shouldUsePowerShellTool();vw();n2s=M(yo(),1);bwr=class bwr extends Jd.classBuilder().ep(Kp).m(function(e,t,n,r){return[n2s.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AWSCognitoIdentityService","DescribeIdentity",{}).n("CognitoIdentityClient","DescribeIdentityCommand").sc(PUs).build(){}});
-export {n2s,bwr,Ewr};
+import {b} from "../runtime.ts";
+import {WIr,aF} from "./m1396.ts";
+var Vpn,Kpn,zpn,jpn,Ypn,Jpn,Xpn,Qpn,Zpn,emn,tmn;
+var GIr=b(()=>{WIr();Vpn=class Vpn extends aF{name="InternalErrorException";$fault="server";constructor(e){super({name:"InternalErrorException",$fault:"server",...e});Object.setPrototypeOf(this,Vpn.prototype)}};Kpn=class Kpn extends aF{name="InvalidParameterException";$fault="client";constructor(e){super({name:"InvalidParameterException",$fault:"client",...e});Object.setPrototypeOf(this,Kpn.prototype)}};zpn=class zpn extends aF{name="LimitExceededException";$fault="client";constructor(e){super({name:"LimitExceededException",$fault:"client",...e});Object.setPrototypeOf(this,zpn.prototype)}};jpn=class jpn extends aF{name="NotAuthorizedException";$fault="client";constructor(e){super({name:"NotAuthorizedException",$fault:"client",...e});Object.setPrototypeOf(this,jpn.prototype)}};Ypn=class Ypn extends aF{name="ResourceConflictException";$fault="client";constructor(e){super({name:"ResourceConflictException",$fault:"client",...e});Object.setPrototypeOf(this,Ypn.prototype)}};Jpn=class Jpn extends aF{name="TooManyRequestsException";$fault="client";constructor(e){super({name:"TooManyRequestsException",$fault:"client",...e});Object.setPrototypeOf(this,Jpn.prototype)}};Xpn=class Xpn extends aF{name="ResourceNotFoundException";$fault="client";constructor(e){super({name:"ResourceNotFoundException",$fault:"client",...e});Object.setPrototypeOf(this,Xpn.prototype)}};Qpn=class Qpn extends aF{name="ExternalServiceException";$fault="client";constructor(e){super({name:"ExternalServiceException",$fault:"client",...e});Object.setPrototypeOf(this,Qpn.prototype)}};Zpn=class Zpn extends aF{name="InvalidIdentityPoolConfigurationException";$fault="client";constructor(e){super({name:"InvalidIdentityPoolConfigurationException",$fault:"client",...e});Object.setPrototypeOf(this,Zpn.prototype)}};emn=class emn extends aF{name="DeveloperUserAlreadyRegisteredException";$fault="client";constructor(e){super({name:"DeveloperUserAlreadyRegisteredException",$fault:"client",...e});Object.setPrototypeOf(this,emn.prototype)}};tmn=class tmn extends aF{name="ConcurrentModificationException";$fault="client";constructor(e){super({name:"ConcurrentModificationException",$fault:"client",...e});Object.setPrototypeOf(this,tmn.prototype)}}});
+export {Vpn,Kpn,zpn,jpn,Ypn,Jpn,Xpn,Qpn,Zpn,emn,tmn,GIr};

@@ -1,17 +1,9 @@
 // @ts-nocheck
-import {VZe,mt,XR,configProtoStore} from "./m2458.ts";
-import {qu,bk} from "./m2291.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function ug(e,t){let n=mIi.c(8),r=t===void 0?!0:t,s=bet.useContext(VZe)?.setState,i,a;if(n[0]!==r||n[1]!==e||n[2]!==s)i=()=>{if(!r||!s)return;return s((u)=>{if(u.activeOverlays.has(e))return u;let d=new Set(u.activeOverlays);return d.add(e),{...u,activeOverlays:d}}),()=>{s((u)=>{if(!u.activeOverlays.has(e))return u;let d=new Set(u.activeOverlays);return d.delete(e),{...u,activeOverlays:d}})}},a=[e,r,s],n[0]=r,n[1]=e,n[2]=s,n[3]=i,n[4]=a;else i=n[3],a=n[4];bet.useEffect(i,a);let l,c;if(n[5]!==r)l=()=>{if(!r)return;return Wfd},c=[r],n[5]=r,n[6]=l,n[7]=c;else l=n[6],c=n[7];bet.useLayoutEffect(l,c)}
-function Wfd(){return qu.get(process.stdout)?.invalidatePrevFrame()}
-function fIi(){return mt(Gfd)}
-function Gfd(e){return e.activeOverlays.size>0}
-function Pwe(){return mt(Vfd)}
-function Vfd(e){for(let t of e.activeOverlays)if(!qfd.has(t))return!0;return!1}
-function HEn(){return XR(Kfd)??!1}
-function Kfd(e){for(let t of e.activeOverlays)if(jfd.has(t))return!0;return!1}
-var mIi,bet,qfd,jfd;
-var ZR=b(()=>{bk();configProtoStore();mIi=M(rt(),1),bet=M(Te(),1),qfd=new Set(["autocomplete"]),jfd=new Set(["history-search"])});
-export {ug,Wfd,fIi,Gfd,Pwe,Vfd,HEn,Kfd,mIi,bet,qfd,jfd,ZR};
+import {b} from "../runtime.ts";
+function TMi(e){let t=XAd[e.name],n={upArrow:t==="upArrow",downArrow:t==="downArrow",leftArrow:t==="leftArrow",rightArrow:t==="rightArrow",pageDown:t==="pageDown",pageUp:t==="pageUp",wheelUp:!1,wheelDown:!1,home:t==="home",end:t==="end",return:t==="return",escape:t==="escape",tab:t==="tab",backspace:t==="backspace",delete:t==="delete",ctrl:e.ctrl,shift:e.shift,super:e.superKey,meta:e.meta};return{input:e.name==="enter"?`
+`:[...e.key].length===1?e.key:"",key:n}}
+function SMi(e,t){let n="";if(t.escape)n="escape";else if(t.return)n="return";else if(t.tab)n="tab";else if(t.backspace)n="backspace";else if(t.delete)n="delete";else if(t.upArrow)n="up";else if(t.downArrow)n="down";else if(t.leftArrow)n="left";else if(t.rightArrow)n="right";else if(t.pageUp)n="pageup";else if(t.pageDown)n="pagedown";else if(t.wheelUp)n="wheelup";else if(t.wheelDown)n="wheeldown";else if(t.home)n="home";else if(t.end)n="end";else if(e===`
+`)n="enter";return{name:n,key:e,ctrl:t.ctrl,shift:t.shift,meta:t.meta,superKey:t.super}}
+var XAd;
+var B5r=b(()=>{XAd={up:"upArrow",down:"downArrow",left:"leftArrow",right:"rightArrow",pagedown:"pageDown",pageup:"pageUp",home:"home",end:"end",return:"return",escape:"escape",tab:"tab",backspace:"backspace",delete:"delete"}});
+export {TMi,SMi,XAd,B5r};

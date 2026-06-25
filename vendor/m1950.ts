@@ -1,12 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {CQs,qPr} from "./m1944.ts";
-import {Zxt} from "./m1942.ts";
-import {xQs} from "./m1948.ts";
-import {isCompletedWithKeepalive,y2} from "../src/api/0194_baseURL.ts";
-import {PQs,DQs} from "../src/core/1950_fromNodeProviderChain.ts";
-import {WJe} from "./m1946.ts";
-import {mi} from "./m135.ts";
-var O6u="aws-external-anthropic",AnthropicAws;
-var WPr=b(()=>{CQs();Zxt();xQs();isCompletedWithKeepalive();isCompletedWithKeepalive();PQs();AnthropicAws=class AnthropicAws extends y2{constructor({awsRegion:e,baseURL:t,apiKey:n,awsAccessKey:r=null,awsSecretAccessKey:o=null,awsSessionToken:s=null,awsProfile:i,providerChainResolver:a=null,workspaceId:l,skipAuth:c=!1,...u}={}){let d=e??WJe("AWS_REGION")??WJe("AWS_DEFAULT_REGION"),p=t??WJe("ANTHROPIC_AWS_BASE_URL")??(d?`https://aws-external-anthropic.${d}.api.aws`:void 0);if(!p&&!c)throw new mi("No AWS region or base URL found. Set `awsRegion` in the constructor, the `AWS_REGION` / `AWS_DEFAULT_REGION` environment variable, or provide a `baseURL` / `ANTHROPIC_AWS_BASE_URL` environment variable.");let m=n!=null;if(r!=null!==(o!=null))throw new mi("`awsAccessKey` and `awsSecretAccessKey` must be provided together. You provided only one.");let A=r!=null&&o!=null,h=i!=null,g;if(m)g=n;else if(!A&&!h)g=WJe("ANTHROPIC_AWS_API_KEY")??void 0;let _=l??WJe("ANTHROPIC_AWS_WORKSPACE_ID");if(!_&&!c)throw new mi("No workspace ID found. Set `workspaceId` in the constructor or the `ANTHROPIC_AWS_WORKSPACE_ID` environment variable.");super({apiKey:g,baseURL:p,...u,defaultHeaders:qPr([{"anthropic-workspace-id":_},u.defaultHeaders])});this.skipAuth=!1,this.awsRegion=d,this.awsAccessKey=r,this.awsSecretAccessKey=o,this.awsSessionToken=s,this.awsProfile=i??null,this.providerChainResolver=a,this.workspaceId=_,this.skipAuth=c,this._useSigV4=g==null}async authHeaders(e){if(this.skipAuth)return;if(!this._useSigV4)return super.authHeaders(e);return}validateHeaders(){}async prepareRequest(e,{url:t,options:n}){if(this.skipAuth||!this._useSigV4)return;let r=this.awsRegion;if(!r)throw new mi("No AWS region found. Set `awsRegion` in the constructor or the `AWS_REGION` / `AWS_DEFAULT_REGION` environment variable.");let o=await DQs(e,{url:t,regionName:r,serviceName:O6u,awsAccessKey:this.awsAccessKey,awsSecretAccessKey:this.awsSecretAccessKey,awsSessionToken:this.awsSessionToken,awsProfile:this.awsProfile,providerChainResolver:this.providerChainResolver});e.headers=qPr([o,e.headers]).values}}});
-export {O6u,AnthropicAws,WPr};
+import {v0t} from "./m1947.ts";
+var Soi=b(()=>{v0t()});
+export {Soi};

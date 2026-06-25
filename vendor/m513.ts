@@ -1,6 +1,5 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {K7o} from "./m512.ts";
-var z7o,ten;
-var hpr=b(()=>{z7o=M(K7o(),1),ten=z7o.default});
-export {z7o,ten,hpr};
+import {Q} from "../runtime.ts";
+import {EAt} from "./m505.ts";
+var Dnn=Q((XCf,HQo)=>{var j8c=Function.prototype.call,Y8c=Object.prototype.hasOwnProperty,J8c=EAt();HQo.exports=J8c.call(j8c,Y8c)});
+export {Dnn};

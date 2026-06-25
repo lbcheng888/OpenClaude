@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {$Hr,DQ} from "./m1662.ts";
+import {jPr} from "./m1654.ts";
 import {b} from "../runtime.ts";
-function aGs(e){return $Hr(e)}
-var lGs=b(()=>{DQ()});
-export {aGs,lGs};
+import {kQ} from "./m1667.ts";
+function VYs(){return jPr()}
+var KYs=b(()=>{kQ()});
+export {VYs,KYs};

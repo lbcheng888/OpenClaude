@@ -1,11 +1,9 @@
 // @ts-nocheck
-import {zon} from "./m922.ts";
-import {U_s,F_s} from "./m977.ts";
-import {b,M} from "../runtime.ts";
-import {Jon} from "./m924.ts";
-import {r0} from "./m751.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-import {I2} from "./m600.ts";
-var UTr,ZKe,$_s,OCt=!1,$Tr=async({ssoStartUrl:e,ssoSession:t,ssoAccountId:n,ssoRegion:r,ssoRoleName:o,ssoClient:s,clientConfig:i,parentClientConfig:a,profile:l,filepath:c,configFilepath:u,ignoreCache:d,logger:p})=>{let m,f="To refresh this SSO session run aws sso login with the corresponding profile.";if(t)try{let I=await zon({profile:l,filepath:c,configFilepath:u,ignoreCache:d})();m={accessToken:I.token,expiresAt:new Date(I.expiration).toISOString()}}catch(I){throw new ZKe.CredentialsProviderError(I.message,{tryNextLink:OCt,logger:p})}else try{m=await $_s.getSSOTokenFromFile(e)}catch(I){throw new ZKe.CredentialsProviderError("The SSO session associated with this profile is invalid. To refresh this SSO session run aws sso login with the corresponding profile.",{tryNextLink:OCt,logger:p})}if(new Date(m.expiresAt).getTime()-Date.now()<=0)throw new ZKe.CredentialsProviderError("The SSO session associated with this profile has expired. To refresh this SSO session run aws sso login with the corresponding profile.",{tryNextLink:OCt,logger:p});let{accessToken:A}=m,{SSOClient:h,GetRoleCredentialsCommand:g}=await Promise.resolve().then(() => (U_s(),F_s)),_=s||new h(Object.assign({},i??{},{logger:i?.logger??a?.logger,region:i?.region??r,userAgentAppId:i?.userAgentAppId??a?.userAgentAppId})),y;try{y=await _.send(new g({accountId:n,roleName:o,accessToken:A}))}catch(I){throw new ZKe.CredentialsProviderError(I,{tryNextLink:OCt,logger:p})}let{roleCredentials:{accessKeyId:T,secretAccessKey:S,sessionToken:v,expiration:R,credentialScope:k,accountId:x}={}}=y;if(!T||!S||!v||!R)throw new ZKe.CredentialsProviderError("SSO returns an invalid temporary credential.",{tryNextLink:OCt,logger:p});let H={accessKeyId:T,secretAccessKey:S,sessionToken:v,expiration:new Date(R),...k&&{credentialScope:k},...x&&{accountId:x}};if(t)UTr.setCredentialFeature(H,"CREDENTIALS_SSO","s");else UTr.setCredentialFeature(H,"CREDENTIALS_SSO_LEGACY","u");return H};
-var q_s=b(()=>{Jon();UTr=M(r0(),1),ZKe=M(createDefaultGlobalConfig(),1),$_s=M(I2(),1)});
-export {UTr,ZKe,$_s,OCt,$Tr,q_s};
+import {b,x} from "../runtime.ts";
+import {eln,swt} from "./m973.ts";
+import {nwt,SSOClient} from "./m968.ts";
+import {Zu} from "./m855.ts";
+var vAs=()=>{};
+var wAs,T6f;
+var kAs=b(()=>{eln();nwt();wAs=x(Zu(),1),T6f=wAs.createPaginator(SSOClient,swt,"nextToken","nextToken","maxResults")});
+export {vAs,wAs,T6f,kAs};

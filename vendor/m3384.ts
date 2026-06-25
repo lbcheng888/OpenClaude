@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Cda=X((YDn)=>{Object.defineProperty(YDn,"__esModule",{value:!0});YDn.ViewRegistry=void 0;class Eda{_registeredViews=[];addView(e){this._registeredViews.push(e)}findViews(e,t){return this._registeredViews.filter((r)=>this._matchInstrument(r.instrumentSelector,e)&&this._matchMeter(r.meterSelector,t))}_matchInstrument(e,t){return(e.getType()===void 0||t.type===e.getType())&&e.getNameFilter().match(t.name)&&e.getUnitFilter().match(t.unit)}_matchMeter(e,t){return e.getNameFilter().match(t.name)&&(t.version===void 0||e.getVersionFilter().match(t.version))&&(t.schemaUrl===void 0||e.getSchemaUrlFilter().match(t.schemaUrl))}}YDn.ViewRegistry=Eda});
-export {Cda};
+import {Q} from "../runtime.ts";
+var vLn=Q((Hat)=>{Object.defineProperty(Hat,"__esModule",{value:!0});Hat.nextGreaterSquare=Hat.ldexp=void 0;function Vtp(e,t){if(e===0||e===Number.POSITIVE_INFINITY||e===Number.NEGATIVE_INFINITY||Number.isNaN(e))return e;return e*Math.pow(2,t)}Hat.ldexp=Vtp;function Ktp(e){return e--,e|=e>>1,e|=e>>2,e|=e>>4,e|=e>>8,e|=e>>16,e++,e}Hat.nextGreaterSquare=Ktp});
+export {vLn};

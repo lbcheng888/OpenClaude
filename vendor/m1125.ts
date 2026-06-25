@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,tRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var $xs,ListAutomatedReasoningPolicyTestResultsCommand;
-var Oan=b(()=>{ri();wi();xi();$xs=M(yo(),1);ListAutomatedReasoningPolicyTestResultsCommand=class ListAutomatedReasoningPolicyTestResultsCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[$xs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListAutomatedReasoningPolicyTestResults",{}).n("BedrockClient","ListAutomatedReasoningPolicyTestResultsCommand").sc(tRs).build(){}});
-export {$xs,ListAutomatedReasoningPolicyTestResultsCommand,Oan};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Gxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var IPs,GetProvisionedModelThroughputCommand;
+var Xwr=b(()=>{$s();ai();ci();IPs=x(yo(),1);GetProvisionedModelThroughputCommand=class GetProvisionedModelThroughputCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[IPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetProvisionedModelThroughput",{}).n("BedrockClient","GetProvisionedModelThroughputCommand").sc(Gxs).build(){}});
+export {IPs,GetProvisionedModelThroughputCommand,Xwr};

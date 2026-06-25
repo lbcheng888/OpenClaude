@@ -1,9 +1,17 @@
 // @ts-nocheck
-import {Cl,myn,Ri} from "../src/tools/2227_userFacingName.ts";
-import {b,M} from "../runtime.ts";
-import {j$,BRIEF_TOOL_NAME} from "./m2692.ts";
-import {rt} from "./m2255.ts";
-function QBa(e,t,n){let r=XBa.c(7),o;if(r[0]!==n.toolUseByToolUseID||r[1]!==e||r[2]!==t){e:{let s=n.toolUseByToolUseID.get(e);if(!s){o=null;break e}let i=Cl(t,s.name);if(i){o={tool:i,toolUse:s};break e}if(!qCp.has(s.name)){o=null;break e}let a=Cl(myn()??[],s.name);if(!a){o=null;break e}let l;if(r[4]!==a||r[5]!==s)l={tool:a,toolUse:s},r[4]=a,r[5]=s,r[6]=l;else l=r[6];o=l}r[0]=n.toolUseByToolUseID,r[1]=e,r[2]=t,r[3]=o}else o=r[3];return o}
-var XBa,qCp;
-var ZBa=b(()=>{Ri();j$();XBa=M(rt(),1),qCp=new Set([BRIEF_TOOL_NAME])});
-export {QBa,XBa,qCp,ZBa};
+import {ft,b,x} from "../runtime.ts";
+import {z3t,Ipo} from "./m4020.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {Dpo,xpo} from "./m4021.ts";
+import {je} from "./m2462.ts";
+import {oe} from "./m2275.ts";
+var Ppo={};
+ft(Ppo,{callNonInteractive:()=>callNonInteractive,call:()=>Exp});
+var c3n,l3n="/extra-usage is now /usage-credits",Exp=async(e,t)=>{let{call:n}=await Promise.resolve().then(() => (z3t(),Ipo)),o=await n((s,i)=>e(s?`${l3n}
+
+${s}`:l3n,i),t);if(o==null)return o;return c3n.jsxs(Box,{flexDirection:"column",children:[c3n.jsx(Text,{dimColor:!0,children:l3n}),o]})},callNonInteractive=async()=>{let{call:e}=await Promise.resolve().then(() => (Dpo(),xpo)),t=await e();return{type:"text",value:`${l3n}
+
+${t.value}`}};
+var Opo=b(()=>{je();c3n=x(oe(),1)});
+export {Ppo,c3n,l3n,Exp,callNonInteractive,Opo};

@@ -1,12 +1,27 @@
 // @ts-nocheck
-import {sRr,oRr} from "./m1422.ts";
-import {Wcn} from "./m1352.ts";
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-function bun(e){return async(t)=>{e.logger?.debug("@aws-sdk/credential-provider-cognito-identity - fromCognitoIdentity");let{GetCredentialsForIdentityCommand:n,CognitoIdentityClient:r}=await Promise.resolve().then(() => (sRr(),oRr)),o=(c)=>e.clientConfig?.[c]??e.parentClientConfig?.[c]??t?.callerClientConfig?.[c],{Credentials:{AccessKeyId:s=TPu(e.logger),Expiration:i,SecretKey:a=bPu(e.logger),SessionToken:l}=SPu(e.logger)}=await(e.client??new r(Object.assign({},e.clientConfig??{},{region:o("region"),profile:o("profile"),userAgentAppId:o("userAgentAppId")}))).send(new n({CustomRoleArn:e.customRoleArn,IdentityId:e.identityId,Logins:e.logins?await Wcn(e.logins):void 0}));return{identityId:e.identityId,accessKeyId:s,secretAccessKey:a,sessionToken:l,expiration:i}}}
-function TPu(e){throw new Sun.CredentialsProviderError("Response from Amazon Cognito contained no access key ID",{logger:e})}
-function SPu(e){throw new Sun.CredentialsProviderError("Response from Amazon Cognito contained no credentials",{logger:e})}
-function bPu(e){throw new Sun.CredentialsProviderError("Response from Amazon Cognito contained no secret key",{logger:e})}
-var Sun;
-var iRr=b(()=>{Sun=M(createDefaultGlobalConfig(),1)});
-export {bun,TPu,SPu,bPu,Sun,iRr};
+import {b} from "../runtime.ts";
+import {KIr} from "./m1399.ts";
+import {jIr} from "./m1400.ts";
+import {JIr} from "./m1401.ts";
+import {QIr} from "./m1402.ts";
+import {e0r} from "./m1403.ts";
+import {t0r} from "./m1404.ts";
+import {n0r} from "./m1405.ts";
+import {o0r} from "./m1406.ts";
+import {i0r} from "./m1407.ts";
+import {l0r} from "./m1408.ts";
+import {u0r} from "./m1409.ts";
+import {p0r} from "./m1410.ts";
+import {omn} from "./m1411.ts";
+import {f0r} from "./m1412.ts";
+import {g0r} from "./m1413.ts";
+import {y0r} from "./m1414.ts";
+import {S0r} from "./m1415.ts";
+import {E0r} from "./m1416.ts";
+import {A0r} from "./m1417.ts";
+import {v0r} from "./m1418.ts";
+import {k0r} from "./m1419.ts";
+import {I0r} from "./m1420.ts";
+import {D0r} from "./m1421.ts";
+var T6s=b(()=>{KIr();jIr();JIr();QIr();e0r();t0r();n0r();o0r();i0r();l0r();u0r();p0r();omn();f0r();g0r();y0r();S0r();E0r();A0r();v0r();k0r();I0r();D0r()});
+export {T6s};

@@ -1,13 +1,29 @@
 // @ts-nocheck
-import {Box} from "./m2422.ts";
-import {cR,gJ} from "./m4537.ts";
-import {HE,JW} from "./m3976.ts";
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Jdl(e){let t=Ydl.c(10),{currentWorkflowInstallStep:n,secretExists:r,useExistingSecret:o,secretName:s,skipWorkflow:i,selectedWorkflows:a}=e,l=i===void 0?!1:i,c;if(t[0]!==r||t[1]!==s||t[2]!==a||t[3]!==l||t[4]!==o)c=l?["Getting repository information",r&&o?"Using existing API key secret":`Setting up ${s} secret`]:["Getting repository information","Creating branch",a.length>1?"Creating workflow files":"Creating workflow file",r&&o?"Using existing API key secret":`Setting up ${s} secret`,"Opening pull request page"],t[0]=r,t[1]=s,t[2]=a,t[3]=l,t[4]=o,t[5]=c;else c=t[5];let u=c,d;if(t[6]===Symbol.for("react.memo_cache_sentinel"))d=SDe.default.createElement(Box,{marginBottom:1},SDe.default.createElement(cR,{subtitle:"Create GitHub Actions workflow"},"Install GitHub App")),t[6]=d;else d=t[6];let p;if(t[7]!==n||t[8]!==u)p=SDe.default.createElement(SDe.default.Fragment,null,SDe.default.createElement(HE,null,d,u.map((m,f)=>{let A="pending";if(f<n)A="completed";else if(f===n)A="in-progress";return SDe.default.createElement(Box,{key:f},SDe.default.createElement(Text,{color:A==="completed"?"success":A==="in-progress"?"warning":void 0},A==="completed"?"\u2713 ":"",m,A==="in-progress"?"\u2026":""))}))),t[7]=n,t[8]=u,t[9]=p;else p=t[9];return p}
-var Ydl,SDe;
-var Xdl=b(()=>{gJ();JW();ze();Ydl=M(rt(),1),SDe=M(Te(),1)});
-export {Jdl,Ydl,SDe,Xdl};
+import {ft,b,x} from "../runtime.ts";
+import {or,dl,eC,dn} from "../src/config/0137_namespace.ts";
+import {Js,rT} from "./m1294.ts";
+import {cn,Ct} from "./m197.ts";
+import {GG,d9} from "./m4632.ts";
+import {tyl,ryl} from "./m4630.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {Hc,OE} from "./m3855.ts";
+import {X_l,Q_l} from "../src/tui/4630_onSelect.ts";
+import {Sx,fne} from "./m4618.ts";
+import {clearMemoryFileCaches,getMemoryFiles,ZR} from "../src/config/2729_stripHtmlComments.ts";
+import {je} from "./m2462.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+var uyl={};
+ft(uyl,{call:()=>Onm});
+function Pnm({onDone:e}){let t=async(r)=>{try{if(r.includes(or()))await Js().mkdir(or());try{await lyl.writeFile(r,"",{encoding:"utf8",flag:"wx"})}catch(c){if(cn(c)!=="EEXIST")throw c}await GG(r);let o="default",s="";if(process.env.VISUAL)o="$VISUAL",s=process.env.VISUAL;else if(process.env.EDITOR)o="$EDITOR",s=process.env.EDITOR;let i=o!=="default"?`Using ${o}="${s}".`:"",a=i?`> ${i} To change editor, set $EDITOR or $VISUAL environment variable.`:"> To use a different editor, set the $EDITOR or $VISUAL environment variable.",l=dl()?`
+
+> Safe mode: this session doesn't load memory files, so changes take effect after you ${eC()}.`:"";e(`Opened memory file at ${tyl(r)}${l}
+
+${a}`,{display:"system"})}catch(o){logForDebugging(`Failed to open memory file ${r}: ${o}`,{level:"error"}),e(`Error opening memory file: ${o}`)}},n=()=>{e("Cancelled memory editing",{display:"system"})};return uJ.jsx(preInitQueue,{title:"Memory",onCancel:n,color:"remember",children:uJ.jsxs(Box,{flexDirection:"column",gap:1,children:[dl()&&uJ.jsxs(Box,{flexDirection:"column",children:[uJ.jsxs(Text,{color:"suggestion",children:[Xe.info," Safe mode"]}),uJ.jsxs(Text,{dimColor:!0,children:["Memory files aren't loaded into this session. You can still edit them \u2014 changes take effect after you ",eC(),"."]})]}),uJ.jsx(cyl.Suspense,{fallback:uJ.jsx(Hc,{message:"Loading memory files\u2026",dimColor:!0}),children:uJ.jsx(X_l,{onSelect:t,onCancel:n})}),uJ.jsx(Sx,{url:"https://code.claude.com/docs/en/memory"})]})})}
+var lyl,cyl,uJ,Onm=async(e)=>(clearMemoryFileCaches(),await getMemoryFiles(),uJ.jsx(Pnm,{onDone:e}));
+var dyl=b(()=>{Zs();di();fne();OE();Q_l();ryl();je();rT();ZR();qe();dn();Ct();d9();lyl=require("fs/promises"),cyl=x(et(),1),uJ=x(oe(),1)});
+export {uyl,Pnm,lyl,cyl,uJ,Onm,dyl};

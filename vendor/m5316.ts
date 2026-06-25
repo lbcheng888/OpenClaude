@@ -1,21 +1,11 @@
 // @ts-nocheck
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {getIsNonInteractiveSession,lt} from "../src/session/0131_sent.ts";
-import {ra,Ap} from "../src/config/0614_Ap.ts";
-import {getGlobalConfig,saveGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {execFileNoThrow,oa} from "./m684.ts";
-import {qt,Le,Xt} from "../src/config/0228_encoding.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Pn,bt} from "./m195.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {fs} from "../src/api/0459_getOauthConfig.ts";
-import {b} from "../runtime.ts";
-function z4l(){return QYn.join(tr(),"cache","my-closed-issues.json")}
-function pkm(e){return new Date(e-dkm*24*60*60*1000).toISOString().slice(0,10)}
-async function Y4l(){if(getIsNonInteractiveSession())return null;if(ra())return null;let e=getGlobalConfig(),t=Date.now();if(t-(e.closedIssuesLastChecked??0)<ukm)return null;let n=t,{stdout:r,code:o}=await execFileNoThrow("gh",["issue","list","-R","anthropics/claude-code","--author","@me","--state","closed","--search",`closed:>${pkm(t)}`,"--json","number,title,closedAt,stateReason","--limit","30"],{timeout:ckm,preserveOutputOnError:!1}),s=Date.now()-n,i=null;if(o===0)try{i=qt(r).filter((d)=>d.stateReason==="COMPLETED").map((d)=>({number:d.number,title:d.title,closedAt:d.closedAt}))}catch(u){logForDebugging(`Failed to parse gh issue list output: ${u}`,{level:"error"})}if(i!==null)try{let u=z4l();await UAt.mkdir(QYn.dirname(u),{recursive:!0}),await UAt.writeFile(u,Le(i),{encoding:"utf-8"})}catch(u){logForDebugging(`Failed to write closed-issues cache: ${u}`,{level:"error"})}let a=e.closedIssuesAcknowledged??[],l=a;if(i!==null){let u=new Set(i.map((d)=>d.number));l=a.filter((d)=>u.has(d))}let c=l.length!==a.length||l.some((u,d)=>u!==a[d]);return saveGlobalConfig((u)=>({...u,closedIssuesLastChecked:t,...c&&{closedIssuesAcknowledged:l}})),s}
-async function EPo(){try{let e=await UAt.readFile(z4l(),{encoding:"utf-8"}),t=qt(e);return Array.isArray(t)?t:[]}catch(e){if(!Pn(e))De(e);return[]}}
-function CPo(e){let t=new Set(getGlobalConfig().closedIssuesAcknowledged??[]);return e.filter((n)=>!t.has(n.number))}
-function J4l(e){if(e.length===0)return;let t=getGlobalConfig().closedIssuesAcknowledged??[],n=fs([...t,...e]);if(n.length===t.length)return;saveGlobalConfig((r)=>({...r,closedIssuesAcknowledged:n}))}
-var UAt,QYn,ckm=5000,ukm=86400000,dkm=30;
-var X4l=b(()=>{lt();Qn();qe();sn();bt();oa();Rn();Ap();Xt();UAt=require("fs/promises"),QYn=require("path")});
-export {z4l,pkm,Y4l,EPo,CPo,J4l,UAt,QYn,ckm,ukm,dkm,X4l};
+import {_t,uo} from "./m2468.ts";
+import {getCaps,lt} from "../src/session/0132_sent.ts";
+import {transcriptCursorEnd,isLoggableMessage,collectReplIds,recordTranscript,cleanMessagesForLogging,isChainParticipant,_a} from "../src/permissions/5175_writeRemoteAgentMetadata.ts";
+import {isAgentSwarmsEnabled,lb} from "../src/config/3314_isAgentSwarmsEnabled.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function AKl(e,t=!1,n=!1){let r=_t((p)=>p.teamContext),o=FJ.useRef(0),s=FJ.useRef(void 0),i=FJ.useRef(void 0),a=FJ.useRef(void 0),l=FJ.useRef(!0),c=FJ.useRef(0),u=FJ.useRef(new Set),d=FJ.useRef(0);FJ.useEffect(()=>{JLm?.initSessionLog()},[]),FJ.useEffect(()=>{if(getCaps().transcriptSource==="ccr-api")return;if(t){d.current=e.length;return}let p=e[0]?.uuid,m=o.current,f=i.current===void 0,h=m===0||e[m-1]?.uuid===a.current||!l.current&&m===e.length,g=p!==void 0&&!f&&p===i.current&&m<=e.length&&h,_=p!==void 0&&!f&&p===i.current&&m>e.length,T=g?m:0,y=g||f?d.current:T,S=transcriptCursorEnd(e,Math.max(T,y),n);if(!g)d.current=S;let E=e[S-1];if(a.current=E?.uuid,l.current=E===void 0||isLoggableMessage(E),S===T)return;let R=T===0&&S===e.length?e:e.slice(T,S),w=g?s.current:void 0;if(T===0)u.current.clear();collectReplIds(R,u.current);let H=++c.current,k=r?.selfAgentName;if(recordTranscript(R,isAgentSwarmsEnabled()&&k?{teamName:r?.teamName,agentName:k}:{},w,u.current).then((I)=>{if(H!==c.current)return;if(I&&!g)s.current=I}),g||f||_){let I=cleanMessagesForLogging(R,u.current).findLast(isChainParticipant);if(I)s.current=I.uuid}o.current=S,i.current=p},[e,t,n,r?.teamName,r?.selfAgentName])}
+var FJ,JLm=null;
+var RKl=b(()=>{lt();uo();lb();_a();FJ=x(et(),1)});
+export {AKl,FJ,JLm,RKl};

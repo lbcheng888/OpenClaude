@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function K2c(e,t){e=e||10;let n=Array(e),r=Array(e),o=0,s=0,i;return t=t!==void 0?t:1000,function(l){let c=Date.now(),u=r[s];if(!i)i=c;n[o]=l,r[o]=c;let d=s,p=0;while(d!==o)p+=n[d++],d=d%e;if(o=(o+1)%e,o===s)s=(s+1)%e;if(c-i<t)return;let m=u&&c-u;return m?Math.round(p*1000/m):void 0}}
-var nzo;
-var rzo=b(()=>{nzo=K2c});
-export {K2c,nzo,rzo};
+import {b,x} from "../runtime.ts";
+import {oC,rr} from "./m466.ts";
+var OZo,C_r,LZo,A_r;
+var MZo=b(()=>{oC();OZo=x(require("stream")),C_r=Symbol("internals");LZo=class LZo extends OZo.default.Transform{constructor(e){e=rr.toFlatObject(e,{maxRate:0,chunkSize:65536,minChunkSize:100,timeWindow:500,ticksRate:2,samplesCount:15},null,(n,r)=>!rr.isUndefined(r[n]));super({readableHighWaterMark:e.chunkSize});let t=this[C_r]={timeWindow:e.timeWindow,chunkSize:e.chunkSize,maxRate:e.maxRate,minChunkSize:e.minChunkSize,bytesSeen:0,isCaptured:!1,notifiedBytesLoaded:0,ts:Date.now(),bytes:0,onReadCallback:null};this.on("newListener",(n)=>{if(n==="progress"){if(!t.isCaptured)t.isCaptured=!0}})}_read(e){let t=this[C_r];if(t.onReadCallback)t.onReadCallback();return super._read(e)}_transform(e,t,n){let r=this[C_r],o=r.maxRate,s=this.readableHighWaterMark,i=r.timeWindow,a=1000/i,l=o/a,c=r.minChunkSize!==!1?Math.max(r.minChunkSize,l*0.01):0,u=(p,m)=>{let f=Buffer.byteLength(p);if(r.bytesSeen+=f,r.bytes+=f,r.isCaptured&&this.emit("progress",r.bytesSeen),this.push(p))process.nextTick(m);else r.onReadCallback=()=>{r.onReadCallback=null,process.nextTick(m)}},d=(p,m)=>{let f=Buffer.byteLength(p),h=null,g=s,_,T=0;if(o){let y=Date.now();if(!r.ts||(T=y-r.ts)>=i)r.ts=y,_=l-r.bytes,r.bytes=_<0?-_:0,T=0;_=l-r.bytes}if(o){if(_<=0)return setTimeout(()=>{m(null,p)},i-T);if(_<g)g=_}if(g&&f>g&&f-g>c)h=p.subarray(g),p=p.subarray(0,g);u(p,h?()=>{process.nextTick(m,null,h)}:m)};d(e,function p(m,f){if(m)return n(m);if(f)d(f,p);else n(null)})}};A_r=LZo});
+export {OZo,C_r,LZo,A_r,MZo};

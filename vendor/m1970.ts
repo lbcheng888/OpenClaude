@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var uOr=X((cOr)=>{Object.defineProperty(cOr,"__esModule",{value:!0});cOr.fromArrayBufferToHex=Pju;function Pju(e){return Array.from(new Uint8Array(e)).map((n)=>n.toString(16).padStart(2,"0")).join("")}});
-export {uOr};
+import {Q} from "../runtime.ts";
+var fsi=Q((N_n)=>{Object.defineProperty(N_n,"__esModule",{value:!0});N_n.Colours=void 0;class mf{static isEnabled(e){return e&&e.isTTY&&(typeof e.getColorDepth==="function"?e.getColorDepth()>2:!0)}static refresh(){if(mf.enabled=mf.isEnabled(process===null||process===void 0?void 0:process.stderr),!this.enabled)mf.reset="",mf.bright="",mf.dim="",mf.red="",mf.green="",mf.yellow="",mf.blue="",mf.magenta="",mf.cyan="",mf.white="",mf.grey="";else mf.reset="\x1B[0m",mf.bright="\x1B[1m",mf.dim="\x1B[2m",mf.red="\x1B[31m",mf.green="\x1B[32m",mf.yellow="\x1B[33m",mf.blue="\x1B[34m",mf.magenta="\x1B[35m",mf.cyan="\x1B[36m",mf.white="\x1B[37m",mf.grey="\x1B[90m"}}N_n.Colours=mf;mf.enabled=!1;mf.reset="";mf.bright="";mf.dim="";mf.red="";mf.green="";mf.yellow="";mf.blue="";mf.magenta="";mf.cyan="";mf.white="";mf.grey="";mf.refresh()});
+export {fsi};

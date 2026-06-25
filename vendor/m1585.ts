@@ -1,6 +1,6 @@
 // @ts-nocheck
+import {dAe,Foe} from "./m1191.ts";
 import {b} from "../runtime.ts";
-import {Zjs,Qjs,Xjs} from "./m1584.ts";
-var Ime;
-var kkr=b(()=>{Zjs();Ime=class Ime extends Uint8Array{static fromString(e,t="utf-8"){switch(typeof e){case"string":return Qjs(e,t);default:throw Error(`Unsupported conversion from ${typeof e} to Uint8ArrayBlobAdapter.`)}}static mutate(e){return Object.setPrototypeOf(e,Ime.prototype),e}transformToString(e="utf-8"){return Xjs(this,e)}}});
-export {Ime,kkr};
+var rPr=(e)=>{let t=dAe(e,"utf8");return new Uint8Array(t.buffer,t.byteOffset,t.byteLength/Uint8Array.BYTES_PER_ELEMENT)};
+var oPr=b(()=>{Foe()});
+export {rPr,oPr};

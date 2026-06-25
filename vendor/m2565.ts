@@ -1,12 +1,13 @@
 // @ts-nocheck
-import {useApp,H$r} from "./m2442.ts";
-import {Y4,Cet} from "../src/config/2565_Cet.ts";
-import {ju,wk} from "../src/tui/2564_current.ts";
-import {logFeatureBadAsync,get} from "./m2523.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function LIi(e,t,n,r=!0){let{handleInterrupt:o,handleExit:s,exitState:i}=S3r(t,n),a=Lwe.useMemo(()=>({"app:interrupt":o,"app:exit":s}),[o,s]);return e(a,{context:"Global",isActive:r}),i}
-function S3r(e,t){let{exit:n}=useApp(),[r,o]=Lwe.useState({pending:!1,keyName:null}),s=Lwe.useMemo(()=>t??n,[t,n]),i=Y4(),a=ju("app:interrupt","Global","Ctrl-C"),l=ju("app:exit","Global","Ctrl-D"),c=i&&a?a:"Ctrl-C",u=i&&l?l:"Ctrl-D",d=logFeatureBadAsync((A)=>o({pending:A,keyName:c}),s),p=logFeatureBadAsync((A)=>o({pending:A,keyName:u}),s),m=Lwe.useCallback(()=>{if(e?.())return;d()},[d,e]),f=Lwe.useCallback(()=>{p()},[p]);return{handleInterrupt:m,handleExit:f,exitState:r}}
-var Lwe;
-var MIi=b(()=>{H$r();wk();Cet();get();Lwe=M(Te(),1)});
-export {LIi,S3r,Lwe,MIi};
+import {Text} from "./m2433.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function bn(e){let t=jMi.c(5),{children:n}=e,r,o;if(t[0]!==n){o=Symbol.for("react.early_return_sentinel");e:{let i=Svn.Children.toArray(n).filter(HRd);if(i.length===0){o=null;break e}r=i.map(kRd)}t[0]=n,t[1]=r,t[2]=o}else r=t[1],o=t[2];if(o!==Symbol.for("react.early_return_sentinel"))return o;let s;if(t[3]!==r)s=P2e.jsx(P2e.Fragment,{children:r}),t[3]=r,t[4]=s;else s=t[4];return s}
+function kRd(e,t){return P2e.jsxs(YMi.Fragment,{children:[t>0&&P2e.jsx(Text,{dimColor:!0,children:" \xB7 "}),e]},Svn.isValidElement(e)?e.key??t:t)}
+function HRd(e){return e!==""}
+var jMi,YMi,Svn,P2e;
+var Is=b(()=>{je();jMi=x(tt(),1),YMi=x(et(),1),Svn=x(et(),1),P2e=x(oe(),1)});
+export {bn,kRd,HRd,jMi,YMi,Svn,P2e,Is};

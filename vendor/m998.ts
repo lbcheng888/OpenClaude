@@ -1,13 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {nC} from "./m880.ts";
-import {ume} from "./m904.ts";
-import {Sd} from "./m850.ts";
-import {V2} from "./m896.ts";
-import {b7} from "./m758.ts";
-import {Uon} from "./m909.ts";
-import {FS} from "./m788.ts";
-import {dSr} from "./m995.ts";
-import {xTs} from "./m997.ts";
-var ITs=X((Lsn)=>{Object.defineProperty(Lsn,"__esModule",{value:!0});Lsn.getRuntimeConfig=void 0;var yAu=nC(),TAu=ume(),SAu=Sd(),bAu=V2(),EAu=b7(),kTs=Uon(),HTs=FS(),CAu=dSr(),vAu=xTs(),wAu=(e)=>({apiVersion:"2023-01-01",base64Decoder:e?.base64Decoder??kTs.fromBase64,base64Encoder:e?.base64Encoder??kTs.toBase64,disableHostPrefix:e?.disableHostPrefix??!1,endpointProvider:e?.endpointProvider??vAu.defaultEndpointResolver,extensions:e?.extensions??[],httpAuthSchemeProvider:e?.httpAuthSchemeProvider??CAu.defaultSigninHttpAuthSchemeProvider,httpAuthSchemes:e?.httpAuthSchemes??[{schemeId:"aws.auth#sigv4",identityProvider:(t)=>t.getIdentityProvider("aws.auth#sigv4"),signer:new yAu.AwsSdkSigV4Signer},{schemeId:"smithy.api#noAuth",identityProvider:(t)=>t.getIdentityProvider("smithy.api#noAuth")||(async()=>({})),signer:new SAu.NoAuthSigner}],logger:e?.logger??new bAu.NoOpLogger,protocol:e?.protocol??new TAu.AwsRestJsonProtocol({defaultNamespace:"com.amazonaws.signin"}),serviceId:e?.serviceId??"Signin",urlParser:e?.urlParser??EAu.parseUrl,utf8Decoder:e?.utf8Decoder??HTs.fromUtf8,utf8Encoder:e?.utf8Encoder??HTs.toUtf8});Lsn.getRuntimeConfig=wAu});
-export {ITs};
+import {x,b} from "../runtime.ts";
+import {pln} from "./m997.ts";
+import {$As,qAs} from "./m987.ts";
+import {b0} from "./m756.ts";
+import {Vg} from "./m600.ts";
+import {ZU} from "./m606.ts";
+var NRr,FRr,rvs,ovs=(e,{profile:t="default",logger:n}={})=>Boolean(e)&&typeof e==="object"&&typeof e.role_arn==="string"&&["undefined","string"].indexOf(typeof e.role_session_name)>-1&&["undefined","string"].indexOf(typeof e.external_id)>-1&&["undefined","string"].indexOf(typeof e.mfa_serial)>-1&&(bRu(e,{profile:t,logger:n})||ERu(e,{profile:t,logger:n})),bRu=(e,{profile:t,logger:n})=>{let r=typeof e.source_profile==="string"&&typeof e.credential_source>"u";if(r)n?.debug?.(`    ${t} isAssumeRoleWithSourceProfile source_profile=${e.source_profile}`);return r},ERu=(e,{profile:t,logger:n})=>{let r=typeof e.credential_source==="string"&&typeof e.source_profile>"u";if(r)n?.debug?.(`    ${t} isCredentialSourceProfile credential_source=${e.credential_source}`);return r},svs=async(e,t,n,r={},o)=>{n.logger?.debug("@aws-sdk/credential-provider-ini - resolveAssumeRoleCredentials (STS)");let s=t[e],{source_profile:i,region:a}=s;if(!n.roleAssumer){let{getDefaultRoleAssumer:c}=await Promise.resolve().then(() => x(pln(),1));n.roleAssumer=c({...n.clientConfig,credentialProviderLogger:n.logger,parentClientConfig:{...n?.parentClientConfig,region:a??n?.parentClientConfig?.region}},n.clientPlugins)}if(i&&i in r)throw new FRr.CredentialsProviderError(`Detected a cycle attempting to resolve credentials for profile ${rvs.getProfileName(n)}. Profiles visited: `+Object.keys(r).join(", "),{logger:n.logger});n.logger?.debug(`@aws-sdk/credential-provider-ini - finding credential resolver using ${i?`source_profile=[${i}]`:`profile=[${e}]`}`);let l=i?o(i,t,n,{...r,[i]:!0},nvs(t[i]??{})):(await $As(s.credential_source,e,n.logger)(n))();if(nvs(s))return l.then((c)=>NRr.setCredentialFeature(c,"CREDENTIALS_PROFILE_SOURCE_PROFILE","o"));else{let c={RoleArn:s.role_arn,RoleSessionName:s.role_session_name||`aws-sdk-js-${Date.now()}`,ExternalId:s.external_id,DurationSeconds:parseInt(s.duration_seconds||"3600",10)},{mfa_serial:u}=s;if(u){if(!n.mfaCodeProvider)throw new FRr.CredentialsProviderError(`Profile ${e} requires multi-factor authentication, but no MFA code callback was provided.`,{logger:n.logger,tryNextLink:!1});c.SerialNumber=u,c.TokenCode=await n.mfaCodeProvider(u)}let d=await l;return n.roleAssumer(d,c).then((p)=>NRr.setCredentialFeature(p,"CREDENTIALS_PROFILE_SOURCE_PROFILE","o"))}},nvs=(e)=>!e.role_arn&&!!e.credential_source;
+var ivs=b(()=>{qAs();NRr=x(b0(),1),FRr=x(Vg(),1),rvs=x(ZU(),1)});
+export {NRr,FRr,rvs,ovs,bRu,ERu,svs,nvs,ivs};

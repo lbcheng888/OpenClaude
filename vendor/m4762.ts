@@ -1,29 +1,9 @@
 // @ts-nocheck
-import {tr,sn} from "../src/config/0047_namespace.ts";
-import {getGlobalConfig,saveGlobalConfig,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {ci,pT} from "./m1289.ts";
-import {getIsNonInteractiveSession,lt} from "../src/session/0131_sent.ts";
-import {ra,Ap} from "../src/config/0614_Ap.ts";
-import {externalHttp,ek} from "../src/core/0570_isCancel.ts";
-import {Di,dr} from "./m231.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {_o,bt} from "./m195.ts";
-import {cE,b0} from "./m2206.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {b,M} from "../runtime.ts";
-import {O4} from "./m2337.ts";
-function SEo(){return Ojt.join(tr(),"cache","changelog.md")}
-async function Cgl(){let e=getGlobalConfig();if(!e.cachedChangelog)return;let t=SEo();try{await ci().mkdir(Ojt.dirname(t)),await ci().writeExclusive(t,e.cachedChangelog)}catch{}saveGlobalConfig(({cachedChangelog:n,...r})=>r)}
-async function bEo(){if(getIsNonInteractiveSession())return;if(ra())return;let e=DZp,t=await externalHttp.get(e);if(t.status===200){let n=t.data;if(n===Gje)return;let r=SEo();await ci().mkdir(Ojt.dirname(r)),await ci().write(r,n),Gje=n;let o=Date.now();saveGlobalConfig((s)=>({...s,changelogLastFetched:o}))}}
-async function Ljt(){if(Gje!==null)return Gje;let e=SEo();try{let t=await ci().read(e);return Gje=t,t}catch{return Gje="",""}}
-function UWn(){return Gje??""}
-function Mjt(e){try{if(!e)return{};let t={},n=e.split(/^## /gm).slice(1);for(let r of n){let o=r.trim().split(`
-`);if(o.length===0)continue;let s=o[0];if(!s)continue;let i=Di(s," - ").trim();if(!i)continue;let a=o.slice(1).filter((l)=>l.trim().startsWith("- ")).map((l)=>l.trim().substring(2).trim()).filter(Boolean);if(a.length>0)t[i]=a}return t}catch(t){return De(_o(t)),{}}}
-function vgl(e,t,n=UWn()){try{let r=Mjt(n),o=FWn.coerce(e),s=t?FWn.coerce(t):null;if(!s||o&&cE(o.version,s.version))return Object.entries(r).filter(([i])=>!s||cE(i,s.version)).sort(([i],[a])=>cE(i,a)?-1:1).flatMap(([i,a])=>a).filter(Boolean).slice(0,IZp)}catch(r){return De(_o(r)),[]}return[]}
-function $Wn(e=UWn()){try{let t=Mjt(e);return Object.keys(t).sort((r,o)=>cE(r,o)?1:-1).map((r)=>{let o=t[r];if(!o||o.length===0)return null;let s=o.filter(Boolean);if(s.length===0)return null;return[r,s]}).filter((r)=>r!==null)}catch(t){return De(_o(t)),[]}}
-async function wgl(e,t={ISSUES_EXPLAINER:"report the issue at https://github.com/anthropics/claude-code/issues",PACKAGE_URL:"@anthropic-ai/claude-code",README_URL:"https://code.claude.com/docs/en/overview",VERSION:"2.1.185",FEEDBACK_CHANNEL:"https://github.com/anthropics/claude-code/issues",BUILD_TIME:"2026-06-20T06:38:30Z",GIT_SHA:"9d0bb50cc439a8bbfdbf96567a55bd0e353e9333"}.VERSION){let n=await Ljt();if(e!==t||!n||PZp(n,t))bEo().catch((s)=>logForDebugging(`Failed to fetch changelog: ${_o(s).message}`,{level:"error"}));let r=vgl(t,e,n);return{hasReleaseNotes:r.length>0,releaseNotes:r}}
-function Rgl(e,t={ISSUES_EXPLAINER:"report the issue at https://github.com/anthropics/claude-code/issues",PACKAGE_URL:"@anthropic-ai/claude-code",README_URL:"https://code.claude.com/docs/en/overview",VERSION:"2.1.185",FEEDBACK_CHANNEL:"https://github.com/anthropics/claude-code/issues",BUILD_TIME:"2026-06-20T06:38:30Z",GIT_SHA:"9d0bb50cc439a8bbfdbf96567a55bd0e353e9333"}.VERSION){let n=vgl(t,e);return{hasReleaseNotes:n.length>0,releaseNotes:n}}
-function PZp(e,t){let n=FWn.coerce(t);if(!n)return!1;return!Object.keys(Mjt(e)).some((o)=>{try{return b0(o,n.version)}catch{return!1}})}
-var Ojt,FWn,IZp=5,Egl="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",DZp="https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md",Gje=null;
-var Vje=b(()=>{lt();ek();pT();Qn();qe();sn();bt();Rn();Ap();dr();Ojt=require("path"),FWn=M(O4(),1)});
-export {SEo,Cgl,bEo,Ljt,UWn,Mjt,vgl,$Wn,wgl,Rgl,PZp,Ojt,FWn,IZp,Egl,DZp,Gje,Vje};
+import {Q} from "../runtime.ts";
+import {lko} from "./m4752.ts";
+import {qCl} from "./m4756.ts";
+import {gko} from "./m4759.ts";
+import {_ko} from "./m4760.ts";
+import {yko} from "./m4761.ts";
+var XCl=Q((vrS,JCl)=>{var pam=require("util"),Tko=require("zlib"),YCl=lko(),mam=qCl(),fam=gko(),ham=_ko(),gam=yko(),bue=JCl.exports=function(e){YCl.call(this),this._parser=new fam(e,{read:this.read.bind(this),error:this._handleError.bind(this),metadata:this._handleMetaData.bind(this),gamma:this.emit.bind(this,"gamma"),palette:this._handlePalette.bind(this),transColor:this._handleTransColor.bind(this),finished:this._finished.bind(this),inflateData:this._inflateData.bind(this),simpleTransparency:this._simpleTransparency.bind(this),headersFinished:this._headersFinished.bind(this)}),this._options=e,this.writable=!0,this._parser.start()};pam.inherits(bue,YCl);bue.prototype._handleError=function(e){if(this.emit("error",e),this.writable=!1,this.destroy(),this._inflate&&this._inflate.destroy)this._inflate.destroy();if(this._filter)this._filter.destroy(),this._filter.on("error",function(){});this.errord=!0};bue.prototype._inflateData=function(e){if(!this._inflate)if(this._bitmapInfo.interlace)this._inflate=Tko.createInflate(),this._inflate.on("error",this.emit.bind(this,"error")),this._filter.on("complete",this._complete.bind(this)),this._inflate.pipe(this._filter);else{let n=((this._bitmapInfo.width*this._bitmapInfo.bpp*this._bitmapInfo.depth+7>>3)+1)*this._bitmapInfo.height,r=Math.max(n,Tko.Z_MIN_CHUNK);this._inflate=Tko.createInflate({chunkSize:r});let o=n,s=this.emit.bind(this,"error");this._inflate.on("error",function(a){if(!o)return;s(a)}),this._filter.on("complete",this._complete.bind(this));let i=this._filter.write.bind(this._filter);this._inflate.on("data",function(a){if(!o)return;if(a.length>o)a=a.slice(0,o);o-=a.length,i(a)}),this._inflate.on("end",this._filter.end.bind(this._filter))}this._inflate.write(e)};bue.prototype._handleMetaData=function(e){this._metaData=e,this._bitmapInfo=Object.create(e),this._filter=new mam(this._bitmapInfo)};bue.prototype._handleTransColor=function(e){this._bitmapInfo.transColor=e};bue.prototype._handlePalette=function(e){this._bitmapInfo.palette=e};bue.prototype._simpleTransparency=function(){this._metaData.alpha=!0};bue.prototype._headersFinished=function(){this.emit("metadata",this._metaData)};bue.prototype._finished=function(){if(this.errord)return;if(!this._inflate)this.emit("error","No Inflate block");else this._inflate.end()};bue.prototype._complete=function(e){if(this.errord)return;let t;try{let n=ham.dataToBitMap(e,this._bitmapInfo);t=gam(n,this._bitmapInfo),n=null}catch(n){this._handleError(n);return}this.emit("parsed",t)}});
+export {XCl};

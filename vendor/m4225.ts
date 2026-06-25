@@ -1,27 +1,30 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {getBridgeBaseUrlOverride,getBridgeAccessToken,tJ} from "./m4224.ts";
-import {getOauthConfig,Dc} from "../src/api/0459_getOauthConfig.ts";
-import {fo} from "./m566.ts";
-import {Le,Xt} from "../src/config/0228_encoding.ts";
-import {Gp} from "./m567.ts";
-import {Xr} from "./m321.ts";
-import {we} from "./m455.ts";
-import {E} from "./m319.ts";
-var i5a={};
-isFullscreenWithTTY(i5a,{uploadBriefAttachment:()=>uploadBriefAttachment,escapeContentDispositionFilename:()=>escapeContentDispositionFilename});
-function iPp(e){let t=H3n.extname(e).toLowerCase();return sPp[t]??"application/octet-stream"}
-function escapeContentDispositionFilename(e){return e.replace(/[\r\n]/g,"").replaceAll("\\","\\\\").replaceAll('"',"\\\"")}
-function i6e(e){logForDebugging(`[brief:upload] ${e}`)}
-function aPp(){return getBridgeBaseUrlOverride()??process.env.ANTHROPIC_BASE_URL??getOauthConfig().BASE_API_URL}
-async function uploadBriefAttachment(e,t,n){if(!n.replBridgeEnabled)return;if(t>n5a){i6e(`skip ${e}: ${t} bytes exceeds ${n5a} limit`);return}let r=getBridgeAccessToken();if(!r){i6e("skip: no oauth token");return}let o;try{o=await o5a.readFile(e)}catch(d){i6e(`read failed for ${e}: ${d}`);return}let i=`${aPp()}/api/oauth/file_upload`,a=H3n.basename(e),l=iPp(a),c=`----FormBoundary${r5a.randomUUID()}`,u=Buffer.concat([Buffer.from(`--${c}\r
-Content-Disposition: form-data; name="file"; filename="${escapeContentDispositionFilename(a)}"\r
-Content-Type: ${l}\r
-\r
-`),o,Buffer.from(`\r
---${c}--\r
-`)]);try{let d=await fo.post(i,u,{headers:{Authorization:`Bearer ${r}`,"Content-Type":`multipart/form-data; boundary=${c}`,"Content-Length":u.length.toString()},timeout:oPp,signal:n.signal,validateStatus:()=>!0});if(d.status!==201){i6e(`upload failed for ${e}: status=${d.status} body=${Le(d.data).slice(0,200)}`);return}let p=lPp().safeParse(d.data);if(!p.success){i6e(`unexpected response shape for ${e}: ${p.error.message}`);return}return i6e(`uploaded ${e} \u2192 ${p.data.file_uuid} (${t} bytes)`),p.data.file_uuid}catch(d){i6e(`upload threw for ${e}: ${d}`);return}}
-var r5a,o5a,H3n,n5a=31457280,oPp=30000,sPp,lPp;
-var a5a=b(()=>{Gp();Xr();tJ();Dc();qe();Xt();r5a=require("crypto"),o5a=require("fs/promises"),H3n=require("path"),sPp={".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".webp":"image/webp"};lPp=we(()=>E.object({file_uuid:E.string()}))});
-export {i5a,iPp,escapeContentDispositionFilename,i6e,aPp,uploadBriefAttachment,r5a,o5a,H3n,n5a,oPp,sPp,lPp,a5a};
+import {ft,b} from "../runtime.ts";
+import {getUserTmuxSocket,isTmuxAvailable,isInsideTmux,getLeaderPaneId,hte} from "./m3895.ts";
+import {execFileNoThrow,Ii} from "./m690.ts";
+import {cG,T9t,Vco,lG,gut,O0e,wB} from "../src/config/3893_wB.ts";
+import {kB,but,C9t} from "./m3896.ts";
+import {xe,mn} from "../src/telemetry/0600_feature_name.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {zn} from "../src/api/0465_getOauthConfig.ts";
+import {sye,registerTmuxBackend} from "./m4227.ts";
+var Eza={};
+ft(Eza,{respawnPaneWithCommand:()=>respawnPaneWithCommand,TmuxBackend:()=>TmuxBackend});
+function Sza(e){let t=`Failed to create teammate pane: ${e}`,n=e.toLowerCase();return n.includes("no space")||n.includes("too small")?`${t} \u2014 no room for another tmux split. Spawn fewer concurrent teammates, enlarge your terminal if running inside tmux, or switch to in-process teammates via /config.`:t}
+function FBp(){let e,t=new Promise((r)=>{e=r}),n=Tza;return Tza=t,n.then(()=>e)}
+function bza(e){return{red:"red",blue:"blue",green:"green",yellow:"yellow",purple:"magenta",orange:"colour208",pink:"colour205",cyan:"cyan"}[e]}
+function e9(e){let t=getUserTmuxSocket(),n=t?["-S",t,...e]:e;return execFileNoThrow(cG,n)}
+function $B(e){return execFileNoThrow(cG,["-L",T9t(),...e])}
+async function respawnPaneWithCommand(e,t,n){await execFileNoThrow(cG,[...e,"set-option","-p","-t",t,"remain-on-exit","failed"]);let r=await execFileNoThrow(cG,[...e,"respawn-pane","-k","-t",t,"--",n]);if(r.code!==0)throw new kB(`Failed to send command to pane ${t}: ${r.stderr}`)}
+class TmuxBackend{type="tmux";displayName="tmux";supportsHideShow=!0;cachedLeaderWindowTarget=null;firstPaneUsedForExternal=!1;async isAvailable(){return isTmuxAvailable()}async isRunningInside(){return isInsideTmux()}async createTeammatePaneInSwarmView(e,t){let n=await FBp();try{if(await this.isRunningInside())return await this.createTeammatePaneWithLeader(e,t);return await this.createTeammatePaneExternal(e,t)}finally{n()}}async sendCommandToPane(e,t,n=!1){try{but(t)}catch(s){throw xe("swarm_pane_spawn","swarm_pane_command_control_chars"),s}let r=getUserTmuxSocket(),o=n?["-L",T9t()]:r?["-S",r]:[];await respawnPaneWithCommand(o,e,t)}async setPaneBorderColor(e,t,n=!1){let r=bza(t),o=n?$B:e9;await o(["set-option","-p","-t",e,"window-style",`bg=default,fg=${r}`]),await o(["set-option","-p","-t",e,"pane-border-style",`fg=${r}`]),await o(["set-option","-p","-t",e,"pane-active-border-style",`fg=${r}`])}async setPaneTitle(e,t,n,r=!1){let o=bza(n),s=r?$B:e9;await s(["select-pane","-t",e,"-T",t]),await s(["set-option","-p","-t",e,"pane-border-format",`#[fg=${o},bold] #{pane_title} #[default]`])}async enablePaneBorderStatus(e,t=!1){let n=e||await this.getCurrentWindowTarget();if(!n)return;await(t?$B:e9)(["set-option","-w","-t",n,"pane-border-status","top"])}async rebalancePanes(e,t){if(t)await this.rebalancePanesWithLeader(e);else await this.rebalancePanesTiled(e)}async killPane(e,t=!1){return(await(t?$B:e9)(["kill-pane","-t",e])).code===0}async hidePane(e,t=!1){let n=t?$B:e9;await n(["new-session","-d","-s",Vco]);let r=await n(["break-pane","-d","-s",e,"-t",`${Vco}:`]);if(r.code===0)logForDebugging(`[TmuxBackend] Hidden pane ${e}`);else logForDebugging(`[TmuxBackend] Failed to hide pane ${e}: ${r.stderr}`);return r.code===0}async showPane(e,t,n=!1){let r=n?$B:e9,o=await r(["join-pane","-h","-s",e,"-t",t]);if(o.code!==0)return logForDebugging(`[TmuxBackend] Failed to show pane ${e}: ${o.stderr}`),!1;logForDebugging(`[TmuxBackend] Showed pane ${e} in ${t}`),await r(["select-layout","-t",t,"main-vertical"]);let i=(await r(["list-panes","-t",t,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean);if(i[0])await r(["resize-pane","-t",i[0],"-x","30%"]);return!0}async getCurrentPaneId(){let e=getLeaderPaneId();if(e)return e;let t=await e9(["display-message","-p","#{pane_id}"]);if(t.code!==0)return logForDebugging(`[TmuxBackend] Failed to get current pane ID (exit ${t.code}): ${t.stderr}`),null;return t.stdout.trim()}async getCurrentWindowTarget(){if(this.cachedLeaderWindowTarget)return this.cachedLeaderWindowTarget;let e=getLeaderPaneId(),t=["display-message"];if(e)t.push("-t",e);t.push("-p","#{window_id}");let n=await e9(t);if(n.code!==0)return logForDebugging(`[TmuxBackend] Failed to get current window target (exit ${n.code}): ${n.stderr}`),null;return this.cachedLeaderWindowTarget=n.stdout.trim(),this.cachedLeaderWindowTarget}async getCurrentWindowPaneCount(e,t=!1){let n=e||await this.getCurrentWindowTarget();if(!n)return null;let r=["list-panes","-t",n,"-F","#{pane_id}"],o=t?await $B(r):await e9(r);if(o.code!==0)return logForDebugging(`[TmuxBackend] Failed to get pane count for ${n} (exit ${o.code}): ${o.stderr}`,{level:"error"}),null;return zn(o.stdout.trim().split(`
+`),Boolean)}async hasSessionInSwarm(e){return(await $B(["has-session","-t",e])).code===0}async createExternalSwarmSession(){if(!await this.hasSessionInSwarm(lG)){let s=await $B(["new-session","-d","-s",lG,"-n",gut,"-P","-F","#{pane_id}","--",O0e]);if(s.code!==0)throw new kB(`Failed to create swarm session: ${s.stderr||"Unknown error"}`);let i=s.stdout.trim(),a=`${lG}:${gut}`;return logForDebugging(`[TmuxBackend] Created external swarm session with window ${a}, pane ${i}`),{windowTarget:a,paneId:i}}let n=(await $B(["list-windows","-t",lG,"-F","#{window_name}"])).stdout.trim().split(`
+`).filter(Boolean),r=`${lG}:${gut}`;if(n.includes(gut)){let i=(await $B(["list-panes","-t",r,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean);return{windowTarget:r,paneId:i[0]||""}}let o=await $B(["new-window","-t",lG,"-n",gut,"-P","-F","#{pane_id}","--",O0e]);if(o.code!==0)throw new kB(`Failed to create swarm-view window: ${o.stderr||"Unknown error"}`);return{windowTarget:r,paneId:o.stdout.trim()}}async createTeammatePaneWithLeader(e,t){let n=await this.getCurrentPaneId(),r=await this.getCurrentWindowTarget();if(!n||!r)throw new kB("Could not determine current tmux pane/window");let o=await this.getCurrentWindowPaneCount(r);if(o===null)throw new kB("Could not determine pane count for current window");let s=o===1,i;if(s)i=await e9(["split-window","-d","-t",n,"-h","-l","70%","-P","-F","#{pane_id}","--",O0e]);else{let u=(await e9(["list-panes","-t",r,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean).slice(1),d=u.length,p=d%2===1,m=Math.floor((d-1)/2),f=u[m]||u.at(-1);i=await e9(["split-window","-d","-t",f,p?"-v":"-h","-P","-F","#{pane_id}","--",O0e])}if(i.code!==0)throw new kB(Sza(i.stderr));let a=i.stdout.trim();return logForDebugging(`[TmuxBackend] Created teammate pane for ${e}: ${a}`),await this.setPaneBorderColor(a,t),await this.setPaneTitle(a,e,t),await this.rebalancePanesWithLeader(r),{paneId:a,isFirstTeammate:s}}async createTeammatePaneExternal(e,t){let{windowTarget:n,paneId:r}=await this.createExternalSwarmSession(),o=await this.getCurrentWindowPaneCount(n,!0);if(o===null)throw new kB("Could not determine pane count for swarm window");let s=!this.firstPaneUsedForExternal&&o===1,i;if(s)i=r,this.firstPaneUsedForExternal=!0,logForDebugging(`[TmuxBackend] Using initial pane for first teammate ${e}: ${i}`),await this.enablePaneBorderStatus(n,!0);else{let l=(await $B(["list-panes","-t",n,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean),c=l.length,u=c%2===1,d=Math.floor((c-1)/2),p=l[d]||l.at(-1),m=await $B(["split-window","-d","-t",p,u?"-v":"-h","-P","-F","#{pane_id}","--",O0e]);if(m.code!==0)throw new kB(Sza(m.stderr));i=m.stdout.trim(),logForDebugging(`[TmuxBackend] Created teammate pane for ${e}: ${i}`)}return await this.setPaneBorderColor(i,t,!0),await this.setPaneTitle(i,e,t,!0),await this.rebalancePanesTiled(n),{paneId:i,isFirstTeammate:s}}async rebalancePanesWithLeader(e){let n=(await e9(["list-panes","-t",e,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean);if(n.length<=2)return;await e9(["select-layout","-t",e,"main-vertical"]);let r=n[0];await e9(["resize-pane","-t",r,"-x","30%"]),logForDebugging(`[TmuxBackend] Rebalanced ${n.length-1} teammate panes with leader`)}async rebalancePanesTiled(e){let n=(await $B(["list-panes","-t",e,"-F","#{pane_id}"])).stdout.trim().split(`
+`).filter(Boolean);if(n.length<=1)return;await $B(["select-layout","-t",e,"tiled"]),logForDebugging(`[TmuxBackend] Rebalanced ${n.length} teammate panes with tiled layout`)}}
+var Tza;
+var Mgo=b(()=>{mn();qe();Ii();wB();hte();sye();C9t();Tza=Promise.resolve();registerTmuxBackend(TmuxBackend)});
+export {Eza,Sza,FBp,bza,e9,$B,respawnPaneWithCommand,TmuxBackend,Tza,Mgo};

@@ -1,11 +1,115 @@
 // @ts-nocheck
-import {globalRegistry,$ZodRegistry,xar} from "./m301.ts";
-import {getEnumValues,pp} from "./m254.ts";
+import {normalizeParams,Fd} from "./m256.ts";
+import {$ZodCheckLessThan,$ZodCheckGreaterThan,$ZodCheckMultipleOf,$ZodCheckMaxSize,$ZodCheckMinSize,$ZodCheckSizeEquals,$ZodCheckMaxLength,$ZodCheckMinLength,$ZodCheckLengthEquals,$ZodCheckRegex,$ZodCheckLowerCase,$ZodCheckUpperCase,$ZodCheckIncludes,$ZodCheckStartsWith,$ZodCheckEndsWith,$ZodCheckProperty,$ZodCheckMimeType,$ZodCheckOverwrite,HQt} from "./m260.ts";
+import {$ZodType,$ZodPipe,$ZodBoolean,$ZodString,$ZodTransform,wEt} from "./m262.ts";
 import {b} from "../runtime.ts";
-class JSONSchemaGenerator{constructor(e){this.counter=0,this.metadataRegistry=e?.metadata??globalRegistry,this.target=e?.target??"draft-2020-12",this.unrepresentable=e?.unrepresentable??"throw",this.override=e?.override??(()=>{}),this.io=e?.io??"output",this.seen=new Map}process(e,t={path:[],schemaPath:[]}){var n;let r=e._zod.def,o={guid:"uuid",url:"uri",datetime:"date-time",json_string:"json-string",regex:""},s=this.seen.get(e);if(s){if(s.count++,t.schemaPath.includes(e))s.cycle=t.path;return s.schema}let i={schema:{},count:1,cycle:void 0,path:t.path};this.seen.set(e,i);let a=e._zod.toJSONSchema?.();if(a)i.schema=a;else{let u={...t,schemaPath:[...t.schemaPath,e],path:t.path},d=e._zod.parent;if(d)i.ref=d,this.process(d,u),this.seen.get(d).isParent=!0;else{let p=i.schema;switch(r.type){case"string":{let m=p;m.type="string";let{minimum:f,maximum:A,format:h,patterns:g,contentEncoding:_}=e._zod.bag;if(typeof f==="number")m.minLength=f;if(typeof A==="number")m.maxLength=A;if(h){if(m.format=o[h]??h,m.format==="")delete m.format}if(_)m.contentEncoding=_;if(g&&g.size>0){let y=[...g];if(y.length===1)m.pattern=y[0].source;else if(y.length>1)i.schema.allOf=[...y.map((T)=>({...this.target==="draft-7"?{type:"string"}:{},pattern:T.source}))]}break}case"number":{let m=p,{minimum:f,maximum:A,format:h,multipleOf:g,exclusiveMaximum:_,exclusiveMinimum:y}=e._zod.bag;if(typeof h==="string"&&h.includes("int"))m.type="integer";else m.type="number";if(typeof y==="number")m.exclusiveMinimum=y;if(typeof f==="number"){if(m.minimum=f,typeof y==="number")if(y>=f)delete m.minimum;else delete m.exclusiveMinimum}if(typeof _==="number")m.exclusiveMaximum=_;if(typeof A==="number"){if(m.maximum=A,typeof _==="number")if(_<=A)delete m.maximum;else delete m.exclusiveMaximum}if(typeof g==="number")m.multipleOf=g;break}case"boolean":{let m=p;m.type="boolean";break}case"bigint":{if(this.unrepresentable==="throw")throw Error("BigInt cannot be represented in JSON Schema");break}case"symbol":{if(this.unrepresentable==="throw")throw Error("Symbols cannot be represented in JSON Schema");break}case"null":{p.type="null";break}case"any":break;case"unknown":break;case"undefined":case"never":{p.not={};break}case"void":{if(this.unrepresentable==="throw")throw Error("Void cannot be represented in JSON Schema");break}case"date":{if(this.unrepresentable==="throw")throw Error("Date cannot be represented in JSON Schema");break}case"array":{let m=p,{minimum:f,maximum:A}=e._zod.bag;if(typeof f==="number")m.minItems=f;if(typeof A==="number")m.maxItems=A;m.type="array",m.items=this.process(r.element,{...u,path:[...u.path,"items"]});break}case"object":{let m=p;m.type="object",m.properties={};let f=r.shape;for(let g in f)m.properties[g]=this.process(f[g],{...u,path:[...u.path,"properties",g]});let A=new Set(Object.keys(f)),h=new Set([...A].filter((g)=>{let _=r.shape[g]._zod;if(this.io==="input")return _.optin===void 0;else return _.optout===void 0}));if(h.size>0)m.required=Array.from(h);if(r.catchall?._zod.def.type==="never")m.additionalProperties=!1;else if(!r.catchall){if(this.io==="output")m.additionalProperties=!1}else if(r.catchall)m.additionalProperties=this.process(r.catchall,{...u,path:[...u.path,"additionalProperties"]});break}case"union":{let m=p;m.anyOf=r.options.map((f,A)=>this.process(f,{...u,path:[...u.path,"anyOf",A]}));break}case"intersection":{let m=p,f=this.process(r.left,{...u,path:[...u.path,"allOf",0]}),A=this.process(r.right,{...u,path:[...u.path,"allOf",1]}),h=(_)=>("allOf"in _)&&Object.keys(_).length===1,g=[...h(f)?f.allOf:[f],...h(A)?A.allOf:[A]];m.allOf=g;break}case"tuple":{let m=p;m.type="array";let f=r.items.map((g,_)=>this.process(g,{...u,path:[...u.path,"prefixItems",_]}));if(this.target==="draft-2020-12")m.prefixItems=f;else m.items=f;if(r.rest){let g=this.process(r.rest,{...u,path:[...u.path,"items"]});if(this.target==="draft-2020-12")m.items=g;else m.additionalItems=g}if(r.rest)m.items=this.process(r.rest,{...u,path:[...u.path,"items"]});let{minimum:A,maximum:h}=e._zod.bag;if(typeof A==="number")m.minItems=A;if(typeof h==="number")m.maxItems=h;break}case"record":{let m=p;m.type="object",m.propertyNames=this.process(r.keyType,{...u,path:[...u.path,"propertyNames"]}),m.additionalProperties=this.process(r.valueType,{...u,path:[...u.path,"additionalProperties"]});break}case"map":{if(this.unrepresentable==="throw")throw Error("Map cannot be represented in JSON Schema");break}case"set":{if(this.unrepresentable==="throw")throw Error("Set cannot be represented in JSON Schema");break}case"enum":{let m=p,f=getEnumValues(r.entries);if(f.every((A)=>typeof A==="number"))m.type="number";if(f.every((A)=>typeof A==="string"))m.type="string";m.enum=f;break}case"literal":{let m=p,f=[];for(let A of r.values)if(A===void 0){if(this.unrepresentable==="throw")throw Error("Literal `undefined` cannot be represented in JSON Schema")}else if(typeof A==="bigint")if(this.unrepresentable==="throw")throw Error("BigInt literals cannot be represented in JSON Schema");else f.push(Number(A));else f.push(A);if(f.length===0);else if(f.length===1){let A=f[0];m.type=A===null?"null":typeof A,m.const=A}else{if(f.every((A)=>typeof A==="number"))m.type="number";if(f.every((A)=>typeof A==="string"))m.type="string";if(f.every((A)=>typeof A==="boolean"))m.type="string";if(f.every((A)=>A===null))m.type="null";m.enum=f}break}case"file":{let m=p,f={type:"string",format:"binary",contentEncoding:"binary"},{minimum:A,maximum:h,mime:g}=e._zod.bag;if(A!==void 0)f.minLength=A;if(h!==void 0)f.maxLength=h;if(g)if(g.length===1)f.contentMediaType=g[0],Object.assign(m,f);else m.anyOf=g.map((_)=>({...f,contentMediaType:_}));else Object.assign(m,f);break}case"transform":{if(this.unrepresentable==="throw")throw Error("Transforms cannot be represented in JSON Schema");break}case"nullable":{let m=this.process(r.innerType,u);p.anyOf=[m,{type:"null"}];break}case"nonoptional":{this.process(r.innerType,u),i.ref=r.innerType;break}case"success":{let m=p;m.type="boolean";break}case"default":{this.process(r.innerType,u),i.ref=r.innerType,p.default=JSON.parse(JSON.stringify(r.defaultValue));break}case"prefault":{if(this.process(r.innerType,u),i.ref=r.innerType,this.io==="input")p._prefault=JSON.parse(JSON.stringify(r.defaultValue));break}case"catch":{this.process(r.innerType,u),i.ref=r.innerType;let m;try{m=r.catchValue(void 0)}catch{throw Error("Dynamic catch values are not supported in JSON Schema")}p.default=m;break}case"nan":{if(this.unrepresentable==="throw")throw Error("NaN cannot be represented in JSON Schema");break}case"template_literal":{let m=p,f=e._zod.pattern;if(!f)throw Error("Pattern not found in template literal");m.type="string",m.pattern=f.source;break}case"pipe":{let m=this.io==="input"?r.in._zod.def.type==="transform"?r.out:r.in:r.out;this.process(m,u),i.ref=m;break}case"readonly":{this.process(r.innerType,u),i.ref=r.innerType,p.readOnly=!0;break}case"promise":{this.process(r.innerType,u),i.ref=r.innerType;break}case"optional":{this.process(r.innerType,u),i.ref=r.innerType;break}case"lazy":{let m=e._zod.innerType;this.process(m,u),i.ref=m;break}case"custom":{if(this.unrepresentable==="throw")throw Error("Custom types cannot be represented in JSON Schema");break}default:}}}let l=this.metadataRegistry.get(e);if(l)Object.assign(i.schema,l);if(this.io==="input"&&BD(e))delete i.schema.examples,delete i.schema.default;if(this.io==="input"&&i.schema._prefault)(n=i.schema).default??(n.default=i.schema._prefault);return delete i.schema._prefault,this.seen.get(e).schema}emit(e,t){let n={cycles:t?.cycles??"ref",reused:t?.reused??"inline",external:t?.external??void 0},r=this.seen.get(e);if(!r)throw Error("Unprocessed schema. This is a bug in Zod.");let o=(c)=>{let u=this.target==="draft-2020-12"?"$defs":"definitions";if(n.external){let f=n.external.registry.get(c[0])?.id;if(f)return{ref:n.external.uri(f)};let A=c[1].defId??c[1].schema.id??`schema${this.counter++}`;return c[1].defId=A,{defId:A,ref:`${n.external.uri("__shared")}#/${u}/${A}`}}if(c[1]===r)return{ref:"#"};let p=`${"#"}/${u}/`,m=c[1].schema.id??`__schema${this.counter++}`;return{defId:m,ref:p+m}},s=(c)=>{if(c[1].schema.$ref)return;let u=c[1],{ref:d,defId:p}=o(c);if(u.def={...u.schema},p)u.defId=p;let m=u.schema;for(let f in m)delete m[f];m.$ref=d};for(let c of this.seen.entries()){let u=c[1];if(e===c[0]){s(c);continue}if(n.external){let p=n.external.registry.get(c[0])?.id;if(e!==c[0]&&p){s(c);continue}}if(this.metadataRegistry.get(c[0])?.id){s(c);continue}if(u.cycle){if(n.cycles==="throw")throw Error(`Cycle detected: #/${u.cycle?.join("/")}/<root>
-
-Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.`);else if(n.cycles==="ref")s(c);continue}if(u.count>1){if(n.reused==="ref"){s(c);continue}}}let i=(c,u)=>{let d=this.seen.get(c),p=d.def??d.schema,m={...p};if(d.ref===null)return;let f=d.ref;if(d.ref=null,f){i(f,u);let A=this.seen.get(f).schema;if(A.$ref&&u.target==="draft-7")p.allOf=p.allOf??[],p.allOf.push(A);else Object.assign(p,A),Object.assign(p,m)}if(!d.isParent)this.override({zodSchema:c,jsonSchema:p,path:d.path??[]})};for(let c of[...this.seen.entries()].reverse())i(c[0],{target:this.target});let a={};if(this.target==="draft-2020-12")a.$schema="https://json-schema.org/draft/2020-12/schema";else if(this.target==="draft-7")a.$schema="http://json-schema.org/draft-07/schema#";else console.warn(`Invalid target: ${this.target}`);Object.assign(a,r.def);let l=n.external?.defs??{};for(let c of this.seen.entries()){let u=c[1];if(u.def&&u.defId)l[u.defId]=u.def}if(!n.external&&Object.keys(l).length>0)if(this.target==="draft-2020-12")a.$defs=l;else a.definitions=l;try{return JSON.parse(JSON.stringify(a))}catch(c){throw Error("Error converting schema to JSON.")}}}
-function toJSONSchema(e,t){if(e instanceof $ZodRegistry){let r=new JSONSchemaGenerator(t),o={};for(let a of e._idmap.entries()){let[l,c]=a;r.process(c)}let s={},i={registry:e,uri:t?.uri||((a)=>a),defs:o};for(let a of e._idmap.entries()){let[l,c]=a;s[l]=r.emit(c,{...t,external:i})}if(Object.keys(o).length>0){let a=r.target==="draft-2020-12"?"$defs":"definitions";s.__shared={[a]:o}}return{schemas:s}}let n=new JSONSchemaGenerator(t);return n.process(e),n.emit(e,t)}
-function BD(e,t){let n=t??{seen:new Set};if(n.seen.has(e))return!1;n.seen.add(e);let o=e._zod.def;switch(o.type){case"string":case"number":case"bigint":case"boolean":case"date":case"symbol":case"undefined":case"null":case"any":case"unknown":case"never":case"void":case"literal":case"enum":case"nan":case"file":case"template_literal":return!1;case"array":return BD(o.element,n);case"object":{for(let s in o.shape)if(BD(o.shape[s],n))return!0;return!1}case"union":{for(let s of o.options)if(BD(s,n))return!0;return!1}case"intersection":return BD(o.left,n)||BD(o.right,n);case"tuple":{for(let s of o.items)if(BD(s,n))return!0;if(o.rest&&BD(o.rest,n))return!0;return!1}case"record":return BD(o.keyType,n)||BD(o.valueType,n);case"map":return BD(o.keyType,n)||BD(o.valueType,n);case"set":return BD(o.valueType,n);case"promise":case"optional":case"nonoptional":case"nullable":case"readonly":return BD(o.innerType,n);case"lazy":return BD(o.getter(),n);case"default":return BD(o.innerType,n);case"prefault":return BD(o.innerType,n);case"custom":return!1;case"transform":return!0;case"pipe":return BD(o.in,n)||BD(o.out,n);case"success":return!1;case"catch":return!1;default:}throw Error(`Unknown schema type: ${o.type}`)}
-var hqo=b(()=>{xar();pp()});
-export {JSONSchemaGenerator,toJSONSchema,BD,hqo};
+function _string(e,t){return new e({type:"string",...normalizeParams(t)})}
+function _coercedString(e,t){return new e({type:"string",coerce:!0,...normalizeParams(t)})}
+function _email(e,t){return new e({type:"string",format:"email",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _guid(e,t){return new e({type:"string",format:"guid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _uuid(e,t){return new e({type:"string",format:"uuid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _uuidv4(e,t){return new e({type:"string",format:"uuid",check:"string_format",abort:!1,version:"v4",...normalizeParams(t)})}
+function _uuidv6(e,t){return new e({type:"string",format:"uuid",check:"string_format",abort:!1,version:"v6",...normalizeParams(t)})}
+function _uuidv7(e,t){return new e({type:"string",format:"uuid",check:"string_format",abort:!1,version:"v7",...normalizeParams(t)})}
+function _url(e,t){return new e({type:"string",format:"url",check:"string_format",abort:!1,...normalizeParams(t)})}
+function NEt(e,t){return new e({type:"string",format:"emoji",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _nanoid(e,t){return new e({type:"string",format:"nanoid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _cuid(e,t){return new e({type:"string",format:"cuid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _cuid2(e,t){return new e({type:"string",format:"cuid2",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _ulid(e,t){return new e({type:"string",format:"ulid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _xid(e,t){return new e({type:"string",format:"xid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _ksuid(e,t){return new e({type:"string",format:"ksuid",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _ipv4(e,t){return new e({type:"string",format:"ipv4",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _ipv6(e,t){return new e({type:"string",format:"ipv6",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _cidrv4(e,t){return new e({type:"string",format:"cidrv4",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _cidrv6(e,t){return new e({type:"string",format:"cidrv6",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _base64(e,t){return new e({type:"string",format:"base64",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _base64url(e,t){return new e({type:"string",format:"base64url",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _e164(e,t){return new e({type:"string",format:"e164",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _jwt(e,t){return new e({type:"string",format:"jwt",check:"string_format",abort:!1,...normalizeParams(t)})}
+function _isoDateTime(e,t){return new e({type:"string",format:"datetime",check:"string_format",offset:!1,local:!1,precision:null,...normalizeParams(t)})}
+function _isoDate(e,t){return new e({type:"string",format:"date",check:"string_format",...normalizeParams(t)})}
+function _isoTime(e,t){return new e({type:"string",format:"time",check:"string_format",precision:null,...normalizeParams(t)})}
+function _isoDuration(e,t){return new e({type:"string",format:"duration",check:"string_format",...normalizeParams(t)})}
+function _number(e,t){return new e({type:"number",checks:[],...normalizeParams(t)})}
+function _coercedNumber(e,t){return new e({type:"number",coerce:!0,checks:[],...normalizeParams(t)})}
+function _int(e,t){return new e({type:"number",check:"number_format",abort:!1,format:"safeint",...normalizeParams(t)})}
+function _float32(e,t){return new e({type:"number",check:"number_format",abort:!1,format:"float32",...normalizeParams(t)})}
+function _float64(e,t){return new e({type:"number",check:"number_format",abort:!1,format:"float64",...normalizeParams(t)})}
+function _int32(e,t){return new e({type:"number",check:"number_format",abort:!1,format:"int32",...normalizeParams(t)})}
+function _uint32(e,t){return new e({type:"number",check:"number_format",abort:!1,format:"uint32",...normalizeParams(t)})}
+function _boolean(e,t){return new e({type:"boolean",...normalizeParams(t)})}
+function _coercedBoolean(e,t){return new e({type:"boolean",coerce:!0,...normalizeParams(t)})}
+function _bigint(e,t){return new e({type:"bigint",...normalizeParams(t)})}
+function _coercedBigint(e,t){return new e({type:"bigint",coerce:!0,...normalizeParams(t)})}
+function _int64(e,t){return new e({type:"bigint",check:"bigint_format",abort:!1,format:"int64",...normalizeParams(t)})}
+function _uint64(e,t){return new e({type:"bigint",check:"bigint_format",abort:!1,format:"uint64",...normalizeParams(t)})}
+function _symbol(e,t){return new e({type:"symbol",...normalizeParams(t)})}
+function _undefined(e,t){return new e({type:"undefined",...normalizeParams(t)})}
+function _null(e,t){return new e({type:"null",...normalizeParams(t)})}
+function _any(e){return new e({type:"any"})}
+function _unknown(e){return new e({type:"unknown"})}
+function _never(e,t){return new e({type:"never",...normalizeParams(t)})}
+function _void(e,t){return new e({type:"void",...normalizeParams(t)})}
+function _date(e,t){return new e({type:"date",...normalizeParams(t)})}
+function _coercedDate(e,t){return new e({type:"date",coerce:!0,...normalizeParams(t)})}
+function _nan(e,t){return new e({type:"nan",...normalizeParams(t)})}
+function Spe(e,t){return new $ZodCheckLessThan({check:"less_than",...normalizeParams(t),value:e,inclusive:!1})}
+function yK(e,t){return new $ZodCheckLessThan({check:"less_than",...normalizeParams(t),value:e,inclusive:!0})}
+function bpe(e,t){return new $ZodCheckGreaterThan({check:"greater_than",...normalizeParams(t),value:e,inclusive:!1})}
+function X9(e,t){return new $ZodCheckGreaterThan({check:"greater_than",...normalizeParams(t),value:e,inclusive:!0})}
+function dpr(e){return bpe(0,e)}
+function ppr(e){return Spe(0,e)}
+function mpr(e){return yK(0,e)}
+function fpr(e){return X9(0,e)}
+function FMe(e,t){return new $ZodCheckMultipleOf({check:"multiple_of",...normalizeParams(t),value:e})}
+function eze(e,t){return new $ZodCheckMaxSize({check:"max_size",...normalizeParams(t),maximum:e})}
+function BMe(e,t){return new $ZodCheckMinSize({check:"min_size",...normalizeParams(t),minimum:e})}
+function QEt(e,t){return new $ZodCheckSizeEquals({check:"size_equals",...normalizeParams(t),size:e})}
+function tze(e,t){return new $ZodCheckMaxLength({check:"max_length",...normalizeParams(t),maximum:e})}
+function fEe(e,t){return new $ZodCheckMinLength({check:"min_length",...normalizeParams(t),minimum:e})}
+function nze(e,t){return new $ZodCheckLengthEquals({check:"length_equals",...normalizeParams(t),length:e})}
+function ZEt(e,t){return new $ZodCheckRegex({check:"string_format",format:"regex",...normalizeParams(t),pattern:e})}
+function eCt(e){return new $ZodCheckLowerCase({check:"string_format",format:"lowercase",...normalizeParams(e)})}
+function tCt(e){return new $ZodCheckUpperCase({check:"string_format",format:"uppercase",...normalizeParams(e)})}
+function nCt(e,t){return new $ZodCheckIncludes({check:"string_format",format:"includes",...normalizeParams(t),includes:e})}
+function rCt(e,t){return new $ZodCheckStartsWith({check:"string_format",format:"starts_with",...normalizeParams(t),prefix:e})}
+function oCt(e,t){return new $ZodCheckEndsWith({check:"string_format",format:"ends_with",...normalizeParams(t),suffix:e})}
+function hpr(e,t,n){return new $ZodCheckProperty({check:"property",property:e,schema:t,...normalizeParams(n)})}
+function sCt(e,t){return new $ZodCheckMimeType({check:"mime_type",mime:e,...normalizeParams(t)})}
+function Epe(e){return new $ZodCheckOverwrite({check:"overwrite",tx:e})}
+function iCt(e){return Epe((t)=>t.normalize(e))}
+function aCt(){return Epe((e)=>e.trim())}
+function lCt(){return Epe((e)=>e.toLowerCase())}
+function cCt(){return Epe((e)=>e.toUpperCase())}
+function _array(e,t,n){return new e({type:"array",element:t,...normalizeParams(n)})}
+function _union(e,t,n){return new e({type:"union",options:t,...normalizeParams(n)})}
+function _discriminatedUnion(e,t,n,r){return new e({type:"union",options:n,discriminator:t,...normalizeParams(r)})}
+function _intersection(e,t,n){return new e({type:"intersection",left:t,right:n})}
+function _tuple(e,t,n,r){let o=n instanceof $ZodType;return new e({type:"tuple",items:t,rest:o?n:null,...normalizeParams(o?r:n)})}
+function _record(e,t,n,r){return new e({type:"record",keyType:t,valueType:n,...normalizeParams(r)})}
+function _map(e,t,n,r){return new e({type:"map",keyType:t,valueType:n,...normalizeParams(r)})}
+function _set(e,t,n){return new e({type:"set",valueType:t,...normalizeParams(n)})}
+function _enum(e,t,n){let r=Array.isArray(t)?Object.fromEntries(t.map((o)=>[o,o])):t;return new e({type:"enum",entries:r,...normalizeParams(n)})}
+function _nativeEnum(e,t,n){return new e({type:"enum",entries:t,...normalizeParams(n)})}
+function _literal(e,t,n){return new e({type:"literal",values:Array.isArray(t)?t:[t],...normalizeParams(n)})}
+function _file(e,t){return new e({type:"file",...normalizeParams(t)})}
+function _transform(e,t){return new e({type:"transform",transform:t})}
+function _optional(e,t){return new e({type:"optional",innerType:t})}
+function _nullable(e,t){return new e({type:"nullable",innerType:t})}
+function _default(e,t,n){return new e({type:"default",innerType:t,get defaultValue(){return typeof n==="function"?n():n}})}
+function _nonoptional(e,t,n){return new e({type:"nonoptional",innerType:t,...normalizeParams(n)})}
+function _success(e,t){return new e({type:"success",innerType:t})}
+function _catch(e,t,n){return new e({type:"catch",innerType:t,catchValue:typeof n==="function"?n:()=>n})}
+function _pipe(e,t,n){return new e({type:"pipe",in:t,out:n})}
+function _readonly(e,t){return new e({type:"readonly",innerType:t})}
+function _templateLiteral(e,t,n){return new e({type:"template_literal",parts:t,...normalizeParams(n)})}
+function _lazy(e,t){return new e({type:"lazy",getter:t})}
+function _promise(e,t){return new e({type:"promise",innerType:t})}
+function _custom(e,t,n){let r=normalizeParams(n);return r.abort??(r.abort=!0),new e({type:"custom",check:"custom",fn:t,...r})}
+function _refine(e,t,n){return new e({type:"custom",check:"custom",fn:t,...normalizeParams(n)})}
+function _stringbool(e,t){let n=normalizeParams(t),r=n.truthy??["true","1","yes","on","y","enabled"],o=n.falsy??["false","0","no","off","n","disabled"];if(n.case!=="sensitive")r=r.map((f)=>typeof f==="string"?f.toLowerCase():f),o=o.map((f)=>typeof f==="string"?f.toLowerCase():f);let s=new Set(r),i=new Set(o),a=e.Pipe??$ZodPipe,l=e.Boolean??$ZodBoolean,c=e.String??$ZodString,d=new(e.Transform??$ZodTransform)({type:"transform",transform:(f,h)=>{let g=f;if(n.case!=="sensitive")g=g.toLowerCase();if(s.has(g))return!0;else if(i.has(g))return!1;else return h.issues.push({code:"invalid_value",expected:"stringbool",values:[...s,...i],input:h.value,inst:d}),{}},error:n.error}),p=new a({type:"pipe",in:new c({type:"string",error:n.error}),out:d,error:n.error});return new a({type:"pipe",in:p,out:new l({type:"boolean",error:n.error}),error:n.error})}
+function _stringFormat(e,t,n,r={}){let o=normalizeParams(r),s={...normalizeParams(r),check:"string_format",type:"string",format:t,fn:typeof n==="function"?n:(a)=>n.test(a),...o};if(n instanceof RegExp)s.pattern=n;return new e(s)}
+var TimePrecision;
+var _pr=b(()=>{HQt();wEt();Fd();TimePrecision={Any:null,Minute:-1,Second:0,Millisecond:3,Microsecond:6}});
+export {_string,_coercedString,_email,_guid,_uuid,_uuidv4,_uuidv6,_uuidv7,_url,NEt,_nanoid,_cuid,_cuid2,_ulid,_xid,_ksuid,_ipv4,_ipv6,_cidrv4,_cidrv6,_base64,_base64url,_e164,_jwt,_isoDateTime,_isoDate,_isoTime,_isoDuration,_number,_coercedNumber,_int,_float32,_float64,_int32,_uint32,_boolean,_coercedBoolean,_bigint,_coercedBigint,_int64,_uint64,_symbol,_undefined,_null,_any,_unknown,_never,_void,_date,_coercedDate,_nan,Spe,yK,bpe,X9,dpr,ppr,mpr,fpr,FMe,eze,BMe,QEt,tze,fEe,nze,ZEt,eCt,tCt,nCt,rCt,oCt,hpr,sCt,Epe,iCt,aCt,lCt,cCt,_array,_union,_discriminatedUnion,_intersection,_tuple,_record,_map,_set,_enum,_nativeEnum,_literal,_file,_transform,_optional,_nullable,_default,_nonoptional,_success,_catch,_pipe,_readonly,_templateLiteral,_lazy,_promise,_custom,_refine,_stringbool,_stringFormat,TimePrecision,_pr};

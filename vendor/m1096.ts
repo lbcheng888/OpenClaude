@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,wws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var pxs,DeregisterMarketplaceModelEndpointCommand;
-var Qbr=b(()=>{ri();wi();xi();pxs=M(yo(),1);DeregisterMarketplaceModelEndpointCommand=class DeregisterMarketplaceModelEndpointCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[pxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeregisterMarketplaceModelEndpoint",{}).n("BedrockClient","DeregisterMarketplaceModelEndpointCommand").sc(wws).build(){}});
-export {pxs,DeregisterMarketplaceModelEndpointCommand,Qbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,hxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var tPs,DeleteInferenceProfileCommand;
+var Ewr=b(()=>{$s();ai();ci();tPs=x(yo(),1);DeleteInferenceProfileCommand=class DeleteInferenceProfileCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[tPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteInferenceProfile",{}).n("BedrockClient","DeleteInferenceProfileCommand").sc(hxs).build(){}});
+export {tPs,DeleteInferenceProfileCommand,Ewr};

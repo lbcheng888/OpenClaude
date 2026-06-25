@@ -1,4 +1,19 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var sis=X((ois)=>{var ceu=(e)=>typeof ArrayBuffer==="function"&&e instanceof ArrayBuffer||Object.prototype.toString.call(e)==="[object ArrayBuffer]";ois.isArrayBuffer=ceu});
-export {sis};
+import {b} from "../runtime.ts";
+var Tds=()=>{};
+var Sds=()=>{};
+var bds=()=>{};
+var Eds=()=>{};
+var Cds=()=>{};
+var Ads=()=>{};
+var Rds=()=>{};
+var vds=()=>{};
+var wds=()=>{};
+var kds=()=>{};
+var Hds=()=>{};
+var Ids=()=>{};
+var xds=()=>{};
+var Dds=()=>{};
+var Pds;
+var Ods=b(()=>{(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(Pds||(Pds={}))});
+export {Tds,Sds,bds,Eds,Cds,Ads,Rds,vds,wds,kds,Hds,Ids,xds,Dds,Pds,Ods};

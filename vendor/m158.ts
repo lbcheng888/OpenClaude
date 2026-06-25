@@ -1,8 +1,9 @@
 // @ts-nocheck
+import {nlr,Wbe} from "./m138.ts";
 import {b} from "../runtime.ts";
-import {Yx,VT} from "./m152.ts";
-import {QC,Rp,Ss} from "./m156.ts";
-import {GI,Ta} from "./m157.ts";
-var I_t;
-var Krr=b(()=>{Yx();QC();GI();I_t=class I_t extends Rp{create(e,t){let{betas:n,...r}=e;return this._client.post("/v1/environments?beta=true",{body:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}retrieve(e,t={},n){let{betas:r}=t??{};return this._client.get(Ta`/v1/environments/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}update(e,t,n){let{betas:r,...o}=t;return this._client.post(Ta`/v1/environments/${e}?beta=true`,{body:o,...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}list(e={},t){let{betas:n,...r}=e??{};return this._client.getAPIList("/v1/environments?beta=true",VT,{query:r,...t,headers:Ss([{"anthropic-beta":[...n??[],"managed-agents-2026-04-01"].toString()},t?.headers])})}delete(e,t={},n){let{betas:r}=t??{};return this._client.delete(Ta`/v1/environments/${e}?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}archive(e,t={},n){let{betas:r}=t??{};return this._client.post(Ta`/v1/environments/${e}/archive?beta=true`,{...n,headers:Ss([{"anthropic-beta":[...r??[],"managed-agents-2026-04-01"].toString()},n?.headers])})}}});
-export {I_t,Krr};
+var T5o=()=>{};
+class Jd{constructor(e){this._client=e}}
+function*Mvc(e){if(!e)return;if(S5o in e){let{values:r,nulls:o}=e;yield*r.entries();for(let s of o)yield[s,null];return}let t=!1,n;if(e instanceof Headers)n=e.entries();else if(nlr(e))n=e;else t=!0,n=Object.entries(e??{});for(let r of n){let o=r[0];if(typeof o!=="string")throw TypeError("expected header name to be a string");let s=nlr(r[1])?r[1]:[r[1]],i=!1;for(let a of s){if(a===void 0)continue;if(t&&!i)i=!0,yield[o,null];yield[o,a]}}}
+var S5o,is=(e)=>{let t=new Headers,n=new Set;for(let r of e){let o=new Set;for(let[s,i]of Mvc(r)){let a=s.toLowerCase();if(!o.has(a))t.delete(s),o.add(a);if(i===null)t.delete(s),n.add(a);else t.append(s,i),n.delete(a)}}return{[S5o]:!0,values:t,nulls:n}};
+var oA=b(()=>{Wbe();S5o=Symbol.for("brand.privateNullableHeaders")});
+export {T5o,Jd,Mvc,S5o,is,oA};

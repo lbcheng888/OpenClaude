@@ -1,11 +1,8 @@
 // @ts-nocheck
-import {U1,Yve} from "./m2365.ts";
-import {tn,Hc} from "./m235.ts";
-import {buildSystemPrompt,ope} from "./m236.ts";
+import {FF,w4r} from "./m2365.ts";
 import {b} from "../runtime.ts";
-function lSn(e,t,n){let r=U1(e,t,n);while(tn(r)>n-t&&n>t)n--,r=U1(e,t,n);return r}
-function Osd(e,t,n){if(t<1)return"";let r=tn(e);if(r<=t)return e;if(t===1)return aSn;if(n==="start")return aSn+lSn(e,r-t+1,r);if(n==="middle"){let o=Math.floor(t/2);return lSn(e,0,o)+aSn+lSn(e,r-(t-o)+1,r)}return lSn(e,0,t-1)+aSn}
-function $1(e,t,n="wrap"){if(n==="wrap"||n==="wrap-stream")return buildSystemPrompt(e,t,{trim:!1,hard:!0});if(n==="wrap-trim")return buildSystemPrompt(e,t,{trim:!0,hard:!0});if(n==="end"||n==="middle"||n.startsWith("truncate")){let r="end";if(n==="truncate-middle"||n==="middle")r="middle";if(n==="truncate-start")r="start";return Osd(e,t,r)}return e}
-var aSn="\u2026";
-var FIt=b(()=>{Yve();Hc();ope()});
-export {lSn,Osd,$1,aSn,FIt};
+function I4r(e){if(WCn.has(e))return e;if(k4r.has(e))return k4r.get(e);if(e.startsWith(GCn))return jhd;if(e=e.slice(2),e.startsWith("38"))return FF.color.close;else if(e.startsWith("48"))return FF.bgColor.close;let t=FF.codes.get(parseInt(e,10));if(t)return FF.color.ansi(t);else return FF.reset.open}
+function QM(e){return e.map((t)=>t.code).join("")}
+var Jki,Xki,Qki,WCn,k4r,GCn="\x1B]8;;",H4r,Zki="\x07",ugg,jhd;
+var fPt=b(()=>{w4r();Jki=new Set([27,155]),Xki="[".codePointAt(0),Qki="]".codePointAt(0),WCn=new Set,k4r=new Map;for(let[e,t]of FF.codes)WCn.add(FF.color.ansi(t)),k4r.set(FF.color.ansi(e),FF.color.ansi(t));H4r=GCn.split("").map((e)=>e.charCodeAt(0)),ugg=Zki.charCodeAt(0),jhd=`\x1B]8;;${Zki}`});
+export {I4r,QM,Jki,Xki,Qki,WCn,k4r,GCn,H4r,Zki,ugg,jhd,fPt};

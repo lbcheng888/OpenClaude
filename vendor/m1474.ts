@@ -1,19 +1,5 @@
 // @ts-nocheck
-import {v9s} from "./m1473.ts";
-import {z7} from "../src/session/1460_promise.ts";
-import {B7,k8} from "./m1291.ts";
-import {ci,pT} from "./m1289.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Se,bt} from "./m195.ts";
-import {kme,sdn} from "./m1460.ts";
-import {b} from "../runtime.ts";
-function gxr(){if(!hxr)hxr=v9s();return hxr}
-async function Mg(e,t){let n=await gxr().lock(e,t);return Object.assign(n,{[Symbol.asyncDispose]:n})}
-function w9s(e,t){let n=gxr().lockSync(e,t);return Object.assign(n,{[Symbol.dispose]:n})}
-function R9s(e,t){return gxr().check(e,t)}
-var hxr;
-async function XOu(e){if(x9s.getStore())return e();let t=k9s,n=z7();k9s=n.promise;try{await t;let r=B7();await ci().mkdir(r);let o=await Mg(I9s.join(r,".storage-write"),{realpath:!1,retries:{retries:10,minTimeout:100,maxTimeout:1000},stale:15000,onCompromised:(s)=>logForDebugging(`[secureStorage] write lock compromised: ${Se(s)}`,{level:"warn"})});try{return await x9s.run(!0,e)}finally{await o().catch((s)=>logForDebugging(`[secureStorage] write lock release failed: ${Se(s)}`,{level:"warn"}))}}finally{n.resolve()}}
-function hNe(e,t){return XOu(async()=>{e.invalidateCache?.();let n=await(e.readAsyncStrict?.()??e.readAsync());if(n===kme)return{success:!1,transient:!0};let r=n??{},o=t(r);return o===r?{success:!0}:await e.update(o)})}
-var H9s,I9s,x9s,k9s;
-var Rwt=b(()=>{pT();qe();bt();k8();sdn();H9s=require("async_hooks"),I9s=require("path"),x9s=new H9s.AsyncLocalStorage,k9s=Promise.resolve()});
-export {gxr,Mg,w9s,R9s,hxr,XOu,hNe,H9s,I9s,x9s,k9s,Rwt};
+import {Q} from "../runtime.ts";
+import {l8s} from "./m1473.ts";
+var c8s=Q((swh,wXe)=>{var DR=global.process,cFe=function(e){return e&&typeof e==="object"&&typeof e.removeListener==="function"&&typeof e.emit==="function"&&typeof e.reallyExit==="function"&&typeof e.listeners==="function"&&typeof e.kill==="function"&&typeof e.pid==="number"&&typeof e.on==="function"};if(!cFe(DR))wXe.exports=function(){return function(){}};else{if(Mxr=require("assert"),uFe=l8s(),Nxr=/^win/i.test(DR.platform),vXe=require("events"),typeof vXe!=="function")vXe=vXe.EventEmitter;if(DR.__signal_exit_emitter__)lD=DR.__signal_exit_emitter__;else lD=DR.__signal_exit_emitter__=new vXe,lD.count=0,lD.emitted={};if(!lD.infinite)lD.setMaxListeners(1/0),lD.infinite=!0;wXe.exports=function(e,t){if(!cFe(global.process))return function(){};if(Mxr.equal(typeof e,"function","a callback must be provided for exit handler"),dFe===!1)zmn();var n="exit";if(t&&t.alwaysLast)n="afterexit";var r=function(){if(lD.removeListener(n,e),lD.listeners("exit").length===0&&lD.listeners("afterexit").length===0)Ykt()};return lD.on(n,e),r},Ykt=function(){if(!dFe||!cFe(global.process))return;dFe=!1,uFe.forEach(function(t){try{DR.removeListener(t,Jkt[t])}catch(n){}}),DR.emit=Xkt,DR.reallyExit=jmn,lD.count-=1},wXe.exports.unload=Ykt,BAe=function(t,n,r){if(lD.emitted[t])return;lD.emitted[t]=!0,lD.emit(t,n,r)},Jkt={},uFe.forEach(function(e){Jkt[e]=function(){if(!cFe(global.process))return;var n=DR.listeners(e);if(n.length===lD.count){if(Ykt(),BAe("exit",null,e),BAe("afterexit",null,e),Nxr&&e==="SIGHUP")e="SIGINT";DR.kill(DR.pid,e)}}}),wXe.exports.signals=function(){return uFe},dFe=!1,zmn=function(){if(dFe||!cFe(global.process))return;dFe=!0,lD.count+=1,uFe=uFe.filter(function(t){try{return DR.on(t,Jkt[t]),!0}catch(n){return!1}}),DR.emit=Bxr,DR.reallyExit=Fxr},wXe.exports.load=zmn,jmn=DR.reallyExit,Fxr=function(t){if(!cFe(global.process))return;DR.exitCode=t||0,BAe("exit",DR.exitCode,null),BAe("afterexit",DR.exitCode,null),jmn.call(DR,DR.exitCode)},Xkt=DR.emit,Bxr=function(t,n){if(t==="exit"&&cFe(global.process)){if(n!==void 0)DR.exitCode=n;var r=Xkt.apply(this,arguments);return BAe("exit",DR.exitCode,null),BAe("afterexit",DR.exitCode,null),r}else return Xkt.apply(this,arguments)}}var Mxr,uFe,Nxr,vXe,lD,Ykt,BAe,Jkt,dFe,zmn,jmn,Fxr,Xkt,Bxr});
+export {c8s};

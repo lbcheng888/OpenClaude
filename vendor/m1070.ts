@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,ews} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var URs,CreateCustomModelDeploymentCommand;
-var wbr=b(()=>{ri();wi();xi();URs=M(yo(),1);CreateCustomModelDeploymentCommand=class CreateCustomModelDeploymentCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[URs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CreateCustomModelDeployment",{}).n("BedrockClient","CreateCustomModelDeploymentCommand").sc(ews).build(){}});
-export {URs,CreateCustomModelDeploymentCommand,wbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,W0s} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var HDs,CancelAutomatedReasoningPolicyBuildWorkflowCommand;
+var Jvr=b(()=>{$s();ai();ci();HDs=x(yo(),1);CancelAutomatedReasoningPolicyBuildWorkflowCommand=class CancelAutomatedReasoningPolicyBuildWorkflowCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[HDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","CancelAutomatedReasoningPolicyBuildWorkflow",{}).n("BedrockClient","CancelAutomatedReasoningPolicyBuildWorkflowCommand").sc(W0s).build(){}});
+export {HDs,CancelAutomatedReasoningPolicyBuildWorkflowCommand,Jvr};

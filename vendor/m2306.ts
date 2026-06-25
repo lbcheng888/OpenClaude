@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {dF} from "./m2298.ts";
-var RTi=X((tnh,wTi)=>{var hnd=dF(),gnd=(e,t)=>new hnd(e,t).patch;wTi.exports=gnd});
-export {RTi};
+import {Q} from "../runtime.ts";
+var mCn=Q((Rfg,pvi)=>{var wpd=Object.freeze({loose:!0}),kpd=Object.freeze({}),Hpd=(e)=>{if(!e)return kpd;if(typeof e!=="object")return wpd;return e};pvi.exports=Hpd});
+export {mCn};

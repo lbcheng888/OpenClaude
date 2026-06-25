@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {uf,dr} from "./m231.ts";
-import {b} from "../runtime.ts";
-function MIn(e){return e.replace(/`[^`\n]+`/g,(t,n)=>{let r=e[n-1];return r==="!"||r==="`"?t:"`"+uf(" ",t.length-2)+"`"})}
-function nY(e){return e.replace(/`!/g,"` !").replace(/!`/g,"! `").replace(/(^|\s)!/gm,"$1\\!")}
-var Dot=b(()=>{dr()});
-export {MIn,nY,Dot};
+import {Q} from "../runtime.ts";
+import {XHe} from "./m3246.ts";
+var HZr=Q((uPn)=>{Object.defineProperty(uPn,"__esModule",{value:!0});uPn.Semaphore=void 0;var JYd=XHe();class xda{constructor(e=1){if(e<=0)throw Error("Capacity must be greater than 0");this._capacity=e,this._active=0,this._waiting=[]}lock(e){return new Promise((t,n)=>{this._waiting.push({thunk:e,resolve:t,reject:n}),this.runNext()})}get active(){return this._active}runNext(){if(this._waiting.length===0||this._active===this._capacity)return;(0,JYd.default)().timer.setImmediate(()=>this.doRunNext())}doRunNext(){if(this._waiting.length===0||this._active===this._capacity)return;let e=this._waiting.shift();if(this._active++,this._active>this._capacity)throw Error("To many thunks active");try{let t=e.thunk();if(t instanceof Promise)t.then((n)=>{this._active--,e.resolve(n),this.runNext()},(n)=>{this._active--,e.reject(n),this.runNext()});else this._active--,e.resolve(t),this.runNext()}catch(t){this._active--,e.reject(t),this.runNext()}}}uPn.Semaphore=xda});
+export {HZr};

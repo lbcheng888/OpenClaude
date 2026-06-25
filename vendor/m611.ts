@@ -1,12 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {KJo,Vmr} from "./m610.ts";
-import {ws,jt} from "./m228.ts";
-function abe(e){let t=0;for(let n=0;n<e.length;n++)t=(t<<5)-t+e.charCodeAt(n)|0;return t}
-function zJo(e){return Bun.hash(e).toString()}
-function YJo(e,t){return Bun.hash(t,Bun.hash(e)).toString()}
-function XJo(e){let t=e.replace(/[^a-zA-Z0-9]/g,"-");if(t.length<=JJo)return t;return`${t.slice(0,JJo)}-${Math.abs(abe(e)).toString(36)}`}
-function qen(e){return XJo(e)}
-var wbt,$en,JJo=200,LMe;
-var jen=b(()=>{KJo();ws();wbt=require("path"),$en=Vmr("claude-cli");LMe={baseLogs:()=>wbt.join($en.cache,qen(jt().cwd())),errors:()=>wbt.join($en.cache,qen(jt().cwd()),"errors"),messages:()=>wbt.join($en.cache,qen(jt().cwd()),"messages"),mcpLogs:(e)=>wbt.join($en.cache,qen(jt().cwd()),`mcp-logs-${XJo(e)}`)}});
-export {abe,zJo,YJo,XJo,qen,wbt,$en,JJo,LMe,jen};
+import {Q} from "../runtime.ts";
+var Sns=Q((Gb)=>{Gb.HttpAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(Gb.HttpAuthLocation||(Gb.HttpAuthLocation={}));Gb.HttpApiKeyAuthLocation=void 0;(function(e){e.HEADER="header",e.QUERY="query"})(Gb.HttpApiKeyAuthLocation||(Gb.HttpApiKeyAuthLocation={}));Gb.EndpointURLScheme=void 0;(function(e){e.HTTP="http",e.HTTPS="https"})(Gb.EndpointURLScheme||(Gb.EndpointURLScheme={}));Gb.AlgorithmId=void 0;(function(e){e.MD5="md5",e.CRC32="crc32",e.CRC32C="crc32c",e.SHA1="sha1",e.SHA256="sha256"})(Gb.AlgorithmId||(Gb.AlgorithmId={}));var uru=(e)=>{let t=[];if(e.sha256!==void 0)t.push({algorithmId:()=>Gb.AlgorithmId.SHA256,checksumConstructor:()=>e.sha256});if(e.md5!=null)t.push({algorithmId:()=>Gb.AlgorithmId.MD5,checksumConstructor:()=>e.md5});return{addChecksumAlgorithm(n){t.push(n)},checksumAlgorithms(){return t}}},dru=(e)=>{let t={};return e.checksumAlgorithms().forEach((n)=>{t[n.algorithmId()]=n.checksumConstructor()}),t},pru=(e)=>uru(e),mru=(e)=>dru(e);Gb.FieldPosition=void 0;(function(e){e[e.HEADER=0]="HEADER",e[e.TRAILER=1]="TRAILER"})(Gb.FieldPosition||(Gb.FieldPosition={}));var fru="__smithy_context";Gb.IniSectionType=void 0;(function(e){e.PROFILE="profile",e.SSO_SESSION="sso-session",e.SERVICES="services"})(Gb.IniSectionType||(Gb.IniSectionType={}));Gb.RequestHandlerProtocol=void 0;(function(e){e.HTTP_0_9="http/0.9",e.HTTP_1_0="http/1.0",e.TDS_8_0="tds/8.0"})(Gb.RequestHandlerProtocol||(Gb.RequestHandlerProtocol={}));Gb.SMITHY_CONTEXT_KEY=fru;Gb.getDefaultClientConfiguration=pru;Gb.resolveDefaultRuntimeConfig=mru});
+export {Sns};

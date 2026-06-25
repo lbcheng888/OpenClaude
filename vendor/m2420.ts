@@ -1,0 +1,9 @@
+// @ts-nocheck
+import {b} from "../runtime.ts";
+import {r2e} from "./m2359.ts";
+function MPt(e,t){if(e.nodeName==="#text")return e.nodeValue;let n=e.accessibility;if(n?.hidden)return"";if(e.isHidden||e.yogaNode?.getDisplay()===1)return"";let r="";if(n?.label!==void 0)r=n.label;else if(e.nodeName==="ink-text"||e.nodeName==="ink-virtual-text"||e.nodeName==="ink-link")for(let o of e.childNodes)r+=MPt(o,n?.role??t);else if(e.nodeName==="ink-box"||e.nodeName==="ink-root")r=uyd(e,n?.role??t);if(n?.state){let o=Object.keys(n.state).filter((s)=>n.state[s]);if(o.length>0)r=`(${o.join(", ")}) ${r}`}if(n?.role&&n.role!==t)r=`${n.role}: ${r}`;return r}
+function uyd(e,t){let n=e.style.flexDirection??"row",r=n==="column"||n==="column-reverse",o=n==="row-reverse"||n==="column-reverse",s=r?`
+`:" ",i=[];for(let a of e.childNodes){let l=MPt(a,t);if(l!=="")i.push(l)}if(o)i.reverse();return i.join(s)}
+function Kqr(e,t,n){if(e===t)return 0;if(e.nodeName==="#text")return null;let r=e.accessibility;if(r?.hidden)return null;if(e.isHidden||e.yogaNode?.getDisplay()===1)return null;if(r?.label!==void 0)return null;if(e.nodeName==="ink-text"||e.nodeName==="ink-virtual-text"||e.nodeName==="ink-link")return null;if(e.nodeName!=="ink-box"&&e.nodeName!=="ink-root")return null;let o=r?.role??n,s=0;if(r?.state){let p=Object.keys(r.state).filter((m)=>r.state[m]);if(p.length>0)s+=`(${p.join(", ")}) `.length}if(r?.role&&r.role!==n)s+=`${r.role}: `.length;let i=e.style.flexDirection??"row",a=i==="column"||i==="column-reverse",l=i==="row-reverse"||i==="column-reverse",c=a?1:1,u=[];for(let p of e.childNodes){let m=MPt(p,o);if(m!=="")u.push({node:p,out:m})}if(l)u.reverse();let d=0;for(let p of u){let m=Kqr(p.node,t,o);if(m!==null)return s+d+m;d+=p.out.length+c}return null}
+var k0i=b(()=>{r2e()});
+export {MPt,uyd,Kqr,k0i};

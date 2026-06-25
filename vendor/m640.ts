@@ -1,7 +1,16 @@
 // @ts-nocheck
+import {Wt,Nd,ps} from "./m230.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
 import {b} from "../runtime.ts";
-function Ibt(e,t){if(e.type!=="user")return;if(e.isMeta===!0||e.isCompactSummary===!0)return;let n=e.message;if(!n)return;let r=n.content,o=[];if(typeof r==="string")o.push(r);else if(Array.isArray(r))for(let s of r){if(!s||typeof s!=="object")continue;if(s.type==="tool_result")return;if(s.type==="text"&&typeof s.text==="string")o.push(s.text)}for(let s of o){let i=s.replaceAll(`
-`," ").trim();if(!i)continue;let a=bzc.exec(i);if(a){if(!t.commandFallback)t.commandFallback=a[1];continue}let l=/<bash-input>([\s\S]*?)<\/bash-input>/.exec(i);if(l)return`! ${l[1].trim()}`;if(Szc.test(i))continue;if(i.length>200)i=i.slice(0,200).trim()+"\u2026";return i}return}
-var Szc,bzc;
-var ofr=b(()=>{Szc=/^(?:\s*<[a-z][\w-]*[\s>]|\[Request interrupted by user[^\]]*\])/,bzc=/<command-name>(.*?)<\/command-name>/});
-export {Ibt,Szc,bzc,ofr};
+function Orn(e){let{buffer:t,bytesRead:n}=Wt().readSync(e,{length:4096});if(n===0)return"utf8";if(n>=2){if(t[0]===255&&t[1]===254)return"utf16le"}if(n>=3&&t[0]===239&&t[1]===187&&t[2]===191)return"utf8";return"utf8"}
+function Lrn(e){let t=0,n=0;for(let r=0;r<e.length;r++)if(e[r]===`
+`)if(r>0&&e[r-1]==="\r")t++;else n++;return t>n?"CRLF":"LF"}
+function XX(e){let t=Wt(),{resolvedPath:n,isSymlink:r}=Nd(t,e);if(r)logForDebugging(`Reading through symlink: ${e} -> ${n}`);let o=Orn(n),s=t.readFileSync(n,{encoding:o}),i=Lrn(s.slice(0,4096));return{content:s.replaceAll(`\r
+`,`
+`),encoding:o,lineEndings:i}}
+function Ov(e){return XX(e).content}
+async function wrs(e){let t=Wt(),{resolvedPath:n,isSymlink:r}=Nd(t,e);if(r)logForDebugging(`Reading through symlink: ${e} -> ${n}`);let o=Orn(n),s=await t.readFile(n,{encoding:o}),i=Lrn(s.slice(0,4096));return{content:s.replaceAll(`\r
+`,`
+`),encoding:o,lineEndings:i}}
+var GN=b(()=>{qe();ps()});
+export {Orn,Lrn,XX,Ov,wrs,GN};

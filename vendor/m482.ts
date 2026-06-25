@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var LVo=X((sdf,OVo)=>{OVo.exports=URIError});
-export {LVo};
+import {Q} from "../runtime.ts";
+var bXo=Q((SCf,SXo)=>{SXo.exports=Error});
+export {bXo};

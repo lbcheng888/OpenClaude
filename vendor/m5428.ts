@@ -1,10 +1,16 @@
 // @ts-nocheck
-import {getCommandName} from "../src/tools/4028_maxEditDistance.ts";
-import {mS,mee} from "./m2749.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function VPm(e,t){if(t.length===0)return e;let n=new Set(e.map(getCommandName)),r=t.map((o)=>o.isMcp&&n.has(getCommandName(o))?{...o,isHidden:!0}:o);return mS([...e,...r],"name")}
-function dLo(e,t){return KWl.useMemo(()=>VPm(e,t),[e,t])}
-var KWl;
-var zWl=b(()=>{mee();KWl=M(Te(),1)});
-export {VPm,dLo,KWl,zWl};
+import {useIsScreenReaderEnabled,Jve} from "./m2444.ts";
+import {getIsRemoteMode,lt} from "../src/session/0132_sent.ts";
+import {getCurrentProjectConfig,saveCurrentProjectConfig,tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {Yxt,vu} from "../src/mcp/2200_mcpServerName.ts";
+import {Udn,RM} from "./m1289.ts";
+import {q0e,K9t,V$} from "../src/telemetry/3911_contextWindow.ts";
+import {isShuttingDown,isAmberSentinelEnabled} from "../src/config/3348_flushAnalyticsSinks.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function lXl(e){let t=useIsScreenReaderEnabled();aXl.useEffect(()=>{if(getIsRemoteMode())return;let n=getCurrentProjectConfig(),r=Yxt();if(n.lastGracefulShutdown!==!1||n.lastVersionBase!==r)saveCurrentProjectConfig((s)=>({...s,lastGracefulShutdown:!1,lastVersionBase:r}));let o=()=>{if(Udn()){let s=t?"Cost: ":"";process.stdout.write(`
+`+s+q0e()+`
+`)}K9t(e?.())};return process.on("exit",o),()=>{if(isShuttingDown())K9t(e?.());process.off("exit",o)}},[t])}
+var aXl;
+var cXl=b(()=>{lt();V$();Jve();vu();RM();tr();isAmberSentinelEnabled();aXl=x(et(),1)});
+export {lXl,aXl,cXl};

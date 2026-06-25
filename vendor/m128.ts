@@ -1,26 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function hH(){return ttr}
-function EKt(e){ttr=e}
-function i2o(e){return bKt.has(e)?bKt.get(e):void 0}
-function a2o(e,t){bKt.set(e,t)}
-function l2o(){return ntr}
-function c2o(e){ntr=e}
-function u2o(){return rtr}
-function d2o(e){rtr=e}
-function p2o(){return otr}
-function m2o(e){otr=e}
-function f2o(){return str}
-function A2o(e){str={value:e}}
-function h2o(){return itr}
-function g2o(e){itr=e}
-function _2o(e){return atr.get(e)}
-function y2o(e,t){atr.set(e,t)}
-function f_(){ttr=null,bKt.clear(),atr.clear(),itr=void 0,ntr=void 0,rtr=void 0,otr=void 0,str=void 0}
-function CKt(){return ltr}
-function S2o(e){ltr=e,T2o=!0}
-function b2o(){ltr=void 0}
-function E2o(){return T2o}
-var ttr=null,bKt,ntr,rtr,otr,str,itr,atr,ltr,T2o=!1;
-var Kx=b(()=>{bKt=new Map;atr=new Map});
-export {hH,EKt,i2o,a2o,l2o,c2o,u2o,d2o,p2o,m2o,f2o,A2o,h2o,g2o,_2o,y2o,f_,CKt,S2o,b2o,E2o,ttr,bKt,ntr,rtr,otr,str,itr,atr,ltr,T2o,Kx};
+function HKe(e){if(!e)return{code:"en"};let t=e.toLowerCase().trim();if(!t)return{code:"en"};if(a6o.has(t))return{code:t};let n=NRc[t];if(n)return{code:n};let r=t.split("-")[0];if(r&&a6o.has(r))return{code:r};return{code:"en",fellBackFrom:e}}
+var NRc,a6o;
+var l6o=b(()=>{NRc={english:"en",spanish:"es",espa\u{f1}ol:"es",espanol:"es",french:"fr",fran\u{e7}ais:"fr",francais:"fr",japanese:"ja",\u{65e5}\u{672c}\u{8a9e}:"ja",german:"de",deutsch:"de",portuguese:"pt",portugu\u{ea}s:"pt",portugues:"pt",italian:"it",italiano:"it",korean:"ko",\u{d55c}\u{ad6d}\u{c5b4}:"ko",hindi:"hi",\u{939}\u{93f}\u{928}\u{94d}\u{926}\u{940}:"hi",\u{939}\u{93f}\u{902}\u{926}\u{940}:"hi",indonesian:"id","bahasa indonesia":"id",bahasa:"id",russian:"ru",\u{440}\u{443}\u{441}\u{441}\u{43a}\u{438}\u{439}:"ru",polish:"pl",polski:"pl",turkish:"tr",t\u{fc}rk\u{e7}e:"tr",turkce:"tr",dutch:"nl",nederlands:"nl",ukrainian:"uk",\u{443}\u{43a}\u{440}\u{430}\u{457}\u{43d}\u{441}\u{44c}\u{43a}\u{430}:"uk",greek:"el",\u{3b5}\u{3bb}\u{3bb}\u{3b7}\u{3bd}\u{3b9}\u{3ba}\u{3ac}:"el",czech:"cs",\u{10d}e\u{161}tina:"cs",cestina:"cs",danish:"da",dansk:"da",swedish:"sv",svenska:"sv",norwegian:"no",norsk:"no"},a6o=new Set(["en","es","fr","ja","de","pt","it","ko","hi","id","ru","pl","tr","nl","uk","el","cs","da","sv","no"])});
+export {HKe,NRc,a6o,l6o};

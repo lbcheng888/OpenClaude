@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {tC} from "./m829.ts";
-var cIs;
-var uIs=b(()=>{cIs=M(tC(),1)});
-export {cIs,uIs};
+import {WLs,GLs,VLs} from "./m1212.ts";
+import {MLs,NLs,FLs} from "./m1210.ts";
+import {b} from "../runtime.ts";
+var KLs=(e,t)=>({applyToStack:(n)=>{n.addRelativeTo(WLs(e,t),GLs),n.add(MLs(),NLs)}});
+var zLs=b(()=>{FLs();VLs()});
+export {KLs,zLs};

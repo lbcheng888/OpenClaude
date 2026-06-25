@@ -1,4 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var kDn=X((HNt)=>{Object.defineProperty(HNt,"__esModule",{value:!0});HNt.AggregationTemporality=void 0;var MGd;(function(e){e[e.DELTA=0]="DELTA",e[e.CUMULATIVE=1]="CUMULATIVE"})(MGd=HNt.AggregationTemporality||(HNt.AggregationTemporality={}))});
-export {kDn};
+import {b} from "../runtime.ts";
+import {ftt,AZ} from "./m2380.ts";
+var uno;
+var h_a=b(()=>{ftt();uno=class uno extends AZ{action;sourceEvent;isChordCompletion;origin;constructor(e,t){super("action",{bubbles:!0,cancelable:!0});this.action=e,this.sourceEvent=t?.sourceEvent??null,this.isChordCompletion=t?.isChordCompletion??!1,this.origin=t?.origin??"single"}consume(){this.stopPropagation(),this.sourceEvent?.preventDefault(),this.sourceEvent?.stopImmediatePropagation()}get consumed(){return this._isPropagationStopped()}}});
+export {uno,h_a};

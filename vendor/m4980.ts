@@ -1,13 +1,30 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {performHeapDump,ywo} from "../src/session/4980_performHeapDump.ts";
-var uxl={};
-isFullscreenWithTTY(uxl,{call:()=>Clm});
-async function Clm(){let e=await performHeapDump();if(!e.success)return{type:"text",value:`Failed to create heap dump: ${e.error}`};let t=[e.heapPath,e.diagPath,"",vlm(e.diagnostics)];return t.push("","Open the .heapsnapshot in Chrome DevTools \u2192 Memory \u2192 Load to inspect retainers."),{type:"text",value:t.join(`
-`)}}
-function vlm(e){let{memoryUsage:t,resourceUsage:n,analysis:r}=e,o=t.external-t.arrayBuffers,s=Math.max(0,t.rss-t.heapTotal-t.external),i=t.heapTotal>t.external+s?"\u2014 most memory is JS heap (inspect the .heapsnapshot)":"\u2014 most memory is native (NOT in the .heapsnapshot)",a=r.potentialLeaks.length?r.potentialLeaks.map((l)=>`  \u26A0 ${l}`).join(`
-`):"  (no obvious leak indicators)";return[`RSS ${yft(t.rss)} (peak ${yft(n.maxRSS)}) ${i}`,`  JS heap        ${yft(t.heapTotal).padStart(8)}  in snapshot`,`  array buffers  ${yft(t.arrayBuffers).padStart(8)}  not in snapshot`,`  other external ${yft(o).padStart(8)}  not in snapshot`,`  unaccounted    ${yft(s).padStart(8)}  not in snapshot (code/JIT/stacks/allocator)`,a].join(`
-`)}
-function yft(e){return`${(e/1073741824).toFixed(2)} GB`}
-var dxl=b(()=>{ywo()});
-export {uxl,Clm,vlm,yft,dxl};
+import {iu} from "./m3830.ts";
+import {Or,ss} from "./m2553.ts";
+import {pOl,v0o} from "../src/agent/4980_isValid.ts";
+import {truncateToWidth} from "./m239.ts";
+import {Kc,Jm} from "../src/config/2207_Jm.ts";
+import {Text} from "./m2433.ts";
+import {lEn,rz} from "../src/config/2253_displayName.ts";
+import {_c,PE} from "./m3831.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {dr,uc} from "./m2558.ts";
+import {Box} from "./m2432.ts";
+import {WPl,Rgt} from "./m4970.ts";
+import {c$n,tce} from "../src/permissions/3892_permissionMode.ts";
+import {Ba,I_} from "./m2584.ts";
+import {cS,Rj} from "./m3188.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {Xo} from "./m240.ts";
+import {Fy} from "./m3832.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function fOl(e){let t=mOl.c(88),{tools:n,existingAgents:r,onSave:o,onSaveAndEdit:s,error:i}=e,{goBack:a,wizardData:l}=iu(),c;if(t[0]===Symbol.for("react.memo_cache_sentinel"))c={context:"Confirmation"},t[0]=c;else c=t[0];Or("confirm:no",a,c);let u;if(t[1]!==o||t[2]!==s)u=(J)=>{if(J.key==="return"){J.preventDefault(),o();return}if(J.ctrl||J.meta)return;if(J.key==="s")J.preventDefault(),o();else if(J.key==="e")J.preventDefault(),s()},t[1]=o,t[2]=s,t[3]=u;else u=t[3];let d=u,p=l.finalAgent,m,f,h,g,_,T,y,S,E,R,w,H,k,I,D,O,L,P,M;if(t[4]!==p||t[5]!==r||t[6]!==d||t[7]!==n||t[8]!==l.location){let J=pOl(p,n,r),K;if(t[28]!==p)K=truncateToWidth(p.getSystemPrompt(),240),t[28]=p,t[29]=K;else K=t[29];let j=K,X;if(t[30]!==p.whenToUse)X=truncateToWidth(p.whenToUse,240),t[30]=p.whenToUse,t[31]=X;else X=t[31];let ee=X,te=Wgm,ne;if(t[32]!==p.memory)ne=Kc()?Fp.jsxs(Text,{children:[Fp.jsx(Text,{bold:!0,children:"Memory"}),": ",lEn(p.memory)]}):null,t[32]=p.memory,t[33]=ne;else ne=t[33];let se=ne;if(f=_c,w="Confirm and save",t[34]===Symbol.for("react.memo_cache_sentinel"))H=Fp.jsxs(bn,{children:[Fp.jsx(at,{chord:["s","enter"],action:"save"}),Fp.jsx(at,{chord:"e",action:"edit in your editor"}),Fp.jsx(dr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"cancel"})]}),t[34]=H;else H=t[34];m=Box,k="column",I=0,D=!0,O=d;let re;if(t[35]===Symbol.for("react.memo_cache_sentinel"))re=Fp.jsx(Text,{bold:!0,children:"Name"}),t[35]=re;else re=t[35];if(t[36]!==p.agentType)L=Fp.jsxs(Text,{children:[re,": ",p.agentType]}),t[36]=p.agentType,t[37]=L;else L=t[37];let ue;if(t[38]===Symbol.for("react.memo_cache_sentinel"))ue=Fp.jsx(Text,{bold:!0,children:"Location"}),t[38]=ue;else ue=t[38];let le;if(t[39]!==p.agentType||t[40]!==l.location)le=WPl({source:l.location,agentType:p.agentType}),t[39]=p.agentType,t[40]=l.location,t[41]=le;else le=t[41];if(t[42]!==le)P=Fp.jsxs(Text,{children:[ue,":"," ",le]}),t[42]=le,t[43]=P;else P=t[43];let ce;if(t[44]===Symbol.for("react.memo_cache_sentinel"))ce=Fp.jsx(Text,{bold:!0,children:"Tools"}),t[44]=ce;else ce=t[44];let Se;if(t[45]!==p.tools)Se=te(p.tools),t[45]=p.tools,t[46]=Se;else Se=t[46];if(t[47]!==Se)M=Fp.jsxs(Text,{children:[ce,": ",Se]}),t[47]=Se,t[48]=M;else M=t[48];let ie;if(t[49]===Symbol.for("react.memo_cache_sentinel"))ie=Fp.jsx(Text,{bold:!0,children:"Model"}),t[49]=ie;else ie=t[49];let ae;if(t[50]!==p.model)ae=c$n(p.model),t[50]=p.model,t[51]=ae;else ae=t[51];if(t[52]!==ae)h=Fp.jsxs(Text,{children:[ie,": ",ae]}),t[52]=ae,t[53]=h;else h=t[53];if(g=se,t[54]===Symbol.for("react.memo_cache_sentinel"))_=Fp.jsx(Box,{marginTop:1,children:Fp.jsxs(Text,{children:[Fp.jsx(Text,{bold:!0,children:"Description"})," (tells Claude when to use this agent):"]})}),t[54]=_;else _=t[54];if(t[55]!==ee)T=Fp.jsx(Box,{marginLeft:2,marginTop:1,children:Fp.jsx(Text,{children:ee})}),t[55]=ee,t[56]=T;else T=t[56];if(t[57]===Symbol.for("react.memo_cache_sentinel"))y=Fp.jsx(Box,{marginTop:1,children:Fp.jsxs(Text,{children:[Fp.jsx(Text,{bold:!0,children:"System prompt"}),":"]})}),t[57]=y;else y=t[57];if(t[58]!==j)S=Fp.jsx(Box,{marginLeft:2,marginTop:1,children:Fp.jsx(Text,{children:j})}),t[58]=j,t[59]=S;else S=t[59];E=J.warnings.length>0&&Fp.jsxs(Box,{marginTop:1,flexDirection:"column",children:[Fp.jsx(Text,{color:"warning",children:"Warnings:"}),Fp.jsx(Box,{flexDirection:"column",marginLeft:1,children:J.warnings.map(qgm)})]}),R=J.errors.length>0&&Fp.jsxs(Box,{marginTop:1,flexDirection:"column",children:[Fp.jsx(Text,{color:"error",children:"Errors:"}),Fp.jsx(Box,{flexDirection:"column",marginLeft:1,children:J.errors.map($gm)})]}),t[4]=p,t[5]=r,t[6]=d,t[7]=n,t[8]=l.location,t[9]=m,t[10]=f,t[11]=h,t[12]=g,t[13]=_,t[14]=T,t[15]=y,t[16]=S,t[17]=E,t[18]=R,t[19]=w,t[20]=H,t[21]=k,t[22]=I,t[23]=D,t[24]=O,t[25]=L,t[26]=P,t[27]=M}else m=t[9],f=t[10],h=t[11],g=t[12],_=t[13],T=t[14],y=t[15],S=t[16],E=t[17],R=t[18],w=t[19],H=t[20],k=t[21],I=t[22],D=t[23],O=t[24],L=t[25],P=t[26],M=t[27];let B;if(t[60]!==i)B=i&&Fp.jsx(Box,{marginTop:1,children:Fp.jsx(Ba,{error:i})}),t[60]=i,t[61]=B;else B=t[61];let N;if(t[62]===Symbol.for("react.memo_cache_sentinel"))N=Fp.jsx(Text,{bold:!0,children:"s"}),t[62]=N;else N=t[62];let F;if(t[63]===Symbol.for("react.memo_cache_sentinel"))F=Fp.jsx(Text,{bold:!0,children:"Enter"}),t[63]=F;else F=t[63];let V;if(t[64]===Symbol.for("react.memo_cache_sentinel"))V=Fp.jsx(Box,{marginTop:2,children:Fp.jsxs(Text,{color:"success",children:["Press ",N," or ",F," to save,"," ",Fp.jsx(Text,{bold:!0,children:"e"})," to save and edit"]})}),t[64]=V;else V=t[64];let G;if(t[65]!==m||t[66]!==h||t[67]!==g||t[68]!==_||t[69]!==T||t[70]!==y||t[71]!==S||t[72]!==E||t[73]!==R||t[74]!==B||t[75]!==k||t[76]!==I||t[77]!==D||t[78]!==O||t[79]!==L||t[80]!==P||t[81]!==M)G=Fp.jsxs(m,{flexDirection:k,tabIndex:I,autoFocus:D,onKeyDown:O,children:[L,P,M,h,g,_,T,y,S,E,R,B,V]}),t[65]=m,t[66]=h,t[67]=g,t[68]=_,t[69]=T,t[70]=y,t[71]=S,t[72]=E,t[73]=R,t[74]=B,t[75]=k,t[76]=I,t[77]=D,t[78]=O,t[79]=L,t[80]=P,t[81]=M,t[82]=G;else G=t[82];let z;if(t[83]!==f||t[84]!==w||t[85]!==H||t[86]!==G)z=Fp.jsx(f,{subtitle:w,footerText:H,children:G}),t[83]=f,t[84]=w,t[85]=H,t[86]=G,t[87]=z;else z=t[87];return z}
+function $gm(e,t){return Fp.jsx(cS,{color:"error",children:e},t)}
+function qgm(e,t){return Fp.jsx(cS,{children:Fp.jsx(Text,{dimColor:!0,children:e})},t)}
+function Wgm(e){if(e===void 0)return"All tools";if(e.length===0)return"None";if(e.length===1)return e[0]||"None";if(e.length===2)return e.join(" and ");return`${e.slice(0,-1).join(", ")}, and ${e.at(-1)}`}
+var mOl,Fp;
+var hOl=b(()=>{je();ss();Jm();rz();Xo();tce();uc();Rj();Is();I_();Wo();Fy();PE();Rgt();v0o();mOl=x(tt(),1),Fp=x(oe(),1)});
+export {fOl,$gm,qgm,Wgm,mOl,Fp,hOl};

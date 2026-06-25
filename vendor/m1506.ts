@@ -1,7 +1,11 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Nxr} from "./m1504.ts";
-import {p4s} from "./m1505.ts";
-var m4s=()=>{};
-var f4s=b(()=>{Nxr();p4s();m4s()});
-export {m4s,f4s};
+var qWs=()=>{};
+var WWs=()=>{};
+var GWs=()=>{};
+var VWs=()=>{};
+var KWs=()=>{};
+var zWs=()=>{};
+var jWs=()=>{};
+var YWs=b(()=>{KWs();zWs();jWs()});
+export {qWs,WWs,GWs,VWs,KWs,zWs,jWs,YWs};

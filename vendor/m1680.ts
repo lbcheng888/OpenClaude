@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {FHr} from "./m1660.ts";
 import {b} from "../runtime.ts";
-import {DQ} from "./m1662.ts";
-function nGs(e,t){return FHr(e,t)}
-var rGs=b(()=>{DQ()});
-export {nGs,rGs};
+function bOr(e){return typeof e[UYs]==="function"}
+function $Ys(e){if(bOr(e))return e[UYs]();else return e}
+var UYs;
+var qYs=b(()=>{UYs=Symbol("rawContent")});
+export {bOr,$Ys,UYs,qYs};

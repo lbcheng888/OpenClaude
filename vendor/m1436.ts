@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {fromSSO} from "./m980.ts";
+import {fromIni} from "./m1021.ts";
 import {b} from "../runtime.ts";
-import {ysn} from "./m981.ts";
-var PPu=(e={})=>fromSSO({...e});
-var G2s=b(()=>{ysn()});
-export {PPu,G2s};
+import {lvr} from "./m1022.ts";
+var K$u=(e={})=>fromIni({...e});
+var L6s=b(()=>{lvr()});
+export {K$u,L6s};

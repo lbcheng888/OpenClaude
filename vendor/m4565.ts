@@ -1,9 +1,12 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Bll(e){let t=Mll.c(3),{children:n}=e,r=mDe.useRef(null),o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o={setHandler:(a)=>{r.current=a},tryDelete:(a)=>r.current?.(a)??!1},t[0]=o;else o=t[0];let s=o,i;if(t[1]!==n)i=mDe.default.createElement(Nll.Provider,{value:s},n),t[1]=n,t[2]=i;else i=t[2];return i}
-function X8n(){return mDe.useContext(Nll)}
-var Mll,mDe,Nll;
-var Q8n=b(()=>{Mll=M(rt(),1),mDe=M(Te(),1),Nll=mDe.createContext({setHandler:()=>{},tryDelete:()=>!1})});
-export {Bll,X8n,Mll,mDe,Nll,Q8n};
+import {b,x} from "../runtime.ts";
+import {aRo} from "./m4564.ts";
+import {je} from "./m2462.ts";
+import {uo} from "./m2468.ts";
+import {Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {lr} from "./m233.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+var _Qp,qfl;
+var Wfl=b(()=>{aRo();je();uo();Ro();lr();_Qp=x(tt(),1),qfl=x(oe(),1)});
+export {_Qp,qfl,Wfl};

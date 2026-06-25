@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JB} from "./m1820.ts";
-var yzs=X((xNA,_zs)=>{var B2u=JB(),F2u=(e,t)=>new B2u(e,t).major;_zs.exports=F2u});
-export {yzs};
+import {Q} from "../runtime.ts";
+import {TF} from "./m1825.ts";
+var fBe=Q((V8h,nei)=>{var tei=TF(),JGu=(e,t,n=!1)=>{if(e instanceof tei)return e;try{return new tei(e,t)}catch(r){if(!n)return null;throw r}};nei.exports=JGu});
+export {fBe};

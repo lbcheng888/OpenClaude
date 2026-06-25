@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {FXr,UXr} from "../src/tui/3357_rerender.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function o4l(){let[e,t]=FYn.useState(null);return FYn.useEffect(()=>(FXr((n)=>new Promise((r)=>{t({settings:n,resolve:(o)=>{t(null),r(o)}})})),()=>FXr(null)),[]),e}
-var FYn;
-var s4l=b(()=>{UXr();FYn=M(Te(),1)});
-export {o4l,FYn,s4l};
+import {getInitialSettings,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {Yc,m1,Zm} from "../src/config/2709_Zm.ts";
+import {b} from "../runtime.ts";
+function wZn(){let e=getInitialSettings().defaultShell;if(e==="bash"&&!Yc())return"powershell";if(e==="powershell"&&!m1())return"bash";return e??(Yc()?"bash":"powershell")}
+var lNo=b(()=>{br();Zm()});
+export {wZn,lNo};

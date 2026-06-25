@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {Ho,aC} from "./m1717.ts";
-import {ls,m0} from "./m1721.ts";
-import {noCryptoObject,invalidState,LH} from "./m1720.ts";
+import {mse,Co,uC,dC} from "./m1722.ts";
+import {ServerError,RQe} from "./m1763.ts";
+import {vQe,agn} from "./m1764.ts";
 import {b} from "../runtime.ts";
-class Pmn{static setRequestState(e,t,n){let r=Pmn.generateLibraryState(e,n);return t?`${r}${Ho.RESOURCE_DELIM}${t}`:r}static generateLibraryState(e,t){if(!e)throw ls(noCryptoObject);let n={id:e.createNewGuid()};if(t)n.meta=t;let r=JSON.stringify(n);return e.base64Encode(r)}static parseRequestState(e,t){if(!e)throw ls(noCryptoObject);if(!t)throw ls(invalidState);try{let n=t.split(Ho.RESOURCE_DELIM),r=n[0],o=n.length>1?n.slice(1).join(Ho.RESOURCE_DELIM):Ho.EMPTY_STRING,s=e.base64Decode(r),i=JSON.parse(s);return{userRequestState:o||Ho.EMPTY_STRING,libraryState:i}}catch(n){throw ls(invalidState)}}}
-var r7s=b(()=>{aC();m0();LH();/*! @azure/msal-common v15.13.1 2025-10-29 */});
-export {Pmn,r7s};
+class sfe{static generateThrottlingStorageKey(e){return`${mse.THROTTLING_PREFIX}.${JSON.stringify(e)}`}static preProcess(e,t,n){let r=sfe.generateThrottlingStorageKey(t),o=e.getThrottlingCache(r);if(o){if(o.throttleTime<Date.now()){e.removeItem(r,n);return}throw new ServerError(o.errorCodes?.join(" ")||Co.EMPTY_STRING,o.errorMessage,o.subError)}}static postProcess(e,t,n,r){if(sfe.checkResponseStatus(n)||sfe.checkResponseForRetryAfter(n)){let o={throttleTime:sfe.calculateThrottleTime(parseInt(n.headers[uC.RETRY_AFTER])),error:n.body.error,errorCodes:n.body.error_codes,errorMessage:n.body.error_description,subError:n.body.suberror};e.setThrottlingCache(sfe.generateThrottlingStorageKey(t),o,r)}}static checkResponseStatus(e){return e.status===429||e.status>=500&&e.status<600}static checkResponseForRetryAfter(e){if(e.headers)return e.headers.hasOwnProperty(uC.RETRY_AFTER)&&(e.status<200||e.status>=300);return!1}static calculateThrottleTime(e){let t=e<=0?0:e,n=Date.now()/1000;return Math.floor(Math.min(n+(t||mse.DEFAULT_THROTTLE_TIME_SECONDS),n+mse.DEFAULT_MAX_THROTTLE_TIME_SECONDS)*1000)}static removeThrottle(e,t,n,r){let o=vQe(t,n,r),s=this.generateThrottlingStorageKey(o);e.removeItem(s,n.correlationId)}}
+var YXs=b(()=>{dC();RQe();agn();/*! @azure/msal-common v15.13.1 2025-10-29 */});
+export {sfe,YXs};

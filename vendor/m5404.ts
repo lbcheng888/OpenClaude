@@ -1,10 +1,15 @@
 // @ts-nocheck
-import {getDynamicTeamContext,Am} from "../src/agent/1459_waitForTeammatesToBecomeIdle.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {readTeamFile,getTeamFilePath,BL} from "./m3879.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {b} from "../runtime.ts";
-function K5l(){let e=getDynamicTeamContext();if(!e?.teamName||!e?.agentName){logForDebugging("[Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)");return}let{teamName:t,agentId:n,agentName:r}=e,o=readTeamFile(t);if(!o){De(Error(`[computeInitialTeamContext] Could not read team file for ${t}`));return}let s=getTeamFilePath(t),i=!n;return logForDebugging(`[Reconnection] Computed initial team context for ${i?"leader":`teammate ${r}`} in team ${t}`),{teamName:t,teamFilePath:s,leadAgentId:o.leadAgentId,selfAgentId:n,selfAgentName:r,isLeader:i,teammates:{}}}
-function z5l(e,t,n){let r=readTeamFile(t);if(!r){logForDebugging(`[initializeTeammateContextFromSession] Could not read team file for ${t} (agent: ${n}) \u2014 team may have been disbanded`,{level:"error"});return}let o=r.members.find((a)=>a.name===n);if(!o)logForDebugging(`[Reconnection] Member ${n} not found in team ${t} - may have been removed`);let s=o?.agentId,i=getTeamFilePath(t);e((a)=>({...a,teamContext:{teamName:t,teamFilePath:i,leadAgentId:r.leadAgentId,selfAgentId:s,selfAgentName:n,isLeader:!1,teammates:{}}})),logForDebugging(`[Reconnection] Initialized agent context from session for ${n} in team ${t}`)}
-var nLo=b(()=>{qe();Rn();Am();BL()});
-export {K5l,z5l,nLo};
+import {Die,yOt} from "./m2545.ts";
+import {useClock} from "./m2442.ts";
+import {useAnimationFrame} from "../src/config/2452_isVisible.ts";
+import {X3,cZ} from "./m2273.ts";
+import {lc,mg} from "./m2209.ts";
+import {color,Kve} from "./m2431.ts";
+import {f8,$M} from "../src/telemetry/2032_word.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {et} from "./m2261.ts";
+function GYl(e,t){let n=Die(),[r,o]=qer.useState(!1),s=useClock(),[,i]=useAnimationFrame(r&&!n?qYl:null);if(qer.useEffect(()=>{let u=WYl===!1&&e;if(WYl=e,!u||n)return;o(!0);let d=s.setTimeout(()=>o(!1),nUm);return()=>{d(),o(!1)}},[e,s,n]),!r||n||t<=0)return;let a=Math.floor(i/qYl),l=X3(lc("theme","dark").value),c=Array.from({length:t},(u,d)=>color(f8(d+a),l)("\u2500")).join("");return[{content:c,position:"top",align:"start",offset:0},{content:c,position:"bottom",align:"start",offset:0}]}
+var qer,nUm=2500,qYl=150,WYl=null;
+var VYl=b(()=>{yOt();je();mg();cZ();$M();Kve();qer=x(et(),1)});
+export {GYl,qer,nUm,qYl,WYl,VYl};

@@ -1,5 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {mT} from "./m1464.ts";
-var UVr=X((Djh,FYi)=>{var yrt=mT();function cFd(e,t,n,r){yrt.open(e,"r+",(o,s)=>{if(o)return r(o);yrt.futimes(s,t,n,(i)=>{yrt.close(s,(a)=>{if(r)r(i||a)})})})}function uFd(e,t,n){let r=yrt.openSync(e,"r+");return yrt.futimesSync(r,t,n),yrt.closeSync(r)}FYi.exports={utimesMillis:cFd,utimesMillisSync:uFd}});
-export {UVr};
+import {Q} from "../runtime.ts";
+import {AC} from "./m3074.ts";
+import {Qta} from "./m3096.ts";
+import {rna} from "./m3098.ts";
+import {sna} from "./m3099.ts";
+var ana=Q((uZg,ina)=>{var A8d=AC().fromPromise,w$=Qta();w$.outputJson=A8d(rna());w$.outputJsonSync=sna();w$.outputJSON=w$.outputJson;w$.outputJSONSync=w$.outputJsonSync;w$.writeJSON=w$.writeJson;w$.writeJSONSync=w$.writeJsonSync;w$.readJSON=w$.readJson;w$.readJSONSync=w$.readJsonSync;ina.exports=w$});
+export {ana};

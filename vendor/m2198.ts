@@ -1,8 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function B_n(e,t){let n=e.toLowerCase();for(let r of t)if(typeof r==="string"&&r.length>0&&n.includes(r.toLowerCase()))return!0;return!1}
-function CK(e){let t=e.toLowerCase().replace(/\u0131/g,"i").replace(/\u017f/g,"s");return t.replace(/[\u200c-\u200f\u202a-\u202e\u206a-\u206f\ufeff]/g,"").replace(/:.*$/,"").replace(/[. ]+$/,"")||t}
-function mve(e,t,n){let r=e.slice(t.length).split(Ffi.sep),o=r.length-1;for(let s=0;s<r.length;s++){let i=CK(r[s]);if(rXu.has(i))return!0;if(s===o&&n?.has(i))return!0}return!1}
-var Ffi,rXu;
-var F_n=b(()=>{Ffi=require("path"),rXu=new Set([".git","hooks",".husky",".githooks","node_modules",".vscode",".idea","head","config","objects","refs",".claude","skills","commands","agents",".cargo",".devcontainer",".yarn",".mvn"])});
-export {B_n,CK,mve,Ffi,rXu,F_n};
+function j2r(e){let t=zid;if(!t)return!1;let n,r;try{n=new URL(e),r=new URL(t)}catch{return!1}if((n.protocol==="wss:"?`https://${n.host}`:n.protocol==="ws:"?`http://${n.host}`:n.origin)!==r.origin)return!1;return z2r.some((s)=>n.pathname.includes(s))}
+function aSi(e){if(!j2r(e))return!1;let t;try{t=new URL(e)}catch{return!1}let n=t.searchParams.get("mcp_url");if(!n)return!1;try{let r=new URL(n);return jid.has(r.hostname)&&r.pathname==="/devices/mcp"}catch{return!1}}
+function ZZe(e){if(!("url"in e)||typeof e.url!=="string")return;try{let t=new URL(e.url);return t.search="",t.username="",t.password="",t.hash="",t.toString().replace(/\/$/,"")}catch{return}}
+var z2r,zid,jid;
+var eet=b(()=>{z2r=["/v2/session_ingress/shttp/mcp/","/v2/session_ingress/mcp/ws/","/v2/ccr-sessions/","/v1/code/"],zid=process.env.SESSION_INGRESS_URL??process.env.ANTHROPIC_BASE_URL;jid=new Set(["bridge.claudeusercontent.com","bridge-staging.claudeusercontent.com"])});
+export {j2r,aSi,ZZe,z2r,zid,jid,eet};

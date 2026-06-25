@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var F4i=X((q2h,B4i)=>{function HId(e){return{name:"CSP",case_insensitive:!1,keywords:{$pattern:"[a-zA-Z][a-zA-Z0-9_-]*",keyword:"base-uri child-src connect-src default-src font-src form-action frame-ancestors frame-src img-src media-src object-src plugin-types report-uri sandbox script-src style-src"},contains:[{className:"string",begin:"'",end:"'"},{className:"attribute",begin:"^Content",end:":",excludeEnd:!0}]}}B4i.exports=HId});
-export {F4i};
+import {Q} from "../runtime.ts";
+var aVi=Q((R7g,iVi)=>{function jBd(e){return{name:"Cap\u2019n Proto",aliases:["capnp"],keywords:{keyword:"struct enum interface union group import using const annotation extends in of on as with from fixed",built_in:"Void Bool Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Float32 Float64 Text Data AnyPointer AnyStruct Capability List",literal:"true false"},contains:[e.QUOTE_STRING_MODE,e.NUMBER_MODE,e.HASH_COMMENT_MODE,{className:"meta",begin:/@0x[\w\d]{16};/,illegal:/\n/},{className:"symbol",begin:/@\d+\b/},{className:"class",beginKeywords:"struct enum",end:/\{/,illegal:/\n/,contains:[e.inherit(e.TITLE_MODE,{starts:{endsWithParent:!0,excludeEnd:!0}})]},{className:"class",beginKeywords:"interface",end:/\{/,illegal:/\n/,contains:[e.inherit(e.TITLE_MODE,{starts:{endsWithParent:!0,excludeEnd:!0}})]}]}}iVi.exports=jBd});
+export {aVi};

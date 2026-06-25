@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,ERs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var cks,StopEvaluationJobCommand;
-var DEr=b(()=>{ri();wi();xi();cks=M(yo(),1);StopEvaluationJobCommand=class StopEvaluationJobCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[cks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","StopEvaluationJob",{}).n("BedrockClient","StopEvaluationJobCommand").sc(ERs).build(){}});
-export {cks,StopEvaluationJobCommand,DEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,pDs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var QPs,PutModelInvocationLoggingConfigurationCommand;
+var nkr=b(()=>{$s();ai();ci();QPs=x(yo(),1);PutModelInvocationLoggingConfigurationCommand=class PutModelInvocationLoggingConfigurationCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[QPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","PutModelInvocationLoggingConfiguration",{}).n("BedrockClient","PutModelInvocationLoggingConfigurationCommand").sc(pDs).build(){}});
+export {QPs,PutModelInvocationLoggingConfigurationCommand,nkr};

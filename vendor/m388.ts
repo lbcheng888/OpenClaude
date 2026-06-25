@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {initZV} from "./m363.ts";
-import {initLf} from "./m354.ts";
-import {Ig} from "./m355.ts";
-var f5o=X((Hur)=>{Object.defineProperty(Hur,"__esModule",{value:!0});var CSt=initZV(),vSt=initLf(),Cxc=Ig(),vxc={message:({params:{missingProperty:e}})=>vSt.str`must have required property '${e}'`,params:({params:{missingProperty:e}})=>vSt._`{missingProperty: ${e}}`},wxc={keyword:"required",type:"object",schemaType:"array",$data:!0,error:vxc,code(e){let{gen:t,schema:n,schemaCode:r,data:o,$data:s,it:i}=e,{opts:a}=i;if(!s&&n.length===0)return;let l=n.length>=a.loopRequired;if(i.allErrors)c();else u();if(a.strictRequired){let m=e.parentSchema.properties,{definedProperties:f}=e.it;for(let A of n)if((m===null||m===void 0?void 0:m[A])===void 0&&!f.has(A)){let h=i.schemaEnv.baseId+i.errSchemaPath,g=`required property "${A}" is not defined at "${h}" (strictRequired)`;(0,Cxc.checkStrictMode)(i,g,i.opts.strictRequired)}}function c(){if(l||s)e.block$data(vSt.nil,d);else for(let m of n)(0,CSt.checkReportMissingProp)(e,m)}function u(){let m=t.let("missing");if(l||s){let f=t.let("valid",!0);e.block$data(f,()=>p(m,f)),e.ok(f)}else t.if((0,CSt.checkMissingProp)(e,n,m)),(0,CSt.reportMissingProp)(e,m),t.else()}function d(){t.forOf("prop",r,(m)=>{e.setParams({missingProperty:m}),t.if((0,CSt.noPropertyInData)(t,o,m,a.ownProperties),()=>e.error())})}function p(m,f){e.setParams({missingProperty:m}),t.forOf(m,r,()=>{t.assign(f,(0,CSt.propertyInData)(t,o,m,a.ownProperties)),t.if((0,vSt.not)(f),()=>{e.error(),t.break()})},vSt.nil)}}};Hur.default=wxc});
-export {f5o};
+import {Q} from "../runtime.ts";
+import {AK} from "./m365.ts";
+import {apiKeyHelperCache} from "./m357.ts";
+import {Km} from "./m356.ts";
+var ajo=Q((thr)=>{Object.defineProperty(thr,"__esModule",{value:!0});var E1c=AK(),C1c=apiKeyHelperCache(),Cze=Km(),A1c={message:({schemaCode:e})=>Cze.str`must match pattern "${e}"`,params:({schemaCode:e})=>Cze._`{pattern: ${e}}`},R1c={keyword:"pattern",type:"string",schemaType:"string",$data:!0,error:A1c,code(e){let{gen:t,data:n,$data:r,schema:o,schemaCode:s,it:i}=e,a=i.opts.unicodeRegExp?"u":"";if(r){let{regExp:l}=i.opts.code,c=l.code==="new RegExp"?Cze._`new RegExp`:(0,C1c.useFunc)(t,l),u=t.let("valid");t.try(()=>t.assign(u,Cze._`${c}(${s}, ${a}).test(${n})`),()=>t.assign(u,!1)),e.fail$data(Cze._`!${u}`)}else{let l=(0,E1c.usePattern)(e,o);e.fail$data(Cze._`!${l}.test(${n})`)}}};thr.default=R1c});
+export {ajo};

@@ -1,10 +1,7 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {PO} from "./m1236.ts";
-import {initToolFactoryModule,a0} from "./m1238.ts";
-import {gQ,UPs} from "../src/tools/1263_error.ts";
-import {yo} from "./m887.ts";
-import {Ew} from "./m1228.ts";
-var JPs,ConverseStreamCommand;
-var WCr=b(()=>{PO();initToolFactoryModule();gQ();JPs=M(yo(),1);ConverseStreamCommand=class ConverseStreamCommand extends Ew.classBuilder().ep(a0).m(function(e,t,n,r){return[JPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockFrontendService","ConverseStream",{eventStream:{output:!0}}).n("BedrockRuntimeClient","ConverseStreamCommand").sc(UPs).build(){}});
-export {JPs,ConverseStreamCommand,WCr};
+import {b} from "../runtime.ts";
+import {QP} from "./m1241.ts";
+import {fAe} from "./m1234.ts";
+var BedrockRuntimeServiceException;
+var mdn=b(()=>{QP();BedrockRuntimeServiceException=class BedrockRuntimeServiceException extends fAe{constructor(e){super(e);Object.setPrototypeOf(this,BedrockRuntimeServiceException.prototype)}}});
+export {BedrockRuntimeServiceException,mdn};

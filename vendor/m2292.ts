@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {zy,xU} from "./m23.ts";
+import {rRi,oRi} from "./m2291.ts";
 import {b} from "../runtime.ts";
-class eTi{proc;constructor(e=process){this.proc=e}isJetBrainsIdeTerminal(){return this.proc.env.TERMINAL_EMULATOR==="JetBrains-JediTerm"}isMicrosoftWindowsTerminal(){return this.proc.platform==="win32"&&!!this.proc.env.WT_SESSION}isGhostty(){return this.proc.env.TERM==="xterm-ghostty"||this.proc.env.TERM_PROGRAM==="ghostty"}isMintty(){if(this.proc.env.TERM_PROGRAM==="mintty")return!0;if(this.proc.platform==="win32"&&this.proc.env.MSYSTEM)return!0;return!1}windowsConsoleSupportsVirtualTerminalSequences(){if(this.isMicrosoftWindowsTerminal())return!0;if(this.proc.platform==="win32"&&this.proc.env.TERM_PROGRAM==="vscode"&&this.proc.env.TERM_PROGRAM_VERSION)return!0;if(this.isMintty())return!0;return!1}hasGeometricShapesInkBleedBug(){return this.isGhostty()}}
-var die;
-var rZe=b(()=>{die=new eTi});
-export {eTi,die,rZe};
+function Edd(e,t,n){var r=!0,o=!0;if(typeof e!="function")throw TypeError(bdd);if(zy(n))r="leading"in n?!!n.leading:r,o="trailing"in n?!!n.trailing:o;return rRi(e,t,{leading:r,maxWait:t,trailing:o})}
+var bdd="Expected a function",sRi;
+var iRi=b(()=>{oRi();xU();sRi=Edd});
+export {Edd,bdd,sRi,iRi};

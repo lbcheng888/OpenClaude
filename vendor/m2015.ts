@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {sti} from "./m2014.ts";
-function qAn(e){return e!=null&&typeof e==="object"&&!Array.isArray(e)}
-var lLr=(e)=>(lLr=Array.isArray,lLr(e)),cLr;
-var uLr=b(()=>{sti();cLr=lLr});
-export {qAn,lLr,cLr,uLr};
+import {Q} from "../runtime.ts";
+var Vii=Q((Syn)=>{Object.defineProperty(Syn,"__esModule",{value:!0});Syn.IAMAuth=void 0;class Gii{selector;token;constructor(e,t){this.selector=e,this.token=t,this.selector=e,this.token=t}getRequestHeaders(){return{"x-goog-iam-authority-selector":this.selector,"x-goog-iam-authorization-token":this.token}}}Syn.IAMAuth=Gii});
+export {Vii};

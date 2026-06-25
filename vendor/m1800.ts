@@ -1,4 +1,11 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var IJe=X((eDr,rKs)=>{/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */var rfn=require("buffer"),yse=rfn.Buffer;function nKs(e,t){for(var n in e)t[n]=e[n]}if(yse.from&&yse.alloc&&yse.allocUnsafe&&yse.allocUnsafeSlow)rKs.exports=rfn;else nKs(rfn,eDr),eDr.Buffer=gBe;function gBe(e,t,n){return yse(e,t,n)}gBe.prototype=Object.create(yse.prototype);nKs(yse,gBe);gBe.from=function(e,t,n){if(typeof e==="number")throw TypeError("Argument must not be a number");return yse(e,t,n)};gBe.alloc=function(e,t,n){if(typeof e!=="number")throw TypeError("Argument must be a number");var r=yse(e);if(t!==void 0)if(typeof n==="string")r.fill(t,n);else r.fill(t);else r.fill(0);return r};gBe.allocUnsafe=function(e){if(typeof e!=="number")throw TypeError("Argument must be a number");return yse(e)};gBe.allocUnsafeSlow=function(e){if(typeof e!=="number")throw TypeError("Argument must be a number");return rfn.SlowBuffer(e)}});
-export {IJe};
+import {bMr,UQs} from "./m1799.ts";
+import {qIt,SMr} from "./m1796.ts";
+import {dBe,Mgn} from "./m1798.ts";
+import {M3,WIt} from "./m1797.ts";
+import {MM} from "./m1722.ts";
+import {b} from "../runtime.ts";
+import {iT} from "./m1780.ts";
+class CryptoProvider{constructor(){this.pkceGenerator=new bMr,this.guidGenerator=new qIt,this.hashUtils=new dBe}base64UrlEncode(){throw Error("Method not implemented.")}encodeKid(){throw Error("Method not implemented.")}createNewGuid(){return this.guidGenerator.generateGuid()}base64Encode(e){return M3.base64Encode(e)}base64Decode(e){return M3.base64Decode(e)}generatePkceCodes(){return this.pkceGenerator.generatePkceCodes()}getPublicKeyThumbprint(){throw Error("Method not implemented.")}removeTokenBindingKey(){throw Error("Method not implemented.")}clearKeystore(){throw Error("Method not implemented.")}signJwt(){throw Error("Method not implemented.")}async hashString(e){return M3.base64EncodeUrl(this.hashUtils.sha256(e).toString(MM.BASE64),MM.BASE64)}}
+var GIt=b(()=>{iT();SMr();WIt();UQs();Mgn();/*! @azure/msal-node v3.8.1 2025-10-29 */});
+export {CryptoProvider,GIt};

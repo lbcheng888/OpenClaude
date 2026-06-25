@@ -1,13 +1,13 @@
 // @ts-nocheck
-import {jXr,M9e,N9e} from "../src/api/3360_headers.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {MCP_SETTINGS_SCOPES,getMcpConfigsByScope,px} from "../src/telemetry/3148_unwrapCcrProxyUrl.ts";
-import {Nhn,jkt} from "../src/api/2045_type.ts";
-import {AHn,ab} from "../src/config/3178_path.ts";
-import {loadAllPluginsCacheOnly,gg} from "../src/agent/4445_resolvePluginRoot.ts";
-import {hasStoredOAuthToken,Ao} from "../src/config/2031_withOAuthRefreshLock.ts";
 import {b} from "../runtime.ts";
-async function GJ(e){if(!jXr())return;if(e.hasDynamicMcpConfig||!e.pluginStateReliable||await OCm())logForDebugging("[mcp-policy-cold-start] waiting on remote managed-settings load"),await M9e();else logForDebugging("[mcp-policy-cold-start] skipped \u2014 no MCP server source visible")}
-async function OCm(){for(let e of MCP_SETTINGS_SCOPES)if(Object.keys(getMcpConfigsByScope(e,{expandVars:!1}).servers).length>0)return!0;if(Object.keys(Nhn()).length>0)return!0;if(AHn())return!0;try{if((await loadAllPluginsCacheOnly()).enabled.length>0)return!0}catch{return!0}return hasStoredOAuthToken()}
-var AWt=b(()=>{Ao();qe();ab();gg();N9e();px();jkt()});
-export {GJ,OCm,AWt};
+import {Wi,Hn} from "./m100.ts";
+import {fDt,SUe} from "../src/permissions/2218_surface.ts";
+import {mn,He,Pt} from "../src/telemetry/0600_feature_name.ts";
+import {qe,logForDebugging} from "../src/config/0236_setHasFormattedOutput.ts";
+import {HA,HF,bUe} from "./m2219.ts";
+import {vn,Ie} from "../src/session/0621_length.ts";
+import {Xq,n6,$ce,kft} from "../src/agent/5220_bigint.ts";
+import {IGn} from "./m4454.ts";
+var y6l,T6l;
+var S6l=b(()=>{Wi();fDt();mn();qe();HA();vn();Xq();IGn();y6l=require("path"),T6l=Hn(async(e)=>{try{let n=(await n6("output-styles",e)).map(({filePath:r,frontmatter:o,content:s,source:i,baseDir:a})=>{try{SUe("output-style",o);let c=y6l.basename(r).replace(/\.md$/,""),u=(o.name!=null?String(o.name):void 0)||c,d=HF(o.description,c)??$ce(s,`Custom ${c} output style`),p=bUe(o["keep-coding-instructions"]);if(o["force-for-plugin"]!==void 0)logForDebugging(`Output style "${u}" has force-for-plugin set, but this option only applies to plugin output styles. Ignoring.`,{level:"warn"});return{name:u,description:d,prompt:s.trim(),source:i,baseDir:a,keepCodingInstructions:p}}catch(l){return Ie(l),null}}).filter((r)=>r!==null).sort(kft);return He("output_style_load"),n}catch(t){return Pt("output_style_load","output_style_load_failed"),logForDebugging(`Failed to load output styles: ${t instanceof Error?t.message:String(t)}`,{level:"error"}),[]}})});
+export {y6l,T6l,S6l};

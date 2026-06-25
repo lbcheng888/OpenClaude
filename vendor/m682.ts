@@ -1,10 +1,4 @@
 // @ts-nocheck
-import {E7e,C7e} from "./m638.ts";
-import {zMe,Wfr,Gfr} from "./m681.ts";
-import {b} from "../runtime.ts";
-function hJc(){return!1}
-async function qb(e,t=[],n){if(hJc()){let r=E7e(e);if(r===null)throw Error(`Command '${e}' not found or is in an unsafe location (current directory)`);return zMe(r,t,n)}return zMe(e,t,n)}
-async function wR(e,t){return zMe(e,{...t,shell:!0})}
-function mes(e,t){return Wfr(e,{...t,shell:!0})}
-var vB=b(()=>{Gfr();C7e()});
-export {hJc,qb,wR,mes,vB};
+import {Q} from "../runtime.ts";
+var Nss=Q((sDf,Mss)=>{var{PassThrough:Tiu}=require("stream");Mss.exports=function(){var e=[],t=new Tiu({objectMode:!0});return t.setMaxListeners(0),t.add=n,t.isEmpty=r,t.on("unpipe",o),Array.prototype.slice.call(arguments).forEach(n),t;function n(s){if(Array.isArray(s))return s.forEach(n),this;return e.push(s),s.once("end",o.bind(null,s)),s.once("error",t.emit.bind(t,"error")),s.pipe(t,{end:!1}),this}function r(){return e.length==0}function o(s){if(e=e.filter(function(i){return i!==s}),!e.length&&t.readable)t.end()}}});
+export {Nss};

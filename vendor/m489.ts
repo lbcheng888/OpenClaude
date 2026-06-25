@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var YVo=X((pdf,zVo)=>{zVo.exports=Number.isNaN||function(t){return t!==t}});
-export {YVo};
+import {Q} from "../runtime.ts";
+var OXo=Q((wCf,PXo)=>{PXo.exports=Math.abs});
+export {OXo};

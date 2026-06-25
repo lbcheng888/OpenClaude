@@ -1,7 +1,8 @@
 // @ts-nocheck
+import {Wt,ps} from "./m230.ts";
+import {cn,Ct} from "./m197.ts";
 import {b} from "../runtime.ts";
-import {Ypl,zpl} from "../src/telemetry/4652_call.ts";
-import {zfl,Kfl} from "./m4694.ts";
-var Yfl,QJp,Jfl;
-var Xfl=b(()=>{Yfl={type:"local",name:"mcp",supportsNonInteractive:!0,description:"Manage MCP servers",argumentHint:"[reconnect|enable|disable [<server>|all]]",load:()=>Promise.resolve().then(() => (Ypl(),zpl))},QJp={type:"local-jsx",name:"mcp",description:"Manage MCP servers",immediate:!0,argumentHint:"[reconnect <server>|enable|disable [<server>|all]]",load:()=>Promise.resolve().then(() => (zfl(),Kfl))},Jfl=QJp});
-export {Yfl,QJp,Jfl,Xfl};
+async function I7n(e){let t=e.trim(),n=Wt(),r=t.match(/^([a-zA-Z0-9._-]+@[^:]+:.+?(?:\.git)?)(#(.+))?$/);if(r?.[1]){let i=r[1],a=r[3];return a?{source:"git",url:i,ref:a}:{source:"git",url:i}}if(t.startsWith("http://")||t.startsWith("https://")){let i=t.match(/^([^#]+)(#(.+))?$/),a=i?.[1]||t,l=i?.[3];if(a.endsWith(".git")||a.includes("/_git/"))return l?{source:"git",url:a,ref:l}:{source:"git",url:a};let c;try{c=new URL(a)}catch(u){return{source:"url",url:a}}if(c.hostname==="github.com"||c.hostname==="www.github.com"){if(c.pathname.match(/^\/([^/]+\/[^/]+?)(\/|\.git|$)/)?.[1]){let d=a.endsWith(".git")?a:`${a}.git`;return l?{source:"git",url:d,ref:l}:{source:"git",url:d}}}return{source:"url",url:a}}let s=!1;if(t.startsWith("./")||t.startsWith("../")||t.startsWith("/")||t.startsWith("~")||s){let i=nbl.resolve(t.startsWith("~")?t.replace(/^~/,tbl.homedir()):t),a;try{a=await n.stat(i)}catch(l){let c=cn(l);return{error:c==="ENOENT"?`Path does not exist: ${i}`:`Cannot access path: ${i} (${c??l})`}}if(a.isFile())if(i.endsWith(".json"))return{source:"file",path:i};else return{error:`File path must point to a .json file (marketplace.json), but got: ${i}`};else if(a.isDirectory())return{source:"directory",path:i};else return{error:`Path is neither a file nor a directory: ${i}`}}if(t.includes("/")&&!t.startsWith("@")){if(t.includes(":"))return null;let i=t.match(/^([^#@]+)(?:[#@](.+))?$/),a=i?.[1]||t,l=i?.[2];return l?{source:"github",repo:a,ref:l}:{source:"github",repo:a}}return null}
+var tbl,nbl;
+var two=b(()=>{Ct();ps();tbl=require("os"),nbl=require("path")});
+export {I7n,tbl,nbl,two};

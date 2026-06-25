@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {_Mn} from "./m3619.ts";
-import {gle} from "./m3479.ts";
-import {ple} from "./m3439.ts";
-var Pva=X((oNn)=>{Object.defineProperty(oNn,"__esModule",{value:!0});oNn.OTLPLogExporter=void 0;var Iva=_Mn(),Dup=gle(),Pup=ple();class Dva extends Pup.OTLPExporterBase{constructor(e={}){super((0,Iva.createOtlpGrpcExportDelegate)((0,Iva.convertLegacyOtlpGrpcOptions)(e,"LOGS"),Dup.ProtobufLogsSerializer,"LogsExportService","/opentelemetry.proto.collector.logs.v1.LogsService/Export"))}}oNn.OTLPLogExporter=Dva});
-export {Pva};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {r$t} from "./m3726.ts";
+import {vBn} from "./m3723.ts";
+var cxa=Q((lct)=>{Object.defineProperty(lct,"__esModule",{value:!0});lct.BatchObservableResultImpl=lct.ObservableResultImpl=void 0;var act=xi(),ixa=r$t(),ySp=vBn();class axa{_buffer=new ixa.AttributeHashMap;_instrumentName;_valueType;constructor(e,t){this._instrumentName=e,this._valueType=t}observe(e,t={}){if(typeof e!=="number"){act.diag.warn(`non-number value provided to metric ${this._instrumentName}: ${e}`);return}if(this._valueType===act.ValueType.INT&&!Number.isInteger(e)){if(act.diag.warn(`INT value type cannot accept a floating-point value for ${this._instrumentName}, ignoring the fractional digits.`),e=Math.trunc(e),!Number.isInteger(e))return}this._buffer.set(t,e)}}lct.ObservableResultImpl=axa;class lxa{_buffer=new Map;observe(e,t,n={}){if(!(0,ySp.isObservableInstrument)(e))return;let r=this._buffer.get(e);if(r==null)r=new ixa.AttributeHashMap,this._buffer.set(e,r);if(typeof t!=="number"){act.diag.warn(`non-number value provided to metric ${e._descriptor.name}: ${t}`);return}if(e._descriptor.valueType===act.ValueType.INT&&!Number.isInteger(t)){if(act.diag.warn(`INT value type cannot accept a floating-point value for ${e._descriptor.name}, ignoring the fractional digits.`),t=Math.trunc(t),!Number.isInteger(t))return}r.set(n,t)}}lct.BatchObservableResultImpl=lxa});
+export {cxa};

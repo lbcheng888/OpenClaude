@@ -1,13 +1,15 @@
 // @ts-nocheck
-import {formatRelativeTimeAgo,formatNumber,ps} from "./m238.ts";
-import {getGitDir,Ba} from "./m693.ts";
-import {getCommonDir,vO} from "./m691.ts";
-import {b} from "../runtime.ts";
-function J6l(e){let t=[`This session was opened by an external deep link in ${RIm(e.cwd)}`];if(e.repo){let n=e.lastFetch?formatRelativeTimeAgo(e.lastFetch):"never",r=!e.lastFetch||Date.now()-e.lastFetch.getTime()>wIm;t.push(`Resolved ${e.repo} from local clones \xB7 last fetched ${n}${r?" \u2014 CLAUDE.md may be stale":""}`)}if(e.prefillLength)t.push(e.prefillLength>uOo?`The prompt below (${formatNumber(e.prefillLength)} chars) was supplied by the link \u2014 scroll to review the entire prompt before pressing Enter.`:"The prompt below was supplied by the link \u2014 review carefully before pressing Enter.");return t.join(`
-`)}
-async function X6l(e){let t=await getGitDir(e);if(!t)return;let n=await getCommonDir(t),[r,o]=await Promise.all([K6l(fGt.join(t,"FETCH_HEAD")),n?K6l(fGt.join(n,"FETCH_HEAD")):Promise.resolve(void 0)]);if(r&&o)return r>o?r:o;return r??o}
-async function K6l(e){try{let{mtime:t}=await z6l.stat(e);return t}catch{return}}
-function RIm(e){let t=Y6l.homedir();if(e===t)return"~";if(e.startsWith(t+fGt.sep))return"~"+e.slice(t.length);return e}
-var z6l,Y6l,fGt,wIm=604800000,uOo=1000;
-var LJn=b(()=>{ps();vO();Ba();z6l=require("fs/promises"),Y6l=require("os"),fGt=require("path")});
-export {J6l,X6l,K6l,RIm,z6l,Y6l,fGt,wIm,uOo,LJn};
+import {U_e,c0e} from "./m3774.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {N7l,F7l} from "../src/config/5345_isUpdating.ts";
+import {I7l,x7l} from "../src/config/5344_isUpdating.ts";
+import {k7l,H7l} from "../src/tui/5343_isUpdating.ts";
+import {b,x} from "../runtime.ts";
+import {tr} from "../src/session/5228_shouldSkipPluginAutoupdate.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function ter(e){let t=B7l.c(13),{isUpdating:n,onChangeIsUpdating:r,showSuccessMessage:o,verbose:s}=e,[i,a]=I7t.useState(null),[l,c]=I7t.useState(null),u,d;if(t[0]===Symbol.for("react.memo_cache_sentinel"))u=()=>{(async function(){let g=await U_e();logForDebugging(`AutoUpdaterWrapper: Installation type: ${g}`),a(g==="native"),c(g==="package-manager")})()},d=[],t[0]=u,t[1]=d;else u=t[0],d=t[1];if(I7t.useEffect(u,d),i===null||l===null)return null;if(l){let f;if(t[2]!==n||t[3]!==r||t[4]!==o||t[5]!==s)f=jNo.jsx(N7l,{verbose:s,isUpdating:n,onChangeIsUpdating:r,showSuccessMessage:o}),t[2]=n,t[3]=r,t[4]=o,t[5]=s,t[6]=f;else f=t[6];return f}let p=i?I7l:k7l,m;if(t[7]!==p||t[8]!==n||t[9]!==r||t[10]!==o||t[11]!==s)m=jNo.jsx(p,{verbose:s,isUpdating:n,onChangeIsUpdating:r,showSuccessMessage:o}),t[7]=p,t[8]=n,t[9]=r,t[10]=o,t[11]=s,t[12]=m;else m=t[12];return m}
+var B7l,I7t,jNo;
+var YNo=b(()=>{tr();qe();c0e();H7l();x7l();F7l();B7l=x(tt(),1),I7t=x(et(),1),jNo=x(oe(),1)});
+export {ter,B7l,I7t,jNo,YNo};

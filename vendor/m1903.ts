@@ -1,5 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Mfn} from "./m1902.ts";
-var iXs=b(()=>{Mfn()});
-export {iXs};
+import {yBe,F3,_Be} from "./m1892.ts";
+import {RA,ManagedIdentitySourceNames,wd,AA,L3,P0,ew} from "./m1783.ts";
+import {TBe,o8} from "./m1895.ts";
+var sYu="2017-09-01",iYu,ABe;
+var Xni=b(()=>{yBe();RA();TBe();/*! @azure/msal-node v3.8.1 2025-10-29 */iYu=`Only client id is supported for user-assigned managed identity in ${ManagedIdentitySourceNames.MACHINE_LEARNING}.`;ABe=class ABe extends F3{constructor(e,t,n,r,o,s,i){super(e,t,n,r,o);this.msiEndpoint=s,this.secret=i}static getEnvironmentVariables(){let e=process.env[wd.MSI_ENDPOINT],t=process.env[wd.MSI_SECRET];return[e,t]}static tryCreate(e,t,n,r,o){let[s,i]=ABe.getEnvironmentVariables();if(!s||!i)return e.info(`[Managed Identity] ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity is unavailable because one or both of the '${wd.MSI_ENDPOINT}' and '${wd.MSI_SECRET}' environment variables are not defined.`),null;let a=ABe.getValidatedEnvVariableUrlString(wd.MSI_ENDPOINT,s,ManagedIdentitySourceNames.MACHINE_LEARNING,e);return e.info(`[Managed Identity] Environment variables validation passed for ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity. Endpoint URI: ${a}. Creating ${ManagedIdentitySourceNames.MACHINE_LEARNING} managed identity.`),new ABe(e,t,n,r,o,s,i)}createRequest(e,t){let n=new o8(AA.GET,this.msiEndpoint);if(n.headers[L3.METADATA_HEADER_NAME]="true",n.headers[L3.ML_AND_SF_SECRET_HEADER_NAME]=this.secret,n.queryParameters[P0.API_VERSION]=sYu,n.queryParameters[P0.RESOURCE]=e,t.idType===ew.SYSTEM_ASSIGNED)n.queryParameters[_Be.MANAGED_IDENTITY_CLIENT_ID_2017]=process.env[wd.DEFAULT_IDENTITY_CLIENT_ID];else if(t.idType===ew.USER_ASSIGNED_CLIENT_ID)n.queryParameters[this.getManagedIdentityUserAssignedIdQueryParameterKey(t.idType,!1,!0)]=t.id;else throw Error(iYu);return n}}});
+export {sYu,iYu,ABe,Xni};

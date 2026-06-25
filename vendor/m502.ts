@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var h7o=X((vdf,A7o)=>{A7o.exports=typeof Reflect<"u"&&Reflect&&Reflect.apply});
-export {h7o};
+import {Q} from "../runtime.ts";
+var Ogr=Q((UCf,oQo)=>{oQo.exports=typeof Reflect<"u"&&Reflect.getPrototypeOf||null});
+export {Ogr};

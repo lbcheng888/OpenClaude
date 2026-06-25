@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {vUe} from "./m2482.ts";
-var QRi=X((fmh,XRi)=>{var cud=vUe(),uud=(e,t,n)=>cud(e,t,n)<0;XRi.exports=uud});
-export {QRi};
+import {Q} from "../runtime.ts";
+var QDi=Q((BRg,XDi)=>{var YDi=/^[0-9]+$/,JDi=(e,t)=>{if(typeof e==="number"&&typeof t==="number")return e===t?0:e<t?-1:1;let n=YDi.test(e),r=YDi.test(t);if(n&&r)e=+e,t=+t;return e===t?0:n&&!r?-1:r&&!n?1:e<t?-1:1},ySd=(e,t)=>JDi(t,e);XDi.exports={compareIdentifiers:JDi,rcompareIdentifiers:ySd}});
+export {QDi};

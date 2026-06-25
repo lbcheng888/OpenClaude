@@ -1,7 +1,15 @@
 // @ts-nocheck
-import {mainAgentId,lt} from "../src/session/0131_sent.ts";
 import {b} from "../runtime.ts";
-function X5r(e,t){let n=Object.create(null),r=0;for(let o of e){let s=t(o,r++);if(n[s]===void 0)n[s]=[];n[s].push(o)}return n}
-function P0(e){return e.agentId===mainAgentId()}
-var wnt=b(()=>{lt()});
-export {X5r,P0,wnt};
+function MNd(e){let t=e,n="";try{n=a8i.homedir()}catch{}if(n)t=t.replaceAll(n+"/","~/").replaceAll(n+"\\","~\\");let r=(o,s)=>/https?:\/\/[^\s'",;|()]*$/i.test(o.slice(0,s));return t=t.replace(/([/\\](?:Users|home)[/\\])[^/\\\n]+/gi,(o,s,i,a)=>r(a,i)?o:`${s}<user>`).replace(/(\/(?:Volumes|mnt|media)\/)[^/\n]+/g,(o,s,i,a)=>r(a,i)?o:`${s}<vol>`).replace(/\b([A-Za-z]):[\\/]/g,"<drv>:\\").replace(/\\\\[^\\]+\\[^\\\s'",:()]+/g,"<unc>"),t}
+function FNd(e){return e.replace(NNd,"<email>")}
+function qNd(e){return e.replace(BNd,"<ip>").replace(UNd,(t)=>$Nd.test(t)?t:"<ip>")}
+function KNd(e){return e.replace(WNd,(t,n,r)=>r.replace(/\D/g,"").length>=7&&!GNd.test(r)?`${n}<phone>`:`${n}${r}`).replace(VNd,"<phone>")}
+function jNd(e){let t=e;for(let[n,r]of zNd)t=t.replace(n,r);return t}
+function YNd(e){return e.replace(/https?:\/\/\S+/gi,"<url>").replace(/\b(?:ssh|git|gs|s3|file|s?ftp|wss?|postgres(?:ql)?|mysql|mongodb(?:\+srv)?|rediss?|amqps?):\/\/\S+/gi,"<url>").replace(/\b[\w.-]+\.(?:ant\.dev|anthropic\.com)\b[^\s"')\]]*/gi,"<url>")}
+function JNd(e){return e.replace(/\b(E[A-Z0-9]+: [^,'\n]{1,80}, [a-z]\w{0,31} ')[^]*/g,"$1<path>'").replace(/~[\\/][^"'\n]*/g,"~/<path>").replace(/<drv>:\\[^"'\n]*/g,"<path>").replace(/[A-Za-z]:\\[^"'\n]*/g,"<path>").replace(/<unc>[\\/]?[^"'\n]*/g,"<path>").replace(/\\\\[^"'\n]+/g,"<path>").replace(/(?:[^\s"'\\]+\\){2,}[^"'\n]*/g,"<path>").replace(/(?:\/[^\s"':]+){2,}[^"'\n]*/g,"<path>")}
+function QNd(e){return e.replace(XNd,"<api-error-body>")}
+function ZNd(e){return e.replace(/\bmcp__[A-Za-z0-9_-]+__([A-Za-z0-9_-]+)/g,"mcp__<server>__$1").replace(/\bmcp__[A-Za-z0-9_-]+/g,"mcp__<server>").replace(/\bplugin:[^\s:"')\],]+:[^\s"')\],]*/g,"plugin:<server>")}
+function L4(e){let n=(e.length>i8i?e.slice(0,i8i)+"\u2026<truncated>":e).replace(/:\/\/[^\s/]*@(?=[^@\s]*(?:[/:\s]|$))/g,"://<userinfo>@").replace(/\b[\w][\w.+-]*@[\w.-]+:[^\s"')\]]*(?:\/[^\s"')\]]*|\.git\b)/gi,"<url>"),r=ZNd(KNd(jNd(qNd(FNd(MNd(n))))));return JNd(YNd(QNd(r)))}
+var a8i,NNd,BNd,UNd,$Nd,WNd,GNd,VNd,zNd,XNd,i8i=4000;
+var t9e=b(()=>{a8i=require("os");NNd=/[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63}){0,7}\.[A-Za-z][\w-]{0,62}/g;BNd=/\b(?:\d{1,3}\.){3}\d{1,3}\b/g,UNd=/\b(?:[A-Fa-f0-9]{1,4}:){2,7}(?::?[A-Fa-f0-9]{1,4}){1,7}\b/g,$Nd=/^\d{1,2}:\d{2}:\d{2}$/;WNd=/(^|[^\w/.-])((?:\+\d{1,3}[ \t.-]?)?\(?\d{2,4}\)?[ \t.-]\d{2,4}[ \t.-]\d{2,4}(?:[ \t.-]\d{2,4}(?![ \t.-]\d))?)(?!\w)/g,GNd=/^\s*\d{4}[-.]\d{2}[-.]\d{2}(?:[ T]\d{1,2})?\s*$/,VNd=/\+\d{7,15}\b/g;zNd=[[/\bBearer\s+[A-Za-z0-9._~+/=-]{8,}/gi,"Bearer <token>"],[/(:\s*)Basic\s+[A-Za-z0-9+/=]{8,}/gi,"$1Basic <token>"],[/\bsk-ant-[A-Za-z0-9_-]{8,}/g,"<token>"],[/\bsk-[A-Za-z0-9_-]{20,}/g,"<token>"],[/\bAKIA[0-9A-Z]{16}\b/g,"<token>"],[/\bASIA[0-9A-Z]{16}\b/g,"<token>"],[/\barn:(aws[\w-]*):([\w-]*):([\w-]*):\d*:[^\s"')\],]*/g,"arn:$1:$2:$3:<redacted>"],[/\bgh[opusr]_[A-Za-z0-9]{36,}/g,"<token>"],[/\bxox[baprs]-[A-Za-z0-9-]{10,}/g,"<token>"],[/\bey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g,"<jwt>"],[/(?<![A-Za-z0-9+_-])(?!mcp__)(?=[a-z_]*[A-Z0-9+-])[A-Za-z0-9+_-]{40,}={0,2}\b/g,"<blob>"]];XNd=/\{\s*\\?["'](?:type\\?["']\s*:\s*\\?["']error|request_id\\?["']\s*:\s*\\?["']req_|error\\?["']\s*:\s*\{)[^]*/g});
+export {MNd,FNd,qNd,KNd,jNd,YNd,JNd,QNd,ZNd,L4,a8i,NNd,BNd,UNd,$Nd,WNd,GNd,VNd,zNd,XNd,i8i,t9e};

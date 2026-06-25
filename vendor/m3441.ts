@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var vma=X((Cma)=>{var IPn=Cma;IPn.length=function(t){var n=t.length;if(!n)return 0;var r=0;while(--n%4>1&&t.charAt(n)==="=")++r;return Math.ceil(t.length*3)/4-r};var Jst=Array(64),Ema=Array(123);for(mY=0;mY<64;)Ema[Jst[mY]=mY<26?mY+65:mY<52?mY+71:mY<62?mY-4:mY-59|43]=mY++;var mY;IPn.encode=function(t,n,r){var o=null,s=[],i=0,a=0,l;while(n<r){var c=t[n++];switch(a){case 0:s[i++]=Jst[c>>2],l=(c&3)<<4,a=1;break;case 1:s[i++]=Jst[l|c>>4],l=(c&15)<<2,a=2;break;case 2:s[i++]=Jst[l|c>>6],s[i++]=Jst[c&63],a=0;break}if(i>8191)(o||(o=[])).push(String.fromCharCode.apply(String,s)),i=0}if(a){if(s[i++]=Jst[l],s[i++]=61,a===1)s[i++]=61}if(o){if(i)o.push(String.fromCharCode.apply(String,s.slice(0,i)));return o.join("")}return String.fromCharCode.apply(String,s.slice(0,i))};var bma="invalid encoding";IPn.decode=function(t,n,r){var o=r,s=0,i;for(var a=0;a<t.length;){var l=t.charCodeAt(a++);if(l===61&&s>1)break;if((l=Ema[l])===void 0)throw Error(bma);switch(s){case 0:i=l,s=1;break;case 1:n[r++]=i<<2|(l&48)>>4,i=l,s=2;break;case 2:n[r++]=(i&15)<<4|(l&60)>>2,i=l,s=3;break;case 3:n[r++]=(i&3)<<6|l,s=0;break}}if(s===1)throw Error(bma);return r-o};IPn.test=function(t){return/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(t)}});
-export {vma};
+import {b,x} from "../runtime.ts";
+import {pg} from "./m2138.ts";
+class gMn{export(e,t){return this._sendSpans(e,t)}shutdown(){return this._sendSpans([]),this.forceFlush()}forceFlush(){return Promise.resolve()}_exportInfo(e){return{resource:{attributes:e.resource.attributes},instrumentationScope:e.instrumentationScope,traceId:e.spanContext().traceId,parentSpanContext:e.parentSpanContext,traceState:e.spanContext().traceState?.serialize(),name:e.name,id:e.spanContext().spanId,kind:e.kind,timestamp:EUt.hrTimeToMicroseconds(e.startTime),duration:EUt.hrTimeToMicroseconds(e.duration),attributes:e.attributes,status:e.status,events:e.events,links:e.links}}_sendSpans(e,t){for(let n of e)console.dir(this._exportInfo(n),{depth:3});if(t)return t({code:EUt.ExportResultCode.SUCCESS})}}
+var EUt;
+var dSa=b(()=>{EUt=x(pg(),1)});
+export {gMn,EUt,dSa};

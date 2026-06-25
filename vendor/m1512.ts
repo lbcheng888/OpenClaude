@@ -1,5 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {Bdn} from "./m1511.ts";
-var j4s=b(()=>{Bdn()});
-export {j4s};
+var fDr;
+var uGs=b(()=>{(function(e){e[e.HEADER=0]="HEADER",e[e.TRAILER=1]="TRAILER"})(fDr||(fDr={}))});
+export {fDr,uGs};

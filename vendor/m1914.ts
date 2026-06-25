@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {kXs,HXs} from "./m1913.ts";
-import {b} from "../runtime.ts";
-async function aPr(e){return kXs(`tell application "Finder" to set app_path to application file id "${e}" as string
-tell application "System Events" to get value of property list item "CFBundleName" of property list file (app_path & ":Contents:Info.plist")`)}
-var IXs=b(()=>{HXs()});
-export {aPr,IXs};
+import {k1r,pri} from "./m1913.ts";
+import {b,x} from "../runtime.ts";
+function FQe(){if(H1r===void 0)H1r=fYu()||k1r();return H1r}
+var mri,H1r,fYu=()=>{try{return mri.default.statSync("/run/.containerenv"),!0}catch{return!1}};
+var I1r=b(()=>{pri();mri=x(require("fs"))});
+export {FQe,mri,H1r,fYu,I1r};

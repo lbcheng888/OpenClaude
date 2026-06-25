@@ -1,8 +1,6 @@
 // @ts-nocheck
-import {ID,Sre} from "./m70.ts";
-import {Ide,_gt} from "./m94.ts";
 import {b} from "../runtime.ts";
-function l_c(e){return ID(e)&&Ide(e)==a_c}
-var a_c="[object Map]",F9o;
-var U9o=b(()=>{_gt();Sre();F9o=l_c});
-export {l_c,a_c,F9o,U9o};
+import {xU,zy} from "./m23.ts";
+var x8o,ckc,D8o;
+var P8o=b(()=>{xU();x8o=Object.create,ckc=function(){function e(){}return function(t){if(!zy(t))return{};if(x8o)return x8o(t);e.prototype=t;var n=new e;return e.prototype=void 0,n}}(),D8o=ckc});
+export {x8o,ckc,D8o,P8o};

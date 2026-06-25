@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {n6s} from "./m1528.ts";
-var r6s=b(()=>{n6s()});
-export {r6s};
+var bVs=()=>{};
+var EVs;
+var CVs=b(()=>{(function(e){e[e.HEADER=0]="HEADER",e[e.TRAILER=1]="TRAILER"})(EVs||(EVs={}))});
+export {bVs,EVs,CVs};

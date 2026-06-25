@@ -1,6 +1,30 @@
 // @ts-nocheck
+import {getSessionId,lt,mainAgentId} from "../src/session/0132_sent.ts";
+import {recordQueueOperation,_a} from "../src/permissions/5175_writeRemoteAgentMetadata.ts";
+import {y1,SW} from "../src/telemetry/2793_consumer.ts";
+import {Kl,po} from "../src/tools/5224_userPromptCount.ts";
+import {Ni} from "./m127.ts";
+import {zn} from "../src/api/0465_getOauthConfig.ts";
+import {wI,xzr,xot} from "./m2793.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
 import {b} from "../runtime.ts";
-function Ykd(e,t,n){var r=-1,o=e.length,s=t.length,i={};while(++r<o){var a=r<s?t[r]:void 0;n(i,e[r],a)}return i}
-var w9i;
-var R9i=b(()=>{w9i=Ykd});
-export {Ykd,w9i,R9i};
+import {ig} from "./m130.ts";
+function L8i(e){O8i=e}
+function M8i(){return O8i}
+var O8i=null;
+function Ege(e,t){let n=getSessionId(),r={type:"queue-operation",operation:e,timestamp:new Date().toISOString(),sessionId:n,...t!==void 0&&{content:t}};recordQueueOperation(r)}
+function yFd(e){return!_Fd.has(e)}
+function bW(e){return yFd(e.mode)&&!e.isMeta&&y1(e.origin)}
+function B8i(e,t){let n=typeof t==="boolean"?t:!1;if(e.origin?.kind==="channel")return!0;if(e.origin?.kind==="task-notification")return!0;if(e.origin?.kind==="auto-continuation")return!0;if(e.origin?.kind==="peer"){if(e.origin.senderTaskId!==void 0)return!0;if(n)return!0}return bW(e)}
+function U8i(e){return typeof e.value==="string"&&e.value.trim().startsWith("/")&&!e.skipSlashCommands}
+function N8i(e){return typeof e==="string"?e:Kl(e,`
+`)}
+function F8i(e,t){if(typeof e==="string")return[];let n=[],r=0;for(let o of e)if(o.type==="image"&&o.source.type==="base64")n.push({id:t+r,type:"image",content:o.source.data,mediaType:o.source.media_type,filename:`image${r+1}`}),r++;return n}
+function TFd(){let e=[],t=Object.freeze([]),n=Ni(),r=new Set;function o(){t=Object.freeze([...e]),n.emit()}function s(P){r.add(P)}function i(P){return r.delete(P)}let a=null;function l(P){a=P}function c(P){if(P===void 0||a===P)a=null}function u(P){return a!==null&&a.some(P)}function d(){return t}function p(){return[...e]}function m(){return e.length}function f(){return zn(e,wI)}function h(){return e.length>0}function g(){if(e.length>0)o()}function _(P){e.push({...P,priority:P.priority??"next",timestamp:P.timestamp??new Date().toISOString()}),o(),Ege("enqueue",typeof P.value==="string"?P.value:void 0)}function T(P){e.push({...P,priority:P.priority??"later",timestamp:P.timestamp??new Date().toISOString()}),o(),Ege("enqueue",typeof P.value==="string"?P.value:void 0)}function y(P){if(e.length===0)return;let M=-1,B=1/0;for(let F=0;F<e.length;F++){let V=e[F];if(P&&!P(V))continue;let G=kIn[V.priority??"next"];if(G<B)M=F,B=G}if(M===-1)return;let[N]=e.splice(M,1);return o(),Ege("dequeue"),N}function S(){if(e.length===0)return[];let P=[...e];e.length=0,o();for(let M of P)Ege("dequeue");return P}function E(P){if(e.length===0)return;let M=-1,B=1/0;for(let N=0;N<e.length;N++){let F=e[N];if(P&&!P(F))continue;let V=kIn[F.priority??"next"];if(V<B)M=N,B=V}if(M===-1)return;return e[M]}function R(P){let M=[],B=[];for(let N of e)if(P(N))M.push(N);else B.push(N);if(M.length===0)return[];e.length=0,e.push(...B),o();for(let N of M)Ege("dequeue");return M}function w(P){if(P.length===0)return;let M=e.length;for(let B=e.length-1;B>=0;B--)if(P.includes(e[B]))e.splice(B,1);if(e.length!==M)o();for(let B of P)Ege("remove")}function H(P){let M=[];for(let B=e.length-1;B>=0;B--)if(P(e[B]))M.unshift(e.splice(B,1)[0]);if(M.length>0){o();for(let B of M)Ege("remove")}return M}function k(){if(e.length===0)return;let P=xzr(e,(M)=>M.mode);logForDebugging(`[clearCommandQueue] dropping ${e.length} queued command(s): ${Object.entries(P).map(([M,B])=>`${M}=${B.length}`).join(" ")}`,{level:"warn"}),e.length=0,o()}function I(){e.length=0,t=Object.freeze([]),r.clear(),c()}function D(P,M){if(e.length===0)return;let{editable:B=[],nonEditable:N=[]}=xzr([...e],(K)=>bW(K)?"editable":"nonEditable");if(B.length===0)return;let F=B.map((K)=>N8i(K.value)),V=[...F,P].filter(Boolean).join(`
+`),G=F.join(`
+`).length+1+M,z=[],J=Date.now();for(let K of B){if(K.pastedContents){for(let X of Object.values(K.pastedContents))if(X.type==="image")z.push(X)}let j=F8i(K.value,J);z.push(...j),J+=j.length}for(let K of B)Ege("popAll",typeof K.value==="string"?K.value:void 0);return e.length=0,e.push(...N),o(),{text:V,cursorOffset:G,images:z}}function O(P,M,B){let F=e.filter(bW)[P];if(!F)return;let V=N8i(F.value),G=[V,M].filter(Boolean).join(`
+`),z=V.length+1+B,J=[];if(F.pastedContents){for(let j of Object.values(F.pastedContents))if(j.type==="image")J.push(j)}J.push(...F8i(F.value,Date.now())),Ege("popOne",typeof F.value==="string"?F.value:void 0);let K=e.indexOf(F);if(K!==-1)e.splice(K,1),o();return{text:G,cursorOffset:z,images:J}}function L(P){let M=kIn[P];return e.filter((B)=>kIn[B.priority??"next"]<=M)}return{subscribe:n.subscribe,getCommandQueueSnapshot:d,getCommandQueue:p,getCommandQueueLength:m,getMainThreadQueueLength:f,hasCommandsInQueue:h,recheckCommandQueue:g,enqueue:_,enqueuePendingNotification:T,dequeue:y,dequeueAll:S,peek:E,dequeueAllMatching:R,remove:w,removeByFilter:H,clearCommandQueue:k,resetCommandQueue:I,popAllEditable:D,popEditableAt:O,getCommandsByMaxPriority:L,markCancelPending:s,consumeCancelPending:i,setInFlightDrainBatch:l,clearInFlightDrainBatch:c,someInFlightDrainCommand:u}}
+function W8i(){return ch.getCommandQueue().some((e)=>wI(e)&&bW(e))}
+var kIn,_Fd,ch,$8i,q8i,Cge,Dot,mee,Dzr,Pzr,i9e,$Gg,iy,rd,a9e,qGg,lj,Qke,G8i,V8i,K8i,WGg,HIn,z8i,j8i,Ozr,Lzr,Y8i;
+var ef=b(()=>{lt();lt();qe();SW();po();xot();_a();ig();kIn={now:0,next:1,later:2},_Fd=new Set(["task-notification"]);ch=TFd(),$8i=ch.markCancelPending,q8i=ch.consumeCancelPending,Cge=ch.subscribe,Dot=ch.getCommandQueueSnapshot,mee=ch.getCommandQueue,Dzr=ch.getCommandQueueLength,Pzr=ch.getMainThreadQueueLength,i9e=ch.hasCommandsInQueue;$Gg=ch.recheckCommandQueue,iy=ch.enqueue,rd=ch.enqueuePendingNotification,a9e=ch.dequeue,qGg=ch.dequeueAll,lj=ch.peek,Qke=ch.dequeueAllMatching,G8i=ch.remove,V8i=ch.removeByFilter,K8i=ch.clearCommandQueue,WGg=ch.resetCommandQueue,HIn=ch.popAllEditable,z8i=ch.popEditableAt,j8i=ch.getCommandsByMaxPriority,Ozr=ch.setInFlightDrainBatch,Lzr=ch.clearInFlightDrainBatch,Y8i=ch.someInFlightDrainCommand;L8i((e)=>iy({agentId:mainAgentId(),mode:"prompt",value:`/${e}`}))});
+export {L8i,M8i,O8i,Ege,yFd,bW,B8i,U8i,N8i,F8i,TFd,W8i,kIn,_Fd,ch,$8i,q8i,Cge,Dot,mee,Dzr,Pzr,i9e,$Gg,iy,rd,a9e,qGg,lj,Qke,G8i,V8i,K8i,WGg,HIn,z8i,j8i,Ozr,Lzr,Y8i,ef};

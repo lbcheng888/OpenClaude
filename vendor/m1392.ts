@@ -1,6 +1,21 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {fwr,BB} from "./m1391.ts";
-var aun,lun,cun,uun,dun,pun,mun,fun,Aun,hun,gun;
-var Awr=b(()=>{fwr();aun=class aun extends BB{name="InternalErrorException";$fault="server";constructor(e){super({name:"InternalErrorException",$fault:"server",...e});Object.setPrototypeOf(this,aun.prototype)}};lun=class lun extends BB{name="InvalidParameterException";$fault="client";constructor(e){super({name:"InvalidParameterException",$fault:"client",...e});Object.setPrototypeOf(this,lun.prototype)}};cun=class cun extends BB{name="LimitExceededException";$fault="client";constructor(e){super({name:"LimitExceededException",$fault:"client",...e});Object.setPrototypeOf(this,cun.prototype)}};uun=class uun extends BB{name="NotAuthorizedException";$fault="client";constructor(e){super({name:"NotAuthorizedException",$fault:"client",...e});Object.setPrototypeOf(this,uun.prototype)}};dun=class dun extends BB{name="ResourceConflictException";$fault="client";constructor(e){super({name:"ResourceConflictException",$fault:"client",...e});Object.setPrototypeOf(this,dun.prototype)}};pun=class pun extends BB{name="TooManyRequestsException";$fault="client";constructor(e){super({name:"TooManyRequestsException",$fault:"client",...e});Object.setPrototypeOf(this,pun.prototype)}};mun=class mun extends BB{name="ResourceNotFoundException";$fault="client";constructor(e){super({name:"ResourceNotFoundException",$fault:"client",...e});Object.setPrototypeOf(this,mun.prototype)}};fun=class fun extends BB{name="ExternalServiceException";$fault="client";constructor(e){super({name:"ExternalServiceException",$fault:"client",...e});Object.setPrototypeOf(this,fun.prototype)}};Aun=class Aun extends BB{name="InvalidIdentityPoolConfigurationException";$fault="client";constructor(e){super({name:"InvalidIdentityPoolConfigurationException",$fault:"client",...e});Object.setPrototypeOf(this,Aun.prototype)}};hun=class hun extends BB{name="DeveloperUserAlreadyRegisteredException";$fault="client";constructor(e){super({name:"DeveloperUserAlreadyRegisteredException",$fault:"client",...e});Object.setPrototypeOf(this,hun.prototype)}};gun=class gun extends BB{name="ConcurrentModificationException";$fault="client";constructor(e){super({name:"ConcurrentModificationException",$fault:"client",...e});Object.setPrototypeOf(this,gun.prototype)}}});
-export {aun,lun,cun,uun,dun,pun,mun,fun,Aun,hun,gun,Awr};
+import {FIr,NIr} from "./m1376.ts";
+import {J4s,X4s} from "./m1391.ts";
+import {defaultProvider} from "./m1023.ts";
+import {S4s,T4s} from "./m1384.ts";
+import {b,x} from "../runtime.ts";
+import {CNe} from "./m1024.ts";
+import {vy} from "./m1381.ts";
+import {iC} from "./m885.ts";
+import {fme} from "./m904.ts";
+import {yk} from "./m613.ts";
+import {hme} from "./m907.ts";
+import {TM} from "./m899.ts";
+import {$N} from "./m607.ts";
+import {T3} from "./m755.ts";
+import {gme} from "./m908.ts";
+import {Doe} from "./m894.ts";
+import {Sme} from "./m918.ts";
+var Mpn,Npn,kAe,Q4s,Fpn,wAe,Bpn,Z4s,eqs,tqs,nqs=(e)=>{FIr(process.version);let t=tqs.resolveDefaultsModeConfig(e),n=()=>t().then(NIr),r=J4s(e);Mpn.emitWarningIfUnsupportedVersion(process.version);let o={profile:e?.profile,logger:r.logger};return{...r,...e,runtime:"node",defaultsMode:t,authSchemePreference:e?.authSchemePreference??wAe.loadConfig(Mpn.NODE_AUTH_SCHEME_PREFERENCE_OPTIONS,o),bodyLengthChecker:e?.bodyLengthChecker??Z4s.calculateBodyLength,credentialDefaultProvider:e?.credentialDefaultProvider??defaultProvider,defaultUserAgentProvider:e?.defaultUserAgentProvider??Npn.createDefaultUserAgentProvider({serviceId:r.serviceId,clientVersion:S4s.version}),maxAttempts:e?.maxAttempts??wAe.loadConfig(Fpn.NODE_MAX_ATTEMPT_CONFIG_OPTIONS,e),region:e?.region??wAe.loadConfig(kAe.NODE_REGION_CONFIG_OPTIONS,{...kAe.NODE_REGION_CONFIG_FILE_OPTIONS,...o}),requestHandler:Bpn.NodeHttpHandler.create(e?.requestHandler??n),retryMode:e?.retryMode??wAe.loadConfig({...Fpn.NODE_RETRY_MODE_CONFIG_OPTIONS,default:async()=>(await n()).retryMode||eqs.DEFAULT_RETRY_MODE},e),sha256:e?.sha256??Q4s.Hash.bind(null,"sha256"),streamCollector:e?.streamCollector??Bpn.streamCollector,useDualstackEndpoint:e?.useDualstackEndpoint??wAe.loadConfig(kAe.NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS,o),useFipsEndpoint:e?.useFipsEndpoint??wAe.loadConfig(kAe.NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS,o),userAgentAppId:e?.userAgentAppId??wAe.loadConfig(Npn.NODE_APP_ID_CONFIG_OPTIONS,o)}};
+var rqs=b(()=>{T4s();CNe();X4s();vy();vy();Mpn=x(iC(),1),Npn=x(fme(),1),kAe=x(yk(),1),Q4s=x(hme(),1),Fpn=x(TM(),1),wAe=x($N(),1),Bpn=x(T3(),1),Z4s=x(gme(),1),eqs=x(Doe(),1),tqs=x(Sme(),1)});
+export {Mpn,Npn,kAe,Q4s,Fpn,wAe,Bpn,Z4s,eqs,tqs,nqs,rqs};

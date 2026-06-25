@@ -1,9 +1,7 @@
 // @ts-nocheck
-import {buildDefaultSystemPromptSections,eae} from "./m2666.ts";
-import {getSettings_DEPRECATED,yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {b,M} from "../runtime.ts";
-import {Te} from "./m2253.ts";
-function wst(e){let t=hDn.useRef(e);t.current=e,hDn.useEffect(()=>buildDefaultSystemPromptSections.subscribe((n)=>{let r=getSettings_DEPRECATED();t.current(n,r)}),[])}
-var hDn;
-var gDn=b(()=>{eae();yr();hDn=M(Te(),1)});
-export {wst,hDn,gDn};
+import {b} from "../runtime.ts";
+import {V3e,ole} from "./m3348.ts";
+function zga(e){if(eno.has(e))return!1;return eno.add(e),!0}
+var eno;
+var jga=b(()=>{V3e();eno=new Set;ole(()=>eno.clear())});
+export {zga,eno,jga};

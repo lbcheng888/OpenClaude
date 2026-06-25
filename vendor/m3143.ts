@@ -1,6 +1,15 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {zn} from "../src/api/2198_stopPeriodicGrowthBookRefresh.ts";
-function Ikn(){return!1}
-var Dkn=b(()=>{zn()});
-export {Ikn,Dkn};
+import {McpbManifestSchema,oNt} from "./m3070.ts";
+import {unpackExtension,FJr} from "./m3141.ts";
+import {Doa,Poa} from "./m3142.ts";
+import {qJr,Moa} from "./m3144.ts";
+import {b,x} from "../runtime.ts";
+import {boa} from "./m3138.ts";
+import {Aoa} from "./m3139.ts";
+function validateManifest(e){try{let t=bee.resolve(e),n=t;if(Oge.existsSync(t)&&Oge.statSync(t).isDirectory())n=bee.join(t,"manifest.json");let r=Oge.readFileSync(n,"utf-8"),o=JSON.parse(r),s=McpbManifestSchema.safeParse(o);if(s.success)return console.log("Manifest schema validation passes!"),!0;else return console.log(`ERROR: Manifest validation failed:
+`),s.error.issues.forEach((i)=>{let a=i.path.join(".");console.log(`  - ${a?`${a}: `:""}${i.message}`)}),!1}catch(t){if(t instanceof Error)if(t.message.includes("ENOENT")){if(console.error(`ERROR: File not found: ${e}`),Oge.existsSync(bee.resolve(e))&&Oge.statSync(bee.resolve(e)).isDirectory())console.error("  (No manifest.json found in directory)")}else if(t.message.includes("JSON"))console.error(`ERROR: Invalid JSON in manifest file: ${t.message}`);else console.error(`ERROR: Error reading manifest: ${t.message}`);else console.error("ERROR: Unknown error occurred");return!1}}
+async function cleanMcpb(e){let t=await G4.mkdtemp(bee.resolve(Loa.tmpdir(),"mcpb-clean-")),n=bee.resolve(t,"in.mcpb"),r=bee.resolve(t,"out");console.log(" -- Cleaning MCPB...");try{await G4.copyFile(e,n),console.log(" -- Unpacking MCPB..."),await unpackExtension({mcpbPath:n,silent:!0,outputDir:r});let o=bee.resolve(r,"manifest.json"),s=await G4.readFile(o,"utf-8"),i=JSON.parse(s),a=Doa.safeParse(i);if(!a.success)throw Error('Unrecoverable manifest issues, please run "mcpb validate"');if(await G4.writeFile(o,JSON.stringify(a.data,null,2)),s.trim()!==(await G4.readFile(o,"utf8")).trim())console.log(" -- Update manifest to be valid per MCPB schema");else console.log(" -- Manifest already valid per MCPB schema");let l=bee.resolve(r,"node_modules");if(Oge.existsSync(l)){console.log(" -- node_modules found, deleting development dependencies");let p=new Ooa.DestroyerOfModules({rootDirectory:r});try{await p.destroy()}catch(m){if(m instanceof Error&&m.message.includes("Failed to locate module"))console.log(" -- Some modules already removed, skipping remaining cleanup");else throw m}console.log(" -- Removed development dependencies from node_modules")}else console.log(" -- No node_modules, not pruning");let c=await G4.stat(e),{packExtension:u}=await Promise.resolve().then(() => (qJr(),Moa));await u({extensionPath:r,outputPath:e,silent:!0});let d=await G4.stat(e);console.log(`
+Clean Complete:`),console.log("Before:",BJr.default(c.size)),console.log("After:",BJr.default(d.size))}finally{await G4.rm(t,{recursive:!0,force:!0})}}
+var Oge,G4,Ooa,Loa,bee,BJr;
+var $Jr=b(()=>{FJr();oNt();Poa();Oge=require("fs"),G4=x(require("fs/promises")),Ooa=x(boa(),1),Loa=x(require("os")),bee=require("path"),BJr=x(Aoa(),1)});
+export {validateManifest,cleanMcpb,Oge,G4,Ooa,Loa,bee,BJr,$Jr};

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EC} from "./m3064.ts";
-import {yYi} from "./m3091.ts";
-import {CYi} from "./m3092.ts";
-var wYi=X((Cjh,vYi)=>{var rFd=EC().fromCallback;vYi.exports={move:rFd(yYi()),moveSync:CYi()}});
-export {wYi};
+import {Q} from "../runtime.ts";
+import {Sta} from "./m3088.ts";
+import {Rta} from "./m3089.ts";
+import {Fta} from "./m3092.ts";
+var Kta=Q((rZg,Vta)=>{var{createFile:Bta,createFileSync:Uta}=Sta(),{createLink:$ta,createLinkSync:qta}=Rta(),{createSymlink:Wta,createSymlinkSync:Gta}=Fta();Vta.exports={createFile:Bta,createFileSync:Uta,ensureFile:Bta,ensureFileSync:Uta,createLink:$ta,createLinkSync:qta,ensureLink:$ta,ensureLinkSync:qta,createSymlink:Wta,createSymlinkSync:Gta,ensureSymlink:Wta,ensureSymlinkSync:Gta}});
+export {Kta};

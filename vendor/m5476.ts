@@ -1,19 +1,33 @@
 // @ts-nocheck
-import {Fm,Z1} from "./m2693.ts";
-import {_9n,P9t,Rut} from "./m4162.ts";
-import {Tk} from "../src/config/2251_zBr.ts";
-import {b} from "../runtime.ts";
-import {zn} from "../src/api/2198_stopPeriodicGrowthBookRefresh.ts";
-import {rd} from "./m2205.ts";
-import {bt} from "./m195.ts";
-import {li} from "../src/api/1282_usesFirstPartyModelIds.ts";
-import {Ap} from "../src/config/0614_Ap.ts";
-function i7l(){return!1}
-async function a7l(){return[]}
-function l7l(e){let{state:t,tempo:n}=RMm(e.worker_status),r=e.config?.sources?.find((a)=>a.type==="git_repository")?.url,o=e.title??"",s=e.worker_status==="requires_action"?e.external_metadata?.pending_action:void 0,i=e.worker_status==="requires_action"?s?.tool_name===Fm?_9n(s.input).text:s?.tool_name===Tk?"approve plan":typeof s?.tool_name==="string"&&typeof s.action_description==="string"&&s.action_description!==""?P9t(`approve ${typeof s.display_tool_name==="string"&&s.display_tool_name!==""?s.display_tool_name:s.tool_name}: ${s.action_description}`):"awaiting input":void 0;return{state:t,detail:o,tempo:n,needs:i,output:null,children:null,linkScanOffset:0,template:"remote",respawnFlags:[],name:o||void 0,intent:o||e.id,sessionId:e.id,cwd:r??"remote",originCwd:r??"remote",createdAt:e.created_at,updatedAt:e.last_event_at??e.created_at,firstTerminalAt:null,backend:"remote"}}
-function c7l(e,t){let n=(i)=>i.replace(/^(?:session|cse)_/,""),r=new Set(t.map((i)=>n(i.state.sessionId))),o=e.filter((i)=>i.id.startsWith("remote-pending-")&&!r.has(n(i.state.sessionId))),s=[...t,...o];return e.length===s.length&&e.every((i,a)=>i.id===s[a].id&&i.activity===s[a].activity&&wMm(i.state,s[a].state))?e:s}
-function wMm(e,t){let n=Object.keys(e);if(n.length!==Object.keys(t).length)return!1;return n.every((r)=>{let o=e[r],s=t[r];if(o===s)return!0;return typeof o==="object"&&typeof s==="object"&&o!==null&&s!==null&&Bun.deepEquals(o,s)})}
-function RMm(e){switch(e){case"requires_action":return{state:"blocked",tempo:"blocked"};case"idle":return{state:"done",tempo:"idle"};default:return{state:"working",tempo:"active"}}}
-var BLo;
-var u7l=b(()=>{Rut();zn();rd();Z1();bt();li();Ap();BLo=/^(?:session|cse)_[A-Za-z0-9_-]+$/});
-export {i7l,a7l,l7l,c7l,wMm,RMm,BLo,u7l};
+import {_t,uo} from "./m2468.ts";
+import {useIsScreenReaderEnabled} from "./m2444.ts";
+import {T6,TPe} from "./m4631.ts";
+import {tH,uS} from "../src/config/3192_path.ts";
+import {Mre,lr} from "./m233.ts";
+import {AL,d9} from "./m4632.ts";
+import {iZl,aZl} from "./m5475.ts";
+import {Box} from "./m2432.ts";
+import {yg,_4} from "./m2581.ts";
+import {Text} from "./m2433.ts";
+import {q1,X0e} from "./m3930.ts";
+import {Cyt,Ctr} from "./m5474.ts";
+import {wIe,ZBt} from "../src/agent/3357_title.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {nPe} from "./m4540.ts";
+import {hr} from "./m2573.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {TS} from "./m4541.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function cZl(e){let t=lZl.c(59),{question:n,questions:r,currentQuestionIndex:o,answers:s,questionStates:i,hideSubmitTab:a,planFilePath:l,minContentWidth:c,onUpdateQuestionState:u,onAnswer:d,onTextInputFocus:p,onCancel:m,onSubmit:f,onTabPrev:h,onTabNext:g,onRespondToClaude:_,onImagePaste:T,pastedContents:y,onRemoveImage:S}=e,E=a===void 0?!1:a,R=_t(W$m)==="plan",w=useIsScreenReaderEnabled(),[H,k]=azt.useState(!1),[I,D]=azt.useState(!1),O;if(t[0]===Symbol.for("react.memo_cache_sentinel")){let ye=T6();O=ye?tH(ye):null,t[0]=O}else O=t[0];let L=O,P;if(t[1]!==p)P=(ye)=>{let we=ye==="__other__";D(we),p(we)},t[1]=p,t[2]=P;else P=t[2];let M=P,B;if(t[3]===Symbol.for("react.memo_cache_sentinel"))B=()=>{k(!0)},t[3]=B;else B=t[3];let N=B,F;if(t[4]===Symbol.for("react.memo_cache_sentinel"))F=()=>{k(!1)},t[4]=F;else F=t[4];let V=F,z=n.options.length+1+1,J;if(t[5]!==z||t[6]!==H||t[7]!==I||t[8]!==w||t[9]!==m||t[10]!==_)J=(ye)=>{if(!H){if(!w&&!I&&Mre(ye.key)===String(z))ye.preventDefault(),_();return}if(ye.key==="up"||ye.ctrl&&ye.key==="p"){ye.preventDefault(),V();return}if(ye.key==="return"||Mre(ye.key)===String(z)){ye.preventDefault(),_();return}if(ye.key==="escape")ye.preventDefault(),m()},t[5]=z,t[6]=H,t[7]=I,t[8]=w,t[9]=m,t[10]=_,t[11]=J;else J=t[11];let K=J,j=n.options.map(q$m),X=n.question,ee=i[X],te=azt.useRef(null),ne;if(t[12]!==u||t[13]!==n.multiSelect||t[14]!==X)ne=async(ye,we)=>{let Oe=await AL(ye);if(Oe.content!==null&&Oe.content!==ye)we(Oe.content),u(X,{textInputValue:Oe.content},n.multiSelect??!1)},t[12]=u,t[13]=n.multiSelect,t[14]=X,t[15]=ne;else ne=t[15];let se=ne,re=n.multiSelect?"Type something":"Type something.",ue=ee?.textInputValue??"",le;if(t[16]!==u||t[17]!==n.multiSelect||t[18]!==X)le=(ye)=>{te.current={question:X,value:ye},u(X,{textInputValue:ye},n.multiSelect??!1)},t[16]=u,t[17]=n.multiSelect,t[18]=X,t[19]=le;else le=t[19];let ce;if(t[20]!==le||t[21]!==re||t[22]!==ue)ce={type:"input",value:"__other__",label:"Other",placeholder:re,initialValue:ue,onChange:le},t[20]=le,t[21]=re,t[22]=ue,t[23]=ce;else ce=t[23];let Se=ce,ie;if(t[24]!==w||t[25]!==n.multiSelect)ie=w&&!n.multiSelect?[{type:"text",value:"__chat__",label:"Chat about this"}]:[],t[24]=w,t[25]=n.multiSelect,t[26]=ie;else ie=t[26];let ae=ie,pe=[...j,Se,...ae];if(!n.multiSelect&&n.options.some($$m)&&!w){let ye;if(t[27]!==s||t[28]!==o||t[29]!==E||t[30]!==c||t[31]!==d||t[32]!==m||t[33]!==_||t[34]!==g||t[35]!==h||t[36]!==p||t[37]!==u||t[38]!==n||t[39]!==i||t[40]!==r)ye=$_.jsx(iZl,{question:n,questions:r,currentQuestionIndex:o,answers:s,questionStates:i,hideSubmitTab:E,minContentWidth:c,onUpdateQuestionState:u,onAnswer:d,onTextInputFocus:p,onCancel:m,onTabPrev:h,onTabNext:g,onRespondToClaude:_}),t[27]=s,t[28]=o,t[29]=E,t[30]=c,t[31]=d,t[32]=m,t[33]=_,t[34]=g,t[35]=h,t[36]=p,t[37]=u,t[38]=n,t[39]=i,t[40]=r,t[41]=ye;else ye=t[41];return ye}let _e;if(t[42]!==R||t[43]!==l)_e=R&&l&&$_.jsxs(Box,{flexDirection:"column",gap:0,children:[$_.jsx(yg,{color:"inactive"}),$_.jsxs(Text,{color:"inactive",children:["Planning: ",$_.jsx(q1,{filePath:l})]})]}),t[42]=R,t[43]=l,t[44]=_e;else _e=t[44];let de;if(t[45]===Symbol.for("react.memo_cache_sentinel"))de=$_.jsx(yg,{color:"inactive"}),t[45]=de;else de=t[45];let ge;if(t[46]!==s||t[47]!==o||t[48]!==E||t[49]!==r)ge=$_.jsx(Cyt,{questions:r,currentQuestionIndex:o,answers:s,hideSubmitTab:E}),t[46]=s,t[47]=o,t[48]=E,t[49]=r,t[50]=ge;else ge=t[50];let Te;if(t[51]!==n.question)Te=$_.jsx(wIe,{title:n.question,color:"text"}),t[51]=n.question,t[52]=Te;else Te=t[52];let he;if(t[53]!==z||t[54]!==H||t[55]!==I||t[56]!==w||t[57]!==r)he=!w&&$_.jsxs($_.Fragment,{children:[$_.jsxs(Box,{flexDirection:"column",children:[$_.jsx(yg,{color:"inactive"}),$_.jsxs(Box,{flexDirection:"row",gap:1,children:[H?$_.jsx(Text,{color:"suggestion",children:Xe.pointer}):$_.jsx(Text,{children:" "}),$_.jsxs(Text,{color:H?"suggestion":void 0,children:[z,". Chat about this"]})]})]}),$_.jsx(Box,{marginTop:1,children:$_.jsx(Text,{color:"inactive",dimColor:!0,children:$_.jsxs(bn,{children:[$_.jsx(at,{chord:"enter",action:"select"}),r.length===1?$_.jsx(at,{chord:["up","down"],action:"navigate"}):$_.jsx(Text,{children:"Tab/Arrow keys to navigate"}),I&&L&&$_.jsx(at,{chord:"ctrl+g",action:`edit in ${L}`}),$_.jsx(at,{chord:"escape",action:"cancel"})]})})})]}),t[53]=z,t[54]=H,t[55]=I,t[56]=w,t[57]=r,t[58]=he;else he=t[58];return $_.jsxs(Box,{flexDirection:"column",marginTop:0,tabIndex:0,autoFocus:!0,onKeyDown:K,children:[_e,de,$_.jsxs(Box,{flexDirection:"column",paddingTop:0,children:[ge,Te,$_.jsxs(Box,{flexDirection:"column",children:[$_.jsx(Box,{marginTop:1,children:n.multiSelect?$_.jsx(nPe,{options:pe,defaultValue:i[n.question]?.selectedValue,onChange:(ye)=>{u(X,{selectedValue:ye},!0);let we=ye.includes("__other__")?te.current?.question===X?te.current.value:i[X]?.textInputValue:void 0,Oe=ye.filter(U$m).concat(we?[we]:[]);d(X,Oe,void 0,!1)},onFocus:M,onCancel:m,submitButtonText:o===r.length-1?"Submit":"Next",onSubmit:f,onDownFromLastItem:N,isDisabled:H,onOpenEditor:se,onImagePaste:T,pastedContents:y,onRemoveImage:S},n.question):$_.jsx(hr,{options:pe,defaultValue:i[n.question]?.selectedValue,onChange:(ye)=>{if(ye==="__chat__"){_();return}u(X,{selectedValue:ye},!1);let we=ye==="__other__"?i[X]?.textInputValue:void 0;d(X,ye,we)},onFocus:M,onCancel:m,onDownFromLastItem:N,isDisabled:H,layout:"compact-vertical",onOpenEditor:se,onImagePaste:T,pastedContents:y,onRemoveImage:S},n.question)}),he]})]})]})}
+function U$m(e){return e!=="__other__"}
+function $$m(e){return e.preview}
+function q$m(e){return{type:"text",value:e.label,label:e.label,description:e.description}}
+function W$m(e){return e.toolPermissionContext.mode}
+var lZl,azt,$_;
+var uZl=b(()=>{Zs();je();uo();TPe();uS();d9();lr();TS();Is();_4();Wo();X0e();ZBt();aZl();Ctr();lZl=x(tt(),1),azt=x(et(),1),$_=x(oe(),1)});
+export {cZl,U$m,$$m,q$m,W$m,lZl,azt,$_,uZl};

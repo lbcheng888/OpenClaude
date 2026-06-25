@@ -1,4 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var fQo=X((Hyf,mQo)=>{mQo.exports=dQo;dQo.sync=$zc;var uQo=require("fs");function dQo(e,t,n){uQo.stat(e,function(r,o){n(r,r?!1:pQo(o,t))})}function $zc(e,t){return pQo(uQo.statSync(e),t)}function pQo(e,t){return e.isFile()&&qzc(e,t)}function qzc(e,t){var{mode:n,uid:r,gid:o}=e,s=t.uid!==void 0?t.uid:process.getuid&&process.getuid(),i=t.gid!==void 0?t.gid:process.getgid&&process.getgid(),a=parseInt("100",8),l=parseInt("010",8),c=parseInt("001",8),u=a|l,d=n&c||n&l&&o===i||n&a&&r===s||n&u&&s===0;return d}});
-export {fQo};
+import {b} from "../runtime.ts";
+function rRt(e,t){if(e.type!=="user")return;if(e.isMeta===!0||e.isCompactSummary===!0)return;let n=e.message;if(!n)return;let r=n.content,o=[];if(typeof r==="string")o.push(r);else if(Array.isArray(r))for(let s of r){if(!s||typeof s!=="object")continue;if(s.type==="tool_result")return;if(s.type==="text"&&typeof s.text==="string")o.push(s.text)}for(let s of o){let i=s.replaceAll(`
+`," ").trim();if(!i)continue;let a=Bou.exec(i);if(a){if(!t.commandFallback)t.commandFallback=a[1];continue}let l=/<bash-input>([\s\S]*?)<\/bash-input>/.exec(i);if(l)return`! ${l[1].trim()}`;if(Fou.test(i))continue;if(i.length>200)i=i.slice(0,200).trim()+"\u2026";return i}return}
+var Fou,Bou;
+var Pyr=b(()=>{Fou=/^(?:\s*<[a-z][\w-]*[\s>]|\[Request interrupted by user[^\]]*\])/,Bou=/<command-name>(.*?)<\/command-name>/});
+export {rRt,Fou,Bou,Pyr};

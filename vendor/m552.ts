@@ -1,6 +1,6 @@
 // @ts-nocheck
+import {rr,oC} from "./m466.ts";
 import {b} from "../runtime.ts";
-import {KX,Y_} from "./m522.ts";
-var Tzo;
-var Szo=b(()=>{KX();Tzo=Y_.hasStandardBrowserEnv?((e,t)=>(n)=>(n=new URL(n,Y_.origin),e.protocol===n.protocol&&e.host===n.host&&(t||e.port===n.port)))(new URL(Y_.origin),Y_.navigator&&/(msie|trident)/i.test(Y_.navigator.userAgent)):()=>!0});
-export {Tzo,Szo};
+var YGc=(e,t)=>rr.isAsyncFn(e)?function(...n){let r=n.pop();e.apply(this,n).then((o)=>{try{t?r(null,...t(o)):r(null,o)}catch(s){r(s)}},r)}:e,zZo;
+var jZo=b(()=>{oC();zZo=YGc});
+export {YGc,zZo,jZo};

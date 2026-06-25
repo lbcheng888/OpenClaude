@@ -1,0 +1,22 @@
+// @ts-nocheck
+import {ft,b} from "../runtime.ts";
+import {propertyProviderChain,createCredentialChain,E9s} from "./m1356.ts";
+import {e9u,X6s} from "./m1446.ts";
+import {Z$u,J6s} from "./m1445.ts";
+import {fromTemporaryCredentials,Y6s} from "./m1444.ts";
+import {J$u,U6s} from "./m1441.ts";
+import {Y$u,B6s} from "./m1440.ts";
+import {fromNodeProviderChain,U0r} from "./m1439.ts";
+import {fromLoginCredentials,F6s} from "./m1438.ts";
+import {z$u,N6s} from "./m1437.ts";
+import {K$u,L6s} from "./m1436.ts";
+import {fromHttp} from "./m847.ts";
+import {V$u,O6s} from "./m1435.ts";
+import {G$u,P6s} from "./m1434.ts";
+import {fromCognitoIdentityPool,D6s} from "./m1433.ts";
+import {fromCognitoIdentity,x6s} from "./m1432.ts";
+import {win} from "./m848.ts";
+var aXe={};
+ft(aXe,{propertyProviderChain:()=>propertyProviderChain,fromWebToken:()=>e9u,fromTokenFile:()=>Z$u,fromTemporaryCredentials:()=>fromTemporaryCredentials,fromSSO:()=>J$u,fromProcess:()=>Y$u,fromNodeProviderChain:()=>fromNodeProviderChain,fromLoginCredentials:()=>fromLoginCredentials,fromInstanceMetadata:()=>z$u,fromIni:()=>K$u,fromHttp:()=>fromHttp,fromEnv:()=>V$u,fromContainerMetadata:()=>G$u,fromCognitoIdentityPool:()=>fromCognitoIdentityPool,fromCognitoIdentity:()=>fromCognitoIdentity,createCredentialChain:()=>createCredentialChain});
+var lXe=b(()=>{win();E9s();x6s();D6s();P6s();O6s();L6s();N6s();F6s();U0r();B6s();U6s();Y6s();J6s();X6s()});
+export {aXe,lXe};

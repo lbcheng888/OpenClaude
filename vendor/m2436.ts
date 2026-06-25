@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function Newline(e){let t=rwi.c(4),{count:n}=e,r=n===void 0?1:n,o;if(t[0]!==r)o=`
-`.repeat(r),t[0]=r,t[1]=o;else o=t[1];let s;if(t[2]!==o)s=owi.default.createElement("ink-text",null,o),t[2]=o,t[3]=s;else s=t[3];return s}
-var rwi,owi;
-var swi=b(()=>{rwi=M(rt(),1),owi=M(Te(),1)});
-export {Newline,rwi,owi,swi};
+import {getAttacherCaps,onAttacherCapsChange,lt} from "../src/session/0132_sent.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+import {exi} from "./m2435.ts";
+function lw(e){let t=e?.env??process.env,n=getAttacherCaps()?.hyperlinks;if(n!==void 0)return n;let r=e?.stdoutSupported??rxi.default.supportsHyperlink(process.stdout);if("FORCE_HYPERLINK"in t)return r;if(r)return!0;let o=t.TERM_PROGRAM;if(o&&txi.includes(o))return!0;if(t.TERMINAL_EMULATOR==="JetBrains-JediTerm")return!0;if(o==="tmux"){let[a,l]=(t.TERM_PROGRAM_VERSION??"").split("."),c=parseInt(a??"",10),u=parseInt(l??"",10);if(c>3||c===3&&u>=4)return!0}let s=t.LC_TERMINAL;if(s&&txi.includes(s))return!0;if(t.TERM?.includes("kitty"))return!0;return!1}
+function vAn(){return nxi.useSyncExternalStore(onAttacherCapsChange,lw)}
+var nxi,rxi,txi;
+var a4=b(()=>{lt();nxi=x(et(),1),rxi=x(exi(),1),txi=["ghostty","Hyper","kitty","alacritty","iTerm.app","iTerm2"]});
+export {lw,vAn,nxi,rxi,txi,a4};

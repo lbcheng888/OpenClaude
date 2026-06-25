@@ -1,9 +1,8 @@
 // @ts-nocheck
-import {cGs,KHr} from "./m1683.ts";
-import {Upn,pGs} from "./m1685.ts";
+import {zPr} from "./m1654.ts";
 import {b} from "../runtime.ts";
-function bNu(){return{end:()=>{},isRecording:()=>!1,recordException:()=>{},setAttribute:()=>{},setStatus:()=>{},addEvent:()=>{}}}
-function ENu(){return{createRequestHeaders:()=>({}),parseTraceparentHeader:()=>{return},startSpan:(e,t)=>({span:bNu(),tracingContext:cGs({parentContext:t.tracingContext})}),withContext(e,t,...n){return t(...n)}}}
-function Qwt(){if(!Upn.instrumenterImplementation)Upn.instrumenterImplementation=ENu();return Upn.instrumenterImplementation}
-var mGs=b(()=>{KHr();pGs()});
-export {bNu,ENu,Qwt,mGs};
+import {kQ} from "./m1667.ts";
+function ZYs(e="x-ms-client-request-id"){return{name:"setClientRequestIdPolicy",async sendRequest(t,n){if(!t.headers.has(e))t.headers.set(e,t.requestId);return n(t)}}}
+function eJs(e){return zPr(e)}
+var tJs=b(()=>{kQ()});
+export {ZYs,eJs,tJs};

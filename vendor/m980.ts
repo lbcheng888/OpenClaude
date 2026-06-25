@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {isSsoProfile} from "./m856.ts";
-import {validateSsoProfile,jTr} from "./m979.ts";
-import {$Tr,q_s} from "./m978.ts";
-import {b,M} from "../runtime.ts";
-import {createDefaultGlobalConfig} from "./m594.ts";
-import {I2} from "./m600.ts";
-var eze,tze,fromSSO=(e={})=>async({callerClientConfig:t}={})=>{e.logger?.debug("@aws-sdk/credential-provider-sso - fromSSO");let{ssoStartUrl:n,ssoAccountId:r,ssoRegion:o,ssoRoleName:s,ssoSession:i}=e,{ssoClient:a}=e,l=tze.getProfileName({profile:e.profile??t?.profile});if(!n&&!r&&!o&&!s&&!i){let u=(await tze.parseKnownFiles(e))[l];if(!u)throw new eze.CredentialsProviderError(`Profile ${l} was not found.`,{logger:e.logger});if(!isSsoProfile(u))throw new eze.CredentialsProviderError(`Profile ${l} is not configured with SSO credentials.`,{logger:e.logger});if(u?.sso_session){let g=(await tze.loadSsoSessionData(e))[u.sso_session],_=` configurations in profile ${l} and sso-session ${u.sso_session}`;if(o&&o!==g.sso_region)throw new eze.CredentialsProviderError("Conflicting SSO region"+_,{tryNextLink:!1,logger:e.logger});if(n&&n!==g.sso_start_url)throw new eze.CredentialsProviderError("Conflicting SSO start_url"+_,{tryNextLink:!1,logger:e.logger});u.sso_region=g.sso_region,u.sso_start_url=g.sso_start_url}let{sso_start_url:d,sso_account_id:p,sso_region:m,sso_role_name:f,sso_session:A}=validateSsoProfile(u,e.logger);return $Tr({ssoStartUrl:d,ssoSession:A,ssoAccountId:p,ssoRegion:m,ssoRoleName:f,ssoClient:a,clientConfig:e.clientConfig,parentClientConfig:e.parentClientConfig,profile:l,filepath:e.filepath,configFilepath:e.configFilepath,ignoreCache:e.ignoreCache,logger:e.logger})}else if(!n||!r||!o||!s)throw new eze.CredentialsProviderError('Incomplete configuration. The fromSSO() argument hash must include "ssoStartUrl", "ssoAccountId", "ssoRegion", "ssoRoleName"',{tryNextLink:!1,logger:e.logger});else return $Tr({ssoStartUrl:n,ssoSession:i,ssoAccountId:r,ssoRegion:o,ssoRoleName:s,ssoClient:a,clientConfig:e.clientConfig,parentClientConfig:e.parentClientConfig,profile:l,filepath:e.filepath,configFilepath:e.configFilepath,ignoreCache:e.ignoreCache,logger:e.logger})};
-var W_s=b(()=>{q_s();jTr();eze=M(createDefaultGlobalConfig(),1),tze=M(I2(),1)});
-export {eze,tze,fromSSO,W_s};
+import {b} from "../runtime.ts";
+import {vAs,kAs} from "./m978.ts";
+import {IAs} from "./m979.ts";
+var xAs=b(()=>{vAs();kAs();IAs()});
+export {xAs};

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {fmi} from "./m2163.ts";
-var Ami=b(()=>{fmi()});
-export {Ami};
+class Bxt{emit(e){}}
+var Uxt;
+var WSn=b(()=>{Uxt=new Bxt});
+export {Bxt,Uxt,WSn};

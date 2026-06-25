@@ -1,14 +1,4 @@
 // @ts-nocheck
-import {ls} from "./m1721.ts";
-import {ClientAuthErrorCodes} from "./m1720.ts";
-import {hv} from "./m1754.ts";
-import {rK,_v} from "./m1778.ts";
-import {g4,hxt} from "./m1792.ts";
-import {b1,Ho} from "./m1717.ts";
-import {b,M} from "../runtime.ts";
-import {AT} from "./m1775.ts";
-import {IJs} from "./m1873.ts";
-class ClientAssertion{static fromAssertion(e){let t=new ClientAssertion;return t.jwt=e,t}static fromCertificate(e,t,n){let r=new ClientAssertion;if(r.privateKey=t,r.thumbprint=e,r.useSha256=!1,n)r.publicCertificate=this.parseCertificate(n);return r}static fromCertificateWithSha256Thumbprint(e,t,n){let r=new ClientAssertion;if(r.privateKey=t,r.thumbprint=e,r.useSha256=!0,n)r.publicCertificate=this.parseCertificate(n);return r}getJwt(e,t,n){if(this.privateKey&&this.thumbprint){if(this.jwt&&!this.isExpired()&&t===this.issuer&&n===this.jwtAudience)return this.jwt;return this.createJwt(e,t,n)}if(this.jwt)return this.jwt;throw ls(ClientAuthErrorCodes.invalidAssertion)}createJwt(e,t,n){this.issuer=t,this.jwtAudience=n;let r=hv.nowSeconds();this.expirationTime=r+600;let s={alg:this.useSha256?rK.PSS_256:rK.RSA_256},i=this.useSha256?rK.X5T_256:rK.X5T;if(Object.assign(s,{[i]:g4.base64EncodeUrl(this.thumbprint,b1.HEX)}),this.publicCertificate)Object.assign(s,{[rK.X5C]:this.publicCertificate});let a={[rK.AUDIENCE]:this.jwtAudience,[rK.EXPIRATION_TIME]:this.expirationTime,[rK.ISSUER]:this.issuer,[rK.SUBJECT]:this.issuer,[rK.NOT_BEFORE]:r,[rK.JWT_ID]:e.createNewGuid()};return this.jwt=DJs.default.sign(a,this.privateKey,{header:s}),this.jwt}isExpired(){return this.expirationTime<hv.nowSeconds()}static parseCertificate(e){let t=/-----BEGIN CERTIFICATE-----\r*\n(.+?)\r*\n-----END CERTIFICATE-----/gs,n=[],r;while((r=t.exec(e))!==null)n.push(r[1].replace(/\r*\n/g,Ho.EMPTY_STRING));return n}}
-var DJs;
-var Ifn=b(()=>{AT();hxt();_v();DJs=M(IJs(),1);/*! @azure/msal-node v3.8.1 2025-10-29 */});
-export {ClientAssertion,DJs,Ifn};
+import {Q} from "../runtime.ts";
+var lni=Q((BWh,ani)=>{var Qzu="[object Object]";function Zzu(e){var t=!1;if(e!=null&&typeof e.toString!="function")try{t=!!(e+"")}catch(n){}return t}function eju(e,t){return function(n){return e(t(n))}}var tju=Function.prototype,sni=Object.prototype,ini=tju.toString,nju=sni.hasOwnProperty,rju=ini.call(Object),oju=sni.toString,sju=eju(Object.getPrototypeOf,Object);function iju(e){return!!e&&typeof e=="object"}function aju(e){if(!iju(e)||oju.call(e)!=Qzu||Zzu(e))return!1;var t=sju(e);if(t===null)return!0;var n=nju.call(t,"constructor")&&t.constructor;return typeof n=="function"&&n instanceof n&&ini.call(n)==rju}ani.exports=aju});
+export {lni};

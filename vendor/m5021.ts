@@ -1,6 +1,18 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {qkl,$kl} from "./m5020.ts";
-var zcm,Vwo;
-var jkl=b(()=>{zcm={type:"local-jsx",name:"export",description:"Export the current conversation to a file or clipboard",argumentHint:"[filename]",requires:{ink:!0},load:()=>Promise.resolve().then(() => (qkl(),$kl))},Vwo=zcm});
-export {zcm,Vwo,jkl};
+import {SandboxManager,Uh} from "./m2682.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {useTheme} from "./m2285.ts";
+import {qw,sP} from "./m4535.ts";
+import {color} from "./m2431.ts";
+import {hr,Ol} from "./m2573.ts";
+import {Sx,fne} from "./m4618.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function QLl(e){let t=F0o.c(5),{onComplete:n}=e,r=SandboxManager.isSandboxingEnabled(),o=SandboxManager.areSandboxSettingsLockedByPolicy()||SandboxManager.areUnsandboxedCommandsForbiddenByPolicy(),s=SandboxManager.areUnsandboxedCommandsAllowed();if(!r){let a;if(t[0]===Symbol.for("react.memo_cache_sentinel"))a=fP.jsx(Box,{flexDirection:"column",children:fP.jsx(Text,{color:"subtle",children:"Sandbox is not enabled. Enable sandbox to configure override settings."})}),t[0]=a;else a=t[0];return a}if(o){let a;if(t[1]===Symbol.for("react.memo_cache_sentinel"))a=fP.jsx(Text,{color:"subtle",children:"Override settings are managed by a higher-priority configuration and cannot be changed locally."}),t[1]=a;else a=t[1];let l;if(t[2]===Symbol.for("react.memo_cache_sentinel"))l=fP.jsxs(Box,{flexDirection:"column",children:[a,fP.jsx(Box,{marginTop:1,children:fP.jsxs(Text,{dimColor:!0,children:["Current setting:"," ",s?"Allow unsandboxed fallback":"Strict sandbox mode"]})})]}),t[2]=l;else l=t[2];return l}let i;if(t[3]!==n)i=fP.jsx(X_m,{onComplete:n,currentMode:s?"open":"closed"}),t[3]=n,t[4]=i;else i=t[4];return i}
+function X_m(e){let t=F0o.c(24),{onComplete:n,currentMode:r}=e,[o]=useTheme(),{headerFocused:s,focusHeader:i}=qw(),a;if(t[0]!==o)a=color("success",o)("(current)"),t[0]=o,t[1]=a;else a=t[1];let l=a,c=r==="open"?`Allow unsandboxed fallback ${l}`:"Allow unsandboxed fallback",u;if(t[2]!==c)u={label:c,value:"open"},t[2]=c,t[3]=u;else u=t[3];let d=r==="closed"?`Strict sandbox mode ${l}`:"Strict sandbox mode",p;if(t[4]!==d)p={label:d,value:"closed"},t[4]=d,t[5]=p;else p=t[5];let m;if(t[6]!==u||t[7]!==p)m=[u,p],t[6]=u,t[7]=p,t[8]=m;else m=t[8];let f=m,h;if(t[9]!==n)h=async function(H){let k=H;await SandboxManager.setSandboxSettings({allowUnsandboxedCommands:k==="open"}),n(k==="open"?"\u2713 Unsandboxed fallback allowed - commands can run outside sandbox when necessary":"\u2713 Strict sandbox mode - all commands must run in sandbox or be excluded via the `excludedCommands` option")},t[9]=n,t[10]=h;else h=t[10];let g=h,_;if(t[11]===Symbol.for("react.memo_cache_sentinel"))_=fP.jsx(Box,{marginBottom:1,children:fP.jsx(Text,{bold:!0,children:"Configure overrides"})}),t[11]=_;else _=t[11];let T;if(t[12]!==n)T=()=>n(void 0,{display:"skip"}),t[12]=n,t[13]=T;else T=t[13];let y;if(t[14]!==i||t[15]!==g||t[16]!==s||t[17]!==f||t[18]!==T)y=fP.jsx(hr,{options:f,onChange:g,onCancel:T,onUpFromFirstItem:i,isDisabled:s}),t[14]=i,t[15]=g,t[16]=s,t[17]=f,t[18]=T,t[19]=y;else y=t[19];let S;if(t[20]===Symbol.for("react.memo_cache_sentinel"))S=fP.jsxs(Text,{dimColor:!0,wrap:"wrap-trim",children:[fP.jsx(Text,{bold:!0,dimColor:!0,children:"Allow unsandboxed fallback:"})," ","When a command fails due to sandbox restrictions, Claude can retry with dangerouslyDisableSandbox to run outside the sandbox (falling back to default permissions)."]}),t[20]=S;else S=t[20];let E;if(t[21]===Symbol.for("react.memo_cache_sentinel"))E=fP.jsxs(Box,{flexDirection:"column",marginTop:1,gap:1,children:[S,fP.jsxs(Text,{dimColor:!0,wrap:"wrap-trim",children:[fP.jsx(Text,{bold:!0,dimColor:!0,children:"Strict sandbox mode:"})," ","All bash commands invoked by the model must run in the sandbox unless they are explicitly listed in excludedCommands."]}),fP.jsx(Sx,{url:"https://code.claude.com/docs/en/sandboxing#configure-sandboxing"})]}),t[21]=E;else E=t[21];let R;if(t[22]!==y)R=fP.jsxs(Box,{flexDirection:"column",children:[_,y,E]}),t[22]=y,t[23]=R;else R=t[23];return R}
+var F0o,fP;
+var ZLl=b(()=>{je();Uh();Ol();fne();sP();F0o=x(tt(),1),fP=x(oe(),1)});
+export {QLl,X_m,F0o,fP,ZLl};

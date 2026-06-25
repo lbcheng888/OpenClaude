@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {FPn} from "./m3461.ts";
-import {UPn} from "./m3462.ts";
-var ZQr=X((Xst)=>{Object.defineProperty(Xst,"__esModule",{value:!0});Xst.toLogAttributes=Xst.createExportLogsServiceRequest=void 0;var PKd=FPn(),$Pn=UPn();function OKd(e,t){let n=(0,PKd.getOtlpEncoder)(t);return{resourceLogs:MKd(e,n)}}Xst.createExportLogsServiceRequest=OKd;function LKd(e){let t=new Map;for(let n of e){let{resource:r,instrumentationScope:{name:o,version:s="",schemaUrl:i=""}}=n,a=t.get(r);if(!a)a=new Map,t.set(r,a);let l=`${o}@${s}:${i}`,c=a.get(l);if(!c)c=[],a.set(l,c);c.push(n)}return t}function MKd(e,t){let n=LKd(e);return Array.from(n,([r,o])=>{let s=(0,$Pn.createResource)(r);return{resource:s,scopeLogs:Array.from(o,([,i])=>({scope:(0,$Pn.createInstrumentationScope)(i[0].instrumentationScope),logRecords:i.map((a)=>NKd(a,t)),schemaUrl:i[0].instrumentationScope.schemaUrl})),schemaUrl:s.schemaUrl}})}function NKd(e,t){return{timeUnixNano:t.encodeHrTime(e.hrTime),observedTimeUnixNano:t.encodeHrTime(e.hrTimeObserved),severityNumber:BKd(e.severityNumber),severityText:e.severityText,body:(0,$Pn.toAnyValue)(e.body),eventName:e.eventName,attributes:Cfa(e.attributes),droppedAttributesCount:e.droppedAttributesCount,flags:e.spanContext?.traceFlags,traceId:t.encodeOptionalSpanContext(e.spanContext?.traceId),spanId:t.encodeOptionalSpanContext(e.spanContext?.spanId)}}function BKd(e){return e}function Cfa(e){return Object.keys(e).map((t)=>(0,$Pn.toKeyValue)(t,e[t]))}Xst.toLogAttributes=Cfa});
-export {ZQr};
+import {Q} from "../runtime.ts";
+var tba=Q((vx_,eba)=>{eba.exports=sop;function sop(e,t,n){var r=n||8192,o=r>>>1,s=null,i=r;return function(l){if(l<1||l>o)return e(l);if(i+l>r)s=e(r),i=0;var c=t.call(s,i,i+=l);if(i&7)i=(i|7)+1;return c}}});
+export {tba};

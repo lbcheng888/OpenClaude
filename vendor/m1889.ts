@@ -1,9 +1,17 @@
 // @ts-nocheck
-import {jDr,qJs} from "./m1888.ts";
 import {b} from "../runtime.ts";
-import {tfn} from "./m1796.ts";
-import {em} from "./m1717.ts";
-class Lfn{constructor(){this.linearRetryStrategy=new jDr}static get DEFAULT_MANAGED_IDENTITY_RETRY_DELAY_MS(){return vqu}async pauseForRetry(e,t,n,r){if(wqu.includes(e)&&t<Cqu){let o=this.linearRetryStrategy.calculateDelay(r,Lfn.DEFAULT_MANAGED_IDENTITY_RETRY_DELAY_MS);return n.verbose(`Retrying request in ${o}ms (retry attempt: ${t+1})`),await new Promise((s)=>setTimeout(s,o)),!0}return!1}}
-var Cqu=3,vqu=1000,wqu;
-var jJs=b(()=>{tfn();qJs();/*! @azure/msal-node v3.8.1 2025-10-29 */wqu=[em.NOT_FOUND,em.REQUEST_TIMEOUT,em.TOO_MANY_REQUESTS,em.SERVER_ERROR,em.SERVICE_UNAVAILABLE,em.GATEWAY_TIMEOUT]});
-export {Lfn,Cqu,vqu,wqu,jJs};
+import {h_n,ClientApplication} from "./m1883.ts";
+import {m_n,ClientAssertion} from "./m1879.ts";
+import {RA,k2,hQs,fQs,ife} from "./m1783.ts";
+import {iT} from "./m1780.ts";
+import {g_n,ClientCredentialClient} from "./m1887.ts";
+import {_1r,OnBehalfOfClient} from "./m1888.ts";
+import {jo} from "./m1726.ts";
+import {ClientAuthErrorCodes} from "./m1725.ts";
+import {w2} from "./m1774.ts";
+import {gF,D3} from "./m1722.ts";
+import {zp} from "./m1743.ts";
+import {AuthError} from "./m1724.ts";
+var ConfidentialClientApplication;
+var Pni=b(()=>{h_n();m_n();RA();iT();g_n();_1r();/*! @azure/msal-node v3.8.1 2025-10-29 */ConfidentialClientApplication=class ConfidentialClientApplication extends ClientApplication{constructor(e){super(e);let t=!!this.config.auth.clientSecret,n=!!this.config.auth.clientAssertion,r=(!!this.config.auth.clientCertificate?.thumbprint||!!this.config.auth.clientCertificate?.thumbprintSha256)&&!!this.config.auth.clientCertificate?.privateKey;if(this.appTokenProvider)return;if(t&&n||n&&r||t&&r)throw jo(ClientAuthErrorCodes.invalidClientCredential);if(this.config.auth.clientSecret){this.clientSecret=this.config.auth.clientSecret;return}if(this.config.auth.clientAssertion){this.developerProvidedClientAssertion=this.config.auth.clientAssertion;return}if(!r)throw jo(ClientAuthErrorCodes.invalidClientCredential);else this.clientAssertion=this.config.auth.clientCertificate.thumbprintSha256?ClientAssertion.fromCertificateWithSha256Thumbprint(this.config.auth.clientCertificate.thumbprintSha256,this.config.auth.clientCertificate.privateKey,this.config.auth.clientCertificate.x5c):ClientAssertion.fromCertificate(this.config.auth.clientCertificate.thumbprint,this.config.auth.clientCertificate.privateKey,this.config.auth.clientCertificate.x5c);this.appTokenProvider=void 0}SetAppTokenProvider(e){this.appTokenProvider=e}async acquireTokenByClientCredential(e){this.logger.info("acquireTokenByClientCredential called",e.correlationId);let t;if(e.clientAssertion)t={assertion:await w2(e.clientAssertion,this.config.auth.clientId),assertionType:k2.JWT_BEARER_ASSERTION_TYPE};let n=await this.initializeBaseRequest(e),r={...n,scopes:n.scopes.filter((d)=>!gF.includes(d))},o={...e,...r,clientAssertion:t},i=new zp(o.authority).getUrlComponents().PathSegments[0];if(Object.values(D3).includes(i))throw jo(ClientAuthErrorCodes.missingTenantIdError);let a=process.env[hQs],l;if(o.azureRegion!=="DisableMsalForceRegion")if(!o.azureRegion&&a)l=a;else l=o.azureRegion;let c={azureRegion:l,environmentRegion:process.env[fQs]},u=this.initializeServerTelemetryManager(ife.acquireTokenByClientCredential,o.correlationId,o.skipCache);try{let d=await this.createAuthority(o.authority,o.correlationId,c,e.azureCloudOptions),p=await this.buildOauthClientConfiguration(d,o.correlationId,"",u),m=new ClientCredentialClient(p,this.appTokenProvider);return this.logger.verbose("Client credential client created",o.correlationId),await m.acquireToken(o)}catch(d){if(d instanceof AuthError)d.setCorrelationId(o.correlationId);throw u.cacheFailedRequest(d),d}}async acquireTokenOnBehalfOf(e){this.logger.info("acquireTokenOnBehalfOf called",e.correlationId);let t={...e,...await this.initializeBaseRequest(e)};try{let n=await this.createAuthority(t.authority,t.correlationId,void 0,e.azureCloudOptions),r=await this.buildOauthClientConfiguration(n,t.correlationId,"",void 0),o=new OnBehalfOfClient(r);return this.logger.verbose("On behalf of client created",t.correlationId),await o.acquireToken(t)}catch(n){if(n instanceof AuthError)n.setCorrelationId(t.correlationId);throw n}}}});
+export {ConfidentialClientApplication,Pni};

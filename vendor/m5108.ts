@@ -1,11 +1,11 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {Cn,dr} from "./m231.ts";
-import {wQa,Gqn,Qdt,Ydt,Xdt,Vqn,F6e} from "../src/telemetry/4376_condition.ts";
-import {isTmuxControlMode,ln} from "../src/telemetry/0594_feature_name.ts";
-var HPl={};
-isFullscreenWithTTY(HPl,{call:()=>$fm});
-var $fm=async(e,t)=>{let n=e.trim();if(n===""){let o=t.options.activeGoal;if(!o)return{type:"text",value:"No goal set. Usage: `/goal <condition>`"};let s=o.iterations===0?"not yet evaluated":`${o.iterations} ${Cn(o.iterations,"turn")}`,i=o.lastReason?`
-${wQa(o.lastReason)}`:"";return{type:"text",value:`Goal active: ${o.condition} (${s})${i}`}}if(Gqn(n)){let o=Qdt(t);return{type:"text",value:o===null?"No goal set":`Goal cleared: ${o}`}}if(n.length>Ydt)return isTmuxControlMode("goal_set","too_long"),{type:"text",value:`Goal condition is limited to ${Ydt} characters (got ${n.length})`};let r=Xdt(n,t);if(r!==null)return{type:"text",value:r};return{type:"query",value:`Goal set: ${n}`,prompt:Vqn(n)}};
-var IPl=b(()=>{ln();dr();F6e()});
-export {HPl,$fm,IPl};
+import {cYe,Coe,mCe,rQ,fCe} from "./m741.ts";
+import {Wt,ps} from "./m230.ts";
+import {$ls,_sn,dCe,qls,eNe} from "../src/config/0740_settings.ts";
+import {C_,lk} from "./m125.ts";
+import {b} from "../runtime.ts";
+function filterEscalatingDefaultMode(e){let t=e.effective.permissions?.defaultMode;if(!t||!Obm.has(t))return e.effective;for(let n=e.sources.length-1;n>=0;n--){let r=e.sources[n];if(r.settings.permissions?.defaultMode!==void 0){if(Lbm.has(r.source)){let{defaultMode:o,...s}=e.effective.permissions??{};return{...e.effective,permissions:s}}return e.effective}}return e.effective}
+async function pBl(e={}){await cYe();let t={cwd:uBl.resolve(e.cwd??Wt().cwd()),allowedSources:(e.settingSources??Pbm).map((n)=>Dbm[n]),parentManaged:e.managedSettings??null,flagInline:null,flagPath:void 0,mdm:Coe,hkcu:mCe,wslInherits:rQ,...e.serverManagedSettings!==void 0&&{remote:()=>e.serverManagedSettings}};try{let{effective:n,sources:r}=$ls(t),o=_sn(t)??void 0,s=r.map(({source:a,settings:l})=>({source:cBl[a],settings:l,path:a==="policySettings"?void 0:dCe(a,t),...a==="policySettings"&&{policyOrigin:o}})),i={};for(let a of Object.keys(n)){let l=qls(a,t);if(l)i[a]={source:cBl[l],path:l==="policySettings"?void 0:dCe(l,t),...l==="policySettings"&&{policyOrigin:o}}}return{effective:n,provenance:i,sources:s}}finally{C_()}}
+var uBl,Dbm,cBl,Pbm,Obm,Lbm;
+var mBl=b(()=>{ps();fCe();lk();eNe();uBl=require("path"),Dbm={user:"userSettings",project:"projectSettings",local:"localSettings"},cBl={userSettings:"user",projectSettings:"project",localSettings:"local",flagSettings:"flag",policySettings:"managed"},Pbm=["user","project","local"],Obm=new Set(["bypassPermissions","auto","acceptEdits"]),Lbm=new Set(["project"])});
+export {filterEscalatingDefaultMode,pBl,uBl,Dbm,cBl,Pbm,Obm,Lbm,mBl};

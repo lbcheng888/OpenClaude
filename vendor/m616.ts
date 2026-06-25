@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {ID,Sre} from "./m70.ts";
-import {Cre,kWe} from "./m86.ts";
-import {b} from "../runtime.ts";
-function qKc(e){return ID(e)&&Cre(e)}
-var rXo;
-var oXo=b(()=>{kWe();Sre();rXo=qKc});
-export {qKc,rXo,oXo};
+import {b,x} from "../runtime.ts";
+function w1e(e){return e.sort((t,n)=>{let r=n.modified.getTime()-t.modified.getTime();if(r!==0)return r;return n.created.getTime()-t.created.getTime()})}
+function byr(e,{suffix:t="nodejs"}={}){if(typeof e!=="string")throw TypeError(`Expected a string, got ${typeof e}`);if(t)e+=`-${t}`;if(brn.default.platform==="darwin")return Qru(e);if(brn.default.platform==="win32")return Zru(e);return eou(e)}
+var wR,Tyr,brn,$Ee,Syr,cje,Qru=(e)=>{let t=wR.default.join($Ee,"Library");return{data:wR.default.join(t,"Application Support",e),config:wR.default.join(t,"Preferences",e),cache:wR.default.join(t,"Caches",e),log:wR.default.join(t,"Logs",e),temp:wR.default.join(Syr,e)}},Zru=(e)=>{let t=cje.APPDATA||wR.default.join($Ee,"AppData","Roaming"),n=cje.LOCALAPPDATA||wR.default.join($Ee,"AppData","Local");return{data:wR.default.join(n,e,"Data"),config:wR.default.join(t,e,"Config"),cache:wR.default.join(n,e,"Cache"),log:wR.default.join(n,e,"Log"),temp:wR.default.join(Syr,e)}},eou=(e)=>{let t=wR.default.basename($Ee);return{data:wR.default.join(cje.XDG_DATA_HOME||wR.default.join($Ee,".local","share"),e),config:wR.default.join(cje.XDG_CONFIG_HOME||wR.default.join($Ee,".config"),e),cache:wR.default.join(cje.XDG_CACHE_HOME||wR.default.join($Ee,".cache"),e),log:wR.default.join(cje.XDG_STATE_HOME||wR.default.join($Ee,".local","state"),e),temp:wR.default.join(Syr,t,e)}};
+var Gns=b(()=>{wR=x(require("path")),Tyr=x(require("os")),brn=x(require("process")),$Ee=Tyr.default.homedir(),Syr=Tyr.default.tmpdir(),{env:cje}=brn.default});
+export {w1e,byr,wR,Tyr,brn,$Ee,Syr,cje,Qru,Zru,eou,Gns};

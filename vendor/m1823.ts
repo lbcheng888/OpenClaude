@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {_Be} from "./m1821.ts";
-var dzs=X((vNA,uzs)=>{var O2u=_Be(),L2u=(e,t)=>{let n=O2u(e.trim().replace(/^[=v]+/,""),t);return n?n.version:null};uzs.exports=L2u});
-export {dzs};
+import {Q} from "../runtime.ts";
+var Xgn=Q((q8h,zZs)=>{var VGu=Object.freeze({loose:!0}),KGu=Object.freeze({}),zGu=(e)=>{if(!e)return KGu;if(typeof e!=="object")return VGu;return e};zZs.exports=zGu});
+export {Xgn};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Uws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var wxs,GetGuardrailCommand;
-var pEr=b(()=>{ri();wi();xi();wxs=M(yo(),1);GetGuardrailCommand=class GetGuardrailCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[wxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetGuardrail",{}).n("BedrockClient","GetGuardrailCommand").sc(Uws).build(){}});
-export {wxs,GetGuardrailCommand,pEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,Hxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var hPs,GetCustomModelCommand;
+var Mwr=b(()=>{$s();ai();ci();hPs=x(yo(),1);GetCustomModelCommand=class GetCustomModelCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[hPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetCustomModel",{}).n("BedrockClient","GetCustomModelCommand").sc(Hxs).build(){}});
+export {hPs,GetCustomModelCommand,Mwr};

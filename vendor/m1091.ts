@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,Sws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var axs,DeleteInferenceProfileCommand;
-var Kbr=b(()=>{ri();wi();xi();axs=M(yo(),1);DeleteInferenceProfileCommand=class DeleteInferenceProfileCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[axs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteInferenceProfile",{}).n("BedrockClient","DeleteInferenceProfileCommand").sc(Sws).build(){}});
-export {axs,DeleteInferenceProfileCommand,Kbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,uxs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var JDs,DeleteCustomModelCommand;
+var _wr=b(()=>{$s();ai();ci();JDs=x(yo(),1);DeleteCustomModelCommand=class DeleteCustomModelCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[JDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteCustomModel",{}).n("BedrockClient","DeleteCustomModelCommand").sc(uxs).build(){}});
+export {JDs,DeleteCustomModelCommand,_wr};

@@ -1,9 +1,10 @@
 // @ts-nocheck
-import {BaseBox,LZ} from "./m2387.ts";
-import {b,M} from "../runtime.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function NoSelect(e){let t=iwi.c(9),n,r,o;if(t[0]!==e)({children:r,fromLeftEdge:o,...n}=e),t[0]=e,t[1]=n,t[2]=r,t[3]=o;else n=t[1],r=t[2],o=t[3];let s=o?"stretch":void 0,i=o?"from-left-edge":!0,a;if(t[4]!==n||t[5]!==r||t[6]!==s||t[7]!==i)a=awi.default.createElement(BaseBox,{alignSelf:s,...n,noSelect:i},r),t[4]=n,t[5]=r,t[6]=s,t[7]=i,t[8]=a;else a=t[8];return a}
-var iwi,awi;
-var R$r=b(()=>{LZ();iwi=M(rt(),1),awi=M(Te(),1)});
-export {NoSelect,iwi,awi,R$r};
+import {lw,a4} from "./m2436.ts";
+import {BaseText,u2e} from "./m2398.ts";
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function Link(e){let t=oxi.c(5),{children:n,url:r,fallback:o,assumeSupport:s}=e,i=n??r;if(s||lw()){let c;if(t[0]!==i||t[1]!==r)c=wAn.jsx(BaseText,{children:wAn.jsx("ink-link",{href:r,children:i})}),t[0]=i,t[1]=r,t[2]=c;else c=t[2];return c}let a=o??i,l;if(t[3]!==a)l=wAn.jsx(BaseText,{children:a}),t[3]=a,t[4]=l;else l=t[4];return l}
+var oxi,wAn;
+var yie=b(()=>{a4();u2e();oxi=x(tt(),1),wAn=x(oe(),1)});
+export {Link,oxi,wAn,yie};

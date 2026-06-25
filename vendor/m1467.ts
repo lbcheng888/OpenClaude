@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {u9s} from "./m1466.ts";
-var p9s=X((LfA,d9s)=>{d9s.exports=u9s()});
-export {p9s};
+import {Q} from "../runtime.ts";
+var Q5s=Q((Qvh,X5s)=>{var J5s=require("stream").Stream;X5s.exports=G9u;function G9u(e){return{ReadStream:t,WriteStream:n};function t(r,o){if(!(this instanceof t))return new t(r,o);J5s.call(this);var s=this;this.path=r,this.fd=null,this.readable=!0,this.paused=!1,this.flags="r",this.mode=438,this.bufferSize=65536,o=o||{};var i=Object.keys(o);for(var a=0,l=i.length;a<l;a++){var c=i[a];this[c]=o[c]}if(this.encoding)this.setEncoding(this.encoding);if(this.start!==void 0){if(typeof this.start!=="number")throw TypeError("start must be a Number");if(this.end===void 0)this.end=1/0;else if(typeof this.end!=="number")throw TypeError("end must be a Number");if(this.start>this.end)throw Error("start must be <= end");this.pos=this.start}if(this.fd!==null){process.nextTick(function(){s._read()});return}e.open(this.path,this.flags,this.mode,function(u,d){if(u){s.emit("error",u),s.readable=!1;return}s.fd=d,s.emit("open",d),s._read()})}function n(r,o){if(!(this instanceof n))return new n(r,o);J5s.call(this),this.path=r,this.fd=null,this.writable=!0,this.flags="w",this.encoding="binary",this.mode=438,this.bytesWritten=0,o=o||{};var s=Object.keys(o);for(var i=0,a=s.length;i<a;i++){var l=s[i];this[l]=o[l]}if(this.start!==void 0){if(typeof this.start!=="number")throw TypeError("start must be a Number");if(this.start<0)throw Error("start must be >= zero");this.pos=this.start}if(this.busy=!1,this._queue=[],this.fd===null)this._open=e.open,this._queue.push([this._open,this.path,this.flags,this.mode,void 0]),this.flush()}}});
+export {Q5s};

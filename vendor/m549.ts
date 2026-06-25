@@ -1,6 +1,5 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-function z2c(e,t){let n=0,r=1000/t,o,s,i=(c,u=Date.now())=>{if(n=u,o=null,s)clearTimeout(s),s=null;e(...c)};return[(...c)=>{let u=Date.now(),d=u-n;if(d>=r)i(c,u);else if(o=c,!s)s=setTimeout(()=>{s=null,i(o)},r-d)},()=>o&&i(o)]}
-var ozo;
-var szo=b(()=>{ozo=z2c});
-export {z2c,ozo,szo};
+var NZo,GGc=async function*(e){if(e.stream)yield*e.stream();else if(e.arrayBuffer)yield await e.arrayBuffer();else if(e[NZo])yield*e[NZo]();else yield e},Ynn;
+var R_r=b(()=>{({asyncIterator:NZo}=Symbol),Ynn=GGc});
+export {NZo,GGc,Ynn,R_r};

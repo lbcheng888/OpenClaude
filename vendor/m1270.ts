@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {PO} from "./m1236.ts";
-import {initToolFactoryModule,a0} from "./m1238.ts";
-import {gQ,GPs} from "../src/tools/1263_error.ts";
-import {yo} from "./m887.ts";
-import {Ew} from "./m1228.ts";
-var tOs,InvokeModelWithResponseStreamCommand;
-var YCr=b(()=>{PO();initToolFactoryModule();gQ();tOs=M(yo(),1);InvokeModelWithResponseStreamCommand=class InvokeModelWithResponseStreamCommand extends Ew.classBuilder().ep(a0).m(function(e,t,n,r){return[tOs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockFrontendService","InvokeModelWithResponseStream",{eventStream:{output:!0}}).n("BedrockRuntimeClient","InvokeModelWithResponseStreamCommand").sc(GPs).build(){}});
-export {tOs,InvokeModelWithResponseStreamCommand,YCr};
+import {b,x} from "../runtime.ts";
+import {QP} from "./m1241.ts";
+import {l7,R0} from "./m1243.ts";
+import {fQ,OFs} from "../src/tools/1268_error.ts";
+import {yo} from "./m892.ts";
+import {HR} from "./m1233.ts";
+var GFs,ConverseStreamCommand;
+var THr=b(()=>{QP();l7();fQ();GFs=x(yo(),1);ConverseStreamCommand=class ConverseStreamCommand extends HR.classBuilder().ep(R0).m(function(e,t,n,r){return[GFs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockFrontendService","ConverseStream",{eventStream:{output:!0}}).n("BedrockRuntimeClient","ConverseStreamCommand").sc(OFs).build(){}});
+export {GFs,ConverseStreamCommand,THr};

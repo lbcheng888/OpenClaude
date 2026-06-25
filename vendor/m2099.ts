@@ -1,5 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {S1r} from "./m2098.ts";
-var moi=X(($Xe)=>{Object.defineProperty($Xe,"__esModule",{value:!0});$Xe.globalErrorHandler=$Xe.setGlobalErrorHandler=void 0;var bKu=S1r(),poi=(0,bKu.loggingErrorHandler)();function EKu(e){poi=e}$Xe.setGlobalErrorHandler=EKu;function CKu(e){try{poi(e)}catch{}}$Xe.globalErrorHandler=CKu});
-export {moi};
+import {Q} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+import {GUr} from "./m2098.ts";
+var VUr=Q((Bse)=>{Object.defineProperty(Bse,"__esModule",{value:!0});Bse.parseKeyPairsIntoRecord=Bse.parsePairKeyValue=Bse.getKeyPairs=Bse.serializeKeyPairs=void 0;var Ird=xi(),QBe=GUr();function xrd(e){return e.reduce((t,n)=>{let r=`${t}${t!==""?QBe.BAGGAGE_ITEMS_SEPARATOR:""}${n}`;return r.length>QBe.BAGGAGE_MAX_TOTAL_LENGTH?t:r},"")}Bse.serializeKeyPairs=xrd;function Drd(e){return e.getAllEntries().map(([t,n])=>{let r=`${encodeURIComponent(t)}=${encodeURIComponent(n.value)}`;if(n.metadata!==void 0)r+=QBe.BAGGAGE_PROPERTIES_SEPARATOR+n.metadata.toString();return r})}Bse.getKeyPairs=Drd;function Xci(e){let t=e.split(QBe.BAGGAGE_PROPERTIES_SEPARATOR);if(t.length<=0)return;let n=t.shift();if(!n)return;let r=n.indexOf(QBe.BAGGAGE_KEY_PAIR_SEPARATOR);if(r<=0)return;let o=decodeURIComponent(n.substring(0,r).trim()),s=decodeURIComponent(n.substring(r+1).trim()),i;if(t.length>0)i=(0,Ird.baggageEntryMetadataFromString)(t.join(QBe.BAGGAGE_PROPERTIES_SEPARATOR));return{key:o,value:s,metadata:i}}Bse.parsePairKeyValue=Xci;function Prd(e){let t={};if(typeof e==="string"&&e.length>0)e.split(QBe.BAGGAGE_ITEMS_SEPARATOR).forEach((n)=>{let r=Xci(n);if(r!==void 0&&r.value.length>0)t[r.key]=r.value});return t}Bse.parseKeyPairsIntoRecord=Prd});
+export {VUr};

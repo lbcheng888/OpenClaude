@@ -1,6 +1,27 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {ivl,svl} from "./m4907.ts";
-var bim,Fvo;
-var avl=b(()=>{bim={type:"local-jsx",name:"plan",description:"Enable plan mode or view the current session plan",argumentHint:"[open|<description>]",requires:{ink:!0},load:()=>Promise.resolve().then(() => (ivl(),svl))},Fvo=bim});
-export {bim,Fvo,avl};
+import {_r,ui} from "./m2463.ts";
+import {wu,$k} from "../src/tui/2575_current.ts";
+import {detectCurrentRepository,_0} from "./m697.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {fetchCodeSessionsFromSessionsAPI,NR} from "../src/api/2195_updateSessionTitle.ts";
+import {Or,ss} from "./m2553.ts";
+import {$2n,fco} from "./m3877.ts";
+import {Box} from "./m2432.ts";
+import {Hc,OE} from "./m3855.ts";
+import {Text} from "./m2433.ts";
+import {formatRelativeTime,Xo} from "./m240.ts";
+import {hr} from "./m2573.ts";
+import {bn,Is} from "./m2565.ts";
+import {at,Wo} from "./m2557.ts";
+import {dr,uc} from "./m2558.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {TS} from "./m4541.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+function K0l({onSelect:e,onCancel:t,isEmbedded:n=!1}){let{rows:r}=_r(),[o,s]=wne.useState([]),[i,a]=wne.useState(null),[l,c]=wne.useState(!0),[u,d]=wne.useState(null),[p,m]=wne.useState(!1),[f,h]=wne.useState(!1),[g,_]=wne.useState(1),T=wu("confirm:no","Confirmation","Esc"),y=wne.useCallback(async()=>{try{c(!0),d(null);let P=await detectCurrentRepository();a(P),logForDebugging(`Current repository: ${P||"not detected"}`);let M=await fetchCodeSessionsFromSessionsAPI(),B=M;if(P)B=M.filter((F)=>{if(!F.repo)return!1;return`${F.repo.owner.login}/${F.repo.name}`===P}),logForDebugging(`Filtered ${B.length} sessions for repo ${P} from ${M.length} total`);let N=[...B].sort((F,V)=>{let G=new Date(F.updated_at);return new Date(V.updated_at).getTime()-G.getTime()});s(N)}catch(P){let M=P instanceof Error?P.message:String(P);logForDebugging(`Error loading code sessions: ${M}`),d(Nfm(M))}finally{c(!1),m(!1)}},[]),S=()=>{m(!0),y()};Or("confirm:no",t,{context:"Confirmation"});function E(P){if(P.ctrl&&P.key==="c"){P.preventDefault(),t();return}if(P.ctrl&&P.key==="r"&&u){P.preventDefault(),S();return}if(u!==null&&P.key==="return"){P.preventDefault(),t();return}}let R=wne.useCallback(()=>{h(!0),y()},[h,y]);if(!f)return of.jsx($2n,{onComplete:R});if(l)return of.jsx(Box,{flexDirection:"column",padding:1,tabIndex:0,autoFocus:!0,onKeyDown:E,children:of.jsx(Hc,{message:"Loading Claude Code sessions\u2026",bold:!0,subtitle:p?"Retrying\u2026":"Fetching your Claude Code sessions\u2026"})});if(u)return of.jsxs(Box,{flexDirection:"column",padding:1,tabIndex:0,autoFocus:!0,onKeyDown:E,children:[of.jsx(Text,{bold:!0,color:"error",children:"Error loading Claude Code sessions"}),Ffm(u),of.jsxs(Text,{dimColor:!0,children:["Press ",of.jsx(Text,{bold:!0,children:"Ctrl+R"})," to retry \xB7 Press"," ",of.jsx(Text,{bold:!0,children:T})," to cancel"]})]});if(o.length===0)return of.jsxs(Box,{flexDirection:"column",padding:1,tabIndex:0,autoFocus:!0,onKeyDown:E,children:[of.jsxs(Text,{bold:!0,children:["No Claude Code sessions found",i&&of.jsxs(Text,{children:[" for ",i]})]}),of.jsx(Box,{marginTop:1,children:of.jsxs(Text,{dimColor:!0,children:["Press ",of.jsx(Text,{bold:!0,children:T})," to cancel"]})})]});let w=o.map((P)=>({...P,timeString:formatRelativeTime(new Date(P.updated_at))})),H=Math.max(V0l.length,...w.map((P)=>P.timeString.length)),k=w.map(({timeString:P,title:M,id:B})=>({label:`${P.padEnd(H," ")}  ${M}`,value:B})),I=7,D=Math.max(1,n?Math.min(o.length,5,r-6-I):Math.min(o.length,r-1-I)),O=D+I,L=o.length>D;return of.jsxs(Box,{flexDirection:"column",padding:1,height:O,tabIndex:0,autoFocus:!0,onKeyDown:E,children:[of.jsxs(Text,{bold:!0,children:["Select a session to resume",L&&of.jsxs(Text,{dimColor:!0,children:[" ","(",g," of ",o.length,")"]}),i&&of.jsxs(Text,{dimColor:!0,children:[" (",i,")"]}),":"]}),of.jsxs(Box,{flexDirection:"column",marginTop:1,flexGrow:1,children:[of.jsx(Box,{marginLeft:2,children:of.jsxs(Text,{bold:!0,children:[V0l.padEnd(H," "),Mfm,"Session Title"]})}),of.jsx(hr,{visibleOptionCount:D,options:k,onChange:(P)=>{let M=o.find((B)=>B.id===P);if(M)e(M)},onFocus:(P)=>{let M=k.findIndex((B)=>B.value===P);if(M>=0)_(M+1)}})]}),of.jsx(Box,{flexDirection:"row",children:of.jsx(Text,{dimColor:!0,children:of.jsxs(bn,{children:[of.jsx(at,{chord:["up","down"],action:"select"}),of.jsx(at,{chord:"enter",action:"confirm"}),of.jsx(dr,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"cancel"})]})})})]})}
+function Nfm(e){let t=e.toLowerCase();if(t.includes("fetch")||t.includes("network")||t.includes("timeout"))return"network";if(t.includes("auth")||t.includes("token")||t.includes("permission")||t.includes("oauth")||t.includes("not authenticated")||t.includes("/login")||t.includes("console account")||t.includes("403"))return"auth";if(t.includes("api")||t.includes("rate limit")||t.includes("500")||t.includes("529"))return"api";return"other"}
+function Ffm(e){switch(e){case"network":return of.jsx(Box,{marginY:1,flexDirection:"column",children:of.jsx(Text,{dimColor:!0,children:"Check your internet connection"})});case"auth":return of.jsxs(Box,{marginY:1,flexDirection:"column",children:[of.jsx(Text,{dimColor:!0,children:"Teleport requires a Claude account"}),of.jsxs(Text,{dimColor:!0,children:["Run ",of.jsx(Text,{bold:!0,children:"/login"}),' and select "Claude account with subscription"']})]});case"api":return of.jsx(Box,{marginY:1,flexDirection:"column",children:of.jsx(Text,{dimColor:!0,children:"Sorry, Claude encountered an error"})});case"other":return of.jsx(Box,{marginY:1,flexDirection:"row",children:of.jsx(Text,{dimColor:!0,children:"Sorry, Claude Code encountered an error"})})}}
+var wne,of,V0l="Updated",Mfm="  ";
+var z0l=b(()=>{ui();NR();je();ss();$k();qe();_0();Xo();uc();TS();Is();Wo();OE();fco();wne=x(et(),1),of=x(oe(),1)});
+export {K0l,Nfm,Ffm,wne,of,V0l,Mfm,z0l};

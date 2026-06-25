@@ -1,17 +1,16 @@
 // @ts-nocheck
-import {getGatewayAuth,getGatewayRefreshInFlight,setGatewayRefreshInFlight,setGatewayAuth,lt} from "../src/session/0131_sent.ts";
-import {externalHttp,ek} from "../src/core/0570_isCancel.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Se,bt} from "./m195.ts";
-import {dc,U8} from "./m1480.ts";
+import {wM,Woe,ZP,G5,aC,tpn,d7} from "./m1296.ts";
+import {execFileNoThrow,Ii} from "./m690.ts";
+import {qt,tn,TeamDeleteToolName} from "../src/config/0230_encoding.ts";
+import {Fme,$mn} from "./m1465.ts";
+import {Kb,zN} from "./m688.ts";
 import {b} from "../runtime.ts";
-import {iv} from "./m454.ts";
-import {we} from "./m455.ts";
-import {hn} from "./m251.ts";
-function oCe(){let e=getGatewayAuth();if(!e?.idpRefreshToken||e.expiresAt-Date.now()>=sLu)return Promise.resolve();let t=getGatewayRefreshInFlight();if(t)return t;let n=iLu(e,e.idpRefreshToken).finally(()=>setGatewayRefreshInFlight(null));return setGatewayRefreshInFlight(n),n}
-async function iLu(e,t){try{let{data:n}=await externalHttp.post(e.tokenEndpoint??`${e.url}/oauth/token`,new URLSearchParams({grant_type:"refresh_token",refresh_token:t}).toString(),{headers:{"Content-Type":"application/x-www-form-urlencoded"},timeout:1e4}),r=Y9s().safeParse(n);if(!r.success){logForDebugging("[gateway-refresh] malformed response; will retry later");return}if(getGatewayAuth()!==e){logForDebugging("[gateway-refresh] auth changed mid-refresh; discarding");return}await z9s(e,t,()=>({url:e.url,jwt:r.data.access_token,expiresAt:Date.now()+r.data.expires_in*1000,idpRefreshToken:r.data.refresh_token??e.idpRefreshToken,...e.tokenEndpoint&&{tokenEndpoint:e.tokenEndpoint}})),logForDebugging("[gateway-refresh] refreshed gateway JWT")}catch(n){if(J9s(n)==="invalid_grant"){if(getGatewayAuth()!==e){logForDebugging("[gateway-refresh] auth changed mid-refresh; discarding invalid_grant");return}logForDebugging("[gateway-refresh] IdP rejected refresh token; clearing it",{level:"warn"});try{await z9s(e,t,(r)=>({...r,idpRefreshToken:void 0}))}catch(r){logForDebugging(`[gateway-refresh] secureStorage write failed: ${Se(r)}`,{level:"warn"})}}else logForDebugging(`[gateway-refresh] transient failure: ${Se(n)}`)}}
-async function z9s(e,t,n){let r=n(e);try{await dc().mutate((o)=>{let s=o?.enterpriseGateway;if(s&&s.idpRefreshToken!==t)return r=s,o;return r=n(s??e),{...o,enterpriseGateway:r}})}catch(o){logForDebugging(`[gateway-refresh] secureStorage write failed; applying refreshed credential in-memory only: ${Se(o)}`,{level:"warn"})}if(getGatewayAuth()!==e){logForDebugging("[gateway-refresh] auth changed during persist; discarding outcome");return}setGatewayAuth(r)}
-function J9s(e){if(!e||typeof e!=="object"||!("isAxiosError"in e)||!e.isAxiosError)return;let t=e.response?.data;if(typeof t==="object"&&t!==null&&"error"in t){let n=t.error;return typeof n==="string"?n:void 0}return}
-var sLu=300000,Y9s;
-var PYe=b(()=>{iv();lt();ek();qe();bt();U8();Y9s=we(()=>hn.object({access_token:hn.string(),expires_in:hn.number(),refresh_token:hn.string().nullish()}))});
-export {oCe,iLu,z9s,J9s,sLu,Y9s,PYe};
+import {qe,logForDebugging} from "../src/config/0236_setHasFormattedOutput.ts";
+import {bTr,execSyncWithDefaults_BLOCKS_EVENT_LOOP_WILL_FREEZE_UI_MAKE_SURE_YOU_KNOW_WHAT_YOU_ARE_DOING} from "./m689.ts";
+import {eHt,pFe} from "./m1479.ts";
+async function H8s(){try{let e=wM(Woe),t=ZP(),{stdout:n,code:r}=await execFileNoThrow("security",["find-generic-password","-a",t,"-w","-s",e],{useCwd:!1,preserveOutputOnError:!1,timeout:HXe});if(r===0&&n)return qt(n.trim());if(r===0||r===y3u||r===T3u)return null;return Fme}catch(e){return null}}
+function I8s(){if(Qmn!==void 0)return Qmn;return Qmn=Kb("security",["show-keychain-info"],{reject:!1,stdio:["ignore","pipe","pipe"],timeout:HXe}).then((e)=>e.exitCode===36).catch(()=>!1),Qmn}
+var HXe=2000,_3u=4032,y3u=44,T3u=36,jxr,Qmn;
+var Yxr=b(()=>{qe();Ii();bTr();zN();tn();G5();$mn();eHt();jxr={name:"keychain",read(){let e=aC.cache;if(Date.now()-e.cachedAt<tpn)return e.data;try{let t=wM(Woe),n=ZP(),r=execSyncWithDefaults_BLOCKS_EVENT_LOOP_WILL_FREEZE_UI_MAKE_SURE_YOU_KNOW_WHAT_YOU_ARE_DOING(`security find-generic-password -a "${n}" -w -s "${t}"`,{timeout:HXe});if(r){let o=qt(r);return aC.cache={data:o,cachedAt:Date.now()},o}}catch(t){}if(e.data!==null)return logForDebugging("[keychain] read failed; serving stale cache",{level:"warn"}),aC.cache={data:e.data,cachedAt:Date.now()},e.data;return aC.cache={data:null,cachedAt:Date.now()},null},async readAsync(){let e=aC.cache;if(Date.now()-e.cachedAt<tpn)return e.data;if(aC.readInFlight)return aC.readInFlight;let t=aC.generation,n=H8s().then((r)=>{let o=r===Fme?null:r;if(t===aC.generation){if(o===null&&e.data!==null)logForDebugging("[keychain] readAsync failed; serving stale cache",{level:"warn"});let s=o??e.data;return aC.cache={data:s,cachedAt:Date.now()},aC.readInFlight=null,s}return o});return aC.readInFlight=n,n},async readAsyncStrict(){let e=aC.generation,t=await H8s();if(t!==Fme&&e===aC.generation)aC.cache={data:t,cachedAt:Date.now()};return t},invalidateCache(){d7()},mutate(e){return pFe(jxr,e)},async update(e){d7();try{let t=wM(Woe),n=ZP(),r=TeamDeleteToolName(e),o=Buffer.from(r,"utf-8").toString("hex"),s=`add-generic-password -U -a "${n}" -s "${t}" -X "${o}"
+`,i;if(s.length<=_3u)i=await Kb("security",["-i"],{input:s,stdio:["pipe","pipe","pipe"],reject:!1,timeout:HXe});else logForDebugging(`Keychain payload (${r.length}B JSON) exceeds security -i stdin limit; using argv`,{level:"warn"}),i=await Kb("security",["add-generic-password","-U","-a",n,"-s",t,"-X",o],{stdio:["ignore","pipe","pipe"],reject:!1,timeout:HXe});if(i.exitCode!==0)return{success:!1,transient:i.timedOut};return aC.cache={data:e,cachedAt:Date.now()},{success:!0}}catch(t){return{success:!1}}},async delete(){d7();try{let e=wM(Woe),t=ZP();return await execFileNoThrow("security",["delete-generic-password","-a",t,"-s",e],{timeout:HXe,useCwd:!1}),!0}catch(e){return!1}}}});
+export {H8s,I8s,HXe,_3u,y3u,T3u,jxr,Qmn,Yxr};

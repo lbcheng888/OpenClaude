@@ -1,11 +1,4 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ki} from "./m2453.ts";
-import {ze} from "./m2452.ts";
-import {sc} from "./m2455.ts";
-import {TLt} from "./m3009.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var xMd,kMd;
-var GGi=b(()=>{ki();ze();sc();TLt();xMd=M(rt(),1),kMd=M(Te(),1)});
-export {xMd,kMd,GGi};
+import {Q} from "../runtime.ts";
+var PJi=Q((AYg,DJi)=>{function q3d(e){let n={$pattern:/[a-zA-Z][a-zA-Z0-9_?]*/,keyword:"if then else do while until for loop import with is as where when by data constant integer real text name boolean symbol infix prefix postfix block tree",literal:"true false nil",built_in:"in mod rem and or xor not abs sign floor ceil sqrt sin cos tan asin acos atan exp expm1 log log2 log10 log1p pi at text_length text_range text_find text_replace contains page slide basic_slide title_slide title subtitle fade_in fade_out fade_at clear_color color line_color line_width texture_wrap texture_transform texture scale_?x scale_?y scale_?z? translate_?x translate_?y translate_?z? rotate_?x rotate_?y rotate_?z? rectangle circle ellipse sphere path line_to move_to quad_to curve_to theme background contents locally time mouse_?x mouse_?y mouse_buttons "+"ObjectLoader Animate MovieCredits Slides Filters Shading Materials LensFlare Mapping VLCAudioVideo StereoDecoder PointCloud NetworkAccess RemoteControl RegExp ChromaKey Snowfall NodeJS Speech Charts"},r={className:"string",begin:'"',end:'"',illegal:"\\n"},o={className:"string",begin:"'",end:"'",illegal:"\\n"},s={className:"string",begin:"<<",end:">>"},i={className:"number",begin:"[0-9]+#[0-9A-Z_]+(\\.[0-9-A-Z_]+)?#?([Ee][+-]?[0-9]+)?"},a={beginKeywords:"import",end:"$",keywords:n,contains:[r]},l={className:"function",begin:/[a-z][^\n]*->/,returnBegin:!0,end:/->/,contains:[e.inherit(e.TITLE_MODE,{starts:{endsWithParent:!0,keywords:n}})]};return{name:"XL",aliases:["tao"],keywords:n,contains:[e.C_LINE_COMMENT_MODE,e.C_BLOCK_COMMENT_MODE,r,o,s,l,a,i,e.NUMBER_MODE]}}DJi.exports=q3d});
+export {PJi};

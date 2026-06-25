@@ -1,11 +1,16 @@
 // @ts-nocheck
-import {jt,ws} from "./m228.ts";
-import {ftn,mc} from "../src/config/0645_maxBytes.ts";
-import {b} from "../runtime.ts";
-class lUa{cache=new Map;maxCacheSize=1000;readFile(e){let t=jt(),n;try{n=t.statSync(e)}catch(a){throw this.cache.delete(e),a}let r=e,o=this.cache.get(r);if(o&&o.mtime===n.mtimeMs)return{content:o.content,encoding:o.encoding};let s=ftn(e),i=t.readFileSync(e,{encoding:s}).replaceAll(`\r
-`,`
-`);if(this.cache.set(r,{content:i,encoding:s,mtime:n.mtimeMs}),this.cache.size>this.maxCacheSize){let a=this.cache.keys().next().value;if(a)this.cache.delete(a)}return{content:i,encoding:s}}clear(){this.cache.clear()}invalidate(e){this.cache.delete(e)}getStats(){return{size:this.cache.size,entries:Array.from(this.cache.keys())}}}
-function plo(e){let{content:t}=$vp.readFile(e);return t}
-var $vp;
-var cUa=b(()=>{mc();ws();$vp=new lUa});
-export {lUa,plo,$vp,cUa};
+import {b,x} from "../runtime.ts";
+import {lZ,q0} from "./m2270.ts";
+import {et} from "./m2261.ts";
+function Ldt(){return J3t.useSyncExternalStore(TG.subscribe,()=>TG.getState().value)}
+function h4a(){return J3t.useSyncExternalStore(TG.subscribe,()=>TG.getState().value==="")}
+function A3n(){return TG.getState().value}
+function R3n(e){TG.setState((t)=>{if(t.value===e)return t;if(t.launchWarning!==null&&t.value!==""&&e==="")return{...t,value:e,launchWarning:null};return{...t,value:e}})}
+function Mdt(){return J3t.useSyncExternalStore(TG.subscribe,()=>TG.getState().active)}
+function emo(e){TG.setState((t)=>t.active===e?t:{...t,active:e})}
+function g4a(){return J3t.useSyncExternalStore(TG.subscribe,()=>TG.getState().launchWarning)}
+function _4a(){return TG.getState().launchWarning}
+function Eye(e){TG.setState((t)=>t.launchWarning?.type===e.type&&t.launchWarning.prefillLength===e.prefillLength?t:{...t,launchWarning:e})}
+var J3t,TG;
+var yce=b(()=>{lZ();J3t=x(et(),1),TG=q0({value:"",active:!1,launchWarning:null})});
+export {Ldt,h4a,A3n,R3n,Mdt,emo,g4a,_4a,Eye,J3t,TG,yce};

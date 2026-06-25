@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {YMn} from "./m3658.ts";
-import {RFt} from "./m3710.ts";
-var Dno=X((N1n)=>{Object.defineProperty(N1n,"__esModule",{value:!0});N1n.TemporalMetricProcessor=void 0;var Scp=YMn(),bcp=RFt();class xFt{_aggregator;_unreportedAccumulations=new Map;_reportHistory=new Map;constructor(e,t){this._aggregator=e,t.forEach((n)=>{this._unreportedAccumulations.set(n,[])})}buildMetrics(e,t,n,r){this._stashAccumulations(n);let o=this._getMergedUnreportedAccumulations(e),s=o,i;if(this._reportHistory.has(e)){let l=this._reportHistory.get(e),c=l.collectionTime;if(i=l.aggregationTemporality,i===Scp.AggregationTemporality.CUMULATIVE)s=xFt.merge(l.accumulations,o,this._aggregator);else s=xFt.calibrateStartTime(l.accumulations,o,c)}else i=e.selectAggregationTemporality(t.type);this._reportHistory.set(e,{accumulations:s,collectionTime:r,aggregationTemporality:i});let a=Ecp(s);if(a.length===0)return;return this._aggregator.toMetricData(t,i,a,r)}_stashAccumulations(e){let t=this._unreportedAccumulations.keys();for(let n of t){let r=this._unreportedAccumulations.get(n);if(r===void 0)r=[],this._unreportedAccumulations.set(n,r);r.push(e)}}_getMergedUnreportedAccumulations(e){let t=new bcp.AttributeHashMap,n=this._unreportedAccumulations.get(e);if(this._unreportedAccumulations.set(e,[]),n===void 0)return t;for(let r of n)t=xFt.merge(t,r,this._aggregator);return t}static merge(e,t,n){let r=e,o=t.entries(),s=o.next();while(s.done!==!0){let[i,a,l]=s.value;if(e.has(i,l)){let c=e.get(i,l),u=n.merge(c,a);r.set(i,u,l)}else r.set(i,a,l);s=o.next()}return r}static calibrateStartTime(e,t,n){for(let[r,o]of e.keys())t.get(r,o)?.setStartTime(n);return t}}N1n.TemporalMetricProcessor=xFt;function Ecp(e){return Array.from(e.entries())}});
-export {Dno};
+import {Q} from "../runtime.ts";
+import {e$t} from "./m3703.ts";
+import {g0a} from "./m3710.ts";
+import {iao} from "./m3711.ts";
+var T0a=Q((TBn)=>{Object.defineProperty(TBn,"__esModule",{value:!0});TBn.hostDetector=void 0;var aao=e$t(),_0a=require("os"),NTp=g0a(),FTp=iao();class y0a{detect(e){return{attributes:{[aao.ATTR_HOST_NAME]:(0,_0a.hostname)(),[aao.ATTR_HOST_ARCH]:(0,FTp.normalizeArch)((0,_0a.arch)()),[aao.ATTR_HOST_ID]:(0,NTp.getMachineId)()}}}}TBn.hostDetector=new y0a});
+export {T0a};

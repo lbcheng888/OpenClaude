@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {er,ZE} from "./m460.ts";
-import {Z7o,eKo} from "./m515.ts";
-import {b} from "../runtime.ts";
-function PUc(e){return encodeURIComponent(e).replace(/%3A/gi,":").replace(/%24/g,"$").replace(/%2C/gi,",").replace(/%20/g,"+")}
-function AMe(e,t,n){if(!t)return e;let r=n&&n.encode||PUc,o=er.isFunction(n)?{serialize:n}:n,s=o&&o.serialize,i;if(s)i=s(t,o);else i=er.isURLSearchParams(t)?t.toString():new Z7o(t,o).toString(r);if(i){let a=e.indexOf("#");if(a!==-1)e=e.slice(0,a);e+=(e.indexOf("?")===-1?"?":"&")+i}return e}
-var nen=b(()=>{ZE();eKo()});
-export {PUc,AMe,nen};
+import {Q} from "../runtime.ts";
+import {LQo} from "./m514.ts";
+import {NQo} from "./m515.ts";
+import {Dnn} from "./m513.ts";
+import {knn} from "./m487.ts";
+var UQo=Q((eAf,BQo)=>{var AWc=LQo(),FQo=AWc("%Object.defineProperty%",!0),RWc=NQo()(),vWc=Dnn(),wWc=knn(),Lnn=RWc?Symbol.toStringTag:null;BQo.exports=function(t,n){var r=arguments.length>2&&!!arguments[2]&&arguments[2].force,o=arguments.length>2&&!!arguments[2]&&arguments[2].nonConfigurable;if(typeof r<"u"&&typeof r!=="boolean"||typeof o<"u"&&typeof o!=="boolean")throw new wWc("if provided, the `overrideIfSet` and `nonConfigurable` options must be booleans");if(Lnn&&(r||!vWc(t,Lnn)))if(FQo)FQo(t,Lnn,{configurable:!o,enumerable:!1,value:n,writable:!1});else t[Lnn]=n}});
+export {UQo};

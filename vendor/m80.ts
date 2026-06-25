@@ -1,8 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {eUo,ZFo} from "./m77.ts";
-import {nKt,wWe} from "./m78.ts";
-import {oKt,Ere} from "./m79.ts";
-var nUo,hfc,RWe;
-var sKt=b(()=>{eUo();nKt();oKt();nUo=Ere&&Ere.isTypedArray,hfc=nUo?wWe(nUo):ZFo,RWe=hfc});
-export {nUo,hfc,RWe,sKt};
+import {gsr,MYt} from "./m79.ts";
+var RAc,F4o;
+var B4o=b(()=>{gsr();RAc=MYt(Object.keys,Object),F4o=RAc});
+export {RAc,F4o,B4o};

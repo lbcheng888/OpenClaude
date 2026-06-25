@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var kIs=()=>{};
-var HIs=()=>{};
-var IIs;
-var DIs=b(()=>{(function(e){e.HTTP="http",e.HTTPS="https"})(IIs||(IIs={}))});
-export {kIs,HIs,IIs,DIs};
+import {b,x} from "../runtime.ts";
+import {sC} from "./m834.ts";
+var rMs;
+var oMs=b(()=>{rMs=x(sC(),1)});
+export {rMs,oMs};

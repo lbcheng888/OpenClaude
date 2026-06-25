@@ -1,15 +1,4 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b} from "../runtime.ts";
-import {zjn,CronDeleteToolName,lo} from "../src/tools/5190_userPromptCount.ts";
-import {isTeammate,Am} from "../src/agent/1459_waitForTeammatesToBecomeIdle.ts";
-import {Bmt,jWn} from "../src/permissions/4767_once.ts";
-import {B_e,P4t} from "./m4387.ts";
-import {e8n,t8n} from "./m4485.ts";
-import {Fwe,AC,mg} from "../src/agent/2580_level.ts";
-var Ugl={};
-isFullscreenWithTTY(Ugl,{renameSystemReminder:()=>renameSystemReminder,performRename:()=>performRename,call:()=>$Zp});
-function renameSystemReminder(e){let t=zjn(e);return CronDeleteToolName(`The user named this session "${t}". This may indicate the session's focus or intent.`)}
-async function performRename(e,t){if(isTeammate())return{message:"Cannot rename: This session is a teammate. Teammate names are set by the team leader."};let n=!e||e.trim()==="",r;if(n){let o=await Bmt(t.messages,t.abortController.signal,{preferFork:!0});if(!o)return{message:"Could not generate a name: no conversation context yet. Usage: /rename <name>"};r=o}else r=e.trim();return await B_e(r,"user"),t.setAppState((o)=>e8n(o,{name:r})),await Fwe(AC(),r,"user"),{message:`Session renamed to: ${r}`,newName:r,isGenerated:n}}
-async function $Zp(e,t,n){let{message:r,newName:o,isGenerated:s}=await performRename(n,t);return e(r,{display:"system",metaMessages:o&&!s?[renameSystemReminder(o)]:void 0}),null}
-var VWn=b(()=>{mg();lo();t8n();Am();P4t();jWn()});
-export {Ugl,renameSystemReminder,performRename,$Zp,VWn};
+import {Q} from "../runtime.ts";
+var mAl=Q((GWt,pAl)=>{var lAl=require("assert").ok,Vht=require("zlib"),Mam=require("util"),cAl=require("buffer").kMaxLength;function SWe(e){if(!(this instanceof SWe))return new SWe(e);if(e&&e.chunkSize<Vht.Z_MIN_CHUNK)e.chunkSize=Vht.Z_MIN_CHUNK;if(Vht.Inflate.call(this,e),this._offset=this._offset===void 0?this._outOffset:this._offset,this._buffer=this._buffer||this._outBuffer,e&&e.maxLength!=null)this._maxLength=e.maxLength}function Nam(e){return new SWe(e)}function uAl(e,t){if(t)process.nextTick(t);if(!e._handle)return;e._handle.close(),e._handle=null}SWe.prototype._processChunk=function(e,t,n){if(typeof n==="function")return Vht.Inflate._processChunk.call(this,e,t,n);let r=this,o=e&&e.length,s=this._chunkSize-this._offset,i=this._maxLength,a=0,l=[],c=0,u;this.on("error",function(f){u=f});function d(f,h){if(r._hadError)return;let g=s-h;if(lAl(g>=0,"have should not go down"),g>0){let _=r._buffer.slice(r._offset,r._offset+g);if(r._offset+=g,_.length>i)_=_.slice(0,i);if(l.push(_),c+=_.length,i-=_.length,i===0)return!1}if(h===0||r._offset>=r._chunkSize)s=r._chunkSize,r._offset=0,r._buffer=Buffer.allocUnsafe(r._chunkSize);if(h===0)return a+=o-f,o=f,!0;return!1}lAl(this._handle,"zlib binding closed");let p;do p=this._handle.writeSync(t,e,a,o,this._buffer,this._offset,s),p=p||this._writeState;while(!this._hadError&&d(p[0],p[1]));if(this._hadError)throw u;if(c>=cAl)throw uAl(this),RangeError("Cannot create final Buffer. It would be larger than 0x"+cAl.toString(16)+" bytes");let m=Buffer.concat(l,c);return uAl(this),m};Mam.inherits(SWe,Vht.Inflate);function Fam(e,t){if(typeof t==="string")t=Buffer.from(t);if(!(t instanceof Buffer))throw TypeError("Not a string or buffer");let n=e._finishFlushFlag;if(n==null)n=Vht.Z_FINISH;return e._processChunk(t,n)}function dAl(e,t){return Fam(new SWe(t),e)}pAl.exports=GWt=dAl;GWt.Inflate=SWe;GWt.createInflate=Nam;GWt.inflateSync=dAl});
+export {mAl};

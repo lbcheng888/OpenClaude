@@ -1,5 +1,11 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {ZQr} from "./m3463.ts";
-var Gfa=X((zPn)=>{Object.defineProperty(zPn,"__esModule",{value:!0});zPn.JsonLogsSerializer=void 0;var uzd=ZQr();zPn.JsonLogsSerializer={serializeRequest:(e)=>{let t=(0,uzd.createExportLogsServiceRequest)(e,{useHex:!0,useLongBits:!1});return new TextEncoder().encode(JSON.stringify(t))},deserializeResponse:(e)=>{if(e.length===0)return{};return JSON.parse(new TextDecoder().decode(e))}}});
-export {Gfa};
+import {Q} from "../runtime.ts";
+import {wMn} from "./m3466.ts";
+import {pba} from "./m3467.ts";
+import {HMn} from "./m3468.ts";
+import {bba} from "./m3469.ts";
+import {ple} from "./m3465.ts";
+import {wro} from "./m3471.ts";
+import {kro} from "./m3472.ts";
+var Hro=Q((wba)=>{var yq=wba;yq.build="minimal";yq.Writer=wMn();yq.BufferWriter=pba();yq.Reader=HMn();yq.BufferReader=bba();yq.util=ple();yq.rpc=wro();yq.roots=kro();yq.configure=vba;function vba(){yq.util._configure(),yq.Writer._configure(yq.BufferWriter),yq.Reader._configure(yq.BufferReader)}vba()});
+export {Hro};

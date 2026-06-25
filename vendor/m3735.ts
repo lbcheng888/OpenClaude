@@ -1,8 +1,7 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ple} from "./m3439.ts";
-import {gle} from "./m3479.ts";
-import {age} from "./m3493.ts";
-var Lva,Mva,iNn,HFt;
-var Nva=b(()=>{Lva=M(ple(),1),Mva=M(gle(),1),iNn=M(age(),1);HFt=class HFt extends Lva.OTLPExporterBase{constructor(e={}){super(iNn.createOtlpHttpExportDelegate(iNn.convertLegacyHttpOptions(e,"LOGS","v1/logs",{"Content-Type":"application/x-protobuf"}),Mva.ProtobufLogsSerializer))}}});
-export {Lva,Mva,iNn,HFt,Nva};
+import {Q} from "../runtime.ts";
+import {uao} from "./m3725.ts";
+import {mao} from "./m3727.ts";
+import {fao} from "./m3728.ts";
+var hxa=Q((MBn)=>{Object.defineProperty(MBn,"__esModule",{value:!0});MBn.SyncMetricStorage=void 0;var SSp=uao(),bSp=mao(),ESp=fao();class fxa extends SSp.MetricStorage{_aggregationCardinalityLimit;_deltaMetricStorage;_temporalMetricStorage;_attributesProcessor;constructor(e,t,n,r,o){super(e);this._aggregationCardinalityLimit=o,this._deltaMetricStorage=new bSp.DeltaMetricProcessor(t,this._aggregationCardinalityLimit),this._temporalMetricStorage=new ESp.TemporalMetricProcessor(t,r),this._attributesProcessor=n}record(e,t,n,r){t=this._attributesProcessor.process(t,n),this._deltaMetricStorage.record(e,t,n,r)}collect(e,t){let n=this._deltaMetricStorage.collect();return this._temporalMetricStorage.buildMetrics(e,this._instrumentDescriptor,n,t)}}MBn.SyncMetricStorage=fxa});
+export {hxa};

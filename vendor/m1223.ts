@@ -1,9 +1,7 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var KIs=()=>{};
-var zIs=()=>{};
-var YIs=()=>{};
-var JIs=()=>{};
-var XIs=()=>{};
-var QIs=b(()=>{zIs();YIs();JIs();XIs()});
-export {KIs,zIs,YIs,JIs,XIs,QIs};
+var CMs=()=>{};
+var AMs=()=>{};
+var RMs;
+var vMs=b(()=>{(function(e){e.HTTP="http",e.HTTPS="https"})(RMs||(RMs={}))});
+export {CMs,AMs,RMs,vMs};

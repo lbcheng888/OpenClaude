@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {FOe,U7t} from "./m44.ts";
+import {Abe,NTt} from "./m41.ts";
 import {b} from "../runtime.ts";
-function Per(e,t){if(typeof e!="function"||t!=null&&typeof t!="function")throw TypeError(Fpc);var n=function(){var r=arguments,o=t?t.apply(this,r):r[0],s=n.cache;if(s.has(o))return s.get(o);var i=e.apply(this,r);return n.cache=s.set(o,i)||s,i};return n.cache=new(Per.Cache||FOe),n}
-var Fpc="Expected a function",wn;
-var ta=b(()=>{U7t();Per.Cache=FOe;wn=Per});
-export {Per,Fpc,wn,ta};
+function KEc(e,t){var n=Abe(this,e),r=n.size;return n.set(e,t),this.size+=n.size==r?0:1,this}
+var c4o;
+var u4o=b(()=>{NTt();c4o=KEc});
+export {KEc,c4o,u4o};

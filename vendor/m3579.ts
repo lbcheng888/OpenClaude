@@ -1,4 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var vit=X((d3e)=>{Object.defineProperty(d3e,"__esModule",{value:!0});d3e.minDeadline=Zep;d3e.getDeadlineTimeoutString=ttp;d3e.getRelativeTimeout=rtp;d3e.deadlineToString=otp;d3e.formatDateDifference=stp;function Zep(...e){let t=1/0;for(let n of e){let r=n instanceof Date?n.getTime():n;if(r<t)t=r}return t}var etp=[["m",1],["S",1000],["M",60000],["H",3600000]];function ttp(e){let t=new Date().getTime();if(e instanceof Date)e=e.getTime();let n=Math.max(e-t,0);for(let[r,o]of etp){let s=n/o;if(s<1e8)return String(Math.ceil(s))+r}throw Error("Deadline is too far in the future")}var ntp=2147483647;function rtp(e){let t=e instanceof Date?e.getTime():e,n=new Date().getTime(),r=t-n;if(r<0)return 0;else if(r>ntp)return 1/0;else return r}function otp(e){if(e instanceof Date)return e.toISOString();else{let t=new Date(e);if(Number.isNaN(t.getTime()))return""+e;else return t.toISOString()}}function stp(e,t){return((t.getTime()-e.getTime())/1000).toFixed(3)+"s"}});
-export {vit};
+import {Q} from "../runtime.ts";
+import {gRa} from "./m3575.ts";
+import {tso} from "./m3576.ts";
+import {RRa} from "./m3577.ts";
+import {kRa} from "./m3578.ts";
+var IRa=Q((FP_,HRa)=>{var WIe=HRa.exports=gRa();WIe.build="full";WIe.tokenize=tso();WIe.parse=RRa();WIe.common=kRa();WIe.Root._configure(WIe.Type,WIe.parse,WIe.common)});
+export {IRa};

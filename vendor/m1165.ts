@@ -1,8 +1,9 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {Man,ListCustomModelsCommand} from "./m1127.ts";
-import {Sd} from "./m850.ts";
-var Pks,paginateListCustomModels;
-var Oks=b(()=>{s0();Man();Pks=M(Sd(),1),paginateListCustomModels=Pks.createPaginator(BedrockClient,ListCustomModelsCommand,"nextToken","nextToken","maxResults")});
-export {Pks,paginateListCustomModels,Oks};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {fun,ListAutomatedReasoningPoliciesCommand} from "./m1127.ts";
+import {Zu} from "./m855.ts";
+var gOs=()=>{};
+var _Os,paginateListAutomatedReasoningPolicies;
+var yOs=b(()=>{C0();fun();_Os=x(Zu(),1),paginateListAutomatedReasoningPolicies=_Os.createPaginator(BedrockClient,ListAutomatedReasoningPoliciesCommand,"nextToken","nextToken","maxResults")});
+export {gOs,_Os,paginateListAutomatedReasoningPolicies,yOs};

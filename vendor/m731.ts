@@ -1,9 +1,12 @@
 // @ts-nocheck
-import {mhr,RB,J3} from "../src/artifact/0731_allow.ts";
-import {toJSONSchema} from "./m304.ts";
-import {Le,Xt} from "../src/config/0228_encoding.ts";
 import {b} from "../runtime.ts";
-import {Xr} from "./m321.ts";
-function Ahr(e){let t=e?mhr(e):RB(),n=toJSONSchema(t,{unrepresentable:"any"});return Le(n,null,2)}
-var Mns=b(()=>{Xr();Xt();J3()});
-export {Ahr,Mns};
+import {Qr} from "./m323.ts";
+import {jN,PERMISSION_MODES,EXTERNAL_PERMISSION_MODES} from "./m721.ts";
+import {C} from "./m321.ts";
+function OSr(){return Slu.filter((e)=>nsn[e].buildGate())}
+function fls(e){let t={};for(let n of e)t={...t,...nsn[n].shape()};return t}
+function hls(e){let t={};for(let n of e)t={...t,...nsn[n].permissionsShape?.()};return t}
+function gls(e){let t=[];for(let n of e)t.push(...nsn[n].permissionModes?.()??[]);return t}
+var Slu,nsn;
+var _ls=b(()=>{Qr();jN();Slu=["autoMode","deepLink","voice","briefView","screenReader"],nsn={autoMode:{buildGate:()=>!0,shape:()=>({skipAutoPermissionPrompt:C.boolean().optional().describe("Whether the user has accepted the auto mode opt-in dialog"),useAutoModeDuringPlan:C.boolean().optional().describe("Whether plan mode uses auto mode semantics when auto mode is available (default: true)"),autoMode:C.object({allow:C.array(C.string()).optional().describe('Rules for the auto mode classifier allow section. Include the literal string "$defaults" to inherit the built-in rules at that position.'),soft_deny:C.array(C.string()).optional().describe('Rules for the auto mode classifier SOFT BLOCK section \u2014 destructive/irreversible actions that user intent can clear. Include the literal string "$defaults" to inherit the built-in rules at that position.'),hard_deny:C.array(C.string()).optional().describe('Rules for the auto mode classifier HARD BLOCK section \u2014 security boundaries that user intent does NOT clear. Include the literal string "$defaults" to inherit the built-in rules at that position.'),...!1,environment:C.array(C.string()).optional().describe('Entries for the auto mode classifier environment section. Include the literal string "$defaults" to inherit the built-in entries at that position.')}).optional().describe("Auto mode classifier prompt customization")}),permissionsShape:()=>({disableAutoMode:C.enum(["disable"]).optional().describe("Disable auto mode")}),permissionModes:()=>PERMISSION_MODES.filter((e)=>!EXTERNAL_PERMISSION_MODES.includes(e))},deepLink:{buildGate:()=>!0,shape:()=>({disableDeepLinkRegistration:C.enum(["disable"]).optional().describe("Prevent claude-cli:// protocol handler registration with the OS")})},voice:{buildGate:()=>!0,shape:()=>({voiceEnabled:C.boolean().optional().describe("Enable voice mode (hold-to-talk dictation)")})},briefView:{buildGate:()=>!0,shape:()=>({defaultView:C.enum(["chat","transcript"]).optional().describe("Default transcript view: chat (SendUserMessage checkpoints only) or transcript (full)")})},screenReader:{buildGate:()=>!0,shape:()=>({axScreenReader:C.boolean().optional().describe("Render screen-reader friendly output (flat text, no decorative borders or animations). Overridden by the CLAUDE_AX_SCREEN_READER env var and the --ax-screen-reader CLI flag.")})}}});
+export {OSr,fls,hls,gls,Slu,nsn,_ls};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,hRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var nks,ListProvisionedModelThroughputsCommand;
-var Yan=b(()=>{ri();wi();xi();nks=M(yo(),1);ListProvisionedModelThroughputsCommand=class ListProvisionedModelThroughputsCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[nks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListProvisionedModelThroughputs",{}).n("BedrockClient","ListProvisionedModelThroughputsCommand").sc(hRs).build(){}});
-export {nks,ListProvisionedModelThroughputsCommand,Yan};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,sDs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var VPs,ListModelCopyJobsCommand;
+var wun=b(()=>{$s();ai();ci();VPs=x(yo(),1);ListModelCopyJobsCommand=class ListModelCopyJobsCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[VPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","ListModelCopyJobs",{}).n("BedrockClient","ListModelCopyJobsCommand").sc(sDs).build(){}});
+export {VPs,ListModelCopyJobsCommand,wun};

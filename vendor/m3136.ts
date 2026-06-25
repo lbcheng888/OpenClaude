@@ -1,10 +1,6 @@
 // @ts-nocheck
-import {c7r,l7r} from "./m3135.ts";
-import {qt,Xt} from "../src/config/0228_encoding.ts";
-import {Se,bt} from "./m195.ts";
-import {b} from "../runtime.ts";
-async function S2d(e){let{McpbManifestSchema:t}=await Promise.resolve().then(() => (c7r(),l7r)),n=t.safeParse(e);if(!n.success){let r=n.error.flatten(),o=[...Object.entries(r.fieldErrors).map(([s,i])=>`${s}: ${i?.join(", ")}`),...r.formErrors||[]].filter(Boolean).join("; ");throw Error(`Invalid manifest: ${o}`)}return n.data}
-async function b2d(e){let t;try{t=qt(e)}catch(n){throw Error(`Invalid JSON in manifest.json: ${Se(n)}`)}return S2d(t)}
-async function u7r(e){let t=new TextDecoder().decode(e);return b2d(t)}
-var YXi=b(()=>{bt();Xt()});
-export {S2d,b2d,u7r,YXi};
+import {Q} from "../runtime.ts";
+import {goa} from "./m3135.ts";
+import {xJr} from "./m3133.ts";
+var PJr=Q((vHe)=>{var PGd=vHe&&vHe.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),_oa=vHe&&vHe.__exportStar||function(e,t){for(var n in e)if(n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n))PGd(t,e,n)};Object.defineProperty(vHe,"__esModule",{value:!0});_oa(goa(),vHe);_oa(xJr(),vHe)});
+export {PJr};

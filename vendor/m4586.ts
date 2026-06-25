@@ -1,11 +1,18 @@
 // @ts-nocheck
-import {Text} from "./m2423.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function p5n(e){let t=Mcl.c(12),{children:n,color:r,dimColor:o}=e,s,i,a,l;if(t[0]!==n||t[1]!==r||t[2]!==o){let u=n.split("`");s=Text,i=r,a=o,l=u.map(k7p),t[0]=n,t[1]=r,t[2]=o,t[3]=s,t[4]=i,t[5]=a,t[6]=l}else s=t[3],i=t[4],a=t[5],l=t[6];let c;if(t[7]!==s||t[8]!==i||t[9]!==a||t[10]!==l)c=N6t.createElement(s,{color:i,dimColor:a},l),t[7]=s,t[8]=i,t[9]=a,t[10]=l,t[11]=c;else c=t[11];return c}
-function k7p(e,t){return t%2===1?N6t.createElement(Text,{key:t,color:"suggestion"},e):e}
-var Mcl,N6t;
-var jTo=b(()=>{ze();Mcl=M(rt(),1),N6t=M(Te(),1)});
-export {p5n,k7p,Mcl,N6t,jTo};
+import {ft,b,x} from "../runtime.ts";
+import {P_,po} from "../src/tools/5224_userPromptCount.ts";
+import {Cs,tp} from "../src/config/2284_loggedTmuxCcDisable.ts";
+import {Nu,sM,Wu} from "./m438.ts";
+import {fct,i0e} from "./m3768.ts";
+import {RRo,rgl} from "../src/core/4585_count.ts";
+import {Y8t,vRo} from "../src/core/4586_categories.ts";
+import {Ce,Ct} from "./m197.ts";
+import {jWn,YWn} from "../src/permissions/4434_level.ts";
+import {oe} from "./m2275.ts";
+var ogl={};
+ft(ogl,{call:()=>_em});
+function gem(e){return P_(e)}
+async function _em(e,t,n){let r=Cs()&&n.trim().toLowerCase()!=="all",o=Nu();if(o){if(!sM("controlChannel"))return e("Context usage isn't available over this remote connection"),null;try{let f=await o.sendControlRequest({subtype:"get_context_usage"}),h=await fct(wRo.jsx(RRo,{data:f,isRemote:!0,collapseDetailSections:r}));e(h,{display:"system",metaMessages:[Y8t(f,{skipCollapseStatus:!0})]})}catch(f){e(`Couldn't fetch context from remote: ${Ce(f)}`)}return null}let{messages:s,getAppState:i,options:{mainLoopModel:a,tools:l}}=t,c=gem(s),u=process.stdout.columns||80,d=i(),p=await jWn(c,a,async()=>d.toolPermissionContext,l,d.agentDefinitions,u,t,void 0,c,d.autoCompactWindow),m=await fct(wRo.jsx(RRo,{data:p,collapseDetailSections:r}));return e(m,{display:"system",metaMessages:[Y8t(p)]}),null}
+var wRo;
+var sgl=b(()=>{rgl();Wu();YWn();Ct();tp();po();i0e();vRo();wRo=x(oe(),1)});
+export {ogl,gem,_em,wRo,sgl};

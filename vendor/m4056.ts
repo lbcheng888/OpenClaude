@@ -1,10 +1,15 @@
 // @ts-nocheck
-import {lb,AN} from "../src/telemetry/5180_commandWithoutRedirections.ts";
-import {VH,lae} from "./m2675.ts";
-import {zt,qs} from "./m635.ts";
-import {b} from "../runtime.ts";
-function kqe(e){let t=lb(e.trim());if(t[0]!=="sed")return null;let n=t.slice(1),r=!1,o=!1,s=null,i=null,a=0;while(a<n.length){let h=n[a];if(h==="-i"||h==="--in-place"){if(r=!0,a++,a<n.length){let g=n[a];if(typeof g==="string"&&!g.startsWith("-")&&(g===""||g.startsWith(".")))a++}continue}if(h.startsWith("-i")){r=!0,a++;continue}if(h==="-E"||h==="-r"||h==="--regexp-extended"){o=!0,a++;continue}if(h==="-e"||h==="--expression"){if(a+1<n.length&&typeof n[a+1]==="string"){if(s!==null)return null;s=n[a+1],a+=2;continue}return null}if(h.startsWith("--expression=")){if(s!==null)return null;s=h.slice(13),a++;continue}if(h.startsWith("-"))return null;if(s===null)s=h;else if(i===null)i=h;else return null;a++}if(!r||!s||!i)return null;if(VH(i)||zt()==="windows"&&/(?<!:)[\\/]{2,}[^\s\\/]/.test(i))return null;if(!s.match(/^s\//))return null;let c=s.slice(2),u="",d="",p="",m="pattern",f=0;while(f<c.length){let h=c[f];if(h==="\\"&&f+1<c.length){if(m==="pattern")u+=h+c[f+1];else if(m==="replacement")d+=h+c[f+1];else p+=h+c[f+1];f+=2;continue}if(h==="/"){if(m==="pattern")m="replacement";else if(m==="replacement")m="flags";else return null;f++;continue}if(m==="pattern")u+=h;else if(m==="replacement")d+=h;else p+=h;f++}if(m!=="flags")return null;if(!/^[gpimIM1-9]*$/.test(p))return null;return{filePath:i,pattern:u,replacement:d,flags:p,extendedRegex:o}}
-function zUa(e,t){let n="";if(t.flags.includes("g"))n+="g";if(t.flags.includes("i")||t.flags.includes("I"))n+="i";if(t.flags.includes("m")||t.flags.includes("M"))n+="m";let r=t.pattern.replace(/\\\//g,"/");if(!t.extendedRegex)r=r.replace(/\\\\/g,qUa).replace(/\\\+/g,jUa).replace(/\\\?/g,WUa).replace(/\\\|/g,GUa).replace(/\\\(/g,VUa).replace(/\\\)/g,KUa).replace(/\+/g,"\\+").replace(/\?/g,"\\?").replace(/\|/g,"\\|").replace(/\(/g,"\\(").replace(/\)/g,"\\)").replace(fwp,"\\\\").replace(Awp,"+").replace(hwp,"?").replace(gwp,"|").replace(_wp,"(").replace(ywp,")");let s=`___ESCAPED_AMPERSAND_${$Ua.randomBytes(8).toString("hex")}___`,i=t.replacement.replace(/\\\//g,"/").replace(/\\&/g,s).replace(/&/g,"$$&").replace(new RegExp(s,"g"),"&");try{let a=new RegExp(r,n);return e.replace(a,i)}catch{return e}}
-var $Ua,qUa="\x00BACKSLASH\x00",jUa="\x00PLUS\x00",WUa="\x00QUESTION\x00",GUa="\x00PIPE\x00",VUa="\x00LPAREN\x00",KUa="\x00RPAREN\x00",fwp,Awp,hwp,gwp,_wp,ywp;
-var F$t=b(()=>{AN();qs();lae();$Ua=require("crypto"),fwp=new RegExp(qUa,"g"),Awp=new RegExp(jUa,"g"),hwp=new RegExp(WUa,"g"),gwp=new RegExp(GUa,"g"),_wp=new RegExp(VUa,"g"),ywp=new RegExp(KUa,"g")});
-export {kqe,zUa,$Ua,qUa,jUa,WUa,GUa,VUa,KUa,fwp,Awp,hwp,gwp,_wp,ywp,F$t};
+import {tx,i_e} from "./m3307.ts";
+import {fl,po} from "../src/tools/5224_userPromptCount.ts";
+import {Text} from "./m2433.ts";
+import {Box} from "./m2432.ts";
+import {Yn,Pl} from "./m2465.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function RDp(){return tx(["Got it.","Good to know.","Noted."])}
+function V4a(e){let t=G4a.c(10),{text:n,addMargin:r}=e,o;if(t[0]!==n)o=fl(n,"user-memory-input"),t[0]=n,t[1]=o;else o=t[1];let s=o,i;if(t[2]===Symbol.for("react.memo_cache_sentinel"))i=RDp(),t[2]=i;else i=t[2];let a=i;if(!s)return null;let l=r?1:0,c;if(t[3]===Symbol.for("react.memo_cache_sentinel"))c=yxe.jsx(Text,{color:"remember",backgroundColor:"memoryBackgroundColor",children:"#"}),t[3]=c;else c=t[3];let u;if(t[4]!==s)u=yxe.jsxs(Box,{children:[c,yxe.jsxs(Text,{backgroundColor:"memoryBackgroundColor",color:"text",children:[" ",s," "]})]}),t[4]=s,t[5]=u;else u=t[5];let d;if(t[6]===Symbol.for("react.memo_cache_sentinel"))d=yxe.jsx(Yn,{height:1,children:yxe.jsx(Text,{dimColor:!0,children:a})}),t[6]=d;else d=t[6];let p;if(t[7]!==l||t[8]!==u)p=yxe.jsxs(Box,{flexDirection:"column",marginTop:l,width:"100%",children:[u,d]}),t[7]=l,t[8]=u,t[9]=p;else p=t[9];return p}
+var G4a,yxe;
+var K4a=b(()=>{i_e();je();po();Pl();G4a=x(tt(),1),yxe=x(oe(),1)});
+export {RDp,V4a,G4a,yxe,K4a};

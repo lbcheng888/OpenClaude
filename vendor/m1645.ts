@@ -1,6 +1,7 @@
 // @ts-nocheck
-import {U5s,$5s} from "./m1644.ts";
+import {gHt} from "./m1644.ts";
 import {b} from "../runtime.ts";
-function AHr(){return U5s()}
-var q5s=b(()=>{$5s()});
-export {AHr,q5s};
+class ase{constructor({additionalAllowedHeaderNames:e=[],additionalAllowedQueryParameters:t=[]}={}){e=Oqu.concat(e),t=Lqu.concat(t),this.allowedHeaderNames=new Set(e.map((n)=>n.toLowerCase())),this.allowedQueryParameters=new Set(t.map((n)=>n.toLowerCase()))}sanitize(e){let t=new Set;return JSON.stringify(e,(n,r)=>{if(r instanceof Error)return Object.assign(Object.assign({},r),{name:r.name,message:r.message});if(n==="headers")return this.sanitizeHeaders(r);else if(n==="url")return this.sanitizeUrl(r);else if(n==="query")return this.sanitizeQuery(r);else if(n==="body")return;else if(n==="response")return;else if(n==="operationSpec")return;else if(Array.isArray(r)||gHt(r)){if(t.has(r))return"[Circular]";t.add(r)}return r},2)}sanitizeUrl(e){if(typeof e!=="string"||e===null||e==="")return e;let t=new URL(e);if(!t.search)return e;for(let[n]of t.searchParams)if(!this.allowedQueryParameters.has(n.toLowerCase()))t.searchParams.set(n,$Pr);return t.toString()}sanitizeHeaders(e){let t={};for(let n of Object.keys(e))if(this.allowedHeaderNames.has(n.toLowerCase()))t[n]=e[n];else t[n]=$Pr;return t}sanitizeQuery(e){if(typeof e!=="object"||e===null)return e;let t={};for(let n of Object.keys(e))if(this.allowedQueryParameters.has(n.toLowerCase()))t[n]=e[n];else t[n]=$Pr;return t}}
+var $Pr="REDACTED",Oqu,Lqu;
+var _Ht=b(()=>{Oqu=["x-ms-client-request-id","x-ms-return-client-request-id","x-ms-useragent","x-ms-correlation-request-id","x-ms-request-id","client-request-id","ms-cv","return-client-request-id","traceparent","Access-Control-Allow-Credentials","Access-Control-Allow-Headers","Access-Control-Allow-Methods","Access-Control-Allow-Origin","Access-Control-Expose-Headers","Access-Control-Max-Age","Access-Control-Request-Headers","Access-Control-Request-Method","Origin","Accept","Accept-Encoding","Cache-Control","Connection","Content-Length","Content-Type","Date","ETag","Expires","If-Match","If-Modified-Since","If-None-Match","If-Unmodified-Since","Last-Modified","Pragma","Request-Id","Retry-After","Server","Transfer-Encoding","User-Agent","WWW-Authenticate"],Lqu=["api-version"]});
+export {ase,$Pr,Oqu,Lqu,_Ht};

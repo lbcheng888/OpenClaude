@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {hGe,rYt} from "./m214.ts";
 import {b} from "../runtime.ts";
-function Ogc(e,t){var n=t?hGe(e.buffer):e.buffer;return new e.constructor(n,e.byteOffset,e.byteLength)}
-var w9o;
-var R9o=b(()=>{rYt();w9o=Ogc});
-export {Ogc,w9o,R9o};
+function Mwc(e){var t=e.length,n=new e.constructor(t);if(t&&typeof e[0]=="string"&&Lwc.call(e,"index"))n.index=e.index,n.input=e.input;return n}
+var Owc,Lwc,T8o;
+var S8o=b(()=>{Owc=Object.prototype,Lwc=Owc.hasOwnProperty;T8o=Mwc});
+export {Mwc,Owc,Lwc,T8o,S8o};

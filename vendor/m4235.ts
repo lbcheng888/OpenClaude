@@ -1,18 +1,18 @@
 // @ts-nocheck
-import {vu,BM,bt} from "./m195.ts";
-import {mI,lo} from "../src/tools/5190_userPromptCount.ts";
-import {ND,TGe,dr} from "./m231.ts";
+import {GT,Grn,MK,WT,Vrn,Vb,Sk,aM,NS,Eje,VT} from "./m648.ts";
+import {w5,N1e} from "./m647.ts";
 import {b} from "../runtime.ts";
-function v_e(e){if(e instanceof vu)return e.message||mI;if(!(e instanceof Error))return String(e);let n=gpo(e).filter(Boolean).join(`
-`).trim()||"Command failed with no output";if(n.length<=1e4)return n;let r=5000,o=ND(n,r),s=TGe(n,r),i=n.length-o.length-s.length;return`${o}
-
-... [${i} characters truncated] ...
-
-${s}`}
-function gpo(e){if(e instanceof BM)return[`Exit code ${e.code}`,e.interrupted?mI:"",e.stderr,e.stdout];let t=[e.message];if("stderr"in e&&typeof e.stderr==="string")t.push(e.stderr);if("stdout"in e&&typeof e.stdout==="string")t.push(e.stdout);return t}
-function C5a(e){if(e.length===0)return"";return e.reduce((t,n,r)=>{let o=String(n);if(typeof n==="number")return`${String(t)}[${o}]`;return r===0?o:`${String(t)}.${o}`},"")}
-function tdt(e,t){let n=t.issues.filter((a)=>a.code==="invalid_type"&&a.message.includes("received undefined")).map((a)=>C5a(a.path)),r=t.issues.filter((a)=>a.code==="unrecognized_keys").flatMap((a)=>a.keys),o=t.issues.filter((a)=>a.code==="invalid_type"&&!a.message.includes("received undefined")).map((a)=>{let l=a,c=a.message.match(/received (\w+)/),u=c?c[1]:"unknown";return{param:C5a(a.path),expected:l.expected,received:u}}),s=t.message,i=[];if(n.length>0){let a=n.map((l)=>`The required parameter \`${l}\` is missing`);i.push(...a)}if(r.length>0){let a=r.map((l)=>`An unexpected parameter \`${l}\` was provided`);i.push(...a)}if(o.length>0){let a=o.map(({param:l,expected:c,received:u})=>`The parameter \`${l}\` type is expected as \`${c}\` but provided as \`${u}\``);i.push(...a)}if(i.length>0)s=`${e} failed due to the following ${i.length>1?"issues":"issue"}:
-${i.join(`
-`)}`;return s}
-var p3t=b(()=>{bt();lo();dr()});
-export {v_e,gpo,C5a,tdt,p3t};
+function emt(e,t,n){let{head:r,tail:o,mtime:s,size:i}=t,a=r.indexOf(`
+`),l=a>=0?r.slice(0,a):r;if(l.includes('"isSidechain":true')||l.includes('"isSidechain": true'))return null;let c=GT(o,"customTitle")||GT(r,"customTitle")||GT(o,"aiTitle")||GT(r,"aiTitle")||void 0,u=Grn(r)||void 0,d=MK(r,"timestamp"),p;if(d){let T=Date.parse(d);if(!Number.isNaN(T))p=T}let m=c||GT(o,"lastPrompt")||GT(o,"summary")||u;if(!m)return null;let f=GT(o,"gitBranch")||MK(r,"gitBranch")||void 0,h=MK(r,"cwd")||n||void 0,g=o.split(`
+`).findLast((T)=>T.includes('"type":"tag"')&&T.includes('"tag":"')),_=g?GT(g,"tag")||void 0:void 0;return{sessionId:e,summary:m,lastModified:s,fileSize:i,customTitle:c,firstPrompt:u,gitBranch:f,cwd:h,tag:_,createdAt:p}}
+async function k5e(e,t,n){let r;try{r=await Qpt.readdir(e)}catch{return[]}return(await Promise.all(r.map(async(s)=>{if(!s.endsWith(".jsonl"))return null;let i=WT(s.slice(0,-6));if(!i)return null;let a=Zpt.join(e,s);if(!t)return{sessionId:i,filePath:a,mtime:0,projectPath:n};try{let l=await Qpt.stat(a);return{sessionId:i,filePath:a,mtime:l.mtime.getTime(),projectPath:n}}catch{return null}}))).filter((s)=>s!==null)}
+async function eja(e){let t=await Vrn(e.filePath);if(!t)return null;let n=emt(e.sessionId,t,e.projectPath);if(!n)return null;if(e.mtime)n.lastModified=e.mtime;return n}
+function dUp(e,t){if(t.mtime!==e.mtime)return t.mtime-e.mtime;return t.sessionId<e.sessionId?-1:t.sessionId>e.sessionId?1:0}
+async function pUp(e,t,n){e.sort(dUp);let r=[],o=t&&t>0?t:1/0,s=0,i=new Set;for(let a=0;a<e.length&&r.length<o;){let l=Math.min(a+uUp,e.length),c=e.slice(a,l),u=await Promise.all(c.map(eja));for(let d=0;d<u.length&&r.length<o;d++){a++;let p=u[d];if(!p)continue;if(i.has(p.sessionId))continue;if(i.add(p.sessionId),s<n){s++;continue}r.push(p)}}return r}
+async function mUp(e){let t=await Promise.all(e.map(eja)),n=new Map;for(let o of t){if(!o)continue;let s=n.get(o.sessionId);if(!s||o.lastModified>s.lastModified)n.set(o.sessionId,o)}let r=[...n.values()];return r.sort((o,s)=>s.lastModified!==o.lastModified?s.lastModified-o.lastModified:s.sessionId<o.sessionId?-1:s.sessionId>o.sessionId?1:0),r}
+async function fUp(e,t,n){let r=await Vb(e),o;if(t)try{o=await w5(r)}catch{o=[]}else o=[];if(o.length<=1){let d=[];for(let p of await Sk(r))d.push(...await k5e(p,n,r));return d}let s=aM(),i=!1,a=o.map((d)=>{let p=NS(d);return{path:d,prefix:i?p.toLowerCase():p}});a.sort((d,p)=>p.prefix.length-d.prefix.length);let l;try{l=await Qpt.readdir(s,{withFileTypes:!0})}catch{let d=[];for(let p of await Sk(r))d.push(...await k5e(p,n,r));return d}let c=[],u=new Set;for(let d of await Sk(r)){let p=Zpt.basename(d);u.add(i?p.toLowerCase():p),c.push(...await k5e(d,n,r))}for(let d of l){if(!d.isDirectory())continue;let p=i?d.name.toLowerCase():d.name;if(u.has(p))continue;for(let{path:m,prefix:f}of a)if(p===f||f.length>=Eje&&p.startsWith(f+"-")){u.add(p),c.push(...await k5e(Zpt.join(s,d.name),n,m));break}}return c}
+async function hUp(e){let t=aM(),n;try{n=await Qpt.readdir(t,{withFileTypes:!0})}catch{return[]}return(await Promise.all(n.filter((o)=>o.isDirectory()).map((o)=>k5e(Zpt.join(t,o.name),e)))).flat()}
+async function tja(e){let{dir:t,limit:n,offset:r,includeWorktrees:o}=e??{},s=r??0,i=n!==void 0&&n>0||s>0,a=t?await fUp(t,o??!0,i):await hUp(i);if(!i)return mUp(a);return pUp(a,n,s)}
+var Qpt,Zpt,uUp=32;
+var w6n=b(()=>{N1e();VT();Qpt=require("fs/promises"),Zpt=require("path")});
+export {emt,k5e,eja,dUp,pUp,mUp,fUp,hUp,tja,Qpt,Zpt,uUp,w6n};

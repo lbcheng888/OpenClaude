@@ -1,18 +1,13 @@
 // @ts-nocheck
-import {Mie,_et} from "./m2532.ts";
-import {U0t,s3r} from "./m2531.ts";
-import {iP,gAe} from "./m2533.ts";
-import {NZ,gUe} from "../src/config/2421_gUe.ts";
-import {useIsScreenReaderEnabled,dwe} from "./m2434.ts";
-import {OHi,LHi} from "./m2528.ts";
-import {Box} from "./m2422.ts";
-import {zHi,YHi} from "./m2537.ts";
-import {Text} from "./m2423.ts";
-import {Ansi} from "./m2431.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-function _En({inputState:e,children:t,terminalFocus:n,invert:r,hidePlaceholderText:o,cursorCellPainted:s,...i}){let{handleKeyDown:a,renderedValue:l,cursorLine:c,cursorColumn:u}=e,d=Mie({line:c,column:u,active:Boolean(i.focus&&i.showCursor),visible:!s}),p=rL.useRef(null),m=rL.useCallback((N)=>{p.current=N,d(N)},[d]),{handleKeyDown:f,handlePaste:A,isPasting:h}=U0t({onPaste:i.onPaste,handleKeyDown:(N)=>{if(i.onKeyDownBefore?.(N),N.defaultPrevented||N.didStopImmediatePropagation())return;a(N)},onImagePaste:i.onImagePaste}),{onIsPastingChange:g}=i;rL.useEffect(()=>{if(g)g(h)},[h,g]);let _=i.focus!==!1;iP(p,_);let y=rL.useMemo(NZ,[]),T=useIsScreenReaderEnabled(),{showPlaceholder:S,renderedPlaceholder:v}=OHi({placeholder:i.placeholder,value:i.value,showCursor:i.showCursor&&!y,focus:i.focus,terminalFocus:n,invert:r,hidePlaceholderText:o||T}),R=_?{tabIndex:0,autoFocus:!0,onKeyDown:f,onPaste:A}:{},k=i.value&&i.value.trim().indexOf(" ")===-1||i.value&&i.value.endsWith(" "),x=Boolean(i.argumentHint&&i.value&&k&&i.value.startsWith("/")),H=i.showCursor&&i.highlights?i.highlights.filter((N)=>N.dimColor||i.cursorOffset<N.start||i.cursorOffset>=N.end):i.highlights,{viewportCharOffset:I,viewportCharEnd:P}=e,L=H&&I>0?H.filter((N)=>N.end>I&&N.start<P).map((N)=>({...N,start:Math.max(0,N.start-I),end:N.end-I})):H;if(L&&L.length>0)return rL.default.createElement(Box,{ref:m,...R},rL.default.createElement(Box,{flexShrink:0},rL.default.createElement(zHi,{text:l,highlights:L})),x&&rL.default.createElement(Text,{dimColor:!0,wrap:"truncate-end"},i.value?.endsWith(" ")?"":" ",i.argumentHint),t);return rL.default.createElement(Box,{ref:m,...R},rL.default.createElement(Text,{wrap:"truncate-end",dimColor:i.dimColor},S&&i.placeholderElement?i.placeholderElement:S&&v?rL.default.createElement(Ansi,null,v):rL.default.createElement(Ansi,null,l),x&&rL.default.createElement(Text,{dimColor:!0},i.value?.endsWith(" ")?"":" ",i.argumentHint),t))}
-var rL;
-var a3r=b(()=>{LHi();s3r();_et();dwe();gAe();ze();gUe();YHi();rL=M(Te(),1)});
-export {_En,rL,a3r};
+import {_t,uo} from "./m2468.ts";
+import {MA,qZ} from "../src/telemetry/2538_qZ.ts";
+import {useVoiceState,The} from "./m2467.ts";
+import {useAnimationFrame,qPt} from "../src/config/2452_isVisible.ts";
+import {xy,nS} from "../src/config/2351_nS.ts";
+import {evn,nvn,$Z} from "./m2536.ts";
+import {b} from "../runtime.ts";
+function eMi(){hOt=0,L5r=!1}
+function rvn(){let e=_t((_)=>MA(_.settings.prefersReducedMotion)),n=useVoiceState((_)=>_.voiceState)==="recording";if(n&&!L5r)hOt=0;L5r=n;let r=useVoiceState((_)=>_.voiceAudioLevels),o=n&&!e,[s,i]=useAnimationFrame(o?50:null);if(!o)return[s,null];let a=r.at(-1)??0,l=Math.min(a*VAd,1);hOt=hOt*ZLi+l*(1-ZLi);let c=Math.max(1,Math.min(Math.round(hOt*(O5r.length-1)),O5r.length-1)),u=a<KAd,d=i/1000*90%360,p=xy()?evn(d):d,{r:m,g:f,b:h}=u?{r:128,g:128,b:128}:nvn(p),g=`#${(m<<16|f<<8|h).toString(16).padStart(6,"0")}`;return[s,{char:O5r[c],hex:g}]}
+var O5r=" \u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588",ZLi=0.7,VAd=1.8,KAd=0.15,hOt=0,L5r=!1;
+var ovn=b(()=>{$Z();The();qPt();nS();uo();qZ()});
+export {eMi,rvn,O5r,ZLi,VAd,KAd,hOt,L5r,ovn};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,kws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var fxs,GetAutomatedReasoningPolicyAnnotationsCommand;
-var eEr=b(()=>{ri();wi();xi();fxs=M(yo(),1);GetAutomatedReasoningPolicyAnnotationsCommand=class GetAutomatedReasoningPolicyAnnotationsCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[fxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","GetAutomatedReasoningPolicyAnnotations",{}).n("BedrockClient","GetAutomatedReasoningPolicyAnnotationsCommand").sc(kws).build(){}});
-export {fxs,GetAutomatedReasoningPolicyAnnotationsCommand,eEr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,_xs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var rPs,DeleteModelInvocationLoggingConfigurationCommand;
+var Awr=b(()=>{$s();ai();ci();rPs=x(yo(),1);DeleteModelInvocationLoggingConfigurationCommand=class DeleteModelInvocationLoggingConfigurationCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[rPs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteModelInvocationLoggingConfiguration",{}).n("BedrockClient","DeleteModelInvocationLoggingConfigurationCommand").sc(_xs).build(){}});
+export {rPs,DeleteModelInvocationLoggingConfigurationCommand,Awr};

@@ -1,891 +1,347 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var AXl=`---
-name: run
-description: Launch and drive this project's app to see a change working. Use when asked to run, start, or screenshot the app, or to confirm a change works in the real app (not just tests). First looks for a project skill that already covers launching the app; otherwise falls back to built-in patterns per project type (CLI, server, TUI, Electron, browser-driven, library).
----
+import {Q} from "../runtime.ts";
+var Qtc=Q((OiE,C4m)=>{C4m.exports=`// Storybook source adapter. Builds (or copies) storybook-static, parses
+// index.json into the component list, resolves each component's story SOURCE
+// file, and pairs index story names to the module's export keys \u2014 the inputs
+// preview-gen-storybook.mjs needs to compile story modules as previews.
+// Story args are never evaluated here: stories run only in the browser,
+// against the shipped bundle.
 
-**Running means launching the actual app and interacting with it** \u2014
-not the test suite, not an \`import\` of an internal function and a
-\`console.log\`. The app as a user (human or programmatic) would meet
-it: the CLI at its command, the server at its socket, the GUI at its
-window.
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { IIFE_IMPORT_META_DEFINE, titleParts } from './common.mjs';
+import { findStorybookDirs } from './detect.mjs';
+import { storybookStubPlugin } from './story-imports.mjs';
 
-## First: does a project skill already cover this?
+function pickStorybookDir({ INPUTS, PKG, SB_CONFIG_DIR }) {
+  if (SB_CONFIG_DIR) return SB_CONFIG_DIR;
+  // Many repos name the config dir via \`storybook dev -c <dir>\` in
+  // package.json scripts \u2014 that's authoritative when present.
+  try {
+    const scripts = JSON.parse(readFileSync(join(INPUTS, 'package.json'), 'utf8')).scripts ?? {};
+    for (const s of Object.values(scripts)) {
+      const m = typeof s === 'string' && s.match(/\\bstorybook\\s+(?:dev|build)\\b[^;&|]*?(?:-c|--config-dir)[= ]+(\\S+)/);
+      if (m) return resolve(INPUTS, m[1]);
+    }
+  } catch {}
+  const found = findStorybookDirs(INPUTS);
+  if (found.length > 1) {
+    const pkgTail = PKG.split('/').pop();
+    const ranked = found
+      .map((d) => {
+        const sib = join(dirname(d), 'package.json');
+        let name = '';
+        try { name = JSON.parse(readFileSync(sib, 'utf8')).name ?? ''; } catch {}
+        return { d, score: name === PKG ? 2 : d.includes(pkgTail) ? 1 : 0, depth: d.split(sep).length };
+      })
+      .sort((a, b) => b.score - a.score || a.depth - b.depth);
+    console.error(
+      \`[MULTI_STORYBOOK] \${found.length} .storybook/ dirs under --inputs; picked \${ranked[0].d}. \` +
+        \`Override with --storybook-config <dir> if wrong. Found: \${found.join(', ')}\`,
+    );
+    return ranked[0].d;
+  }
+  return found[0] ?? (existsSync(join(INPUTS, '.storybook')) ? join(INPUTS, '.storybook') : undefined);
+}
 
-A project skill that launches this app is the repo's verified path \u2014
-its author already cold-started from a Linux container and committed
-what worked: the exact \`apt-get\` line, the env vars, the patches, the
-driver. Use it instead of rediscovering.
+// Storybook derives a story's display name from its export key (startCase);
+// squash-compare pairs them back without re-implementing the exact algorithm.
+// storyName overrides break the pairing for that story \u2192 it stays unpaired
+// and its cell is omitted; a component with no paired stories shows the
+// floor card.
+const squash = (s) => String(s ?? '').replace(/[^a-z0-9]/gi, '').toLowerCase();
 
-\`\`\`bash
-d=$PWD; while :; do
-  grep -Hm1 '^description:' "$d"/.claude/skills/*/SKILL.md 2>/dev/null
-  [ -e "$d/.git" ] || [ "$d" = / ] && break
-  d=$(dirname "$d")
-done
-\`\`\`
-
-- **One describes launching/driving this app** \u2192 read that SKILL.md
-  and follow it verbatim. Don't paraphrase; don't skip the patches.
-- **Mega-repo, several plausible, no clear match** \u2192 ask the user
-  which unit to run.
-- **Stale** (fails on mechanics unrelated to your task) \u2192 tell the
-  user; offer to refresh it via \`/run-skill-generator\`.
-- **Nothing about running** \u2192 fall back to the patterns below.
-
-## Otherwise: match the shape, use the pattern
-
-Pick the row closest to your project. Each example walks through
-launch + first interaction; ignore any trailing "write the skill"
-section \u2014 you're using the recipe, not authoring one.
-
-| Project type | Handle | Example |
-|---|---|---|
-| CLI tool | direct invocation, exit code, stdin/stdout | [examples/cli.md](examples/cli.md) |
-| Web server / API | background launch + \`curl\` smoke | [examples/server.md](examples/server.md) |
-| TUI / interactive terminal | tmux \`send-keys\` / \`capture-pane\` | [examples/tui.md](examples/tui.md) |
-| Electron / desktop GUI | Playwright \`_electron\` REPL under xvfb | [examples/electron.md](examples/electron.md) |
-| Browser-driven | dev server + \`chromium-cli\` script | [examples/playwright.md](examples/playwright.md) |
-| Library / SDK | import-and-call smoke script at the package boundary | [examples/library.md](examples/library.md) |
-
-If nothing fits, start from the closest match and adapt. For a web
-app, [examples/playwright.md](examples/playwright.md) \u2014 drive it with
-\`chromium-cli\`, no custom driver needed. For a desktop app,
-[examples/electron.md](examples/electron.md) \u2014 it has the \`_electron\`
-REPL driver skeleton and the tmux wrapping.
-
-## Drive it, don't just launch it
-
-Launching with no interaction proves the entrypoint resolves. That's
-not running the app \u2014 it's typechecking with extra steps. Drive it to
-a point where a user would see something:
-
-- CLI \u2192 type a representative command, check the exit code and output.
-- Server \u2192 hit the route the diff touches with \`curl\`, read the body.
-- TUI \u2192 \`send-keys\` a navigation, \`capture-pane\` the result.
-- GUI \u2192 click the button, screenshot the window. **Look at the
-  screenshot.** A blank frame is a failure to launch.
-
-If the fallback pattern didn't work out of the box \u2014 you had to
-install packages, set env vars, patch config, or write a driver \u2014
-recommend \`/run-skill-generator\` in your report so that work gets
-captured as a project skill. If it just worked, don't.
-`;
-var fXl=()=>{};
-var gXl=`# Example: CLI tool
-
-CLIs are the simplest case \u2014 there's usually no background process to
-manage, no ports, no lifecycle. The skill focuses on **installation**,
-**representative invocations**, and **testing**.
-
-## What matters
-
-- **How to get the binary on \`PATH\`.** Installed globally? Run via
-  \`npx\`/\`uv run\`? Built to \`./target/release/foo\`? Be explicit.
-- **Two or three example invocations** that cover the main use cases.
-  Include expected output so a reader can tell it worked.
-- **Exit codes** if they're meaningful (e.g. linter returns 1 on findings).
-- **Stdin behavior** if the tool reads from stdin.
-
-## Example snippet
-
-> ---
-> name: run-mytool
-> description: Build, install, and run mytool. Use when asked to run mytool, test it, or verify it's installed correctly.
-> ---
->
-> ## Setup
->
-> \`\`\`bash
-> pip install -e .
-> \`\`\`
->
-> This puts \`mytool\` on PATH. Verify:
->
-> \`\`\`bash
-> mytool --version
-> # \u2192 mytool 0.3.1
-> \`\`\`
->
-> ## Run
->
-> Process a single file:
->
-> \`\`\`bash
-> mytool process input.json
-> # \u2192 Processed 42 records, wrote output.json
-> \`\`\`
->
-> Read from stdin, write to stdout:
->
-> \`\`\`bash
-> cat input.json | mytool process -
-> \`\`\`
->
-> Lint a directory (exits non-zero on problems):
->
-> \`\`\`bash
-> mytool lint ./src
-> echo $?  # 0 if clean, 1 if issues found
-> \`\`\`
->
-> ## Test
->
-> \`\`\`bash
-> pytest
-> \`\`\`
-
-## Keep it short
-
-A CLI's run skill can be very compact. Don't pad it with every flag \u2014
-the \`--help\` output covers that. Just show enough that an agent can
-(a) build it, (b) confirm it works, (c) run the tests.
-`;
-var hXl=()=>{};
-var yXl=`# Example: Electron / desktop GUI app
-
-Electron apps have a window. A future agent in a headless container
-can't see a window. So your deliverable here is not a markdown file
-that says "\`npm start\` opens a window" \u2014 it's a **driver script** that
-launches the app under xvfb, exposes a REPL of commands (click, type,
-screenshot), and lets an agent poke the UI by sending lines of text.
-
-The skill's \`SKILL.md\` then becomes a short manual for that driver.
-
-## What you're building
-
-\`\`\`
-apps/desktop/
-  .claude/skills/run-desktop/
-    SKILL.md               \u2190 short. "run the driver, here are the commands"
-    driver.mjs             \u2190 REPL: stdin commands \u2192 Playwright actions
-\`\`\`
-
-The driver IS the product. Without it, the skill describes a GUI an
-agent can never touch.
-
-**Graduation path:** if the driver grows launch helpers the project's
-real e2e suite wants to share, move it to \`e2e-playwright/driver.mjs\`
-(or \`scripts/drive.mjs\`) and update the skill's paths. The skill stays
-at \`.claude/skills/run-desktop/\`; the driver finds a better home.
-
-## Step 1 \u2014 get the app to launch AT ALL under xvfb
-
-This is usually the hardest part and produces most of the Gotchas. The
-README will say "macOS/Windows only." Ignore that. Install xvfb + the
-Chromium shared libs, find the Electron binary, and launch it:
-
-\`\`\`bash
-apt-get install -y xvfb libnss3 libgbm1 libasound2t64 libgtk-3-0 \\
-  libxss1 libxkbcommon0 libatk-bridge2.0-0 libcups2 libdrm2
-
-# Build the app first. Often the "dev" script is electron-forge which
-# does a Vite/webpack build THEN launches. You want just the build:
-npm install
-npx electron-forge start &   # builds .vite/build/ or dist/
-sleep 20 && kill %1          # kill it once built \u2014 you'll launch yourself
-
-# Now try the raw launch
-xvfb-run -a node -e "
-  const { _electron } = require('playwright-core');
-  _electron.launch({
-    executablePath: './node_modules/electron/dist/electron',
-    args: ['--no-sandbox', '.'],
-    timeout: 30000,
-  }).then(app => {
-    console.log('launched, windows:', app.windows().map(w => w.url()));
-    return app.close();
-  });
-"
-\`\`\`
-
-Iterate until it launches. Each missing \`.so\` \u2192 one more \`apt-get\`
-package \u2192 one more line in Prerequisites. Each launch timeout \u2192 check
-the \`nodeCliInspect\` fuse isn't disabled, check the build output exists.
-
-**\`--no-sandbox\` is almost always needed in containers.** Electron's
-sandbox needs CAP_SYS_ADMIN or user namespaces. Neither by default.
-
-## Step 2 \u2014 build the REPL driver
-
-Once you can launch it, turn that throwaway script into a REPL. Start
-minimal \u2014 you will add commands as you need them. **The REPL is the
-right shape** because an agent can run it inside tmux and iterate
-without relaunching the (slow) app on every interaction.
-
-\`\`\`javascript
-// .claude/skills/run-<unit>/driver.mjs
-// REPL driver for <app>. Run under xvfb on headless Linux.
-// Designed for agents: wrap in tmux, send-keys commands, capture-pane output.
-import { _electron as electron } from 'playwright-core';
-import * as readline from 'node:readline';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-
-const APP_DIR = path.resolve(import.meta.dirname, '../../..');
-const SHOT_DIR = process.env.SCREENSHOT_DIR || '/tmp/shots';
-fs.mkdirSync(SHOT_DIR, { recursive: true });
-
-let app = null;
-let page = null;   // the window/page you actually interact with
-
-const electronBin = process.platform === 'darwin'
-  ? path.join(APP_DIR, 'node_modules/electron/dist/Electron.app/Contents/MacOS/Electron')
-  : path.join(APP_DIR, 'node_modules/electron/dist/electron');
-
-const COMMANDS = {
-  async launch() {
-    if (app) return console.log('already launched');
-    app = await electron.launch({
-      executablePath: electronBin,
-      args: ['--no-sandbox', APP_DIR],
-      env: { ...process.env, DISPLAY: process.env.DISPLAY || ':99' },
-      timeout: 30_000,
+// Module export keys WITHOUT evaluating the module: esbuild parses the file
+// (bundle:false) and reports exports in the metafile. ~10ms per story file.
+async function storyModuleExports(absPath) {
+  const { build } = await import('esbuild');
+  try {
+    const r = await build({
+      entryPoints: [absPath], bundle: false, write: false, metafile: true,
+      format: 'esm', platform: 'neutral', logLevel: 'silent', jsx: 'preserve',
+      // JSX-in-.js story files are a common convention; jsx is a strict
+      // syntax superset of js, so this is safe for plain files too.
+      loader: { '.js': 'jsx' },
     });
-    // Electron has no clean "loaded" signal \u2014 this sleep is a blind guess.
-    // Replace with a poll once you know what ready looks like for this app:
-    // wait until windows() includes the expected URL, or waitForSelector on firstWindow().
-    await new Promise(r => setTimeout(r, 8_000));
-    // Find the real UI page. Often NOT firstWindow() \u2014 may be a
-    // splash screen, or the real content is in a BrowserView overlay.
-    page = app.windows().find(w => !w.url().startsWith('devtools://'))
-        ?? await app.firstWindow();
-    console.log('launched.', app.windows().length, 'windows:');
-    for (const w of app.windows()) console.log(' ', w.url());
-  },
-
-  async ss(name) {
-    if (!page) return console.log('ERROR: launch first');
-    const f = path.join(SHOT_DIR, (name || \`ss-\${Date.now()}\`) + '.png');
-    await page.screenshot({ path: f });
-    console.log('screenshot:', f);
-  },
-
-  // Click via evaluate(), NOT locator.click(). If the content lives in a
-  // BrowserView layered over the main window, Playwright's coordinate
-  // math hits the wrong layer. DOM .click() always works.
-  async click(sel) {
-    if (!page) return console.log('ERROR: launch first');
-    const r = await page.evaluate(s => {
-      const el = document.querySelector(s);
-      if (!el) return 'NOT_FOUND';
-      el.click(); return 'OK';
-    }, sel);
-    console.log('click', sel, '\u2192', r);
-  },
-
-  async 'click-text'(text) {
-    if (!page) return console.log('ERROR: launch first');
-    const r = await page.evaluate(t => {
-      const els = [...document.querySelectorAll('button, a, [role="button"]')];
-      const el = els.find(e => e.textContent?.trim() === t)
-              ?? els.find(e => e.textContent?.includes(t));
-      if (!el) return 'NOT_FOUND';
-      el.click(); return 'OK: ' + el.tagName;
-    }, text);
-    console.log('click-text', JSON.stringify(text), '\u2192', r);
-  },
-
-  async type(text)  { if (page) await page.keyboard.type(text, { delay: 30 }); },
-  async press(key)  { if (page) await page.keyboard.press(key); },
-
-  async wait(sel) {
-    if (!page) return console.log('ERROR: launch first');
-    try { await page.waitForSelector(sel, { timeout: 10_000 }); console.log('found:', sel); }
-    catch { console.log('TIMEOUT:', sel); }
-  },
-
-  async eval(expr) {
-    if (!page) return console.log('ERROR: launch first');
-    try { console.log(JSON.stringify(await page.evaluate(expr))); }
-    catch (e) { console.log('ERROR:', e.message); }
-  },
-
-  async text(sel) {
-    if (!page) return console.log('ERROR: launch first');
-    console.log(await page.evaluate(
-      s => (s ? document.querySelector(s) : document.body)?.innerText ?? '(null)',
-      sel || null));
-  },
-
-  // Introspection: essential for figuring out which window/webContents
-  // actually has the UI. Electron apps often spawn several.
-  async windows() {
-    if (!app) return console.log('ERROR: launch first');
-    for (const w of app.windows()) console.log(' ', w.url());
-    const wcs = await app.evaluate(({ webContents }) =>
-      webContents.getAllWebContents().map(w => ({ id: w.id, type: w.getType(), url: w.getURL() })));
-    console.log('webContents:');
-    for (const w of wcs) console.log(\` [\${w.id}] \${w.type}: \${w.url}\`);
-  },
-
-  async quit() { if (app) await app.close().catch(()=>{}); app = null; page = null; },
-  help() { console.log('commands:', Object.keys(COMMANDS).join(', ')); },
-};
-
-// Stop Electron from stealing stdin \u2014 use the raw fd.
-const stdin = fs.createReadStream(null, { fd: fs.openSync('/dev/stdin', 'r') });
-const rl = readline.createInterface({ input: stdin, output: process.stdout, prompt: 'driver> ' });
-
-rl.on('line', async line => {
-  const [cmd, ...rest] = line.trim().split(/\\s+/);
-  if (!cmd) return rl.prompt();
-  const fn = COMMANDS[cmd];
-  if (!fn) { console.log('unknown:', cmd, '\u2014 try: help'); return rl.prompt(); }
-  try { await fn(rest.join(' ')); } catch (e) { console.log('ERROR:', e.message); }
-  if (cmd === 'quit') { rl.close(); process.exit(0); }
-  rl.prompt();
-});
-rl.on('close', async () => { await COMMANDS.quit(); process.exit(0); });
-
-console.log('<app> driver \u2014 "help" for commands, "launch" to start');
-rl.prompt();
-\`\`\`
-
-**This is a starting skeleton.** As you try to reach interesting parts
-of the app you'll add app-specific commands: navigate to a particular
-view, focus a weird input type, bypass an auth gate, whatever. Those
-commands encode hard-won knowledge \u2014 keep them.
-
-## Step 3 \u2014 use it yourself, via tmux
-
-Run the driver the same way the next agent will:
-
-\`\`\`bash
-tmux new-session -d -s app -x 200 -y 50
-tmux send-keys -t app 'cd /workspace/apps/desktop && xvfb-run -a node .claude/skills/run-desktop/driver.mjs' Enter
-timeout 20 bash -c 'until tmux capture-pane -t app -p | grep -q "driver>"; do sleep 0.2; done'
-tmux send-keys -t app 'launch' Enter
-timeout 60 bash -c 'until tmux capture-pane -t app -p | grep -q "launched"; do sleep 0.2; done'
-tmux send-keys -t app 'ss 01-landing' Enter
-timeout 10 bash -c 'until tmux capture-pane -t app -p | grep -q "screenshot:"; do sleep 0.2; done'
-tmux send-keys -t app 'windows' Enter    # which page has the real UI?
-tmux capture-pane -t app -p
-\`\`\`
-
-Then actually open \`/tmp/shots/01-landing.png\`. Is it the app? Is it
-blank? Is it a login screen? Each of these tells you what to do next.
-
-Keep going \u2014 click into the main feature, fill a form, see the result
-show up, screenshot it. The driver grows whatever commands you need
-(\`focus-input\`, \`goto-settings\`, \`login-as-test-user\`\u2026). When one real
-flow works end-to-end, you're done building and ready to write.
-
-## Step 4 \u2014 write SKILL.md
-
-Keep it short. The driver is the meat; \`SKILL.md\` is the manual.
-Structure that works:
-
-> ---
-> name: run-desktop
-> description: Build, run, and drive the <app> Electron desktop app. Use when asked to start the desktop app, take a screenshot of it, build it, or interact with its UI.
-> ---
->
-> <App> is an Electron desktop app. For agent/automated use, drive it
-> via the Playwright REPL at \`.claude/skills/run-desktop/driver.mjs\`
-> under xvfb. Launch is slow (~10s) and the interesting UI lives in a
-> BrowserView, not the main window \u2014 the driver handles both.
->
-> All paths are relative to \`apps/desktop/\`.
->
-> ## Prerequisites
->
-> \`\`\`bash
-> apt-get install -y xvfb libnss3 libgbm1 libasound2t64 libgtk-3-0 \\
->   libxss1 libxkbcommon0 libatk-bridge2.0-0 libcups2 libdrm2
-> \`\`\`
->
-> ## Build
->
-> \`\`\`bash
-> npm install
-> npx electron-forge start   # builds .vite/build/ \u2014 Ctrl-C once built
-> # <any patch you had to apply: sed a feature gate, etc.>
-> \`\`\`
->
-> ## Run (agent path)
->
-> \`\`\`bash
-> cd apps/desktop
-> xvfb-run -a node .claude/skills/run-desktop/driver.mjs
-> \`\`\`
->
-> Wrap in tmux for interactive use:
->
-> \`\`\`bash
-> tmux new-session -d -s app -x 200 -y 50
-> tmux send-keys -t app 'cd apps/desktop && xvfb-run -a node .claude/skills/run-desktop/driver.mjs' Enter
-> timeout 20 bash -c 'until tmux capture-pane -t app -p | grep -q "driver>"; do sleep 0.2; done'
-> tmux send-keys -t app 'launch' Enter
-> timeout 60 bash -c 'until tmux capture-pane -t app -p | grep -q "launched"; do sleep 0.2; done'
-> tmux send-keys -t app 'ss landing' Enter
-> tmux capture-pane -t app -p
-> \`\`\`
->
-> Screenshots land in \`/tmp/shots/\` (override: \`SCREENSHOT_DIR\`).
->
-> ### Commands
->
-> | command | what it does |
-> |---|---|
-> | \`launch\` | launch the app, wait for windows |
-> | \`ss [name]\` | screenshot \u2192 \`/tmp/shots/<name>.png\` |
-> | \`click <css-sel>\` | click element (via DOM, not coords \u2014 see Gotchas) |
-> | \`click-text <text>\` | click button/link containing text |
-> | \`type <text>\` / \`press <key>\` | keyboard input |
-> | \`wait <css-sel>\` | wait for element, 10s timeout |
-> | \`eval <js>\` | evaluate in the page, print JSON |
-> | \`text [css-sel]\` | print innerText |
-> | \`windows\` | list all windows + webContents (find the real UI) |
-> | \`quit\` | close app, exit |
->
-> Plus any app-specific commands you built: \`<your-command>\` \u2014 <what it does>.
->
-> ## Run (human path)
->
-> \`\`\`bash
-> npm start   # opens a window; useless headless. Ctrl-C to quit.
-> \`\`\`
->
-> ## Gotchas
->
-> - **<the specific weird thing you hit>** \u2014 <why> \u2192 <fix/workaround>
-> - <etc. \u2014 only things you actually hit, not generic advice>
->
-> ## Troubleshooting
->
-> - **Launch timeout (30s):** build output missing? \u2192 re-run the build
->   step. \`nodeCliInspect\` fuse disabled? \u2192 Playwright can't attach;
->   don't disable that fuse in dev builds.
-> - **"Missing X server":** forgot \`xvfb-run\`. Headless Linux needs it.
-> - **Stale Xvfb locks:** \`rm -f /tmp/.X*-lock; pkill Xvfb\`
-> - <anything else you actually hit>
-
-## Obstacles you will hit (and they go in Gotchas)
-
-These are real patterns from real Electron apps. You'll hit some subset:
-
-- **\`firstWindow()\` gives you a splash/loading screen,** not the app.
-  Wait longer, or find the right page by URL, or wait for a specific
-  selector that only appears when the app is actually ready.
-
-- **The real UI is in a BrowserView, not a BrowserWindow.** Playwright
-  sees it as a separate "window" with a different URL. The \`windows\`
-  command exists exactly for figuring this out. \`getBrowserViews()\`
-  may also return empty on newer Electron \u2014 use
-  \`webContents.getAllWebContents()\` instead.
-
-- **\`locator.click()\` clicks the wrong thing.** Playwright computes
-  click coordinates relative to the main window. If your content is in
-  a BrowserView overlay, those coordinates hit the window behind it.
-  The driver skeleton uses \`page.evaluate(el => el.click())\` for this
-  reason \u2014 DOM click bypasses coordinates entirely.
-
-- **Feature gates block the thing you need to test.** The app checks a
-  plan tier, or an env flag, or a feature flag baked into SSR HTML.
-  Find where the check happens (grep the built output for the gate
-  name) and patch it for your local run \u2014 a \`sed\` on the build output,
-  an env var override, or (for SSR-embedded flags) intercept the
-  response via CDP \`Fetch.enable\` and rewrite it in-flight. Document
-  exactly what you patched and why.
-
-- **contentEditable inputs** (ProseMirror, Tiptap, Slate) aren't
-  \`<textarea>\`. \`fill()\` won't work. Focus the element, then use
-  \`keyboard.type()\`. Add a \`focus <sel>\` command if the app has these.
-
-- **Electron steals stdin.** The \`fs.openSync('/dev/stdin', 'r')\` +
-  \`createReadStream\` trick in the skeleton protects your REPL's input.
-
-- **Native modules fail to load** (keychain, notifications, etc.).
-  Usually non-fatal \u2014 the core app runs, those features no-op. Note it
-  and move on.
-`;
-var _Xl=()=>{};
-var SXl=`# Example: Library / SDK
-
-Libraries don't have a "run" step in the process sense \u2014 there's no
-server to start, no CLI to invoke. For libraries, the run skill is about:
-
-1. **Building** the library from source
-2. **Running the test suite**
-3. **A minimal working example** that exercises the library and proves
-   it's installed correctly
-
-Keep it brief. The template's Build and Test sections do most of the work.
-
-## The smoke-test example
-
-The main library-specific addition is a tiny program (or REPL snippet)
-that imports the library and does one real thing. This is how an agent
-confirms "yes, the library is usable":
-
-> ## Verify
->
-> \`\`\`bash
-> python -c '
-> from mylib import Client
-> c = Client()
-> print(c.ping())
-> '
-> # \u2192 pong
-> \`\`\`
-
-Or for a compiled language:
-
-> \`\`\`bash
-> cat > /tmp/smoke.go <<GO
-> package main
-> import "example.com/mylib"
-> func main() { println(mylib.Version()) }
-> GO
-> go run /tmp/smoke.go
-> # \u2192 v1.2.3
-> \`\`\`
-
-## Example snippet
-
-> ---
-> name: run-mylib
-> description: Build, install, and test mylib from source. Use when asked to verify mylib works, run its tests, or build a distribution.
-> ---
->
-> \`mylib\` is a Python library \u2014 "running" it means building from source
-> and executing the test suite.
->
-> ## Setup
->
-> \`\`\`bash
-> pip install -e '.[dev]'
-> \`\`\`
->
-> ## Verify
->
-> \`\`\`bash
-> python -c 'import mylib; print(mylib.__version__)'
-> # \u2192 2.1.0
-> \`\`\`
->
-> ## Test
->
-> \`\`\`bash
-> pytest
-> \`\`\`
->
-> Subset of tests: \`pytest tests/unit/\`. With coverage: \`pytest --cov=mylib\`.
->
-> ## Build (distribution)
->
-> \`\`\`bash
-> pip install build
-> python -m build
-> # \u2192 dist/mylib-2.1.0-py3-none-any.whl
-> \`\`\`
-
-## Things to consider documenting
-
-- **Development mode vs installed mode.** \`pip install -e .\` vs
-  \`pip install .\` \u2014 if behavior differs, say which to use for what.
-- **Optional dependencies.** \`[dev]\`, \`[test]\`, \`[docs]\` extras and when
-  each is needed.
-- **Generated code.** If there's a codegen step (protobuf, OpenAPI clients),
-  document it \u2014 it's almost always missing from READMEs.
-`;
-var TXl=()=>{};
-var EXl=`# Example: Browser-driven web app
-
-You have a dev server that serves HTML to a browser. An agent in a
-headless container can't open a browser window \u2014 so "run the app" means
-launching the dev server, driving a headless Chromium against it, and
-producing a screenshot that proves the page rendered.
-
-Don't write a browser driver. Use \`chromium-cli\`.
-
-## Dev server
-
-Find the dev command (\`package.json\` \`scripts.dev\`, \`Makefile\`,
-README), start it in the background, and wait for it to actually serve:
-
-\`\`\`bash
-npm run dev &   # or yarn dev, pnpm dev, make serve, ./dev.sh
-echo $! > /tmp/dev.pid
-timeout 30 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done'
-\`\`\`
-
-Don't \`sleep 5\` \u2014 poll the port. Stop with
-\`kill $(cat /tmp/dev.pid)\` (or \`pkill -f 'npm run dev'\`) before
-relaunching, or the next run hits \`EADDRINUSE\`.
-
-## Drive
-
-\`chromium-cli\` is a headless-Chromium REPL. Pipe a script to stdin:
-
-\`\`\`bash
-chromium-cli --session app <<'EOF'
-nav http://localhost:3000
-wait-for text=Dashboard
-screenshot
-click button:has-text("New item")
-fill input[name="title"] Smoke test
-press Enter
-wait-for text=Smoke test
-screenshot
-console --errors
-EOF
-\`\`\`
-
-Screenshots land in \`chromium_cli/sessions/app/screenshots/\` (latest
-symlinked as \`screenshot.png\`). That's the whole loop: \`nav\` \u2192
-\`wait-for\` the element you need \u2192 act (\`click\` / \`fill\` / \`type\` /
-\`press\`) \u2192 \`screenshot\` \u2192 \`console --errors\` to check nothing threw.
-Full command reference: \`chromium-cli\` skill, or \`help\` at the prompt.
-
-For iterative debugging, run it under tmux and \`send-keys\` one command
-at a time \u2014 same commands, same session.
-
-**If \`chromium-cli\` isn't available:** adapt
-[electron.md](electron.md)'s REPL driver \u2014 the structure and commands
-transfer, but it's \`_electron\`-specific:
-import \`{ chromium }\` instead, launch with
-\`chromium.launch({ args: ['--no-sandbox'] })\`, acquire the page via
-\`(await app.newContext()).newPage()\` then \`goto()\` your dev URL, and
-drop the Electron-only window introspection
-(\`.windows()\`/\`.firstWindow()\`/the \`windows\` command).
-
-## What to put in the skill
-
-The project-specific bits only. \`chromium-cli\` handles the mechanics.
-
-- **Dev command + port + stop.** The exact start line, any env vars it
-  needs, and the \`kill\`/\`pkill\` to stop it.
-- **Auth.** Whatever gets a logged-in session \u2014 a \`set-cookie\` line, a
-  \`fill\`/\`click\` login sequence, or a helper script that does the API
-  dance and emits the cookie.
-- **One representative interaction.** Not the whole app \u2014 one path that
-  proves it's running, ending in a screenshot.
-- **App-specific gotchas.** Only the ones you actually hit.
-
-## Gotchas that recur
-
-- **React controlled inputs.** \`eval el.value = '\u2026'\` doesn't fire
-  React's onChange. Use \`fill\` / \`type\` \u2014 they go through Playwright's
-  input pipeline.
-- **Websockets / long-poll.** \`wait-idle\` never settles. \`wait-for\` the
-  element you actually need.
-- **Slow first paint.** Vite/Next compile routes on demand; the first
-  \`nav\` can take 10s+. \`wait-for\` handles it; raw \`sleep\` doesn't.
-- **\`screenshot-element <sel>\`** crops to one element \u2014 use it when the
-  diff is in a specific component, not the whole page.
-- **Check \`console --errors\` before declaring success.** A page can
-  render its shell while every data fetch 500s.
-`;
-var bXl=()=>{};
-var vXl=`# Example: Web server / API
-
-The distinguishing concern for servers is **lifecycle**: an agent needs to
-start the server in the background, verify it's up, interact with it, then
-cleanly shut it down. A foreground \`npm start\` that blocks the shell is
-useless to an agent.
-
-## Structure to follow
-
-A good server run skill has:
-
-1. **Prerequisites & setup** \u2014 same as any project.
-2. **Run** \u2014 the background-launch pattern (below), not a blocking command.
-3. **Verify** \u2014 a \`curl\` or similar that confirms the server is actually up.
-4. **Stop** \u2014 how to cleanly terminate the background process.
-
-If the background-launch + readiness-poll + smoke-curl sequence is more
-than a couple of lines, put it in a \`smoke.sh\` inside the skill directory
-and have \`SKILL.md\` say "run the smoke script." One command, exit code
-tells you if the server is healthy.
-
-## Background-launch pattern
-
-Don't write:
-
-> \`\`\`bash
-> npm start
-> \`\`\`
-
-That blocks. Instead, show how to launch in the background, wait for
-readiness, and find the PID later:
-
-> \`\`\`bash
-> npm start &> /tmp/server.log &
-> SERVER_PID=$!
->
-> # Wait for the server to come up (adjust timeout/port as needed)
-> for i in {1..30}; do
->   curl -sf http://localhost:3000/health > /dev/null && break
->   sleep 1
-> done
-> \`\`\`
-
-Then the verification step:
-
-> \`\`\`bash
-> curl http://localhost:3000/health
-> # \u2192 {"status":"ok"}
-> \`\`\`
-
-And stopping:
-
-> \`\`\`bash
-> kill $SERVER_PID
-> # or, if you've lost the PID:
-> pkill -f "node.*server.js"
-> \`\`\`
-
-## Details worth documenting
-
-- **Which port.** Make it explicit and say how to override it (\`PORT=4000 npm start\`).
-- **What "ready" looks like.** A specific log line or a health endpoint to hit.
-- **Required env vars.** Database URL, API keys, etc. \u2014 with a template \`.env\`
-  if the list is long.
-- **Hot reload vs production mode.** If they differ meaningfully, say which
-  to use and when.
-- **Dependent services.** If the server needs Redis/Postgres/etc., either
-  point at a docker-compose that brings them up, or include the \`docker run\`
-  command directly.
-
-## Example snippet
-
-Here's what a Run section for a typical Node API might look like:
-
-> ## Run
->
-> Start the dev server in the background:
->
-> \`\`\`bash
-> npm run dev &> /tmp/api.log &
-> \`\`\`
->
-> The server listens on port 3000. Wait for it to be ready, then verify:
->
-> \`\`\`bash
-> for i in {1..20}; do
->   curl -sf http://localhost:3000/health && break
->   sleep 0.5
-> done
-> curl http://localhost:3000/health
-> # \u2192 {"status":"ok","version":"1.2.3"}
-> \`\`\`
->
-> Logs are at \`/tmp/api.log\`. Stop with:
->
-> \`\`\`bash
-> pkill -f "tsx watch src/index.ts"
-> \`\`\`
->
-> ### Environment
->
-> | Variable | Required | Default | Notes |
-> |---|---|---|---|
-> | \`DATABASE_URL\` | Yes | \u2014 | Postgres connection string |
-> | \`PORT\` | No | \`3000\` | |
-> | \`LOG_LEVEL\` | No | \`info\` | \`debug\` / \`info\` / \`warn\` / \`error\` |
-`;
-var CXl=()=>{};
-var RXl=`# Example: TUI / interactive terminal app
-
-Interactive terminal apps (text editors, REPLs, curses-based UIs) can't
-be driven directly by an agent's bash tool \u2014 they take over the terminal.
-The skill must show how to wrap them in \`tmux\` so the agent can send
-input, capture output, and take screenshots.
-
-## The tmux pattern
-
-This is the standard approach:
-
-1. Start the TUI inside a detached tmux session
-2. Send keystrokes with \`tmux send-keys\`
-3. Read screen contents with \`tmux capture-pane\`
-4. Clean up with \`tmux kill-session\`
-
-The skill's \`SKILL.md\` should present this as the primary way to drive
-the app. A small \`driver.sh\` that wraps the launch+attach sequence can
-live in the skill directory, but for most TUIs the raw tmux commands in
-the skill body are enough.
-
-## Example snippet
-
-> ## Run (interactive, for agents)
->
-> Start the TUI inside tmux:
->
-> \`\`\`bash
-> tmux new-session -d -s app -x 120 -y 40 './myapp'
-> \`\`\`
->
-> Poll until the ready marker appears (faster + more reliable than a fixed sleep \u2014
-> returns the instant the app is up, fails loudly if it isn't):
->
-> \`\`\`bash
-> timeout 10 bash -c 'until tmux capture-pane -t app -p | grep -q "Ready"; do sleep 0.2; done'
-> tmux capture-pane -t app -p
-> \`\`\`
->
-> Send input (this example navigates to the Settings screen and toggles
-> an option):
->
-> \`\`\`bash
-> tmux send-keys -t app 's'
-> timeout 5 bash -c 'until tmux capture-pane -t app -p | grep -q "Settings"; do sleep 0.2; done'
-> tmux send-keys -t app 'Down' 'Down' 'Space'  # navigate + toggle
-> timeout 5 bash -c 'until tmux capture-pane -t app -p | grep -qF "[x]"; do sleep 0.2; done'
-> tmux capture-pane -t app -p
-> \`\`\`
->
-> If you find yourself writing more than a couple of these poll lines, pull
-> them into a \`wait_for()\` helper in a \`driver.sh\` next to the skill.
->
-> Quit:
->
-> \`\`\`bash
-> tmux send-keys -t app 'q'
-> tmux kill-session -t app 2>/dev/null || true
-> \`\`\`
->
-> ### Key reference
->
-> | Key | Action |
-> |---|---|
-> | \`j\` / \`k\` or \`Down\` / \`Up\` | Navigate list |
-> | \`Enter\` | Select |
-> | \`s\` | Settings |
-> | \`q\` | Quit |
-
-## Details worth documenting
-
-- **Terminal size.** Some TUIs break or hide content at small widths.
-  Specify a known-good size in the \`tmux new-session -x -y\` args.
-- **Startup time.** Poll for a ready marker (\`until tmux capture-pane | grep -q X\`)
-  rather than a fixed \`sleep N\` \u2014 returns the instant the app is up, and fails
-  usefully when it never does. Say what string means ready.
-- **Keybinding reference.** A table of the main keys. This is the "API"
-  of a TUI \u2014 an agent needs it to drive the app.
-- **Exit cleanly.** Show the quit keystroke *and* \`tmux kill-session\` as
-  a fallback.
-- **Color/unicode quirks.** If \`capture-pane\` output is hard to read,
-  note flags that help (\`-e\` for escape sequences, \`-J\` to join wrapped
-  lines).
-
-## Also document the direct invocation
-
-For a human running the app interactively, tmux is overkill. Include
-the one-liner too:
-
-> ## Run (direct, for humans)
->
-> \`\`\`bash
-> ./myapp
-> \`\`\`
->
-> Press \`q\` to quit.
-`;
-var wXl=()=>{};
-var jXn;
-var WLo=b(()=>{hXl();_Xl();TXl();bXl();CXl();wXl();jXn={"examples/cli.md":gXl,"examples/electron.md":yXl,"examples/library.md":SXl,"examples/playwright.md":EXl,"examples/server.md":vXl,"examples/tui.md":RXl}});
-export {AXl,fXl,gXl,hXl,yXl,_Xl,SXl,TXl,EXl,bXl,vXl,CXl,RXl,wXl,jXn,WLo};
+    const out = Object.values(r.metafile.outputs)[0];
+    return (out?.exports ?? []).filter((e) => e !== 'default');
+  } catch (e) {
+    console.error(\`  ! story parse failed: \${relative(process.cwd(), absPath)}: \${String(e?.errors?.[0]?.text ?? e?.message ?? e).split('\\n')[0]}\`);
+    return [];
+  }
+}
+
+// Resolve each component's story source file(s) and pair its index stories
+// to module export keys (c.storySrc / c.srcSha / c.storyIds[].exportKey).
+// A component's stories may live in ONE file or be split across many files
+// sharing a title \u2014 each story pairs against the exports of its OWN file
+// (its index.json importPath). index.json importPaths are relative to the
+// storybook PROJECT root \u2014 the .storybook dir's parent when we know it; cwd
+// and the static dir's parent as fallbacks (--storybook-static-only runs).
+async function resolveStorySources(csfComponents, sbDir, sbStatic) {
+  const bases = [...new Set([
+    ...(sbDir ? [dirname(sbDir)] : []),
+    process.cwd(),
+    ...(sbStatic ? [dirname(sbStatic)] : []),
+  ])];
+  let paired = 0, total = 0;
+  for (const c of csfComponents) {
+    const srcByIp = new Map();
+    for (const ip of c.importPaths ?? []) {
+      const abs = bases.map((b) => resolve(b, ip)).find(existsSync);
+      if (abs) srcByIp.set(ip, abs);
+    }
+    const srcs = [...new Set(srcByIp.values())];
+    if (!srcs.length) continue;
+    c.storySrc = srcs[0];
+    // srcSha spans ALL story files \u2014 an edit to any of them is a contract
+    // change for the component.
+    const h = createHash('sha256');
+    for (const f of srcs) h.update(readFileSync(f));
+    c.srcSha = h.digest('hex').slice(0, 12);
+    const keysByFile = new Map();
+    for (const f of srcs) {
+      keysByFile.set(f, new Map((await storyModuleExports(f)).map((k) => [squash(k), k])));
+    }
+    for (const s of c.storyIds ?? []) {
+      total++;
+      const f = srcByIp.get(s.importPath) ?? srcs[0];
+      // Display name first; fall back to the story ID's tail \u2014 storybook
+      // derives it from the export key, so it survives \`name:\` overrides
+      // ("button--my-story" pairs to export MyStory whatever the name says).
+      const k = keysByFile.get(f)?.get(squash(s.name))
+        ?? keysByFile.get(f)?.get(squash(String(s.id ?? '').split('--').pop() ?? ''));
+      if (k) { s.exportKey = k; s.storySrc = f; paired++; }
+    }
+  }
+  console.error(\`  story sources: \${paired}/\${total} stories paired to module exports\`);
+}
+
+export async function resolveStorybook(ctx) {
+  const { INPUTS, STORIES_ROOT, SB_CONFIG_DIR, SB_STATIC, PKG, PKG_DIR, OUT, entry, titleMap, exportedSet } = ctx;
+  const sbDir = pickStorybookDir({ STORIES_ROOT, INPUTS, PKG, SB_CONFIG_DIR });
+  let sbStatic = SB_STATIC ? resolve(SB_STATIC) : null;
+  if (sbStatic && !existsSync(join(sbStatic, 'index.json'))) {
+    console.error(\`--storybook-static \${sbStatic} has no index.json\`);
+    sbStatic = null;
+  }
+  // storybook-static is parsed for index.json (component list + story source
+  // pairing) and the CSS fallback, then discarded \u2014 previews render
+  // self-contained from the bundle. Built into a dot-prefixed dir so it's
+  // never uploaded.
+  if (!sbStatic && sbDir) {
+    sbStatic = resolve(OUT, '.sb-static');
+    console.error(\`  running: npx storybook build -c \${sbDir} -o \${sbStatic}\`);
+    const { spawnSync } = await import('node:child_process');
+    const r = spawnSync(
+      'npx', ['storybook', 'build', '-c', sbDir, '-o', sbStatic, '--quiet'],
+      { cwd: dirname(sbDir), stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, timeout: 600_000, shell: process.platform === 'win32' },
+    );
+    if (r.error || r.signal || r.status !== 0 || !existsSync(join(sbStatic, 'index.json'))) {
+      console.error(\`[SB_BUILD_FAIL] storybook build exited \${r.status ?? r.signal ?? r.error?.code}:\\n\${(r.stderr || r.stdout || '').slice(-2000)}\`);
+      sbStatic = null;
+    }
+  }
+  const csfComponents = [];
+  if (sbStatic) {
+    const idx = JSON.parse(readFileSync(join(sbStatic, 'index.json'), 'utf8'));
+    // Multi-package Storybooks can have a 'TextField' from each sibling
+    // package. Prefer stories whose importPath is under the target
+    // package's own directory.
+    const sbRoot = sbDir ? resolve(dirname(sbDir)) : null;
+    // Same relative()+realpath treatment as story-imports' barrel rule:
+    // startsWith is case-sensitive (win32 drive-letter casing makes it
+    // silently inert) and raw resolve() misses pnpm-style symlinked package
+    // dirs. A wrong isOwn lets a sibling package's same-named stories win.
+    const realOf = (p) => { try { return realpathSync(p); } catch { return p; } };
+    const pkgReal = realOf(resolve(PKG_DIR));
+    // Memoized per importPath: the sort comparator below calls isOwn
+    // O(n log n) times, and a comparator's view of an entry must not
+    // re-derive syscalls mid-sort.
+    const ownCache = new Map();
+    const isOwn = (e) => {
+      if (!sbRoot || !e.importPath) return false;
+      if (!ownCache.has(e.importPath)) {
+        const rel = relative(pkgReal, realOf(resolve(sbRoot, e.importPath)));
+        ownCache.set(e.importPath, rel !== '' && !rel.startsWith('..') && !isAbsolute(rel));
+      }
+      return ownCache.get(e.importPath);
+    };
+    const idxEntries = Object.values(idx.entries ?? {}).sort((a, b) => isOwn(b) - isOwn(a));
+    const byComp = new Map();
+    for (const e of idxEntries) {
+      if (e.type === 'docs') continue;
+      // Skip stories the DS marks deprecated/hidden so v1-API stories don't
+      // render the v2 export with wrong props.
+      if ((e.tags ?? []).includes('!dev') || (e.tags ?? []).includes('deprecated')) continue;
+      if (/deprecated/i.test(e.importPath ?? '')) continue;
+      const { name: compName, group } = titleParts(e.title, titleMap, exportedSet);
+      if (compName === null) continue; // titleMap {Name: null} = excluded
+      if (!byComp.has(compName)) byComp.set(compName, { name: compName, group, own: isOwn(e), storyIds: [], importPaths: new Set() });
+      const comp = byComp.get(compName);
+      if (comp.own && !isOwn(e)) continue; // own-package stories win the name
+      comp.storyIds.push({ id: e.id, name: e.name, importPath: e.importPath });
+      if (e.importPath) comp.importPaths.add(e.importPath);
+    }
+    for (const c of byComp.values()) csfComponents.push(c);
+    console.error(
+      \`  storybook-static: \${Object.keys(idx.entries ?? {}).length} entries \u2192 \${csfComponents.length} components\`,
+    );
+    await resolveStorySources(csfComponents, sbDir, sbStatic);
+  } else {
+    console.error(\`[SB_BUILD_FAIL] no storybook-static and no .storybook/ dir found \u2014 pass --storybook-static <dir> or run from a repo with .storybook/.\`);
+  }
+  return { shape: 'storybook', entry, components: csfComponents, sbStatic, sbDir };
+}
+
+// Bundle .storybook/preview.{tsx,ts,jsx,js} decorators into
+// _vendor/preview-decorators.js so each preview can wrap its mount in the same
+// provider chain Storybook does. Best-effort: bail (return false) if there's
+// no decorator array or the bundle fails \u2014 cfg.provider remains the manual
+// fallback. Imports of the DS package itself are shimmed to window.<GLOBAL>
+// so the decorator's provider components are the same instances the
+// previews use.
+export async function bundlePreviewDecorators({ sbDir, OUT, NODE_MODULES, PKG, PKG_DIR, GLOBAL }) {
+  if (!sbDir) return false;
+  const sbPreview = ['tsx', 'ts', 'jsx', 'js'].map((e) => join(sbDir, \`preview.\${e}\`)).find(existsSync);
+  if (!sbPreview) {
+    console.error(\`  (preview decorators: no preview.{tsx,ts,jsx,js} in \${sbDir} \u2014 nothing to bundle; cfg.provider is the manual path)\`);
+    return false;
+  }
+  // \\bdecorators\\b (not just \`decorators:\` / \`decorators=\`) \u2014 re-export forms
+  // like \`export { decorators }\` are real; a false positive is harmless (the
+  // wrapper finds no array at runtime and __dsDecorate stays null).
+  if (!/\\bdecorators\\b/.test(readFileSync(sbPreview, 'utf8'))) {
+    console.error(\`  (preview decorators: \${sbPreview} never mentions decorators \u2014 nothing to bundle; if providers live elsewhere, set cfg.provider)\`);
+    return false;
+  }
+  const { build } = await import('esbuild');
+  const entry = join(OUT, '.preview-decorators-entry.mjs');
+  // The decorator receives (Story, ctx). We pass a Story fn that returns the
+  // already-built inner element and a minimal ctx whose globals are seeded
+  // from globalTypes defaultValues / initialGlobals \u2014 theming decorators read
+  // ctx.globals.theme et al, and storybook's own default render uses exactly
+  // these values. Single-function decorators are legal CSF ([].concat).
+  // A decorator returning undefined (an addon stub, a manager-side noop)
+  // falls through to the inner render with one console warning \u2014 otherwise
+  // one unrecognized addon silently blanks every preview.
+  writeFileSync(entry, \`import * as pv from \${JSON.stringify(sbPreview)};
+var ds = [].concat((pv.default && pv.default.decorators) || pv.decorators || []).filter(function(d){return typeof d==="function"});
+if (!ds.length) console.warn("[ds] preview decorators: the preview module mentions decorators but exposed none at runtime (indirect export?) \u2014 previews render without the provider chain; set cfg.provider if components need one");
+var GT = (pv.default && pv.default.globalTypes) || pv.globalTypes || {};
+var G = {};
+for (var k in GT) { if (GT[k] && GT[k].defaultValue !== undefined) G[k] = GT[k].defaultValue; }
+var IG = (pv.default && pv.default.initialGlobals) || pv.initialGlobals || {};
+for (var k2 in IG) { G[k2] = IG[k2]; }
+var ctx = {args:{},argTypes:{},globals:G,parameters:{},viewMode:"story",loaded:{},id:"",name:"",title:"",kind:"",componentId:""};
+// reduce (not reduceRight): Storybook composes first-in-array = innermost.
+// The chain runs inside a rendered component so decorator hooks have a
+// dispatcher \u2014 calling decorators eagerly (outside render) would null it.
+window.__dsDecorate = !ds.length ? null : function(el){
+  return window.React.createElement(function(){
+    return ds.reduce(function(inner,d){
+      var out = d(function(){return inner}, ctx);
+      if (out === undefined) {
+        if (!window.__dsDecoratorWarned) { window.__dsDecoratorWarned = 1; console.warn("[ds] a preview decorator returned undefined \u2014 skipped (addon stub?)"); }
+        return inner;
+      }
+      return out;
+    }, el);
+  });
+};\`);
+  // Shim the DS package (by name, or by a relative path that resolves under
+  // PKG_DIR \u2014 e.g. \`../src\` from .storybook/) to window.<GLOBAL> so we don't
+  // re-bundle the whole DS and the provider's Context matches the bundle's.
+  const pkgRoot = resolve(PKG_DIR);
+  const dsShim = {
+    name: 'ds-global',
+    setup(b) {
+      const escPkg = PKG.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&');
+      // Exact match only \u2014 subpath imports (<pkg>/locales/en.json) must bundle
+      // normally, not shim to a nonexistent window.<GLOBAL>.<subpath>.
+      b.onResolve({ filter: new RegExp(\`^\${escPkg}$\`) }, () => ({ path: 'ds', namespace: 'ds-shim' }));
+      b.onResolve({ filter: /^\\.\\.?\\// }, (a) => {
+        const abs = resolve(a.resolveDir, a.path);
+        if (abs === pkgRoot || abs === join(pkgRoot, 'src') || abs === join(pkgRoot, 'src', 'index')) {
+          return { path: 'ds', namespace: 'ds-shim' };
+        }
+        return undefined;
+      });
+      b.onLoad({ filter: /^ds$/, namespace: 'ds-shim' }, () => ({
+        contents: \`module.exports=window.\${GLOBAL};\`, loader: 'js',
+      }));
+    },
+  };
+  // Storybook-runtime/addon/msw packages are preview-time only. Stubbed (not
+  // externalized \u2014 \`external\` in IIFE output leaves a bare require() that
+  // throws in-browser); manager-api gets functional no-ops. One definition,
+  // shared with preview compilation, lives in story-imports.mjs.
+  const stubEmpty = storybookStubPlugin();
+  // React shim for the decorator bundle: read window.React/ReactDOM at USE
+  // time (getters), not via \`var R = window.React\` at thunk-define time \u2014
+  // esbuild can hoist the CJS thunk call before the page global is live.
+  const reactGlobal = {
+    name: 'react-global',
+    setup(b) {
+      // Catch every subpath (react/jsx-runtime, react-dom/client,
+      // react-dom/server, \u2026) so a transitive package's own \`import React\`
+      // can't bundle a second copy alongside the page's window.React.
+      b.onResolve({ filter: /^react(-dom)?($|\\/)/ }, (a) =>
+        ({ path: a.path.startsWith('react-dom') ? 'rd' : 'r', namespace: 'rg' }));
+      // ownKeys + getOwnPropertyDescriptor so esbuild's __toESM/__copyProps
+      // (which enumerate via getOwnPropertyNames) see every React export \u2014
+      // otherwise \`import {useState} from 'react'\` is undefined.
+      const proxy = (g, extra) => \`new Proxy(\${extra},{
+  get:function(o,k){return k in o?o[k]:(\${g}||{})[k]},
+  ownKeys:function(o){return Array.from(new Set(Object.keys(o).concat(Object.keys(\${g}||{}))))},
+  getOwnPropertyDescriptor:function(o,k){return{enumerable:true,configurable:true,get:function(){return k in o?o[k]:(\${g}||{})[k]}}}
+})\`;
+      b.onLoad({ filter: /^r$/, namespace: 'rg' }, () => ({
+        loader: 'js',
+        contents: \`function jsx(t,p,k){return window.React.createElement(t,k===void 0?p:Object.assign({key:k},p))}
+module.exports=\${proxy('window.React', '{jsx:jsx,jsxs:jsx,jsxDEV:jsx,Fragment:undefined}')};\`,
+      }));
+      b.onLoad({ filter: /^rd$/, namespace: 'rg' }, () => ({
+        loader: 'js',
+        contents: \`module.exports=\${proxy('window.ReactDOM', '{}')};\`,
+      }));
+    },
+  };
+  try {
+    await build({
+      entryPoints: [entry], outfile: join(OUT, '_vendor', 'preview-decorators.js'),
+      bundle: true, format: 'iife', platform: 'browser', target: 'es2020',
+      jsx: 'automatic', loader: { '.js': 'jsx', '.json': 'json' },
+      nodePaths: [NODE_MODULES], plugins: [reactGlobal, dsShim, stubEmpty],
+      // Same defines as the preview compile \u2014 provider chains routinely guard
+      // on NODE_ENV/__DEV__, and esbuild leaves undefined identifiers to
+      // throw at load time.
+      define: {
+        'process.env.NODE_ENV': '"development"', __DEV__: 'true',
+        ...IIFE_IMPORT_META_DEFINE,
+      },
+      logLevel: 'silent',
+    });
+    console.error(\`  preview-decorators.js: bundled from \${relative(pkgRoot, sbPreview)}\`);
+    return true;
+  } catch (e) {
+    {
+      // A decorator bundle failure always means the provider chain needs
+      // manual config, so that line prints unconditionally.
+      // esbuild rejections carry the signature in e.errors[0].text, not String(e).
+      const err = e?.errors?.[0];
+      const firstLine = String(err?.text ?? e?.message ?? String(e)).split('\\n')[0];
+      console.error(\`  ! preview decorator bundle failed: \${firstLine}\`);
+      // No hypothesis line here: the resolve-class remedies name the
+      // story-imports fork seam, which this bundle's hardcoded plugins never
+      // consult \u2014 the only actionable remedy is the unconditional line below.
+      console.error('    decorators will not wrap previews \u2014 set cfg.provider to supply the context they provided');
+    }
+    return false;
+  } finally {
+    rmSync(entry, { force: true });
+  }
+}
+`});
+export {Qtc};

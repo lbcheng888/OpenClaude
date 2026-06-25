@@ -1,4 +1,12 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var frs=X((Z3)=>{var qQc=Z3&&Z3.__createBinding||(Object.create?function(e,t,n,r){if(r===void 0)r=n;var o=Object.getOwnPropertyDescriptor(t,n);if(!o||("get"in o?!t.__esModule:o.writable||o.configurable))o={enumerable:!0,get:function(){return t[n]}};Object.defineProperty(e,r,o)}:function(e,t,n,r){if(r===void 0)r=n;e[r]=t[n]}),jQc=Z3&&Z3.__setModuleDefault||(Object.create?function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}:function(e,t){e.default=t}),prs=Z3&&Z3.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(e!=null){for(var n in e)if(n!=="default"&&Object.prototype.hasOwnProperty.call(e,n))qQc(t,e,n)}return jQc(t,e),t};Object.defineProperty(Z3,"__esModule",{value:!0});Z3.req=Z3.json=Z3.toBuffer=void 0;var WQc=prs(require("http")),GQc=prs(require("https"));async function mrs(e){let t=0,n=[];for await(let r of e)t+=r.length,n.push(r);return Buffer.concat(n,t)}Z3.toBuffer=mrs;async function VQc(e){let n=(await mrs(e)).toString("utf8");try{return JSON.parse(n)}catch(r){let o=r;throw o.message+=` (input: ${n})`,o}}Z3.json=VQc;function KQc(e,t={}){let r=((typeof e==="string"?e:e.href).startsWith("https:")?GQc:WQc).request(e,t),o=new Promise((s,i)=>{r.once("response",s).once("error",i).end()});return r.then=o.then.bind(o),r}Z3.req=KQc});
-export {frs};
+import {ft,b} from "../runtime.ts";
+import {pas,mas,uas,das,xRt,lSr,kon,zje,Hon,ZEe} from "./m710.ts";
+var Vls={};
+ft(Vls,{startMdmRawRead:()=>startMdmRawRead,getMdmRawReadPromise:()=>getMdmRawReadPromise,fireRawRead:()=>fireRawRead});
+function ZSr(e,t){return new Promise((n)=>{try{Wls.execFile(e,t,{encoding:"utf-8",timeout:pas,windowsHide:!0},(r,o)=>{n({stdout:o??"",code:r?1:0})})}catch{n({stdout:"",code:1})}})}
+function fireRawRead(){return(async()=>{{let e=mas(),n=(await Promise.all(e.map(async({path:r,label:o})=>{if(!Gls.existsSync(r))return{stdout:"",label:o,ok:!1};let{stdout:s,code:i}=await ZSr(uas,[...das,r]);return{stdout:s,label:o,ok:i===0&&!!s}}))).find((r)=>r.ok);return{plistStdouts:n?[{stdout:n.stdout,label:n.label}]:[],hklmStdout:null,hkcuStdout:null}}if(xRt()){let[e,t]=await Promise.all([ZSr(lSr,["query",kon,"/v",zje]),ZSr(lSr,["query",Hon,"/v",zje])]);return{plistStdouts:null,hklmStdout:e.code===0?e.stdout:null,hkcuStdout:t.code===0?t.stdout:null}}return{plistStdouts:null,hklmStdout:null,hkcuStdout:null}})()}
+function startMdmRawRead(){if(ebr)return;ebr=fireRawRead()}
+function getMdmRawReadPromise(){return ebr}
+var Wls,Gls,ebr=null;
+var ysn=b(()=>{ZEe();Wls=require("child_process"),Gls=require("fs")});
+export {Vls,ZSr,fireRawRead,startMdmRawRead,getMdmRawReadPromise,Wls,Gls,ebr,ysn};

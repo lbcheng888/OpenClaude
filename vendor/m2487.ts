@@ -1,5 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {vUe} from "./m2482.ts";
-var JRi=X((mmh,YRi)=>{var aud=vUe(),lud=(e,t,n)=>aud(e,t,n)>0;YRi.exports=lud});
-export {JRi};
+import {Q} from "../runtime.ts";
+var aRn=Q((FRg,jDi)=>{var hSd=Object.freeze({loose:!0}),gSd=Object.freeze({}),_Sd=(e)=>{if(!e)return gSd;if(typeof e!=="object")return hSd;return e};jDi.exports=_Sd});
+export {aRn};

@@ -1,7 +1,10 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {JB} from "./m1820.ts";
-import {initSessionMetadataPersistence} from "./m1845.ts";
-import {wxt} from "./m1836.ts";
-var AYs=X((ZNA,fYs)=>{var CDr=JB(),t9u=initSessionMetadataPersistence(),mYs=wxt(),n9u=(e,t)=>{e=new t9u(e,t);let n=new CDr("0.0.0");if(e.test(n))return n;if(n=new CDr("0.0.0-0"),e.test(n))return n;n=null;for(let r=0;r<e.set.length;++r){let o=e.set[r],s=null;if(o.forEach((i)=>{let a=new CDr(i.semver.version);switch(i.operator){case">":if(a.prerelease.length===0)a.patch++;else a.prerelease.push(0);a.raw=a.format();case"":case">=":if(!s||mYs(a,s))s=a;break;case"<":case"<=":break;default:throw Error(`Unexpected operation: ${i.operator}`)}}),s&&(!n||mYs(n,s)))n=s}if(n&&e.test(n))return n;return null};fYs.exports=n9u});
-export {AYs};
+import {Q} from "../runtime.ts";
+import {Xgn} from "./m1823.ts";
+import {OQe} from "./m1822.ts";
+import {JMr} from "./m1847.ts";
+import {QIt} from "./m1821.ts";
+import {TF} from "./m1825.ts";
+import {x7} from "./m1850.ts";
+var t0t=Q((gWh,eti)=>{var n0t=Symbol("SemVer ANY");class a_n{static get ANY(){return n0t}constructor(e,t){if(t=Yei(t),e instanceof a_n)if(e.loose===!!t.loose)return e;else e=e.value;if(e=e.trim().split(/\s+/).join(" "),ZMr("comparator",e,t),this.options=t,this.loose=!!t.loose,this.parse(e),this.semver===n0t)this.value="";else this.value=this.operator+this.semver.version;ZMr("comp",this)}parse(e){let t=this.options.loose?Jei[Xei.COMPARATORLOOSE]:Jei[Xei.COMPARATOR],n=e.match(t);if(!n)throw TypeError(`Invalid comparator: ${e}`);if(this.operator=n[1]!==void 0?n[1]:"",this.operator==="=")this.operator="";if(!n[2])this.semver=n0t;else this.semver=new Qei(n[2],this.options.loose)}toString(){return this.value}test(e){if(ZMr("Comparator.test",e,this.options.loose),this.semver===n0t||e===n0t)return!0;if(typeof e==="string")try{e=new Qei(e,this.options)}catch(t){return!1}return QMr(e,this.operator,this.semver,this.options)}intersects(e,t){if(!(e instanceof a_n))throw TypeError("a Comparator is required");if(this.operator===""){if(this.value==="")return!0;return new Zei(e.value,t).test(this.value)}else if(e.operator===""){if(e.value==="")return!0;return new Zei(this.value,t).test(e.semver)}if(t=Yei(t),t.includePrerelease&&(this.value==="<0.0.0-0"||e.value==="<0.0.0-0"))return!1;if(!t.includePrerelease&&(this.value.startsWith("<0.0.0")||e.value.startsWith("<0.0.0")))return!1;if(this.operator.startsWith(">")&&e.operator.startsWith(">"))return!0;if(this.operator.startsWith("<")&&e.operator.startsWith("<"))return!0;if(this.semver.version===e.semver.version&&this.operator.includes("=")&&e.operator.includes("="))return!0;if(QMr(this.semver,"<",e.semver,t)&&this.operator.startsWith(">")&&e.operator.startsWith("<"))return!0;if(QMr(this.semver,">",e.semver,t)&&this.operator.startsWith("<")&&e.operator.startsWith(">"))return!0;return!1}}eti.exports=a_n;var Yei=Xgn(),{safeRe:Jei,t:Xei}=OQe(),QMr=JMr(),ZMr=QIt(),Qei=TF(),Zei=x7()});
+export {t0t};

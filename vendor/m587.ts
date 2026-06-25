@@ -1,6 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function bVc(e){return e.match(SVc)||[]}
-var SVc,DYo;
-var PYo=b(()=>{SVc=/[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;DYo=bVc});
-export {bVc,SVc,DYo,PYo};
+import {b,x} from "../runtime.ts";
+function DK(e,t=globalThis.Deno?globalThis.Deno.args:urn.default.argv){let n=e.startsWith("-")?"":e.length===1?"-":"--",r=t.indexOf(n+e),o=t.indexOf("--");return r!==-1&&(o===-1||r<o)}
+function _tu(){if("FORCE_COLOR"in vR){if(vR.FORCE_COLOR==="true")return 1;if(vR.FORCE_COLOR==="false")return 0;return vR.FORCE_COLOR.length===0?1:Math.min(Number.parseInt(vR.FORCE_COLOR,10),3)}}
+function ytu(e){if(e===0)return!1;return{level:e,hasBasic:!0,has256:e>=2,has16m:e>=3}}
+function Ttu(e,{streamIsTTY:t,sniffFlags:n=!0}={}){let r=_tu();if(r!==void 0)crn=r;let o=n?crn:r;if(o===0)return 0;if(n){if(DK("color=16m")||DK("color=full")||DK("color=truecolor"))return 3;if(DK("color=256"))return 2}if("TF_BUILD"in vR&&"AGENT_NAME"in vR)return 1;if(e&&!t&&o===void 0)return 0;let s=o||0;if(vR.TERM==="dumb")return s;if(urn.default.platform==="win32"){let i=pts.default.release().split(".");if(Number(i[0])>=10&&Number(i[2])>=10586)return Number(i[2])>=14931?3:2;return 1}if("CI"in vR){if(["GITHUB_ACTIONS","GITEA_ACTIONS","CIRCLECI"].some((i)=>(i in vR)))return 3;if(["TRAVIS","APPVEYOR","GITLAB_CI","BUILDKITE","DRONE"].some((i)=>(i in vR))||vR.CI_NAME==="codeship")return 1;return s}if("TEAMCITY_VERSION"in vR)return/^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(vR.TEAMCITY_VERSION)?1:0;if(vR.COLORTERM==="truecolor")return 3;if(vR.TERM==="xterm-kitty")return 3;if(vR.TERM==="xterm-ghostty")return 3;if(vR.TERM==="wezterm")return 3;if("TERM_PROGRAM"in vR){let i=Number.parseInt((vR.TERM_PROGRAM_VERSION||"").split(".")[0],10);switch(vR.TERM_PROGRAM){case"iTerm.app":return i>=3?3:2;case"Apple_Terminal":return 2}}if(/-256(color)?$/i.test(vR.TERM))return 2;if(/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(vR.TERM))return 1;if("COLORTERM"in vR)return 1;return s}
+function dts(e,t={}){let n=Ttu(e,{streamIsTTY:e&&e.isTTY,...t});return ytu(n)}
+var urn,pts,Y_r,vR,crn,Stu,mts;
+var fts=b(()=>{urn=x(require("process")),pts=x(require("os")),Y_r=x(require("tty"));({env:vR}=urn.default);if(DK("no-color")||DK("no-colors")||DK("color=false")||DK("color=never"))crn=0;else if(DK("color")||DK("colors")||DK("color=true")||DK("color=always"))crn=1;Stu={stdout:dts({isTTY:Y_r.default.isatty(1)}),stderr:dts({isTTY:Y_r.default.isatty(2)})},mts=Stu});
+export {DK,_tu,ytu,Ttu,dts,urn,pts,Y_r,vR,crn,Stu,mts,fts};

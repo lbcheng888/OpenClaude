@@ -1,7 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {v1} from "./m1959.ts";
-import {lei} from "./m1987.ts";
-import {cei} from "./m1988.ts";
-var COr=X((AAn)=>{Object.defineProperty(AAn,"__esModule",{value:!0});AAn.GoogleToken=void 0;var O8u=v1(),uei=lei(),L8u=cei();class dei{tokenOptions;tokenHandler;constructor(e){if(this.tokenOptions=e||{},this.tokenOptions.transporter=this.tokenOptions.transporter||{request:(t)=>(0,O8u.request)(t)},!this.tokenOptions.iss)this.tokenOptions.iss=this.tokenOptions.email;if(typeof this.tokenOptions.scope==="object")this.tokenOptions.scope=this.tokenOptions.scope.join(" ");this.tokenHandler=new uei.TokenHandler(this.tokenOptions)}get expiresAt(){return this.tokenHandler.tokenExpiresAt}get accessToken(){return this.tokenHandler.token?.access_token}get idToken(){return this.tokenHandler.token?.id_token}get tokenType(){return this.tokenHandler.token?.token_type}get refreshToken(){return this.tokenHandler.token?.refresh_token}hasExpired(){return this.tokenHandler.hasExpired()}isTokenExpiring(){return this.tokenHandler.isTokenExpiring()}getToken(e,t={forceRefresh:!1}){let n;if(typeof e==="function")n=e;else if(typeof e==="object")t=e;let r=this.tokenHandler.getToken(t.forceRefresh??!1);if(n)r.then((o)=>n(null,o),n);return r}revokeToken(e){if(!this.accessToken)return Promise.reject(Error("No token to revoke."));let t=(0,L8u.revokeToken)(this.accessToken,this.tokenOptions.transporter);if(e)t.then(()=>e(),e);this.tokenHandler=new uei.TokenHandler(this.tokenOptions)}get googleTokenOptions(){return this.tokenOptions}}AAn.GoogleToken=dei});
-export {COr};
+import {Q} from "../runtime.ts";
+import {Ksi} from "./m1988.ts";
+var zsi=Q((JNr)=>{Object.defineProperty(JNr,"__esModule",{value:!0});JNr.getToken=GXu;var UXu=Ksi(),$Xu="https://oauth2.googleapis.com/token",qXu="urn:ietf:params:oauth:grant-type:jwt-bearer",WXu=(e)=>({method:"POST",url:$Xu,data:new URLSearchParams({grant_type:qXu,assertion:(0,UXu.getJwsSign)(e)}),responseType:"json",retryConfig:{httpMethodsToRetry:["POST"]}});async function GXu(e){if(!e.transporter)throw Error("No transporter set.");try{let t=WXu(e);return(await e.transporter.request(t)).data}catch(t){let n=t,r=n.response?.data;if(r?.error)n.message=`${r.error}: ${r.error_description}`;throw n}}});
+export {zsi};

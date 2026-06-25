@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ag} from "./m2133.ts";
-class g_n{export(e,t){this._sendLogRecords(e,t)}shutdown(){return Promise.resolve()}_exportInfo(e){return{resource:{attributes:e.resource.attributes},instrumentationScope:e.instrumentationScope,timestamp:h_n.hrTimeToMicroseconds(e.hrTime),traceId:e.spanContext?.traceId,spanId:e.spanContext?.spanId,traceFlags:e.spanContext?.traceFlags,severityText:e.severityText,severityNumber:e.severityNumber,body:e.body,attributes:e.attributes}}_sendLogRecords(e,t){for(let n of e)console.dir(this._exportInfo(n),{depth:3});t?.({code:h_n.ExportResultCode.SUCCESS})}}
-var h_n;
-var Imi=b(()=>{h_n=M(ag(),1)});
-export {g_n,h_n,Imi};
+import {T2r,hTi} from "./m2174.ts";
+import {b,x} from "../runtime.ts";
+import {xi} from "./m2096.ts";
+class S2r{instrumentationScope;_sharedState;constructor(e,t){this.instrumentationScope=e,this._sharedState=t}emit(e){let t=e.context||gTi.context.active(),n=new T2r(this._sharedState,this.instrumentationScope,{context:t,...e});this._sharedState.activeProcessor.onEmit(n,t),n._makeReadonly()}}
+var gTi;
+var _Ti=b(()=>{hTi();gTi=x(xi(),1)});
+export {S2r,gTi,_Ti};

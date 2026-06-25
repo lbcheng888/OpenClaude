@@ -1,13 +1,10 @@
 // @ts-nocheck
-import {XR,configProtoStore} from "./m2458.ts";
-import {JR,U4} from "./m2426.ts";
-import {Text} from "./m2423.ts";
-import {Link,Tie} from "./m2427.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function SIi(e){let t=yIi.c(15),{imageId:n,backgroundColor:r,isSelected:o}=e,s=o===void 0?!1:o,i=XR((c)=>c.storedImagePaths.get(n)??null)??null,a=`[Image #${n}]`;if(i&&JR()){let c;if(t[0]!==i)c=TIi.pathToFileURL(i),t[0]=i,t[1]=c;else c=t[1];let u=c.href,d,p;if(t[2]!==r||t[3]!==a||t[4]!==s)d=_Ae.createElement(Text,{backgroundColor:r,inverse:s},a),p=_Ae.createElement(Text,{backgroundColor:r,inverse:s,bold:s},a),t[2]=r,t[3]=a,t[4]=s,t[5]=d,t[6]=p;else d=t[5],p=t[6];let m;if(t[7]!==u||t[8]!==d||t[9]!==p)m=_Ae.createElement(Link,{url:u,fallback:d},p),t[7]=u,t[8]=d,t[9]=p,t[10]=m;else m=t[10];return m}let l;if(t[11]!==r||t[12]!==a||t[13]!==s)l=_Ae.createElement(Text,{backgroundColor:r,inverse:s},a),t[11]=r,t[12]=a,t[13]=s,t[14]=l;else l=t[14];return l}
-var yIi,_Ae,TIi;
-var bIi=b(()=>{Tie();U4();ze();configProtoStore();yIi=M(rt(),1),_Ae=M(Te(),1),TIi=require("url")});
-export {SIi,yIi,_Ae,TIi,bIi};
+import {QS,Q2} from "./m2552.ts";
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function Or(e,t,n={}){let{context:r="Global",isActive:o=!0}=n,s=QS(),i=hwe.useRef(t);i.current=t,hwe.useEffect(()=>{if(!s||!o)return;return s.registerHandler({action:e,context:r,handler:()=>i.current(),singleKey:!0})},[e,r,s,o])}
+function Oo(e,t={}){let{context:n="Global",isActive:r=!0}=t,o=QS(),s=hwe.useRef(e);s.current=e;let i=Object.keys(e).sort().join("|");hwe.useEffect(()=>{if(!o||!r)return;let a=[];for(let l of Object.keys(s.current))a.push(o.registerHandler({action:l,context:n,handler:()=>s.current[l]?.(),singleKey:!0}));return()=>{for(let l of a)l()}},[n,i,o,r])}
+function Cnt(e,{isActive:t=!0}={}){let n=QS(),r=hwe.useRef(e);r.current=e,hwe.useEffect(()=>{if(!t||!n)return;return n.registerPreDispatch((o,s,i)=>r.current(o,s,i))},[t,n])}
+var hwe;
+var ss=b(()=>{Q2();hwe=x(et(),1)});
+export {Or,Oo,Cnt,hwe,ss};

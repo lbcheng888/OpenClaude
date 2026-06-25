@@ -1,6 +1,8 @@
 // @ts-nocheck
+import {no,IQ} from "./m1748.ts";
+import {Lh,ofe} from "./m1757.ts";
+import {Co,Sp,RFe,dC} from "./m1722.ts";
 import {b} from "../runtime.ts";
-import {eK,AuthError} from "./m1719.ts";
-var ServerError;
-var RJe=b(()=>{eK();/*! @azure/msal-common v15.13.1 2025-10-29 */ServerError=class ServerError extends AuthError{constructor(e,t,n,r,o){super(e,t,n);this.name="ServerError",this.errorNo=r,this.status=o,Object.setPrototypeOf(this,ServerError.prototype)}}});
-export {ServerError,RJe};
+class HIt{constructor(e,t,n,r){this.networkInterface=e,this.logger=t,this.performanceClient=n,this.correlationId=r}async detectRegion(e,t){this.performanceClient?.addQueueMeasurement(no.RegionDiscoveryDetectRegion,this.correlationId);let n=e;if(!n){let r=HIt.IMDS_OPTIONS;try{let o=await Lh(this.getRegionFromIMDS.bind(this),no.RegionDiscoveryGetRegionFromIMDS,this.logger,this.performanceClient,this.correlationId)(Co.IMDS_VERSION,r);if(o.status===Sp.SUCCESS)n=o.body,t.region_source=RFe.IMDS;if(o.status===Sp.BAD_REQUEST){let s=await Lh(this.getCurrentVersion.bind(this),no.RegionDiscoveryGetCurrentVersion,this.logger,this.performanceClient,this.correlationId)(r);if(!s)return t.region_source=RFe.FAILED_AUTO_DETECTION,null;let i=await Lh(this.getRegionFromIMDS.bind(this),no.RegionDiscoveryGetRegionFromIMDS,this.logger,this.performanceClient,this.correlationId)(s,r);if(i.status===Sp.SUCCESS)n=i.body,t.region_source=RFe.IMDS}}catch(o){return t.region_source=RFe.FAILED_AUTO_DETECTION,null}}else t.region_source=RFe.ENVIRONMENT_VARIABLE;if(!n)t.region_source=RFe.FAILED_AUTO_DETECTION;return n||null}async getRegionFromIMDS(e,t){return this.performanceClient?.addQueueMeasurement(no.RegionDiscoveryGetRegionFromIMDS,this.correlationId),this.networkInterface.sendGetRequestAsync(`${Co.IMDS_ENDPOINT}?api-version=${e}&format=text`,t,Co.IMDS_TIMEOUT)}async getCurrentVersion(e){this.performanceClient?.addQueueMeasurement(no.RegionDiscoveryGetCurrentVersion,this.correlationId);try{let t=await this.networkInterface.sendGetRequestAsync(`${Co.IMDS_ENDPOINT}?format=json`,e);if(t.status===Sp.BAD_REQUEST&&t.body&&t.body["newest-versions"]&&t.body["newest-versions"].length>0)return t.body["newest-versions"][0];return null}catch(t){return null}}}
+var zXs=b(()=>{dC();IQ();ofe();/*! @azure/msal-common v15.13.1 2025-10-29 */HIt.IMDS_OPTIONS={headers:{Metadata:"true"}}});
+export {HIt,zXs};

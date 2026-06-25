@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {fromContainerMetadata} from "./m755.ts";
 import {b} from "../runtime.ts";
-import {p1e} from "./m765.ts";
-var RPu=(e)=>(e?.logger?.debug("@smithy/credential-provider-imds","fromContainerMetadata"),fromContainerMetadata(e));
-var B2s=b(()=>{p1e()});
-export {RPu,B2s};
+class M0r{dbName;constructor(e="aws:cognito-identity-ids"){this.dbName=e}getItem(e){return this.withObjectStore("readonly",(t)=>{let n=t.get(e);return new Promise((r)=>{n.onerror=()=>r(null),n.onsuccess=()=>r(n.result?n.result.value:null)})}).catch(()=>null)}removeItem(e){return this.withObjectStore("readwrite",(t)=>{let n=t.delete(e);return new Promise((r,o)=>{n.onerror=()=>o(n.error),n.onsuccess=()=>r()})})}setItem(e,t){return this.withObjectStore("readwrite",(n)=>{let r=n.put({id:e,value:t});return new Promise((o,s)=>{r.onerror=()=>s(r.error),r.onsuccess=()=>o()})})}getDb(){let e=self.indexedDB.open(this.dbName,1);return new Promise((t,n)=>{e.onsuccess=()=>{t(e.result)},e.onerror=()=>{n(e.error)},e.onblocked=()=>{n(Error("Unable to access DB"))},e.onupgradeneeded=()=>{let r=e.result;r.onerror=()=>{n(Error("Failed to create object store"))},r.createObjectStore("IdentityIds",{keyPath:"id"})}})}withObjectStore(e,t){return this.getDb().then((n)=>{let r=n.transaction("IdentityIds",e);return r.oncomplete=()=>n.close(),new Promise((o,s)=>{r.onerror=()=>s(r.error),o(t(r.objectStore("IdentityIds")))}).catch((o)=>{throw n.close(),o})})}}
+class N0r{store;constructor(e={}){this.store=e}getItem(e){if(e in this.store)return this.store[e];return null}removeItem(e){delete this.store[e]}setItem(e,t){this.store[e]=t}}
+function v6s(){if(typeof self==="object"&&self.indexedDB)return new M0r;if(typeof window==="object"&&window.localStorage)return window.localStorage;return U$u}
+var U$u;
+var w6s=b(()=>{U$u=new N0r});
+export {M0r,N0r,v6s,U$u,w6s};

@@ -1,5 +1,9 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {Mle} from "./m3660.ts";
-var RFt=X((cat)=>{Object.defineProperty(cat,"__esModule",{value:!0});cat.AttributeHashMap=cat.HashMap=void 0;var ycp=Mle();class kno{_valueMap=new Map;_keyMap=new Map;_hash;constructor(e){this._hash=e}get(e,t){return t??=this._hash(e),this._valueMap.get(t)}getOrDefault(e,t){let n=this._hash(e);if(this._valueMap.has(n))return this._valueMap.get(n);let r=t();if(!this._keyMap.has(n))this._keyMap.set(n,e);return this._valueMap.set(n,r),r}set(e,t,n){if(n??=this._hash(e),!this._keyMap.has(n))this._keyMap.set(n,e);this._valueMap.set(n,t)}has(e,t){return t??=this._hash(e),this._valueMap.has(t)}*keys(){let e=this._keyMap.entries(),t=e.next();while(t.done!==!0)yield[t.value[1],t.value[0]],t=e.next()}*entries(){let e=this._valueMap.entries(),t=e.next();while(t.done!==!0)yield[this._keyMap.get(t.value[0]),t.value[1],t.value[0]],t=e.next()}get size(){return this._valueMap.size}}cat.HashMap=kno;class DCa extends kno{constructor(){super(ycp.hashAttributes)}}cat.AttributeHashMap=DCa});
-export {RFt};
+import {Q,x} from "../runtime.ts";
+import {c0a} from "./m3705.ts";
+import {u0a} from "./m3706.ts";
+import {p0a} from "./m3707.ts";
+import {f0a} from "./m3708.ts";
+import {h0a} from "./m3709.ts";
+var g0a=Q((yBn)=>{Object.defineProperty(yBn,"__esModule",{value:!0});yBn.getMachineId=void 0;var PTp=require("process"),V4e;async function OTp(){if(!V4e)switch(PTp.platform){case"darwin":V4e=(await Promise.resolve().then(() => x(c0a()))).getMachineId;break;case"linux":V4e=(await Promise.resolve().then(() => x(u0a()))).getMachineId;break;case"freebsd":V4e=(await Promise.resolve().then(() => x(p0a()))).getMachineId;break;case"win32":V4e=(await Promise.resolve().then(() => x(f0a()))).getMachineId;break;default:V4e=(await Promise.resolve().then(() => x(h0a()))).getMachineId;break}return V4e()}yBn.getMachineId=OTp});
+export {g0a};

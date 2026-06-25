@@ -1,0 +1,8 @@
+// @ts-nocheck
+import {b,x} from "../runtime.ts";
+import {et} from "./m2261.ts";
+function G$m(e,t){switch(t.type){case"next-question":return{...e,currentQuestionIndex:e.currentQuestionIndex+1,isInTextInput:!1};case"prev-question":return{...e,currentQuestionIndex:Math.max(0,e.currentQuestionIndex-1),isInTextInput:!1};case"update-question-state":{let n=e.questionStates[t.questionText],r={selectedValue:t.updates.selectedValue??n?.selectedValue??(t.isMultiSelect?[]:void 0),textInputValue:t.updates.textInputValue??n?.textInputValue??""};return{...e,questionStates:{...e.questionStates,[t.questionText]:r}}}case"set-answer":{let n={...e,answers:{...e.answers,[t.questionText]:t.answer}};if(t.shouldAdvance)return{...n,currentQuestionIndex:n.currentQuestionIndex+1,isInTextInput:!1};return n}case"set-text-input-mode":return{...e,isInTextInput:t.isInInput}}}
+function fZl(){let[e,t]=YOe.useReducer(G$m,V$m),n=YOe.useCallback(()=>{t({type:"next-question"})},[]),r=YOe.useCallback(()=>{t({type:"prev-question"})},[]),o=YOe.useCallback((a,l,c)=>{t({type:"update-question-state",questionText:a,updates:l,isMultiSelect:c})},[]),s=YOe.useCallback((a,l,c=!0)=>{t({type:"set-answer",questionText:a,answer:l,shouldAdvance:c})},[]),i=YOe.useCallback((a)=>{t({type:"set-text-input-mode",isInInput:a})},[]);return{currentQuestionIndex:e.currentQuestionIndex,answers:e.answers,questionStates:e.questionStates,isInTextInput:e.isInTextInput,nextQuestion:n,prevQuestion:r,updateQuestionState:o,setAnswer:s,setTextInputMode:i}}
+var YOe,V$m;
+var hZl=b(()=>{YOe=x(et(),1);V$m={currentQuestionIndex:0,answers:{},questionStates:{},isInTextInput:!1}});
+export {G$m,fZl,YOe,V$m,hZl};

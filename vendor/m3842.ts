@@ -1,17 +1,14 @@
 // @ts-nocheck
-import {mHa,fHa} from "./m3818.ts";
-import {fIa,AIa} from "./m3839.ts";
-import {hHa,gHa} from "./m3819.ts";
-import {uHa,dHa} from "./m3816.ts";
-import {gIa,_Ia} from "./m3840.ts";
-import {yIa,TIa} from "../src/core/3842_goBack.ts";
-import {iIa,aIa} from "./m3836.ts";
-import {yHa,THa} from "../src/config/3821_CLAUDE_CODE_USE_BEDROCK.ts";
-import {n4e} from "./m3811.ts";
-import {b,M} from "../runtime.ts";
-import {$y} from "./m3814.ts";
-import {Te} from "./m2253.ts";
-function PBn({onComplete:e,onCancel:t}){let n=s4e.useRef(e);n.current=e;let[r]=s4e.useState(()=>[mHa,fIa,hHa,uHa,gIa,yIa,iIa,()=>s4e.default.createElement(yHa,{onComplete:(o)=>n.current(o)})]);return s4e.default.createElement(n4e,{steps:r,initialData:{},onComplete:()=>{},onCancel:t,title:"Set up Amazon Bedrock",showStepCounter:!1})}
-var s4e;
-var foo=b(()=>{$y();dHa();fHa();gHa();THa();aIa();AIa();_Ia();TIa();s4e=M(Te(),1)});
-export {PBn,s4e,foo};
+import {getAgentColorMap,lt} from "../src/session/0132_sent.ts";
+import {b} from "../runtime.ts";
+function mS(e){return typeof e==="object"&&e!==null&&"type"in e&&e.type==="in_process_teammate"}
+function b0e(e,t){if(e===void 0||e.length===0)return[t];if(e.length>=T2n){let n=e.slice(-(T2n-1));return n.push(t),n}return[...e,t]}
+function XMa(e,t){let n=e===void 0||e.every((r)=>r.uuid!==t.uuid)?e:e.filter((r)=>r.uuid!==t.uuid);return b0e(n,t)}
+var T2n=50;
+function QMa(e){return e!==void 0&&__.includes(e)}
+function eut(e){return e.userOverride??e.agentDefinitionColor}
+function j_e(e){if(e==="general-purpose")return;let n=getAgentColorMap().get(e);if(n&&__.includes(n))return tL[n];return}
+function E0e(e,t){let n=getAgentColorMap();if(!t){n.delete(e);return}if(__.includes(t))n.set(e,t)}
+var __,tL;
+var ix=b(()=>{lt();__=["red","blue","green","yellow","purple","orange","pink","cyan"],tL={red:"red_FOR_SUBAGENTS_ONLY",blue:"blue_FOR_SUBAGENTS_ONLY",green:"green_FOR_SUBAGENTS_ONLY",yellow:"yellow_FOR_SUBAGENTS_ONLY",purple:"purple_FOR_SUBAGENTS_ONLY",orange:"orange_FOR_SUBAGENTS_ONLY",pink:"pink_FOR_SUBAGENTS_ONLY",cyan:"cyan_FOR_SUBAGENTS_ONLY"}});
+export {mS,b0e,XMa,T2n,QMa,eut,j_e,E0e,__,tL,ix};

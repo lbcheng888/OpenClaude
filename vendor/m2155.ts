@@ -1,5 +1,7 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {ami} from "./m2154.ts";
-var lmi=X((jse)=>{Object.defineProperty(jse,"__esModule",{value:!0});jse.serviceInstanceIdDetector=jse.processDetector=jse.osDetector=jse.hostDetector=void 0;var l_n=ami();Object.defineProperty(jse,"hostDetector",{enumerable:!0,get:function(){return l_n.hostDetector}});Object.defineProperty(jse,"osDetector",{enumerable:!0,get:function(){return l_n.osDetector}});Object.defineProperty(jse,"processDetector",{enumerable:!0,get:function(){return l_n.processDetector}});Object.defineProperty(jse,"serviceInstanceIdDetector",{enumerable:!0,get:function(){return l_n.serviceInstanceIdDetector}})});
-export {lmi};
+import {Q} from "../runtime.ts";
+import {Nxt} from "./m2146.ts";
+import {Gyi} from "./m2153.ts";
+import {d2r} from "./m2154.ts";
+var zyi=Q((NSn)=>{Object.defineProperty(NSn,"__esModule",{value:!0});NSn.hostDetector=void 0;var p2r=Nxt(),Vyi=require("os"),Qsd=Gyi(),Zsd=d2r();class Kyi{detect(e){return{attributes:{[p2r.ATTR_HOST_NAME]:(0,Vyi.hostname)(),[p2r.ATTR_HOST_ARCH]:(0,Zsd.normalizeArch)((0,Vyi.arch)()),[p2r.ATTR_HOST_ID]:(0,Qsd.getMachineId)()}}}}NSn.hostDetector=new Kyi});
+export {zyi};

@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {qan,ListInferenceProfilesCommand} from "./m1133.ts";
-import {Sd} from "./m850.ts";
-var $ks,paginateListInferenceProfiles;
-var qks=b(()=>{s0();qan();$ks=M(Sd(),1),paginateListInferenceProfiles=$ks.createPaginator(BedrockClient,ListInferenceProfilesCommand,"nextToken","nextToken","maxResults")});
-export {$ks,paginateListInferenceProfiles,qks};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {yun,ListCustomModelDeploymentsCommand} from "./m1131.ts";
+import {Zu} from "./m855.ts";
+var ROs,paginateListCustomModelDeployments;
+var vOs=b(()=>{C0();yun();ROs=x(Zu(),1),paginateListCustomModelDeployments=ROs.createPaginator(BedrockClient,ListCustomModelDeploymentsCommand,"nextToken","nextToken","maxResults")});
+export {ROs,paginateListCustomModelDeployments,vOs};

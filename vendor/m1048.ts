@@ -1,5 +1,7 @@
 // @ts-nocheck
+import {xHs,DHs,PHs} from "./m1047.ts";
 import {b} from "../runtime.ts";
-var ZEs=(e)=>Object.assign(e,{useDualstackEndpoint:e.useDualstackEndpoint??!1,useFipsEndpoint:e.useFipsEndpoint??!1,defaultSigningName:"bedrock"}),Rr;
-var wi=b(()=>{Rr={UseFIPS:{type:"builtInParams",name:"useFipsEndpoint"},Endpoint:{type:"builtInParams",name:"endpoint"},Region:{type:"builtInParams",name:"region"},UseDualStack:{type:"builtInParams",name:"useDualstackEndpoint"}}});
-export {ZEs,Rr,wi};
+var OHs=(e)=>({setRetryStrategy(t){e.retryStrategy=t},retryStrategy(){return e.retryStrategy}}),LHs=(e)=>{let t={};return t.retryStrategy=e.retryStrategy(),t};
+var Nln=(e)=>Object.assign(xHs(e),OHs(e)),jvu,vvr=(e)=>Object.assign(DHs(e),LHs(e));
+var MHs=b(()=>{PHs();jvu=Nln});
+export {OHs,LHs,Nln,jvu,vvr,MHs};

@@ -1,21 +1,7 @@
 // @ts-nocheck
-import {cwr,lwr} from "./m1371.ts";
-import {tUs,nUs} from "./m1386.ts";
-import {defaultProvider} from "./m1018.ts";
-import {vFs,CFs} from "./m1379.ts";
-import {b,M} from "../runtime.ts";
-import {H1e} from "./m1019.ts";
-import {Ry} from "./m1376.ts";
-import {nC} from "./m880.ts";
-import {ime} from "./m899.ts";
-import {nk} from "./m607.ts";
-import {ame} from "./m902.ts";
-import {i1} from "./m894.ts";
-import {yB} from "./m601.ts";
-import {e4} from "./m750.ts";
-import {lme} from "./m903.ts";
-import {Ooe} from "./m889.ts";
-import {pme} from "./m913.ts";
-var Qcn,Zcn,GEe,rUs,eun,WEe,tun,oUs,sUs,iUs,aUs=(e)=>{cwr(process.version);let t=iUs.resolveDefaultsModeConfig(e),n=()=>t().then(lwr),r=tUs(e);Qcn.emitWarningIfUnsupportedVersion(process.version);let o={profile:e?.profile,logger:r.logger};return{...r,...e,runtime:"node",defaultsMode:t,authSchemePreference:e?.authSchemePreference??WEe.loadConfig(Qcn.NODE_AUTH_SCHEME_PREFERENCE_OPTIONS,o),bodyLengthChecker:e?.bodyLengthChecker??oUs.calculateBodyLength,credentialDefaultProvider:e?.credentialDefaultProvider??defaultProvider,defaultUserAgentProvider:e?.defaultUserAgentProvider??Zcn.createDefaultUserAgentProvider({serviceId:r.serviceId,clientVersion:vFs.version}),maxAttempts:e?.maxAttempts??WEe.loadConfig(eun.NODE_MAX_ATTEMPT_CONFIG_OPTIONS,e),region:e?.region??WEe.loadConfig(GEe.NODE_REGION_CONFIG_OPTIONS,{...GEe.NODE_REGION_CONFIG_FILE_OPTIONS,...o}),requestHandler:tun.NodeHttpHandler.create(e?.requestHandler??n),retryMode:e?.retryMode??WEe.loadConfig({...eun.NODE_RETRY_MODE_CONFIG_OPTIONS,default:async()=>(await n()).retryMode||sUs.DEFAULT_RETRY_MODE},e),sha256:e?.sha256??rUs.Hash.bind(null,"sha256"),streamCollector:e?.streamCollector??tun.streamCollector,useDualstackEndpoint:e?.useDualstackEndpoint??WEe.loadConfig(GEe.NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS,o),useFipsEndpoint:e?.useFipsEndpoint??WEe.loadConfig(GEe.NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS,o),userAgentAppId:e?.userAgentAppId??WEe.loadConfig(Zcn.NODE_APP_ID_CONFIG_OPTIONS,o)}};
-var lUs=b(()=>{CFs();H1e();nUs();Ry();Ry();Qcn=M(nC(),1),Zcn=M(ime(),1),GEe=M(nk(),1),rUs=M(ame(),1),eun=M(i1(),1),WEe=M(yB(),1),tun=M(e4(),1),oUs=M(lme(),1),sUs=M(Ooe(),1),iUs=M(pme(),1)});
-export {Qcn,Zcn,GEe,rUs,eun,WEe,tun,oUs,sUs,iUs,aUs,lUs};
+import {E4s,qIr} from "./m1385.ts";
+import {b,x} from "../runtime.ts";
+import {BS} from "./m793.ts";
+var v4s,w4s=(e)=>{let t;if(typeof e==="string")t=v4s.fromUtf8(e);else t=e;if(typeof t!=="object"||typeof t.byteOffset!=="number"||typeof t.byteLength!=="number")throw Error("@smithy/util-base64: toBase64 encoder function only accepts string | Uint8Array.");return E4s(t.buffer,t.byteOffset,t.byteLength).toString("base64")};
+var k4s=b(()=>{qIr();v4s=x(BS(),1)});
+export {v4s,w4s,k4s};

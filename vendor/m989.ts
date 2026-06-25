@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var vys=X((oze)=>{Object.defineProperty(oze,"__esModule",{value:!0});oze.resolveHttpAuthRuntimeConfig=oze.getHttpAuthExtensionConfiguration=void 0;var Dmu=(e)=>{let{httpAuthSchemes:t,httpAuthSchemeProvider:n,credentials:r}=e;return{setHttpAuthScheme(o){let s=t.findIndex((i)=>i.schemeId===o.schemeId);if(s===-1)t.push(o);else t.splice(s,1,o)},httpAuthSchemes(){return t},setHttpAuthSchemeProvider(o){n=o},httpAuthSchemeProvider(){return n},setCredentials(o){r=o},credentials(){return r}}};oze.getHttpAuthExtensionConfiguration=Dmu;var Pmu=(e)=>({httpAuthSchemes:e.httpAuthSchemes(),httpAuthSchemeProvider:e.httpAuthSchemeProvider(),credentials:e.credentials()});oze.resolveHttpAuthRuntimeConfig=Pmu});
-export {vys};
+import {Q} from "../runtime.ts";
+var RRr=Q((eJe)=>{Object.defineProperty(eJe,"__esModule",{value:!0});eJe.commonParams=eJe.resolveClientEndpointParameters=void 0;var CCu=(e)=>Object.assign(e,{useDualstackEndpoint:e.useDualstackEndpoint??!1,useFipsEndpoint:e.useFipsEndpoint??!1,useGlobalEndpoint:e.useGlobalEndpoint??!1,defaultSigningName:"sts"});eJe.resolveClientEndpointParameters=CCu;eJe.commonParams={UseGlobalEndpoint:{type:"builtInParams",name:"useGlobalEndpoint"},UseFIPS:{type:"builtInParams",name:"useFipsEndpoint"},Endpoint:{type:"builtInParams",name:"endpoint"},Region:{type:"builtInParams",name:"region"},UseDualStack:{type:"builtInParams",name:"useDualstackEndpoint"}}});
+export {RRr};

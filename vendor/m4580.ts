@@ -1,7 +1,13 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function s5n(e,t){let n=new Scl.StringDecoder("utf8"),r="",o=!1,s=(a)=>{if(o)return;r+=typeof a==="string"?a:n.write(a);let l;while((l=r.indexOf(`
-`))>=0){let c=r.slice(0,l);if(r=r.slice(l+1),c)t(c)}if(r.length>h7p){if(o=!0,r="","destroy"in e)e.destroy()}},i=()=>{if(o)return;if(r+=n.end(),r)t(r),r=""};return e.on("data",s),e.on("end",i),e.on("close",i),()=>{e.off("data",s),e.off("end",i),e.off("close",i)}}
-var Scl,h7p=1048576;
-var MTo=b(()=>{Scl=require("string_decoder")});
-export {s5n,Scl,h7p,MTo};
+import {ft,b,x} from "../runtime.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {uPe,z8t} from "./m4576.ts";
+import {je} from "./m2462.ts";
+import {oe} from "./m2275.ts";
+var Whl={};
+ft(Whl,{redirectMessageFor:()=>redirectMessageFor,call:()=>OZp});
+function redirectMessageFor(e){let t=e&&$hl[e]?e:"vim";return`/${t} moved \u2192 ${$hl[t]} in /config`}
+var j8t,$hl,OZp=async(e,t,n,r)=>{let o=redirectMessageFor(r);return j8t.jsxs(Box,{flexDirection:"column",children:[j8t.jsx(Text,{color:"suggestion",children:o}),j8t.jsx(uPe,{onClose:()=>e(o),context:t,defaultTab:"Config"})]})};
+var Ghl=b(()=>{z8t();je();j8t=x(oe(),1),$hl={vim:"Editor mode","output-style":"Output style"}});
+export {Whl,redirectMessageFor,j8t,$hl,OZp,Ghl};

@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var SXi=X((tMt)=>{Object.defineProperty(tMt,"__esModule",{value:!0});tMt.NativeModuleType=void 0;var JUd;(function(e){e[e.NONE=0]="NONE",e[e.NODE_GYP=1]="NODE_GYP",e[e.PREBUILD=2]="PREBUILD"})(JUd=tMt.NativeModuleType||(tMt.NativeModuleType={}))});
-export {SXi};
+import {Q} from "../runtime.ts";
+import {mJr} from "./m3095.ts";
+var Gra=Q((LZg,Wra)=>{var oxn=mJr();Wra.exports={readJson:oxn.readFile,readJsonSync:oxn.readFileSync,writeJson:oxn.writeFile,writeJsonSync:oxn.writeFileSync}});
+export {Gra};

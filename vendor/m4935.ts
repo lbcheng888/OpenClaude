@@ -1,7 +1,10 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Sz,ix} from "../src/config/2704_Sz.ts";
-import {mwl,pwl} from "./m4934.ts";
-var fwl;
-var Awl=b(()=>{Sz();fwl={type:"local-jsx",name:"fork",description:"Spawn a background agent that inherits the full conversation",argumentHint:"<directive>",isEnabled:()=>!ix(),load:()=>Promise.resolve().then(() => (mwl(),pwl))}});
-export {fwl,Awl};
+import {ft,b,x} from "../runtime.ts";
+import {lDl,cDl} from "./m4934.ts";
+import {mDl,po} from "../src/tools/5224_userPromptCount.ts";
+import {oe} from "./m2275.ts";
+var uDl={};
+ft(uDl,{call:()=>Ihm});
+var dDl,Ihm=async(e,t)=>dDl.jsx(lDl,{onExit:e,onRetryDenials:(n)=>{t.applyMessageOp({type:"append",messages:[mDl(n)]})}});
+var pDl=b(()=>{cDl();po();dDl=x(oe(),1)});
+export {uDl,dDl,Ihm,pDl};

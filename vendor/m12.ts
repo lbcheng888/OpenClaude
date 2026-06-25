@@ -1,9 +1,11 @@
 // @ts-nocheck
-import {CBo,vBo} from "./m10.ts";
-import {wBo,RBo} from "./m11.ts";
 import {b} from "../runtime.ts";
-import {NOe,dO} from "./m9.ts";
-function qdc(e){if(e==null)return e===void 0?$dc:Udc;return xBo&&xBo in Object(e)?CBo(e):wBo(e)}
-var Udc="[object Null]",$dc="[object Undefined]",xBo,jj;
-var BOe=b(()=>{NOe();vBo();RBo();xBo=dO?dO.toStringTag:void 0;jj=qdc});
-export {qdc,Udc,$dc,xBo,jj,BOe};
+import {d3o,u3o} from "./m5.ts";
+import {m3o,p3o} from "./m8.ts";
+import {h3o,f3o} from "./m9.ts";
+import {_3o,g3o} from "./m10.ts";
+import {T3o,y3o} from "./m11.ts";
+function cKe(e){var t=-1,n=e==null?0:e.length;this.clear();while(++t<n){var r=e[t];this.set(r[0],r[1])}}
+var bbe;
+var OTt=b(()=>{d3o();m3o();h3o();_3o();T3o();cKe.prototype.clear=u3o;cKe.prototype.delete=p3o;cKe.prototype.get=f3o;cKe.prototype.has=g3o;cKe.prototype.set=y3o;bbe=cKe});
+export {cKe,bbe,OTt};

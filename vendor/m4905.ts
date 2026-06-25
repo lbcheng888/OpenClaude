@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {XCl,QCl} from "./m4904.ts";
-import {tvl,lo} from "../src/tools/5190_userPromptCount.ts";
-import {Te} from "./m2253.ts";
-var ZCl={};
-isFullscreenWithTTY(ZCl,{call:()=>_im});
-var Bvo,_im=async(e,t)=>Bvo.createElement(XCl,{onExit:e,onRetryDenials:(n)=>{t.applyMessageOp({type:"append",messages:[tvl(n)]})}});
-var evl=b(()=>{QCl();lo();Bvo=M(Te(),1)});
-export {ZCl,Bvo,_im,evl};
+import {ft,b,x} from "../runtime.ts";
+import {zjn,NIo} from "./m4904.ts";
+import {oe} from "./m2275.ts";
+var N0l={};
+ft(N0l,{call:()=>Ofm});
+async function Ofm(e,t){return F0l.jsx(zjn,{toolUseContext:t,onDone:e})}
+var F0l;
+var B0l=b(()=>{NIo();F0l=x(oe(),1)});
+export {N0l,Ofm,F0l,B0l};

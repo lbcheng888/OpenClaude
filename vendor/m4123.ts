@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {DN} from "./m4106.ts";
-import {d9t} from "./m4121.ts";
-var Jco=X((Gd_,t3a)=>{t3a.exports=Yco;var Qxp=DN(),e3a=d9t();function Yco(e,t){e3a.call(this),this.nodeType=Qxp.COMMENT_NODE,this.ownerDocument=e,this._data=t}var m9t={get:function(){return this._data},set:function(e){if(e===null||e===void 0)e="";else e=String(e);if(this._data=e,this.rooted)this.ownerDocument.mutateValue(this)}};Yco.prototype=Object.create(e3a.prototype,{nodeName:{value:"#comment"},nodeValue:m9t,textContent:m9t,innerText:m9t,data:{get:m9t.get,set:function(e){m9t.set.call(this,e===null?"":String(e))}},clone:{value:function(){return new Yco(this.ownerDocument,this._data)}}})});
-export {Jco};
+import {Q} from "../runtime.ts";
+import {Y1} from "./m4119.ts";
+import {r5e} from "./m4122.ts";
+var A4n=Q((cAy,A8a)=>{A8a.exports=C8a;var E8a=Y1(),DLp=r5e();function C8a(){E8a.call(this),this._firstChild=this._childNodes=null}C8a.prototype=Object.create(E8a.prototype,{hasChildNodes:{value:function(){if(this._childNodes)return this._childNodes.length>0;return this._firstChild!==null}},childNodes:{get:function(){return this._ensureChildNodes(),this._childNodes}},firstChild:{get:function(){if(this._childNodes)return this._childNodes.length===0?null:this._childNodes[0];return this._firstChild}},lastChild:{get:function(){var e=this._childNodes,t;if(e)return e.length===0?null:e[e.length-1];if(t=this._firstChild,t===null)return null;return t._previousSibling}},_ensureChildNodes:{value:function(){if(this._childNodes)return;var e=this._firstChild,t=e,n=this._childNodes=new DLp;if(e)do n.push(t),t=t._nextSibling;while(t!==e);this._firstChild=null}},removeChildren:{value:function(){var t=this.rooted?this.ownerDocument:null,n=this.firstChild,r;while(n!==null){if(r=n,n=r.nextSibling,t)t.mutateRemove(r);r.parentNode=null}if(this._childNodes)this._childNodes.length=0;else this._firstChild=null;this.modify()}}})});
+export {A4n};

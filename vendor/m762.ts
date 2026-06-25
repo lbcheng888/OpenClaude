@@ -1,6 +1,4 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {sgr,Nbe} from "./m761.ts";
-var JZc="AWS_EC2_METADATA_SERVICE_ENDPOINT_MODE",XZc="ec2_metadata_service_endpoint_mode",gos;
-var _os=b(()=>{sgr();gos={environmentVariableSelector:(e)=>e[JZc],configFileSelector:(e)=>e[XZc],default:Nbe.IPv4}});
-export {JZc,XZc,gos,_os};
+import {Q} from "../runtime.ts";
+var ius=Q((sus)=>{function uuu(e){let t={};if(e=e.replace(/^\?/,""),e)for(let n of e.split("&")){let[r,o=null]=n.split("=");if(r=decodeURIComponent(r),o)o=decodeURIComponent(o);if(!(r in t))t[r]=o;else if(Array.isArray(t[r]))t[r].push(o);else t[r]=[t[r],o]}return t}sus.parseQueryString=uuu});
+export {ius};

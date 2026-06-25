@@ -1,4 +1,5 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var Tgr=X((prn)=>{Object.defineProperty(prn,"__esModule",{value:!0});prn.ByteArrayCollector=void 0;class Tis{allocByteArray;byteLength=0;byteArrays=[];constructor(e){this.allocByteArray=e}push(e){this.byteArrays.push(e),this.byteLength+=e.byteLength}flush(){if(this.byteArrays.length===1){let n=this.byteArrays[0];return this.reset(),n}let e=this.allocByteArray(this.byteLength),t=0;for(let n=0;n<this.byteArrays.length;++n){let r=this.byteArrays[n];e.set(r,t),t+=r.byteLength}return this.reset(),e}reset(){this.byteArrays=[],this.byteLength=0}}prn.ByteArrayCollector=Tis});
-export {Tgr};
+import {Q} from "../runtime.ts";
+import {Avt} from "./m795.ts";
+var zbr=Q((Ksn)=>{Object.defineProperty(Ksn,"__esModule",{value:!0});Ksn.ChecksumStream=void 0;var $uu=Avt(),quu=require("stream");class cps extends quu.Duplex{expectedChecksum;checksumSourceLocation;checksum;source;base64Encoder;constructor({expectedChecksum:e,checksum:t,source:n,checksumSourceLocation:r,base64Encoder:o}){super();if(typeof n.pipe==="function")this.source=n;else throw Error(`@smithy/util-stream: unsupported source type ${n?.constructor?.name??n} in ChecksumStream.`);this.base64Encoder=o??$uu.toBase64,this.expectedChecksum=e,this.checksum=t,this.checksumSourceLocation=r,this.source.pipe(this)}_read(e){}_write(e,t,n){try{this.checksum.update(e),this.push(e)}catch(r){return n(r)}return n()}async _final(e){try{let t=await this.checksum.digest(),n=this.base64Encoder(t);if(this.expectedChecksum!==n)return e(Error(`Checksum mismatch: expected "${this.expectedChecksum}" but received "${n}" in response header "${this.checksumSourceLocation}".`))}catch(t){return e(t)}return this.push(null),e()}}Ksn.ChecksumStream=cps});
+export {zbr};

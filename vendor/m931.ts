@@ -1,7 +1,6 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var zAs=()=>{};
-var YAs=()=>{};
-var JAs;
-var XAs=b(()=>{(function(e){e.HTTP="http",e.HTTPS="https"})(JAs||(JAs={}))});
-export {zAs,YAs,JAs,XAs};
+import {b,x} from "../runtime.ts";
+import {sC} from "./m834.ts";
+var Ebs;
+var Cbs=b(()=>{Ebs=x(sC(),1)});
+export {Ebs,Cbs};

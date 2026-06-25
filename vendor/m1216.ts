@@ -1,10 +1,8 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-import {mIs} from "./m1214.ts";
-import {AIs} from "./m1215.ts";
-var hIs=()=>{};
-var gIs=()=>{};
-var _Is=()=>{};
-var yIs=()=>{};
-var TIs=b(()=>{mIs();AIs();hIs();gIs();_Is();yIs()});
-export {hIs,gIs,_Is,yIs,TIs};
+import {LLs} from "./m1210.ts";
+import {zLs} from "./m1213.ts";
+import {XLs} from "./m1215.ts";
+var QLs=()=>{};
+var Wkr=b(()=>{LLs();zLs();XLs();QLs()});
+export {QLs,Wkr};

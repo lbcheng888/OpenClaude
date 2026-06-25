@@ -1,8 +1,8 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {s0,BedrockClient} from "./m1060.ts";
-import {zan,ListPromptRoutersCommand} from "./m1139.ts";
-import {Sd} from "./m850.ts";
-var Zks,paginateListPromptRouters;
-var eHs=b(()=>{s0();zan();Zks=M(Sd(),1),paginateListPromptRouters=Zks.createPaginator(BedrockClient,ListPromptRoutersCommand,"nextToken","nextToken","maxResults")});
-export {Zks,paginateListPromptRouters,eHs};
+import {b,x} from "../runtime.ts";
+import {C0,BedrockClient} from "./m1065.ts";
+import {vun,ListMarketplaceModelEndpointsCommand} from "./m1139.ts";
+import {Zu} from "./m855.ts";
+var NOs,paginateListMarketplaceModelEndpoints;
+var FOs=b(()=>{C0();vun();NOs=x(Zu(),1),paginateListMarketplaceModelEndpoints=NOs.createPaginator(BedrockClient,ListMarketplaceModelEndpointsCommand,"nextToken","nextToken","maxResults")});
+export {NOs,paginateListMarketplaceModelEndpoints,FOs};

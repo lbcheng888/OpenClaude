@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {findGitRoot,Ba} from "./m693.ts";
 import {b} from "../runtime.ts";
-function pul(e){return findGitRoot(e)!==null}
-var mul=b(()=>{Ba()});
-export {pul,mul};
+import {$gl,Bgl} from "./m4599.ts";
+var qgl;
+var Wgl=b(()=>{qgl={type:"local-jsx",name:"diff",description:"View uncommitted changes and per-turn diffs",load:()=>Promise.resolve().then(() => ($gl(),Bgl))}});
+export {qgl,Wgl};

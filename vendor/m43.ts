@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {WTe,cgt} from "./m39.ts";
+import {Abe,NTt} from "./m41.ts";
 import {b} from "../runtime.ts";
-function Bpc(e,t){var n=WTe(this,e),r=n.size;return n.set(e,t),this.size+=n.size==r?0:1,this}
-var fFo;
-var AFo=b(()=>{cgt();fFo=Bpc});
-export {Bpc,fFo,AFo};
+function GEc(e){return Abe(this,e).get(e)}
+var s4o;
+var i4o=b(()=>{NTt();s4o=GEc});
+export {GEc,s4o,i4o};

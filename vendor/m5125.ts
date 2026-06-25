@@ -1,19 +1,22 @@
 // @ts-nocheck
-import {Ul,ln} from "../src/telemetry/0594_feature_name.ts";
-import {vG,rmt,omt} from "../src/session/4584_proto.ts";
-import {zt,qs} from "./m635.ts";
-import {Hje,nmt,eye,$N,SJ,iD,WP,sM} from "./m4581.ts";
-import {wN,$He} from "./m3864.ts";
-import {jUe,mg} from "../src/agent/2580_level.ts";
-import {De,Rn} from "../src/session/0615_length.ts";
-import {FP,dje} from "./m4492.ts";
-import {isSameProcessAsync,sigtermThenKill,rE} from "./m1456.ts";
+import {C} from "./m321.ts";
+import {cn,Ce,Ct} from "./m197.ts";
+import {Js,rT} from "./m1294.ts";
+import {ba,pd} from "./m706.ts";
+import {jM,oie} from "./m2269.ts";
+import {Yt,Es} from "./m641.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {WORKER_KINDS,yVt} from "./m5124.ts";
+import {J_,$X} from "./m446.ts";
 import {b} from "../runtime.ts";
-var SOl="allow_routines",bOl="Routines are disabled by your organization's policy.";
-async function tko(){return Ul("daemon_bg_reap_all",async()=>{let e=await vG({silent:!0}),t=new Map;for(let[l,c]of Object.entries(e.workers))t.set(l,{pid:c.pid,procStart:c.procStart,ptySock:c.ptySock});let n=zt()==="windows",[r,o]=n?[Hje(),".pid"]:[nmt(),".sock"],s=await $ne.readdir(r).catch(()=>[]),i=new Set(s.filter((l)=>l.endsWith(o)));for(let l of s){if(!l.endsWith(o)){if(!n){let d=[".err",".late"].find((p)=>l.endsWith(`.sock${p}`));if(d&&!i.has(l.slice(0,-d.length)))await $ne.unlink(Zxo.join(r,l)).catch(()=>{})}continue}let c=l.slice(0,-o.length);if(t.has(c))continue;let u=n?Number(await wN(eye(c),4096)??"0"):0;t.set(c,{pid:u,ptySock:$N(c)})}if(!n){let l=new Set;for(let u of t.values())if(u.ptySock)l.add(u.ptySock);let c=await $ne.readdir(SJ()).catch(()=>[]);for(let u of c){if(!u.endsWith(".pty.sock"))continue;let d=Zxo.join(SJ(),u);if(l.has(d))continue;t.set(`spare:${u}`,{pid:0,ptySock:d})}}let a=0;if(await Promise.all(Array.from(t.entries()).map(async([l,c])=>{if(c.ptySock&&await g8e(c.ptySock))a++;else if(c.pid&&await ehm(c.pid,c.procStart))a++;if(!l.startsWith("spare:"))await jUe(l,"stopped","stopped");if(n)await $ne.unlink(eye(l)).catch(()=>{}),await $ne.unlink(iD($N(l))).catch(()=>{}),await $ne.unlink(WP($N(l))).catch(()=>{})})),t.size>0)await rmt((l)=>{for(let c of t.keys())delete l.workers[c]}).catch(De);return{reaped:a}})}
-function g8e(e){return new Promise((t)=>{let n=!1,r=(s)=>{if(n)return;n=!0,t(s)},o=eko.connect(e);o.unref(),o.setTimeout(2000,()=>{o.destroy(),r(!1)}),o.on("error",()=>{$ne.unlink(e).catch(()=>{}),$ne.unlink(iD(e)).catch(()=>{}),$ne.unlink(WP(e)).catch(()=>{}),r(!1)}),o.once("connect",()=>{o.resume(),o.write(FP({t:"kill",sig:"SIGTERM"}))}),o.once("close",()=>r(!0))})}
-function J7n(e){return new Promise((t)=>{let n=!1,r=(s)=>{if(n)return;n=!0,t(s)},o=eko.connect(e);o.unref(),o.setTimeout(250,()=>{o.destroy(),r(!1)}),o.on("error",()=>r(!1)),o.once("connect",()=>{o.destroy(),r(!0)})})}
-async function ehm(e,t){if(t!==void 0){if(!await isSameProcessAsync(e,t))return!1}else try{return process.kill(e,0),!1}catch{}return sigtermThenKill([-e,e],t)}
-var $ne,eko,Zxo;
-var m5t=b(()=>{mg();ln();$He();rE();Rn();qs();sM();dje();omt();$ne=require("fs/promises"),eko=require("net"),Zxo=require("path")});
-export {SOl,bOl,tko,g8e,J7n,ehm,$ne,eko,Zxo,m5t};
+import {toe,CR} from "./m450.ts";
+import {Qr} from "./m323.ts";
+import {ve} from "./m461.ts";
+function ZEm(e){return C.union([e,C.array(e)]).optional().transform((t)=>t===void 0?[]:Array.isArray(t)?t:[t])}
+function IDo(){return HDo().parse({})}
+async function rGe(e){let t;try{let i=await _Ul.stat(e).catch((a)=>cn(a)==="ENOENT"?null:Promise.reject(a));if(i&&(!i.isFile()||i.size>1048576))return{ok:!1,error:`${e} is not a regular file (or exceeds 1MiB)`};t=await Js().read(e)}catch(i){if(cn(i)==="ENOENT")return{ok:!0,config:IDo(),unknownKeys:[]};return{ok:!1,error:`failed to read ${e}: ${Ce(i)}`}}let n=ba(t,!1);if(n===null)return{ok:!1,error:`failed to parse ${e} as JSON`};let r=HDo().safeParse(n);if(!r.success)return{ok:!1,error:`config validation failed: ${r.error.message}`};let o=new Set(Object.keys(HDo().shape)),s=typeof n==="object"&&n!==null?Object.keys(n).filter((i)=>!o.has(i)):[];return{ok:!0,config:r.data,unknownKeys:s}}
+function CJn(e,t){let n=pOe.dirname(e),r=pOe.normalize(n),o=pOe.basename(e),s=jM.watch(n,{persistent:!0,ignoreInitial:!0,depth:0,usePolling:Yt()==="macos",interval:100,ignored:(i)=>{let a=pOe.normalize(i);return a!==r&&pOe.basename(a)!==o},awaitWriteFinish:{stabilityThreshold:300,pollInterval:100},atomic:!0,ignorePermissionErrors:!0});return s.on("add",t),s.on("change",t),s.on("unlink",t),s.on("error",(i)=>logForDebugging(`[daemon-config] watcher error: ${Ce(i)}`,{level:"warn"})),()=>void s.close().catch(()=>{})}
+function yUl(e,t){let n={stop:[],start:[],restart:[]};for(let r of Object.keys(WORKER_KINDS)){let o=e[r]??[],s=t[r]??[],i=Math.max(o.length,s.length);for(let a=0;a<i;a++){let l=`${r}:${a}`,c=o[a],u=s[a];if(c!==void 0&&u===void 0)n.stop.push(l);else if(c===void 0&&u!==void 0)n.start.push({id:l,kind:r,config:u});else if(!J_(c,u))n.restart.push({id:l,kind:r,config:u})}}return n}
+var _Ul,pOe,HDo;
+var TVt=b(()=>{oie();$X();toe();Qr();rT();qe();Ct();pd();Es();yVt();_Ul=require("fs/promises"),pOe=require("path");HDo=ve(()=>{let e=CR(WORKER_KINDS,(t)=>ZEm(t.schema()));return C.object({$schema:C.string().optional(),...e})})});
+export {ZEm,IDo,rGe,CJn,yUl,_Ul,pOe,HDo,TVt};

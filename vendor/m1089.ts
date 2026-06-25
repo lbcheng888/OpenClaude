@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,yws} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var sxs,DeleteGuardrailCommand;
-var Gbr=b(()=>{ri();wi();xi();sxs=M(yo(),1);DeleteGuardrailCommand=class DeleteGuardrailCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[sxs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteGuardrail",{}).n("BedrockClient","DeleteGuardrailCommand").sc(yws).build(){}});
-export {sxs,DeleteGuardrailCommand,Gbr};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,axs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var jDs,DeleteAutomatedReasoningPolicyCommand;
+var hwr=b(()=>{$s();ai();ci();jDs=x(yo(),1);DeleteAutomatedReasoningPolicyCommand=class DeleteAutomatedReasoningPolicyCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[jDs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","DeleteAutomatedReasoningPolicy",{}).n("BedrockClient","DeleteAutomatedReasoningPolicyCommand").sc(axs).build(){}});
+export {jDs,DeleteAutomatedReasoningPolicyCommand,hwr};

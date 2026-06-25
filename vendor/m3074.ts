@@ -1,7 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {EC} from "./m3064.ts";
-import {ezi} from "./m3072.ts";
-import {szi} from "./m3073.ts";
-var skn=X((sjh,izi)=>{var YNd=EC().fromCallback;izi.exports={copy:YNd(ezi()),copySync:szi()}});
-export {skn};
+import {Q} from "../runtime.ts";
+var AC=Q((rJr)=>{rJr.fromCallback=function(e){return Object.defineProperty(function(...t){if(typeof t[t.length-1]==="function")e.apply(this,t);else return new Promise((n,r)=>{t.push((o,s)=>o!=null?r(o):n(s)),e.apply(this,t)})},"name",{value:e.name})};rJr.fromPromise=function(e){return Object.defineProperty(function(...t){let n=t[t.length-1];if(typeof n!=="function")return e.apply(this,t);else t.pop(),e.apply(this,t).then((r)=>n(null,r),n)},"name",{value:e.name})}});
+export {AC};

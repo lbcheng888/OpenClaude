@@ -1,7 +1,7 @@
 // @ts-nocheck
-import {jsn} from "./m1002.ts";
+import {H6s} from "./m1430.ts";
 import {b} from "../runtime.ts";
-import {ESr} from "./m1003.ts";
-var fromLoginCredentials=(e)=>jsn({...e});
-var j2s=b(()=>{ESr()});
-export {fromLoginCredentials,j2s};
+import {F0r} from "./m1431.ts";
+var fromCognitoIdentityPool=(e)=>H6s({...e});
+var D6s=b(()=>{F0r()});
+export {fromCognitoIdentityPool,D6s};

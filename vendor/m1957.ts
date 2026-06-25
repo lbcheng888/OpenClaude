@@ -1,4 +1,4 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-var JPr=X((Xfn)=>{Object.defineProperty(Xfn,"__esModule",{value:!0});Xfn.GaxiosInterceptorManager=void 0;class QQs extends Set{}Xfn.GaxiosInterceptorManager=QQs});
-export {JPr};
+import {Q} from "../runtime.ts";
+var bNr=Q((GYh,Foi)=>{var D_n=Object.prototype.hasOwnProperty,Noi=Object.prototype.toString,xoi=Object.defineProperty,Doi=Object.getOwnPropertyDescriptor,Poi=function(t){if(typeof Array.isArray==="function")return Array.isArray(t);return Noi.call(t)==="[object Array]"},Ooi=function(t){if(!t||Noi.call(t)!=="[object Object]")return!1;var n=D_n.call(t,"constructor"),r=t.constructor&&t.constructor.prototype&&D_n.call(t.constructor.prototype,"isPrototypeOf");if(t.constructor&&!n&&!r)return!1;var o;for(o in t);return typeof o>"u"||D_n.call(t,o)},Loi=function(t,n){if(xoi&&n.name==="__proto__")xoi(t,n.name,{enumerable:!0,configurable:!0,value:n.newValue,writable:!0});else t[n.name]=n.newValue},Moi=function(t,n){if(n==="__proto__"){if(!D_n.call(t,n))return;else if(Doi)return Doi(t,n).value}return t[n]};Foi.exports=function e(){var t,n,r,o,s,i,a=arguments[0],l=1,c=arguments.length,u=!1;if(typeof a==="boolean")u=a,a=arguments[1]||{},l=2;if(a==null||typeof a!=="object"&&typeof a!=="function")a={};for(;l<c;++l)if(t=arguments[l],t!=null){for(n in t)if(r=Moi(a,n),o=Moi(t,n),a!==o){if(u&&o&&(Ooi(o)||(s=Poi(o)))){if(s)s=!1,i=r&&Poi(r)?r:[];else i=r&&Ooi(r)?r:{};Loi(a,{name:n,newValue:e(u,i,o)})}else if(typeof o<"u")Loi(a,{name:n,newValue:o})}}return a}});
+export {bNr};

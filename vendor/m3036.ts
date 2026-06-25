@@ -1,7 +1,8 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {yVi} from "./m3033.ts";
-import {SVi} from "./m3034.ts";
-import {EVi} from "./m3035.ts";
-var vVi=X((Uqh,RGr)=>{var r1d=yVi(),o1d=SVi(),s1d=EVi(),CVi=(e)=>{if(typeof e!=="string"||e.length===0)return 0;if(e=r1d(e),e.length===0)return 0;e=e.replace(s1d(),"  ");let t=0;for(let n=0;n<e.length;n++){let r=e.codePointAt(n);if(r<=31||r>=127&&r<=159)continue;if(r>=768&&r<=879)continue;if(r>65535)n++;t+=o1d(r)?2:1}return t};RGr.exports=CVi;RGr.exports.default=CVi});
-export {vVi};
+import {eQi,tQi} from "./m3035.ts";
+import {b} from "../runtime.ts";
+function nQi(e){if(typeof e!=="object"||e===null)return!1;let t=e;while(Object.getPrototypeOf(t)!==null)t=Object.getPrototypeOf(t);return Object.getPrototypeOf(e)===t}
+function rQi(...e){let t={};for(let n of e)for(let[r,o]of Object.entries(n)){let s=t[r];t[r]=nQi(s)&&nQi(o)?rQi(s,o):o}return t}
+function Ige(...e){let t=[eQi,...e.filter((n)=>n!=null)];return rQi(...t)}
+var sYr=b(()=>{tQi()});
+export {nQi,rQi,Ige,sYr};

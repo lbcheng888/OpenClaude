@@ -1,11 +1,15 @@
 // @ts-nocheck
+import {o6,dp,ly} from "../src/tools/5218_toolAlwaysAllowedRule.ts";
+import {sl,UB} from "../src/tools/4381_isSearch.ts";
+import {u_,H1} from "../src/telemetry/5213_commandWithoutRedirections.ts";
+import {bOn,EBt,CBt} from "./m3320.ts";
+import {isTmuxControlMode,Po} from "./m638.ts";
+import {B8n,gSo,hol} from "./m4381.ts";
+import {PARSE_ABORTED,nke} from "../src/telemetry/2685_parseCommandRaw.ts";
 import {b} from "../runtime.ts";
-import {zn} from "../src/api/2198_stopPeriodicGrowthBookRefresh.ts";
-function H$p(){return!1}
-function UQa(){if(!H$p())return"";return`
-${I$p.join(`
-`)}
-`}
-var I$p;
-var sho=b(()=>{zn();I$p=[]});
-export {H$p,UQa,I$p,sho};
+async function Q8p(e,t,n,r,o,s,i){let a=new Map;for(let m=0;m<t.length;m++){let f=t[m].trim();if(!f){let g=n[m],_=await r({...e,command:g});a.set(g,_.behavior==="passthrough"?{behavior:"allow",updatedInput:{...e,command:g},decisionReason:{type:"other",reason:"Bare output redirection with no command; path layer approved"}}:_);continue}let h=await r({...e,command:f});a.set(f,h)}let l=Array.from(a.entries()).find(([,m])=>m.behavior==="deny");if(l){let[m,f]=l;return{behavior:"deny",message:f.behavior==="deny"?f.message:`Permission denied for: ${m}`,decisionReason:{type:"subcommandResults",reasons:a}}}if(t.filter((m)=>{let f=m.trim();return o.isNormalizedCdCommand(f)}).length>1){for(let[,f]of a)if(f.behavior==="ask"&&o6(f.decisionReason,(h)=>h.reason.startsWith("Dangerous rm operation")||h.reason.startsWith("Dangerous rmdir operation")))return f;let m={type:"other",reason:"Multiple directory changes in one command require approval for clarity",bashMissKind:"multi-cd"};return{behavior:"ask",decisionReason:m,message:dp(sl.name,m)}}{let m,f;if(s)m=s.some((g)=>o.isNormalizedCdCommand(g.text)),f=s.some((g)=>o.isNormalizedGitCommand(g.text));else{m=!1,f=!1;for(let g of t)for(let _ of u_(g)){let T=_.trim();if(o.isNormalizedCdCommand(T))m=!0;if(o.isNormalizedGitCommand(T))f=!0}}if(f&&(s?bOn(s,isTmuxControlMode()):EBt(e.command))){let g={type:"other",reason:"This command creates git repository structure files (HEAD/objects/refs/hooks) and then runs git, which can execute hooks/fsmonitor from the created files.",bashMissKind:"cd-git-compound"};return{behavior:"ask",decisionReason:g,message:dp(sl.name,g)}}if(m&&f){let g=[];for(let T of t)for(let y of u_(T))g.push(y.trim());if(!(i?await i(g):!1)){let T={type:"other",reason:"This command changes directory before running git, which can execute untrusted hooks from the target directory. Approve only if you trust it.",bashMissKind:"cd-git-compound"};return{behavior:"ask",decisionReason:T,message:dp(sl.name,T)}}}}if(Array.from(a.values()).every((m)=>m.behavior==="allow"))return{behavior:"allow",updatedInput:e,decisionReason:{type:"subcommandResults",reasons:a}};let d=[];for(let[,m]of a)if(m.behavior!=="allow"&&"suggestions"in m&&m.suggestions)d.push(...m.suggestions);let p={type:"subcommandResults",reasons:a};return{behavior:"ask",message:dp(sl.name,p),decisionReason:p,suggestions:d.length>0?d:void 0}}
+async function Z8p(e){if(!e.includes(">"))return e;return(await B8n.parse(e))?.withoutOutputRedirections()??e}
+async function gol(e,t,n,r,o,s){let i=r&&r!==PARSE_ABORTED?gSo(e.command,r):await B8n.parse(e.command);if(!i)return{behavior:"passthrough",message:"Failed to parse command"};return eWp(e,t,n,i,o,s)}
+async function eWp(e,t,n,r,o,s){let i=r.getTreeSitterAnalysis();if(i?i.compoundStructure.hasSubshell||i.compoundStructure.hasCommandGroup:u_(e.command).length>1){let u={type:"other",reason:"This command uses shell operators that require approval for safety",bashMissKind:"shell-operators"};return{behavior:"ask",message:dp(sl.name,u),decisionReason:u}}let l=r.getPipeSegments();if(l.length<=1)return{behavior:"passthrough",message:"No pipes found in command"};let c=await Promise.all(l.map((u)=>Z8p(u)));return Q8p(e,c,l,t,n,o,s)}
+var _ol=b(()=>{H1();hol();nke();Po();ly();UB();CBt()});
+export {Q8p,Z8p,gol,eWp,_ol};

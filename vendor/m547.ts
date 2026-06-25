@@ -1,6 +1,10 @@
 // @ts-nocheck
+import {X_,GX} from "./m528.ts";
+import {Hi,S5} from "./m467.ts";
 import {b} from "../runtime.ts";
-function Xpr(e){let t;try{t=new URL(e)}catch(s){return!1}let n=(process.env.no_proxy||process.env.NO_PROXY||"").toLowerCase();if(!n)return!1;if(n==="*")return!0;let r=Number.parseInt(t.port,10)||G2c[t.protocol.split(":",1)[0]]||0,o=ZKo(t.hostname.toLowerCase());return n.split(/[\s,]+/).some((s)=>{if(!s)return!1;let[i,a]=V2c(s);if(i=ZKo(i),!i)return!1;if(a&&a!==r)return!1;if(i.charAt(0)==="*")i=i.slice(1);if(i.charAt(0)===".")return o.endsWith(i);return o===i||QKo(o)&&QKo(i)})}
-var j2c,ezo=(e)=>{let t=e.split(".");if(t.length!==4)return!1;if(t[0]!=="127")return!1;return t.every((n)=>/^\d+$/.test(n)&&Number(n)>=0&&Number(n)<=255)},W2c=(e)=>{if(e==="::1")return!0;let t=e.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);if(t)return ezo(t[1]);let n=e.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i);if(n){let o=parseInt(n[1],16);return o>=32512&&o<=32767}let r=e.split(":");if(r.length===8){for(let o=0;o<7;o++)if(!/^0+$/.test(r[o]))return!1;return/^0*1$/.test(r[7])}return!1},QKo=(e)=>{if(!e)return!1;if(j2c.has(e))return!0;if(ezo(e))return!0;return W2c(e)},G2c,V2c=(e)=>{let t=e,n=0;if(t.charAt(0)==="["){let s=t.indexOf("]");if(s!==-1){let i=t.slice(1,s),a=t.slice(s+1);if(a.charAt(0)===":"&&/^\d+$/.test(a.slice(1)))n=Number.parseInt(a.slice(1),10);return[i,n]}}let r=t.indexOf(":"),o=t.lastIndexOf(":");if(r!==-1&&r===o&&/^\d+$/.test(t.slice(o+1)))n=Number.parseInt(t.slice(o+1),10),t=t.slice(0,o);return[t,n]},ZKo=(e)=>{if(!e)return e;if(e.charAt(0)==="["&&e.charAt(e.length-1)==="]")e=e.slice(1,-1);return e.replace(/\.+$/,"")};
-var tzo=b(()=>{j2c=new Set(["localhost"]),G2c={http:80,https:443,ws:80,wss:443,ftp:21}});
-export {Xpr,j2c,ezo,W2c,QKo,G2c,V2c,ZKo,tzo};
+var f1e="1.15.2";
+function MAt(e){let t=/^([-+\w]{1,25})(:?\/\/|:)/.exec(e);return t&&t[1]||""}
+function E_r(e,t,n){let r=n&&n.Blob||X_.classes.Blob,o=MAt(e);if(t===void 0&&r)t=!0;if(o==="data"){e=o.length?e.slice(o.length+1):e;let s=WGc.exec(e);if(!s)throw new Hi("Invalid URL",Hi.ERR_INVALID_URL);let i=s[1],a=s[2],l=s[3],c=Buffer.from(decodeURIComponent(l),a?"base64":"utf8");if(t){if(!r)throw new Hi("Blob is not supported",Hi.ERR_NOT_SUPPORT);return new r([c],{type:i})}return c}throw new Hi("Unsupported protocol "+o,Hi.ERR_NOT_SUPPORT)}
+var WGc;
+var PZo=b(()=>{S5();GX();WGc=/^(?:([^;]+);)?(?:[^;]+;)?(base64|),([\s\S]*)$/});
+export {f1e,MAt,E_r,WGc,PZo};

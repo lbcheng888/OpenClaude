@@ -1,25 +1,5 @@
 // @ts-nocheck
-import {isFullscreenWithTTY,b,M} from "../runtime.ts";
-import {cE} from "./m2206.ts";
-import {bEo,Ljt,$Wn,Egl,Vje} from "./m4762.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {pr,Yl} from "./m2562.ts";
-import {Kn,Li} from "./m2572.ts";
-import {ze} from "./m2452.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-var Dgl={};
-isFullscreenWithTTY(Dgl,{formatVersion:()=>formatVersion,formatAll:()=>formatAll,call:()=>OZp,ReleaseNotesPicker:()=>ReleaseNotesPicker});
-function formatVersion(e,t){let n=`Version ${e}:`,r=t.map((o)=>`\xB7 ${o}`).join(`
-`);return`${n}
-${r}`}
-function formatAll(e){return e.slice().sort(([t],[n])=>cE(t,n)?1:-1).map(([t,n])=>formatVersion(t,n)).join(`
-
-`)}
-async function OZp(e){try{let r=new Promise((o,s)=>setTimeout((i)=>i(Error("Timeout")),500,s));await Promise.race([bEo(),r])}catch{}let t=await Ljt(),n=$Wn(t).slice().sort(([r],[o])=>cE(r,o)?-1:1);if(n.length===0)return e(`See the full changelog at: ${Egl}`,{display:"system"}),null;return Nmt.default.createElement(ReleaseNotesPicker,{notes:n,onDone:e})}
-function ReleaseNotesPicker(e){let t=kgl.c(20),{notes:n,onDone:r}=e,o=`${n.length} versions`,s;if(t[0]!==o)s={label:"Show all",description:o,value:xgl},t[0]=o,t[1]=s;else s=t[1];let i;if(t[2]!==n||t[3]!==s)i=[s,...n.map(LZp)],t[2]=n,t[3]=s,t[4]=i;else i=t[4];let a=i,l;if(t[5]!==n||t[6]!==r)l=function(h){if(h===xgl){r(formatAll(n),{display:"system"});return}let g=n.find((_)=>{let[y]=_;return y===h});if(!g){r(void 0,{display:"skip"});return}r(formatVersion(g[0],g[1]),{display:"system"})},t[5]=n,t[6]=r,t[7]=l;else l=t[7];let c=l,u;if(t[8]!==r)u=()=>r(void 0,{display:"skip"}),t[8]=r,t[9]=u;else u=t[9];let d;if(t[10]===Symbol.for("react.memo_cache_sentinel"))d=Nmt.default.createElement(Box,{flexDirection:"column",marginBottom:1},Nmt.default.createElement(Text,{dimColor:!0},"Select a version to view its notes.")),t[10]=d;else d=t[10];let p;if(t[11]!==r)p=()=>r(void 0,{display:"skip"}),t[11]=r,t[12]=p;else p=t[12];let m;if(t[13]!==c||t[14]!==a||t[15]!==p)m=Nmt.default.createElement(pr,{options:a,visibleOptionCount:10,onChange:c,onCancel:p}),t[13]=c,t[14]=a,t[15]=p,t[16]=m;else m=t[16];let f;if(t[17]!==u||t[18]!==m)f=Nmt.default.createElement(Kn,{title:"Release notes",onCancel:u},d,m),t[17]=u,t[18]=m,t[19]=f;else f=t[19];return f}
-function LZp(e){let[t,n]=e;return{label:`Version ${t}`,description:`${n.length} ${n.length===1?"item":"items"}`,value:t}}
-var kgl,Nmt,xgl="__show_all__";
-var Pgl=b(()=>{Yl();Li();ze();Vje();kgl=M(rt(),1),Nmt=M(Te(),1)});
-export {Dgl,formatVersion,formatAll,OZp,ReleaseNotesPicker,LZp,kgl,Nmt,xgl,Pgl};
+import {Q} from "../runtime.ts";
+import {Ght} from "./m4757.ts";
+var ZCl=Q((wrS,QCl)=>{var hJ=Ght();QCl.exports=function(e,t,n,r){let o=[hJ.COLORTYPE_COLOR_ALPHA,hJ.COLORTYPE_ALPHA].indexOf(r.colorType)!==-1;if(r.colorType===r.inputColorType){let f=function(){let h=new ArrayBuffer(2);return new DataView(h).setInt16(0,256,!0),new Int16Array(h)[0]!==256}();if(r.bitDepth===8||r.bitDepth===16&&f)return e}let s=r.bitDepth!==16?e:new Uint16Array(e.buffer),i=255,a=hJ.COLORTYPE_TO_BPP_MAP[r.inputColorType];if(a===4&&!r.inputHasAlpha)a=3;let l=hJ.COLORTYPE_TO_BPP_MAP[r.colorType];if(r.bitDepth===16)i=65535,l*=2;let c=Buffer.alloc(t*n*l),u=0,d=0,p=r.bgColor||{};if(p.red===void 0)p.red=i;if(p.green===void 0)p.green=i;if(p.blue===void 0)p.blue=i;function m(){let f,h,g,_=i;switch(r.inputColorType){case hJ.COLORTYPE_COLOR_ALPHA:_=s[u+3],f=s[u],h=s[u+1],g=s[u+2];break;case hJ.COLORTYPE_COLOR:f=s[u],h=s[u+1],g=s[u+2];break;case hJ.COLORTYPE_ALPHA:_=s[u+1],f=s[u],h=f,g=f;break;case hJ.COLORTYPE_GRAYSCALE:f=s[u],h=f,g=f;break;default:throw Error("input color type:"+r.inputColorType+" is not supported at present")}if(r.inputHasAlpha){if(!o)_/=i,f=Math.min(Math.max(Math.round((1-_)*p.red+_*f),0),i),h=Math.min(Math.max(Math.round((1-_)*p.green+_*h),0),i),g=Math.min(Math.max(Math.round((1-_)*p.blue+_*g),0),i)}return{red:f,green:h,blue:g,alpha:_}}for(let f=0;f<n;f++)for(let h=0;h<t;h++){let g=m(s,u);switch(r.colorType){case hJ.COLORTYPE_COLOR_ALPHA:case hJ.COLORTYPE_COLOR:if(r.bitDepth===8){if(c[d]=g.red,c[d+1]=g.green,c[d+2]=g.blue,o)c[d+3]=g.alpha}else if(c.writeUInt16BE(g.red,d),c.writeUInt16BE(g.green,d+2),c.writeUInt16BE(g.blue,d+4),o)c.writeUInt16BE(g.alpha,d+6);break;case hJ.COLORTYPE_ALPHA:case hJ.COLORTYPE_GRAYSCALE:{let _=(g.red+g.green+g.blue)/3;if(r.bitDepth===8){if(c[d]=_,o)c[d+1]=g.alpha}else if(c.writeUInt16BE(_,d),o)c.writeUInt16BE(g.alpha,d+2);break}default:throw Error("unrecognised color Type "+r.colorType)}u+=a,d+=l}return c}});
+export {ZCl};

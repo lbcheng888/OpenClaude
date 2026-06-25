@@ -1,24 +1,28 @@
 // @ts-nocheck
-import {getRelativeSettingsFilePathForSource} from "../src/config/0735_settings.ts";
-import {nEt,mf} from "./m702.ts";
-import {Yg,Cae,lx} from "./m2777.ts";
-import {SandboxManager,Ag} from "./m2671.ts";
-import {y5n,XTo} from "./m4594.ts";
-import {Cn,dr} from "./m231.ts";
-import {Box} from "./m2422.ts";
-import {Text} from "./m2423.ts";
-import {pr,Yl} from "./m2562.ts";
-import {Kn,Li} from "./m2572.ts";
-import {Qm,Sw} from "../src/mcp/0728_serverName.ts";
-import {dVn,Ovo} from "./m4898.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {yr} from "../src/config/0740_updateSettingsForSource.ts";
-import {rt} from "./m2255.ts";
-import {Te} from "./m2253.ts";
-function tim(e){switch(e){case"localSettings":return{label:"Project settings (local)",description:`Saved in ${getRelativeSettingsFilePathForSource("localSettings")}`,value:e};case"projectSettings":return{label:"Project settings",description:`Checked in at ${getRelativeSettingsFilePathForSource("projectSettings")}`,value:e};case"userSettings":return{label:"User settings",description:"Saved in at ~/.claude/settings.json",value:e}}}
-function MCl(e){let t=LCl.c(26),{onAddRules:n,onCancel:r,ruleValues:o,ruleBehavior:s,initialContext:i,setToolPermissionContext:a}=e,l;if(t[0]===Symbol.for("react.memo_cache_sentinel"))l=nEt.map(tim),t[0]=l;else l=t[0];let c=l,u;if(t[1]!==i||t[2]!==n||t[3]!==r||t[4]!==s||t[5]!==o||t[6]!==a)u=(S)=>{if(S==="cancel"){r();return}else if(nEt.includes(S)){let v=S,R=Yg(i,{type:"addRules",rules:o,behavior:s,destination:v});Cae({type:"addRules",rules:o,behavior:s,destination:v}),a(R);let k=o.map((P)=>({ruleValue:P,ruleBehavior:s,source:v})),x=SandboxManager.isSandboxingEnabled()&&SandboxManager.isAutoAllowBashIfSandboxedEnabled(),I=y5n(R,{sandboxAutoAllowEnabled:x}).filter((P)=>o.some((L)=>L.toolName===P.rule.ruleValue.toolName&&L.ruleContent===P.rule.ruleValue.ruleContent));n(k,I)}},t[1]=i,t[2]=n,t[3]=r,t[4]=s,t[5]=o,t[6]=a,t[7]=u;else u=t[7];let d=u,p;if(t[8]!==o.length)p=Cn(o.length,"rule"),t[8]=o.length,t[9]=p;else p=t[9];let m=`Add ${s} permission ${p}`,f;if(t[10]!==o)f=o.map(nim),t[10]=o,t[11]=f;else f=t[11];let A;if(t[12]!==f)A=GN.createElement(Box,{flexDirection:"column",paddingX:2},f),t[12]=f,t[13]=A;else A=t[13];let h=o.length===1?"Where should this rule be saved?":"Where should these rules be saved?",g;if(t[14]!==h)g=GN.createElement(Text,null,h),t[14]=h,t[15]=g;else g=t[15];let _;if(t[16]!==d)_=GN.createElement(pr,{options:c,onChange:d}),t[16]=d,t[17]=_;else _=t[17];let y;if(t[18]!==g||t[19]!==_)y=GN.createElement(Box,{flexDirection:"column",marginY:1},g,_),t[18]=g,t[19]=_,t[20]=y;else y=t[20];let T;if(t[21]!==r||t[22]!==A||t[23]!==y||t[24]!==m)T=GN.createElement(Kn,{title:m,onCancel:r,color:"permission"},A,y),t[21]=r,t[22]=A,t[23]=y,t[24]=m,t[25]=T;else T=t[25];return T}
-function nim(e){return GN.createElement(Box,{flexDirection:"column",key:Qm(e)},GN.createElement(Text,{bold:!0},Qm(e)),GN.createElement(dVn,{ruleValue:e}))}
-var LCl,GN;
-var NCl=b(()=>{Yl();ze();lx();Sw();XTo();Ag();mf();yr();dr();Li();Ovo();LCl=M(rt(),1),GN=M(Te(),1)});
-export {tim,MCl,nim,LCl,GN,NCl};
+import {gf,wE} from "./m5177.ts";
+import {pk,ps} from "./m230.ts";
+import {_r,ui} from "./m2463.ts";
+import {useInterval} from "./m2456.ts";
+import {Oo,ss} from "./m2553.ts";
+import {truncateToWidth} from "./m239.ts";
+import {at,Wo} from "./m2557.ts";
+import {bn,Is} from "./m2565.ts";
+import {bf,G8e} from "./m4537.ts";
+import {Text} from "./m2433.ts";
+import {formatDuration,formatFileSize,Xo} from "./m240.ts";
+import {Box} from "./m2432.ts";
+import {preInitQueue,di} from "./m2583.ts";
+import {wl,sy} from "./m2585.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+import {oe} from "./m2275.ts";
+async function h0l(e){let t=gf(e.id);try{let n=await pk(t,afm);return{content:n.content,bytesTotal:n.bytesTotal}}catch{return{content:"",bytesTotal:0}}}
+function g0l(e){let t=kIo.c(61),{shell:n,onDone:r,onKillShell:o,onBack:s}=e,{columns:i}=_r(),a;if(t[0]!==n)a=()=>h0l(n),t[0]=n,t[1]=a;else a=t[1];let[l,c]=KPe.useState(a),u=KPe.useDeferredValue(l),d;if(t[2]!==n)d=()=>c(h0l(n)),t[2]=n,t[3]=d;else d=t[3];useInterval(d,n.status==="running"?1000:null);let p;if(t[4]!==r)p=()=>r("Shell details dismissed",{display:"system"}),t[4]=r,t[5]=p;else p=t[5];let m=p,f;if(t[6]!==m)f={"confirm:yes":m},t[6]=m,t[7]=f;else f=t[7];let h;if(t[8]===Symbol.for("react.memo_cache_sentinel"))h={context:"Confirmation"},t[8]=h;else h=t[8];Oo(f,h);let g;if(t[9]!==s||t[10]!==r||t[11]!==o||t[12]!==n.status)g=(ne)=>{if(ne.key===" ")ne.preventDefault(),r("Shell details dismissed",{display:"system"});else if(ne.key==="left"&&s)ne.preventDefault(),s();else if(ne.key==="x"&&!ne.ctrl&&!ne.meta&&n.status==="running"&&o)ne.preventDefault(),o()},t[9]=s,t[10]=r,t[11]=o,t[12]=n.status,t[13]=g;else g=t[13];let _=g,T=n.kind==="monitor",y;if(t[14]!==n.command)y=truncateToWidth(n.command,280),t[14]=n.command,t[15]=y;else y=t[15];let S=y,E=T?"Monitor details":"Shell details",R;if(t[16]!==s)R=s&&sessionState.jsx(at,{chord:"left",action:"go back"}),t[16]=s,t[17]=R;else R=t[17];let w;if(t[18]===Symbol.for("react.memo_cache_sentinel"))w=sessionState.jsx(at,{chord:["escape","enter","space"],action:"close"}),t[18]=w;else w=t[18];let H;if(t[19]!==o||t[20]!==n.status)H=n.status==="running"&&o&&sessionState.jsx(at,{chord:"x",action:"stop"}),t[19]=o,t[20]=n.status,t[21]=H;else H=t[21];let k;if(t[22]!==H||t[23]!==R)k=sessionState.jsxs(bn,{children:[R,w,H]}),t[22]=H,t[23]=R,t[24]=k;else k=t[24];let I;if(t[25]===Symbol.for("react.memo_cache_sentinel"))I=[{bold:!0},{width:{ratio:1}}],t[25]=I;else I=t[25];let D=i-6,O;if(t[26]===Symbol.for("react.memo_cache_sentinel"))O=sessionState.jsx(sessionState.Fragment,{children:"Status:"}),t[26]=O;else O=t[26];let L;if(t[27]!==n.result||t[28]!==n.status)L=sessionState.jsxs(bf.Row,{children:[O,n.status==="running"?sessionState.jsxs(Text,{color:"background",children:[n.status,n.result?.code!==void 0&&` (exit code: ${n.result.code})`]}):n.status==="completed"?sessionState.jsxs(Text,{color:"success",children:[n.status,n.result?.code!==void 0&&` (exit code: ${n.result.code})`]}):sessionState.jsxs(Text,{color:"error",children:[n.status,n.result?.code!==void 0&&` (exit code: ${n.result.code})`]})]}),t[27]=n.result,t[28]=n.status,t[29]=L;else L=t[29];let P;if(t[30]===Symbol.for("react.memo_cache_sentinel"))P=sessionState.jsx(sessionState.Fragment,{children:"Runtime:"}),t[30]=P;else P=t[30];let M;if(t[31]!==n.endTime)M=n.endTime??Date.now(),t[31]=n.endTime,t[32]=M;else M=t[32];let B=M-n.startTime,N;if(t[33]!==B)N=formatDuration(B),t[33]=B,t[34]=N;else N=t[34];let F;if(t[35]!==N)F=sessionState.jsxs(bf.Row,{children:[P,N]}),t[35]=N,t[36]=F;else F=t[36];let V=T?"Script:":"Command:",G;if(t[37]!==V)G=sessionState.jsx(sessionState.Fragment,{children:V}),t[37]=V,t[38]=G;else G=t[38];let z;if(t[39]!==S||t[40]!==G)z=sessionState.jsxs(bf.Row,{children:[G,S]}),t[39]=S,t[40]=G,t[41]=z;else z=t[41];let J;if(t[42]!==D||t[43]!==L||t[44]!==F||t[45]!==z)J=sessionState.jsxs(bf,{box:"plain",columns:I,forceWidth:D,children:[L,F,z]}),t[42]=D,t[43]=L,t[44]=F,t[45]=z,t[46]=J;else J=t[46];let K;if(t[47]===Symbol.for("react.memo_cache_sentinel"))K=sessionState.jsx(Text,{bold:!0,children:"Output:"}),t[47]=K;else K=t[47];let j;if(t[48]===Symbol.for("react.memo_cache_sentinel"))j=sessionState.jsx(Text,{dimColor:!0,children:"Loading output\u2026"}),t[48]=j;else j=t[48];let X;if(t[49]!==i||t[50]!==u)X=sessionState.jsxs(Box,{flexDirection:"column",children:[K,sessionState.jsx(KPe.Suspense,{fallback:j,children:sessionState.jsx(lfm,{outputPromise:u,columns:i})})]}),t[49]=i,t[50]=u,t[51]=X;else X=t[51];let ee;if(t[52]!==m||t[53]!==k||t[54]!==J||t[55]!==X||t[56]!==E)ee=sessionState.jsxs(preInitQueue,{title:E,onCancel:m,color:"background",inputGuide:k,children:[J,X]}),t[52]=m,t[53]=k,t[54]=J,t[55]=X,t[56]=E,t[57]=ee;else ee=t[57];let te;if(t[58]!==_||t[59]!==ee)te=sessionState.jsx(Box,{flexDirection:"column",tabIndex:0,autoFocus:!0,onKeyDown:_,children:ee}),t[58]=_,t[59]=ee,t[60]=te;else te=t[60];return te}
+function lfm(e){let t=kIo.c(19),{outputPromise:n,columns:r}=e,{content:o,bytesTotal:s}=KPe.use(n);if(!o){let h;if(t[0]===Symbol.for("react.memo_cache_sentinel"))h=sessionState.jsx(wl,{children:"No output available"}),t[0]=h;else h=t[0];return h}let i,a;if(t[1]!==s||t[2]!==o){let h=[],g=o.length;for(let _=0;_<10&&g>0;_++){let T=o.lastIndexOf(`
+`,g-1);h.push(T+1),g=T}h.reverse(),i=s>o.length,a=[];for(let _=0;_<h.length;_++){let T=h[_],y=_<h.length-1?h[_+1]-1:o.length,S=o.slice(T,y);if(S)a.push(S)}t[1]=s,t[2]=o,t[3]=i,t[4]=a}else i=t[3],a=t[4];let l=r-6,c;if(t[5]!==a)c=a.map(cfm),t[5]=a,t[6]=c;else c=t[6];let u;if(t[7]!==l||t[8]!==c)u=sessionState.jsx(Box,{borderStyle:"round",paddingX:1,flexDirection:"column",height:12,maxWidth:l,children:c}),t[7]=l,t[8]=c,t[9]=u;else u=t[9];let d=`Showing ${a.length} lines`,p;if(t[10]!==s||t[11]!==i)p=i?` of ${formatFileSize(s)}`:"",t[10]=s,t[11]=i,t[12]=p;else p=t[12];let m;if(t[13]!==d||t[14]!==p)m=sessionState.jsxs(Text,{dimColor:!0,italic:!0,children:[d,p]}),t[13]=d,t[14]=p,t[15]=m;else m=t[15];let f;if(t[16]!==u||t[17]!==m)f=sessionState.jsxs(sessionState.Fragment,{children:[u,m]}),t[16]=u,t[17]=m,t[18]=f;else f=t[18];return f}
+function cfm(e,t){return sessionState.jsx(Text,{wrap:"truncate-end",children:e},t)}
+var kIo,KPe,sessionState,afm=8192;
+var _0l=b(()=>{ui();je();ss();Xo();ps();wE();Is();di();sy();Wo();G8e();kIo=x(tt(),1),KPe=x(et(),1),sessionState=x(oe(),1)});
+export {h0l,g0l,lfm,cfm,kIo,KPe,sessionState,afm,_0l};

@@ -1,10 +1,10 @@
 // @ts-nocheck
-import {b,M} from "../runtime.ts";
-import {ri} from "./m1046.ts";
-import {wi,Rr} from "./m1048.ts";
-import {xi,DRs} from "./m1063.ts";
-import {yo} from "./m887.ts";
-import {$Command} from "./m1038.ts";
-var _ks,UpdateMarketplaceModelEndpointCommand;
-var $Er=b(()=>{ri();wi();xi();_ks=M(yo(),1);UpdateMarketplaceModelEndpointCommand=class UpdateMarketplaceModelEndpointCommand extends $Command.classBuilder().ep(Rr).m(function(e,t,n,r){return[_ks.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","UpdateMarketplaceModelEndpoint",{}).n("BedrockClient","UpdateMarketplaceModelEndpointCommand").sc(DRs).build(){}});
-export {_ks,UpdateMarketplaceModelEndpointCommand,$Er};
+import {b,x} from "../runtime.ts";
+import {$s} from "./m1051.ts";
+import {ai,wr} from "./m1053.ts";
+import {ci,bDs} from "./m1068.ts";
+import {yo} from "./m892.ts";
+import {$Command} from "./m1043.ts";
+var aOs,UntagResourceCommand;
+var dkr=b(()=>{$s();ai();ci();aOs=x(yo(),1);UntagResourceCommand=class UntagResourceCommand extends $Command.classBuilder().ep(wr).m(function(e,t,n,r){return[aOs.getEndpointPlugin(n,e.getEndpointParameterInstructions())]}).s("AmazonBedrockControlPlaneService","UntagResource",{}).n("BedrockClient","UntagResourceCommand").sc(bDs).build(){}});
+export {aOs,UntagResourceCommand,dkr};

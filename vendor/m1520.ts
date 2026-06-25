@@ -1,9 +1,6 @@
 // @ts-nocheck
 import {b} from "../runtime.ts";
-var hqs=()=>{};
-var gqs=()=>{};
-var _qs=()=>{};
-var yqs=()=>{};
-var Tqs=()=>{};
-var Sqs=b(()=>{hqs();gqs();_qs();yqs();Tqs()});
-export {hqs,gqs,_qs,yqs,Tqs,Sqs};
+var WGs=()=>{};
+var GGs;
+var VGs=b(()=>{(function(e){e.HEADER="header",e.QUERY="query"})(GGs||(GGs={}))});
+export {WGs,GGs,VGs};

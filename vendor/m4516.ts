@@ -1,7 +1,9 @@
 // @ts-nocheck
-import {getInitialSettings,yr} from "../src/config/0740_updateSettingsForSource.ts";
+import {Fmn,vd} from "../src/session/1465_promise.ts";
+import {cpl,Mft} from "../src/agent/4514_label.ts";
+import {sendRv,g8e} from "../src/config/4413_stopRendezvousServer.ts";
+import {rue,bL} from "./m4515.ts";
 import {b} from "../runtime.ts";
-import {zn} from "../src/api/2198_stopPeriodicGrowthBookRefresh.ts";
-function hJ(){let e=getInitialSettings()?.autoUpdatesChannel;if(e&&e!=="latest")return e;return"latest"}
-var rDe=b(()=>{zn();yr()});
-export {hJ,rDe};
+function hTe(e){if(!Fmn())return;let t=cpl();if(sendRv({type:"detach-request",msg:t,broadcast:e?.broadcast}))return;process.stdout.write(rue(t))}
+var R8t=b(()=>{g8e();vd();Mft();bL()});
+export {hTe,R8t};

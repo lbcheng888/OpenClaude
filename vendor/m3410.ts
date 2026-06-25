@@ -1,5 +1,13 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var oge;
-var gPn=b(()=>{(function(e){e[e.NOT_RECORD=0]="NOT_RECORD",e[e.RECORD=1]="RECORD",e[e.RECORD_AND_SAMPLED=2]="RECORD_AND_SAMPLED"})(oge||(oge={}))});
-export {oge,gPn};
+import {Q} from "../runtime.ts";
+import {hUt} from "./m3401.ts";
+import {xi} from "./m2096.ts";
+import {iTa} from "./m3409.ts";
+var lTa=Q((JLn)=>{Object.defineProperty(JLn,"__esModule",{value:!0});JLn.MetricStorageRegistry=void 0;var Mnp=hUt(),aTa=xi(),YLn=iTa();class Vno{_sharedRegistry=new Map;_perCollectorRegistry=new Map;static create(){return new Vno}getStorages(e){let t=[];for(let r of this._sharedRegistry.values())t=t.concat(r);let n=this._perCollectorRegistry.get(e);if(n!=null)for(let r of n.values())t=t.concat(r);return t}register(e){this._registerStorage(e,this._sharedRegistry)}registerForCollector(e,t){let n=this._perCollectorRegistry.get(e);if(n==null)n=new Map,this._perCollectorRegistry.set(e,n);this._registerStorage(t,n)}findOrUpdateCompatibleStorage(e){let t=this._sharedRegistry.get(e.name);if(t===void 0)return null;return this._findOrUpdateCompatibleStorage(e,t)}findOrUpdateCompatibleCollectorStorage(e,t){let n=this._perCollectorRegistry.get(e);if(n===void 0)return null;let r=n.get(t.name);if(r===void 0)return null;return this._findOrUpdateCompatibleStorage(t,r)}_registerStorage(e,t){let n=e.getInstrumentDescriptor(),r=t.get(n.name);if(r===void 0){t.set(n.name,[e]);return}r.push(e)}_findOrUpdateCompatibleStorage(e,t){let n=null;for(let r of t){let o=r.getInstrumentDescriptor();if((0,Mnp.isDescriptorCompatibleWith)(o,e)){if(o.description!==e.description){if(e.description.length>o.description.length)r.updateDescription(e.description);aTa.diag.warn("A view or instrument with the name ",e.name,` has already been registered, but has a different description and is incompatible with another registered view.
+`,`Details:
+`,(0,YLn.getIncompatibilityDetails)(o,e),`The longer description will be used.
+To resolve the conflict:`,(0,YLn.getConflictResolutionRecipe)(o,e))}n=r}else aTa.diag.warn("A view or instrument with the name ",e.name,` has already been registered and is incompatible with another registered view.
+`,`Details:
+`,(0,YLn.getIncompatibilityDetails)(o,e),`To resolve the conflict:
+`,(0,YLn.getConflictResolutionRecipe)(o,e))}return n}}JLn.MetricStorageRegistry=Vno});
+export {lTa};

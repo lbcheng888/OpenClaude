@@ -1,5 +1,11 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-var PEn;
-var HIi=b(()=>{PEn=class PEn extends Map{first;last;constructor(e){let t=[],n,r,o,s=0;for(let i of e){let a={label:i.label,value:i.value,description:i.description,previous:o,next:void 0,index:s};if(o)o.next=a;n||=a,r=a,t.push([i.value,a]),s++,o=a}super(t);this.first=n,this.last=r}}});
-export {PEn,HIi};
+import {b,x} from "../runtime.ts";
+import {tt} from "./m2263.ts";
+import {et} from "./m2261.ts";
+function getSettingsSchema(){return D2e.useContext(Z2)!==null}
+function Dy(e){let t=LMi.c(3),n=D2e.useContext(Z2),r;if(t[0]!==n||t[1]!==e)r=n?{rows:n.rows,columns:n.columns}:e,t[0]=n,t[1]=e,t[2]=r;else r=t[2];return r}
+function Ant(){return D2e.useContext(Z2)?.scrollRef??null}
+function hvn(){return D2e.useContext(Z2)?.claimScrollBox??null}
+var LMi,D2e,Z2;
+var SE=b(()=>{LMi=x(tt(),1),D2e=x(et(),1),Z2=D2e.createContext(null)});
+export {getSettingsSchema,Dy,Ant,hvn,LMi,D2e,Z2,SE};

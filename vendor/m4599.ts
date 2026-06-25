@@ -1,8 +1,9 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-import {Lr} from "./m578.ts";
-import {je} from "./m577.ts";
-import {uul,cul} from "./m4598.ts";
-var iKp,eSo;
-var dul=b(()=>{Lr();iKp={name:"doctor",description:"Diagnose and verify your Claude Code installation and settings",isEnabled:()=>!je.DISABLE_DOCTOR_COMMAND,type:"local-jsx",immediate:!0,requires:{ink:!0},load:()=>Promise.resolve().then(() => (uul(),cul))},eSo=iKp});
-export {iKp,eSo,dul};
+import {ft,b,x} from "../runtime.ts";
+import {Fgl,Ngl} from "./m4598.ts";
+import {oe} from "./m2275.ts";
+var Bgl={};
+ft(Bgl,{call:()=>itm});
+var Ugl,itm=async(e,t)=>{let{DiffDialog:n}=await Promise.resolve().then(() => (Fgl(),Ngl));return Ugl.jsx(n,{messages:t.messages,onDone:e})};
+var $gl=b(()=>{Ugl=x(oe(),1)});
+export {Bgl,Ugl,itm,$gl};

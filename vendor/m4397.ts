@@ -1,9 +1,0 @@
-// @ts-nocheck
-import {b} from "../runtime.ts";
-function kZa(e){let t=e.toLowerCase();return/\b(wtf|wth|ffs|omfg|shit(ty|tiest)?|dumbass|horrible|awful|piss(ed|ing)? off|piece of (shit|crap|junk)|what the (fuck|hell)|fucking? (broken|useless|terrible|awful|horrible)|fuck you|screw (this|you)|so frustrating|this sucks|damn it)\b/.test(t)}
-function HZa(e){let t=e.toLowerCase().trim();if(t==="continue")return!0;return/\b(keep going|go on)\b/.test(t)}
-function IZa(e){let t=e.toLowerCase();return/\bgo to (sleep|bed)\b/.test(t)}
-function DZa(e){let t=e.trim();if(t.length>40)return!1;if(/^(\?+|\.{2,}|\u2026+)$/u.test(t))return!0;let n=t.toLowerCase().replace(/^[\u00BF\u00A1]+|[?!.\u00BF\u00A1\uFF1F\uFF01\u3002\u2026]+$/gu,"").trim();if(/^(hi+|hello+|he+y+|yo+)$/.test(n))return!0;return T9p.has(n)}
-var T9p;
-var Cho=b(()=>{T9p=new Set(["ping","u there","you there","are you there","r u there","u here","you here","are you here","you back","are you back","u back","anyone there","anybody there","still there","you still there","are you still there","still working","you still working","are you still working","you stuck","are you stuck","u stuck","\u5582","\u5728\u5417","\u5728\u55CE","\u8FD8\u5728\u5417","\u9084\u5728\u55CE","\u5728\u4E0D\u5728","\u3082\u3057\u3082\u3057","\u304A\u3044","\u304A\u30FC\u3044","\u3044\u307E\u3059\u304B","\uC5EC\uBCF4\uC138\uC694","\uC57C","\uC788\uC5B4\uC694","hola","oye","est\xE1s ah\xED","estas ahi","sigues ah\xED","sigues ahi","oi","ol\xE1","ola","al\xF4","alo","t\xE1 a\xED","ta ai","est\xE1 a\xED","esta ai","allo","all\xF4","salut","coucou","t'es l\xE0","t'es la","tu es l\xE0","tu es la","hallo","bist du da","noch da","\u043F\u0440\u0438\u0432\u0435\u0442","\u044D\u0439","\u0430\u043B\u043B\u043E","\u0442\u044B \u0442\u0443\u0442","ciao","ehi","ci sei"])});
-export {kZa,HZa,IZa,DZa,T9p,Cho};

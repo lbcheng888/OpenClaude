@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {X} from "../runtime.ts";
-import {c9a} from "./m4107.ts";
-import {d9a} from "./m4108.ts";
-var Mqe=X((Dd_,p9a)=>{var wco;try{wco=c9a()}catch(e){wco=d9a()}p9a.exports=wco});
-export {Mqe};
+import {b} from "../runtime.ts";
+function G5a(e,t){if(zOp.has(e))return!0;let n=jOp.get(e);if(n){if(/%(25)*(2f|5c|2e)/i.test(t))return!1;for(let r of n)if(t===r||t.startsWith(r+"/"))return!0}return!1}
+var KOp,zOp,jOp;
+var V5a=b(()=>{KOp=new Set(["platform.claude.com","code.claude.com","modelcontextprotocol.io","github.com/anthropics","agentskills.io","docs.python.org","en.cppreference.com","docs.oracle.com","learn.microsoft.com","developer.mozilla.org","go.dev","pkg.go.dev","www.php.net","docs.swift.org","kotlinlang.org","ruby-doc.org","doc.rust-lang.org","www.typescriptlang.org","react.dev","angular.io","vuejs.org","nextjs.org","expressjs.com","nodejs.org","bun.sh","jquery.com","getbootstrap.com","tailwindcss.com","d3js.org","threejs.org","redux.js.org","webpack.js.org","jestjs.io","reactrouter.com","docs.djangoproject.com","flask.palletsprojects.com","fastapi.tiangolo.com","pandas.pydata.org","numpy.org","www.tensorflow.org","pytorch.org","scikit-learn.org","matplotlib.org","requests.readthedocs.io","jupyter.org","laravel.com","symfony.com","wordpress.org/documentation","docs.spring.io","hibernate.org","tomcat.apache.org","gradle.org","maven.apache.org","asp.net","dotnet.microsoft.com","blazor.net","reactnative.dev","docs.flutter.dev","developer.apple.com","developer.android.com","keras.io","spark.apache.org","huggingface.co/docs","www.kaggle.com/docs","www.mongodb.com","redis.io","www.postgresql.org","dev.mysql.com","www.sqlite.org","graphql.org","prisma.io","docs.getdbt.com","docs.aws.amazon.com","cloud.google.com","learn.microsoft.com","kubernetes.io","www.docker.com","www.terraform.io","www.ansible.com","vercel.com/docs","docs.stripe.com","docs.netlify.com","devcenter.heroku.com","dev.wix.com/docs","cypress.io","selenium.dev","docs.unity.com","docs.unrealengine.com","git-scm.com","nginx.org","httpd.apache.org"]),{HOSTNAME_ONLY:zOp,PATH_PREFIXES:jOp}=(()=>{let e=new Set,t=new Map;for(let n of KOp){let r=n.indexOf("/");if(r===-1)e.add(n);else{let o=n.slice(0,r),s=n.slice(r),i=t.get(o);if(i)i.push(s);else t.set(o,[s])}}return{HOSTNAME_ONLY:e,PATH_PREFIXES:t}})()});
+export {G5a,KOp,zOp,jOp,V5a};

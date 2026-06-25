@@ -1,15 +1,14 @@
 // @ts-nocheck
-import {ejt,tjt,NSo} from "../src/core/4663_input.ts";
-import {logForDebugging,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {Pt,Go} from "./m632.ts";
-import {findGitRoot,Ba} from "./m693.ts";
-import {MRe,xk} from "./m2715.ts";
-import {withTimeout} from "../src/telemetry/1483_withTimeout.ts";
-import {b,M} from "../runtime.ts";
-import {Yjr} from "./m2714.ts";
-function aml(e,t){return{readFileState:t,bashTools:ejt(e),bashHosts:tjt(e)}}
-function G5n(e,t){let n=t;if(!n?.signals||!n.signals.cli?.length&&!n.signals.filesRead?.length&&!n.signals.manifestDeps?.length&&!n.signals.hosts?.length&&!n.signals.cwd?.length)return null;let r;try{if(n.signals.manifestDeps?.length)r=n.signals.manifestDeps.map((s)=>({file:new RegExp(s.file,"i"),pattern:new RegExp(s.pattern)}))}catch(s){return logForDebugging(`Skipping relevance signals for "${e}": invalid RegExp in relevance.signals: ${s}`,{level:"warn"}),null}let o=n.signals.hosts?.map((s)=>s.toLowerCase());return{cli:n.signals.cli,hosts:o,filesRead:n.signals.filesRead,manifestDep:r,cwd:n.signals.cwd}}
-async function V5n(e,t){let{bashTools:n,bashHosts:r}=t??{};if(e.cli&&n?.size){let i=e.cli.find((a)=>n.has(a));if(i)return{signal:"cli",command:i}}if(e.hosts?.length&&r?.size){let i=e.hosts.find((a)=>r.has(a));if(i)return{signal:"hosts",host:i}}if(e.cwd?.length){let i=Pt().replaceAll("\\","/"),a=findGitRoot(Pt())?.replaceAll("\\","/"),l=[i];if(a&&i.startsWith(`${a}/`))l.push(i.slice(a.length+1));for(let c of e.cwd){let u=c.replace(/\/+$/,"").replace(/\/\*\*$/,"");if(!u)continue;if(l.some((d)=>BSo.default.isMatch(d,[u,`${u}/**`],{nocase:!0,dot:!0})))return{signal:"cwd"}}}let o=t?.readFileState,s=o?MRe(o):[];if(e.filesRead?.length&&s.length){let i=s.find((a)=>BSo.default.isMatch(a.replaceAll("\\","/"),e.filesRead,{nocase:!0,dot:!0}));if(i)return{signal:"filesRead",file:i}}if(e.manifestDep&&o&&s.length>0){let i=new Map(o.entries()),a=(async()=>{for(let{file:c,pattern:u}of e.manifestDep)for(let d of s){if(!c.test(d))continue;try{let p=i.get(d),m=p&&p.limit===void 0&&(p.offset??1)<=1&&!p.isPartialView?p.content:void 0;if(!m){if((await W5n.stat(d)).size>524288)continue;m=await W5n.readFile(d,"utf8")}if(u.test(m))return d}catch{}}return null})(),l=await withTimeout(a,50,"manifestDep scan").catch(()=>null);if(l)return{signal:"manifestDep",file:l}}return null}
-var W5n,BSo;
-var njt=b(()=>{NSo();Go();qe();xk();Ba();W5n=require("fs/promises"),BSo=M(Yjr(),1)});
-export {aml,G5n,V5n,W5n,BSo,njt};
+import {Or,ss} from "./m2553.ts";
+import {Box} from "./m2432.ts";
+import {Text} from "./m2433.ts";
+import {Xe,Zs} from "./m2216.ts";
+import {_ue} from "../src/tui/4657_existingApiKey.ts";
+import {b,x} from "../runtime.ts";
+import {je} from "./m2462.ts";
+import {tt} from "./m2263.ts";
+import {oe} from "./m2275.ts";
+function WTl(e){let t=qTl.c(12),{repoUrl:n,onSubmit:r}=e,o;if(t[0]===Symbol.for("react.memo_cache_sentinel"))o={context:"Confirmation"},t[0]=o;else o=t[0];Or("confirm:yes",r,o);let s;if(t[1]===Symbol.for("react.memo_cache_sentinel"))s=jI.jsx(Box,{flexDirection:"column",marginBottom:1,children:jI.jsx(Text,{bold:!0,children:"Install the Claude GitHub App"})}),t[1]=s;else s=t[1];let i;if(t[2]===Symbol.for("react.memo_cache_sentinel"))i=jI.jsx(Box,{marginBottom:1,children:jI.jsx(Text,{children:"Opening browser to install the Claude GitHub App\u2026"})}),t[2]=i;else i=t[2];let a;if(t[3]===Symbol.for("react.memo_cache_sentinel"))a=jI.jsx(Box,{marginBottom:1,children:jI.jsx(Text,{children:"If your browser doesn't open automatically, visit:"})}),t[3]=a;else a=t[3];let l;if(t[4]===Symbol.for("react.memo_cache_sentinel"))l=jI.jsx(Box,{marginBottom:1,children:jI.jsx(Text,{underline:!0,children:"https://github.com/apps/claude"})}),t[4]=l;else l=t[4];let c;if(t[5]!==n)c=jI.jsx(Box,{marginBottom:1,children:jI.jsxs(Text,{children:["Please install the app for repository: ",jI.jsx(Text,{bold:!0,children:n})]})}),t[5]=n,t[6]=c;else c=t[6];let u;if(t[7]===Symbol.for("react.memo_cache_sentinel"))u=jI.jsx(Box,{marginBottom:1,children:jI.jsx(Text,{dimColor:!0,children:"Important: Make sure to grant access to this specific repository"})}),t[7]=u;else u=t[7];let d;if(t[8]===Symbol.for("react.memo_cache_sentinel"))d=jI.jsx(Box,{children:jI.jsxs(Text,{bold:!0,color:"permission",children:["Press Enter once you've installed the app",Xe.ellipsis]})}),t[8]=d;else d=t[8];let p;if(t[9]===Symbol.for("react.memo_cache_sentinel"))p=jI.jsx(Box,{marginTop:1,children:jI.jsxs(Text,{dimColor:!0,children:["Having trouble? See manual setup instructions at:"," ",jI.jsx(Text,{color:"claude",children:_ue})]})}),t[9]=p;else p=t[9];let m;if(t[10]!==c)m=jI.jsxs(Box,{flexDirection:"column",borderStyle:"round",borderDimColor:!0,paddingX:1,children:[s,i,a,l,c,u,d,p]}),t[10]=c,t[11]=m;else m=t[11];return m}
+var qTl,jI;
+var GTl=b(()=>{Zs();je();ss();qTl=x(tt(),1),jI=x(oe(),1)});
+export {WTl,qTl,jI,GTl};

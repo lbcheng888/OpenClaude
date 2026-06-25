@@ -1,12 +1,24 @@
 // @ts-nocheck
-import {b} from "../runtime.ts";
-function VOt(e){return e.match(/^(.+):\*$/)?.[1]??null}
-function z5r(e){if(e.endsWith(":*"))return!1;for(let t=0;t<e.length;t++)if(e[t]==="*"){let n=0,r=t-1;while(r>=0&&e[r]==="\\")n++,r--;if(n%2===0)return!0}return!1}
-function L$i(e){let t=e.trimEnd();if(!t.endsWith("*"))return!1;let n=0,r=t.length-2;while(r>=0&&t[r]==="\\")n++,r--;return n%2===0}
-function oW(e,t,n=!1,r=!1){let o=e.trim(),s=r?o.replace(/[ \t]+/g," "):o,i=r?t.replace(/[ \t]+/g," "):t,a="",l=0;while(l<s.length){let h=s[l];if(h==="\\"&&l+1<s.length){let g=s[l+1];if(g==="*"){a+="\x00ESCAPED_STAR\x00",l+=2;continue}else if(g==="\\"){a+="\x00ESCAPED_BACKSLASH\x00",l+=2;continue}}a+=h,l++}let p=a.replace(/[.+?^${}()|[\]\\'"]/g,"\\$&").replace(xkd,"\x00GLOBSTAR\x00").replaceAll("*",".*").replace(kkd,"/(?:.*/)?").replace(wkd,"\\*").replace(Rkd,"\\\\"),m=(a.match(/\*/g)||[]).length;if(p.endsWith(" .*")&&m===1)p=p.slice(0,-3)+"( .*)?";let f="s"+(n?"i":"");return new RegExp(`^${p}$`,f).test(i)}
-function $Rn(e){let t=VOt(e);if(t!==null)return{type:"prefix",prefix:t};if(z5r(e))return{type:"wildcard",pattern:e};return{type:"exact",command:e}}
-function qRn(e,t){return[{type:"addRules",rules:[{toolName:e,ruleContent:t}],behavior:"allow",destination:"localSettings"}]}
-function KOt(e,t){return[{type:"addRules",rules:[{toolName:e,ruleContent:`${t} *`}],behavior:"allow",destination:"localSettings"}]}
-var wkd,Rkd,xkd,kkd;
-var X2e=b(()=>{wkd=new RegExp("\x00ESCAPED_STAR\x00","g"),Rkd=new RegExp("\x00ESCAPED_BACKSLASH\x00","g"),xkd=/\/(?:\*\*\/)+/g,kkd=new RegExp("\x00GLOBSTAR\x00","g")});
-export {VOt,z5r,L$i,oW,$Rn,qRn,KOt,wkd,Rkd,xkd,kkd,X2e};
+import {ft,b} from "../runtime.ts";
+import {dl,dn} from "../src/config/0137_namespace.ts";
+import {logForDebugging,qe} from "../src/config/0236_setHasFormattedOutput.ts";
+import {getRegisteredHooks,clearRegisteredPluginHooks,registerHookCallbacks,lt} from "../src/session/0132_sent.ts";
+import {loadAllPluginsCacheOnly,clearPluginCache,path} from "../src/agent/4467_resolvePluginRoot.ts";
+import {getSettings_DEPRECATED,getSettingsForSource,br} from "../src/config/0745_updateSettingsForSource.ts";
+import {TeamDeleteToolName,tn} from "../src/config/0230_encoding.ts";
+import {xO,Xie} from "./m2677.ts";
+import {Wi,Hn} from "./m100.ts";
+import {mn,He} from "../src/telemetry/0600_feature_name.ts";
+import {k8,Z7} from "./m2238.ts";
+var hzr={};
+ft(hzr,{setupPluginHookHotReload:()=>setupPluginHookHotReload,resetHotReloadState:()=>resetHotReloadState,pruneRemovedPluginHooks:()=>pruneRemovedPluginHooks,loadPluginHooks:()=>loadPluginHooks,getPluginAffectingSettingsSnapshot:()=>getPluginAffectingSettingsSnapshot,clearPluginHookCache:()=>clearPluginHookCache});
+function PNd(e){let t={PreToolUse:[],PostToolUse:[],PostToolUseFailure:[],PostToolBatch:[],PermissionDenied:[],Notification:[],UserPromptSubmit:[],UserPromptExpansion:[],SessionStart:[],SessionEnd:[],Stop:[],StopFailure:[],SubagentStart:[],SubagentStop:[],PreCompact:[],PostCompact:[],PermissionRequest:[],Setup:[],TeammateIdle:[],TaskCreated:[],TaskCompleted:[],Elicitation:[],ElicitationResult:[],ConfigChange:[],WorktreeCreate:[],WorktreeRemove:[],InstructionsLoaded:[],CwdChanged:[],FileChanged:[],MessageDisplay:[]};if(!e.hooksConfig)return t;for(let[n,r]of Object.entries(e.hooksConfig)){let o=n;if(!t[o])continue;for(let s of r)if(s.hooks.length>0)t[o].push({matcher:s.matcher,hooks:s.hooks,pluginRoot:e.path,pluginName:e.name,pluginId:e.source})}return t}
+async function loadPluginHooks(){if(dl()){logForDebugging("Safe mode: skipping plugin hook registration");return}await r8i()}
+function clearPluginHookCache(){r8i.cache?.clear?.()}
+async function pruneRemovedPluginHooks(){if(!getRegisteredHooks())return;let{enabled:e}=await loadAllPluginsCacheOnly(),t=new Set(e.map((o)=>o.path)),n=getRegisteredHooks();if(!n)return;let r={};for(let[o,s]of Object.entries(n)){let i=s.filter((a)=>("pluginRoot"in a)&&t.has(a.pluginRoot));if(i.length>0)r[o]=i}clearRegisteredPluginHooks(),registerHookCallbacks(r)}
+function resetHotReloadState(){pzr=!1,uIn=void 0}
+function getPluginAffectingSettingsSnapshot(){let e=getSettings_DEPRECATED(),t=getSettingsForSource("policySettings"),n=(r)=>r?Object.fromEntries(Object.entries(r).sort()):{};return TeamDeleteToolName({enabledPlugins:n(e.enabledPlugins),extraKnownMarketplaces:n(e.extraKnownMarketplaces),strictKnownMarketplaces:t?.strictKnownMarketplaces??[],blockedMarketplaces:t?.blockedMarketplaces??[]})}
+function setupPluginHookHotReload(){if(pzr)return;pzr=!0,uIn=getPluginAffectingSettingsSnapshot(),xO.subscribe((e)=>{if(e==="policySettings"){let t=getPluginAffectingSettingsSnapshot();if(t===uIn){logForDebugging("Plugin hooks: skipping reload, plugin-affecting settings unchanged");return}uIn=t,logForDebugging("Plugin hooks: reloading due to plugin-affecting settings change"),clearPluginCache("loadPluginHooks: plugin-affecting settings changed"),clearPluginHookCache(),loadPluginHooks()}})}
+var pzr=!1,uIn,r8i;
+var e9e=b(()=>{Wi();lt();mn();qe();dn();Xie();br();tn();k8();path();r8i=Hn(async()=>{let{enabled:e}=await loadAllPluginsCacheOnly(),t={PreToolUse:[],PostToolUse:[],PostToolUseFailure:[],PostToolBatch:[],PermissionDenied:[],Notification:[],UserPromptSubmit:[],UserPromptExpansion:[],SessionStart:[],SessionEnd:[],Stop:[],StopFailure:[],SubagentStart:[],SubagentStop:[],PreCompact:[],PostCompact:[],PermissionRequest:[],Setup:[],TeammateIdle:[],TaskCreated:[],TaskCompleted:[],Elicitation:[],ElicitationResult:[],ConfigChange:[],WorktreeCreate:[],WorktreeRemove:[],InstructionsLoaded:[],CwdChanged:[],FileChanged:[],MessageDisplay:[]},n=Z7(),r=n===null?e:[...e.filter((i)=>n.has(i.source)),...e.filter((i)=>!n.has(i.source))],o=new Set;for(let i of r){if(!i.hooksConfig)continue;if(o.has(i.name)){logForDebugging(`Skipping duplicate hook registration for plugin "${i.name}" from ${i.source} - already registered from another source`);continue}o.add(i.name),logForDebugging(`Loading hooks from plugin: ${i.name}`);let a=PNd(i);for(let l of Object.keys(a))t[l].push(...a[l])}clearRegisteredPluginHooks(),registerHookCallbacks(t);let s=Object.values(t).reduce((i,a)=>i+a.reduce((l,c)=>l+c.hooks.length,0),0);logForDebugging(`Registered ${s} hooks from ${e.length} plugins`),He("plugin_load_hooks")})});
+export {hzr,PNd,loadPluginHooks,clearPluginHookCache,pruneRemovedPluginHooks,resetHotReloadState,getPluginAffectingSettingsSnapshot,setupPluginHookHotReload,pzr,uIn,r8i,e9e};

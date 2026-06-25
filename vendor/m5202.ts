@@ -1,20 +1,19 @@
 // @ts-nocheck
-import {qt,Xt} from "../src/config/0228_encoding.ts";
-import {one,opt} from "./m4389.ts";
-import {$b,QT} from "./m642.ts";
-import {setOriginalCwd,setProjectRoot,setCwdState,switchSession,resetStartTime,resetFdCredentialState,lt} from "../src/session/0131_sent.ts";
-import {f_,Kx} from "./m128.ts";
-import {getProjectPathForConfig,resetTrustDialogAcceptedCache,Qn} from "../src/session/5194_shouldSkipPluginAutoupdate.ts";
-import {qT,zE} from "./m125.ts";
-import {D0a,_9} from "../src/config/3864_entrypoint.ts";
-import {resetDebugCaches,qe} from "../src/config/0234_setHasFormattedOutput.ts";
-import {resetEnvDerivedAuthCaches,Ao} from "../src/config/2031_withOAuthRefreshLock.ts";
-import {acn,Zze} from "./m1288.ts";
-import {RNt,xNt} from "../src/config/3358_key.ts";
 import {b} from "../runtime.ts";
-function Yzn(e,t,n){return new Promise((r,o)=>{let s=(a)=>{i.close(),o(a)},i=lUl.createServer((a)=>{let l="";a.setEncoding("utf8"),a.on("data",(c)=>{if(l+=c,n&&l.length>8388608){a.destroy();return}let u=l.indexOf(`
-`);if(u<0)return;if(n){let d;try{d=qt(l.slice(0,u))}catch{d=void 0}if(!d||!one(d.auth,n)){a.destroy();return}i.close(),r(d);return}i.close();try{r(qt(l.slice(0,u)))}catch(d){o(d)}}),a.on("error",n?()=>a.destroy():s)});if(i.on("error",s),t)i.once("listening",()=>{try{t()}catch(a){s(a)}});i.listen(e)})}
-async function Jzn(e,t){let n=await $b(e.cwd);if(process.chdir(n),setOriginalCwd(n),setProjectRoot(n),setCwdState(n),f_(),getProjectPathForConfig.cache?.clear?.(),resetTrustDialogAcceptedCache(),e.sessionId)switchSession(qT(e.sessionId),"spare_claim");resetStartTime(),D0a(),Object.assign(process.env,e.env),process.argv=[process.argv[0],process.argv[1],...e.argv],resetDebugCaches(),resetFdCredentialState(),resetEnvDerivedAuthCaches(),acn(),RNt();let{main:r}=await t;await r()}
-var lUl;
-var D0o=b(()=>{lt();opt();xNt();Zze();zE();Ao();Qn();qe();QT();Kx();Xt();_9();lUl=require("net")});
-export {Yzn,Jzn,lUl,D0o};
+import {Q3l,executePreCompactHooks,executePostCompactHooks} from "./m5188.ts";
+import {Z3l,executeConfigChangeHooks} from "./m5189.ts";
+import {e4l,executeElicitationHooks,executeElicitationResultHooks} from "./m5190.ts";
+import {n4l,executeCwdChangedHooks,executeFileChangedHooks} from "./m5191.ts";
+import {r4l,executeInstructionsLoadedHooks} from "./m5192.ts";
+import {VOo,executeMessageDisplayHooks} from "./m5193.ts";
+import {o4l,executeNotificationHooks} from "./m5194.ts";
+import {s4l,executeSessionStartHooks,executeSessionEndHooks,executeSetupHooks,executeSubagentStartHooks} from "./m5195.ts";
+import {u4l,executeStopHooks,executeStopFailureHooks} from "./m5197.ts";
+import {d4l,executeTeammateIdleHooks,executeTaskCreatedHooks,executeTaskCompletedHooks} from "./m5198.ts";
+import {p4l,executePreToolHooks,executePostToolHooks,executePostToolUseFailureHooks,executePostToolBatchHooks,executePermissionDeniedHooks,executePermissionRequestHooks} from "../src/hooks/5200_level.ts";
+import {Nmo,executeUserPromptExpansionHooks} from "./m4092.ts";
+import {f4l,executeUserPromptSubmitHooks} from "./m5200.ts";
+import {h4l,executeWorktreeCreateHook,executeWorktreeRemoveHook} from "./m5201.ts";
+var HOOK_EVENT_REGISTRY;
+var g4l=b(()=>{Q3l();Z3l();e4l();n4l();r4l();VOo();o4l();s4l();u4l();d4l();p4l();Nmo();f4l();h4l();HOOK_EVENT_REGISTRY={PreToolUse:executePreToolHooks,PostToolUse:executePostToolHooks,PostToolUseFailure:executePostToolUseFailureHooks,PostToolBatch:executePostToolBatchHooks,PermissionDenied:executePermissionDeniedHooks,PermissionRequest:executePermissionRequestHooks,Notification:executeNotificationHooks,Stop:executeStopHooks,SubagentStop:executeStopHooks,StopFailure:executeStopFailureHooks,TeammateIdle:executeTeammateIdleHooks,TaskCreated:executeTaskCreatedHooks,TaskCompleted:executeTaskCompletedHooks,UserPromptSubmit:executeUserPromptSubmitHooks,UserPromptExpansion:executeUserPromptExpansionHooks,SessionStart:executeSessionStartHooks,SessionEnd:executeSessionEndHooks,Setup:executeSetupHooks,SubagentStart:executeSubagentStartHooks,PreCompact:executePreCompactHooks,PostCompact:executePostCompactHooks,ConfigChange:executeConfigChangeHooks,CwdChanged:executeCwdChangedHooks,FileChanged:executeFileChangedHooks,InstructionsLoaded:executeInstructionsLoadedHooks,Elicitation:executeElicitationHooks,ElicitationResult:executeElicitationResultHooks,WorktreeCreate:executeWorktreeCreateHook,WorktreeRemove:executeWorktreeRemoveHook,MessageDisplay:executeMessageDisplayHooks}});
+export {HOOK_EVENT_REGISTRY,g4l};

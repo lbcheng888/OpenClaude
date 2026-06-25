@@ -1,9 +1,8 @@
 // @ts-nocheck
-import {useClock} from "./m2432.ts";
-import {b,M} from "../runtime.ts";
-import {ze} from "./m2452.ts";
-import {Te} from "./m2253.ts";
-function XNa(e,t){let n=useClock(),[r,o]=Cct.useState(e),s=Cct.useRef(e!==void 0?Date.now():0);return Cct.useEffect(()=>{if(e!==void 0){s.current=Date.now(),o(e);return}let i=t-(Date.now()-s.current);if(i<=0){o(void 0);return}return n.setTimeout(()=>o(void 0),i)},[e,t,n]),r}
-var Cct;
-var QNa=b(()=>{ze();Cct=M(Te(),1)});
-export {XNa,Cct,QNa};
+import {getUserSpecifiedModelSetting,Ro} from "../src/permissions/1458_swapShrinksContextWindow.ts";
+import {cee,mge,hHn} from "./m2741.ts";
+import {b} from "../runtime.ts";
+function k0p(){let e=getUserSpecifiedModelSetting();if(e==="opus"&&cee())return{alias:"opus[1m]",name:"Opus 1M",multiplier:5};else if(e==="sonnet"&&mge())return{alias:"sonnet[1m]",name:"Sonnet 1M",multiplier:5};return null}
+function k6e(e){let t=k0p();if(!t)return null;switch(e){case"warning":return`/model ${t.alias}`;case"tip":return`Tip: You have access to ${t.name} with ${t.multiplier}x more context`;default:return null}}
+var V9n=b(()=>{hHn();Ro()});
+export {k0p,k6e,V9n};

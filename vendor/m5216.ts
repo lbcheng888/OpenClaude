@@ -1,20 +1,27 @@
 // @ts-nocheck
-import {tn,Hc} from "./m235.ts";
-import {uf,dr} from "./m231.ts";
-import {b} from "../runtime.ts";
-function eDo(e,t){let n=Math.max(t,1),r=[];for(let o of e.split(`
-`)){let s=o.match(/\s*\S+/g);if(!s){r.push("");continue}let i="",a=0,l=!1;for(let c of s){let u=tn(c);if(!l)i=c,a=u,l=!0;else if(a+u<=n)i+=c,a+=u;else{r.push(i);let d=c.replace(/^\s+/,"");i=d,a=tn(d)}}r.push(i)}return r.join(`
-`)}
-function tYn(e,t,n,r){let o=" ".repeat(mWt);if(!t)return o+e;let s=tn(e);if(t.includes(`
-`)){let u=s<=n?uf(" ",n-s+fWt):" ".repeat(fWt);return(o+e+u+t).replace(/\n/g,`
-`+o)}let i=r-mWt-n-fWt;if(s<=n&&i>=DCm){let u=uf(" ",n-s+fWt),d=" ".repeat(mWt+n+fWt),p=eDo(t,i);return o+e+u+p.replace(/\n/g,`
-`+d)}let a=" ".repeat(mWt+e2l),l=r-mWt-e2l,c=eDo(t,l);return o+e+`
-`+a+c.replace(/\n/g,`
-`+a)}
-function nYn(e,t,n){if(n.length===0)return;e.push(t,...n,"")}
-function PCm(e,t){let n=t.helpWidth||80,r=Math.min(t.padWidth(e,t),ICm),o=[`Usage: ${t.commandUsage(e)}`,""],s=t.commandDescription(e);if(s.length>0)o.push(eDo(s,n),"");if(nYn(o,"Arguments:",t.visibleArguments(e).map((i)=>tYn(t.argumentTerm(i),t.argumentDescription(i),r,n))),nYn(o,"Options:",t.visibleOptions(e).map((i)=>tYn(t.optionTerm(i),t.optionDescription(i),r,n))),t.showGlobalOptions)nYn(o,"Global Options:",t.visibleGlobalOptions(e).map((i)=>tYn(t.optionTerm(i),t.optionDescription(i),r,n)));return nYn(o,"Commands:",t.visibleCommands(e).map((i)=>tYn(t.subcommandTerm(i),t.subcommandDescription(i),r,n))),o.join(`
-`)}
-function Jye(){let e=(t)=>t.long?.replace(/^--/,"")??t.short?.replace(/^-/,"")??"";return Object.assign({sortSubcommands:!0,sortOptions:!0,formatHelp:PCm},{compareOptions:(t,n)=>e(t).localeCompare(e(n))})}
-var mWt=2,fWt=2,ICm=36,DCm=30,e2l=4;
-var rYn=b(()=>{Hc();dr()});
-export {eDo,tYn,nYn,PCm,Jye,mWt,fWt,ICm,DCm,e2l,rYn};
+import {ft,b,oo} from "../runtime.ts";
+import {d1,lW,Zp,Vz} from "./m2705.ts";
+import {dm,vs} from "./m2256.ts";
+import {ow,su} from "./m2257.ts";
+import {XR,readRoster,LO} from "./m2707.ts";
+import {G9e,Nae,Aj} from "./m3168.ts";
+import {zz} from "../src/config/2719_isDeferredTool.ts";
+import {E9n,x$a} from "./m3978.ts";
+import {m3i} from "../src/config/2711_WORKFLOW_TOOL_NAME.ts";
+import {odt} from "./m3979.ts";
+import {qh} from "./m2704.ts";
+import {Rae} from "./m2814.ts";
+import {hke} from "../src/artifact/2713_uuidSlugFromUrl.ts";
+import {QR,Kz,wD,o_} from "../src/tools/2710_allErrors.ts";
+import {j0,vD} from "../src/session/2702_resolveLoopFileFire.ts";
+import {Urt} from "./m2706.ts";
+import {Lk} from "../src/config/2259_R9r.ts";
+import {v6n} from "../src/tools/4235_role.ts";
+var Qql={};
+ft(Qql,{isChromeMcpToolName:()=>isChromeMcpToolName,isAutoModeAllowlistedTool:()=>isAutoModeAllowlistedTool});
+function isChromeMcpToolName(e){return TQn.some((t)=>e.startsWith(t))}
+function Xql(e){return RIm.has(String(e?.action))}
+function isAutoModeAllowlistedTool(e,t){if(SIm.has(e))return!0;if(EIm.has(e))return!0;if(CIm.has(e))return Xql(t);if(AIm.has(e)){let n=t?.actions;if(!Array.isArray(n)||n.length===0)return!1;return n.every(Xql)}return!1}
+var Kql=null,zql,jql=null,Yql=null,Jql=null,TIm,SIm,TQn,EIm,CIm,AIm,RIm;
+var Zql=b(()=>{d1();dm();ow();XR();G9e();zz();E9n();zql=oo(m3i).WORKFLOW_TOOL_NAME,TIm=[],SIm=new Set([vs,readRoster,su,odt,qh,Rae,Nae,Aj,hke,LO,QR,Kz,wD,j0,vD,lW,Zp,Urt,Vz,Lk,o_,...zql?[zql]:[],...Kql?[Kql]:[],...jql?[jql]:[],...Yql?[Yql]:[],v6n,...Jql?[Jql]:[],...TIm,x$a]),TQn=["mcp__claude-in-chrome__","mcp__Claude_in_Chrome__"];EIm=new Set(["find","get_page_text","gif_creator","list_connected_browsers","read_console_messages","read_network_requests","read_page","resize_window","select_browser","shortcuts_list","switch_browser","tabs_close_mcp","tabs_context_mcp"].flatMap((e)=>TQn.map((t)=>t+e))),CIm=new Set(TQn.map((e)=>`${e}computer`)),AIm=new Set(TQn.map((e)=>`${e}browser_batch`)),RIm=new Set(["screenshot","zoom","wait","get_page_text","find","scroll","scroll_to","hover","mouse_move","cursor_position","left_click","right_click","middle_click","double_click","triple_click","left_click_drag"])});
+export {Qql,isChromeMcpToolName,Xql,isAutoModeAllowlistedTool,Kql,zql,jql,Yql,Jql,TIm,SIm,TQn,EIm,CIm,AIm,RIm,Zql};
